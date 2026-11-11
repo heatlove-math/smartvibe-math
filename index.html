@@ -241,19 +241,22 @@ function isleSVG(u, k) {
   const L = LAND[u.land] || LAND.palm, palms = u.land === 'forest' ? '' : PALM(32, 100, .8) + PALM(132, 98, .7);
   return `<svg viewBox="0 0 160 136" aria-hidden="true">${ISL_BASE(u.color, k)}${palms}${L(u.color)}</svg>`;
 }
+/* 단원 목록을 아직 안 적은 학기라도 차시가 있으면 단원 섬을 저절로 만들어요 */
+function UN(id) { const C = CR(id); if (C.units.length) return C.units; const L = LS.filter(l => l.course === id);
+  return [...new Set(L.map(l => l.u))].sort((a, b) => a - b).map(n => ({ n, name: '', icon: '🏝️', color: (L.find(l => l.u === n) || {}).c || '#0ea5e9', island: '', land: 'palm' })); }
 function card(l, gems) {
-  return `<a class="card" style="--c:${l.c}" href="${href(l)}"><div class="th"><div class="thfb">${(() => { const U = CR(l.course).units.find(x => x.n === l.u); return U ? isleSVG(U, 'c' + l.id.replace(/\W/g, '')) : ''; })()}</div><img src="${thumb(l)}" alt="" loading="lazy" onerror="this.remove()"><span class="no">${esc(l.no)}</span>${isNew(l) ? '<span class="new">NEW</span>' : ''}${gems.has(l.id) ? '<span class="gem">💎 보석 획득</span>' : ''}</div>
+  return `<a class="card" style="--c:${l.c}" href="${href(l)}"><div class="th"><div class="thfb">${(() => { const U = UN(l.course).find(x => x.n === l.u); return U ? isleSVG(U, 'c' + l.id.replace(/\W/g, '')) : ''; })()}</div><img src="${thumb(l)}" alt="" loading="lazy" onerror="this.remove()"><span class="no">${esc(l.no)}</span>${isNew(l) ? '<span class="new">NEW</span>' : ''}${gems.has(l.id) ? '<span class="gem">💎 보석 획득</span>' : ''}</div>
     <div class="body"><div class="tt">${ava(l)}<h3>${esc(l.t)}</h3></div><div class="tags">${l.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div><span class="go">▶ 탐험 시작</span></div></a>`;
 }
 function paint() {
   const gems = myGems(), p = params();
   /* 히어로 */
   if (latest) {
-    const U = CR(latest.course).units.find(x => x.n === latest.u) || {};
+    const U = CR(latest.course).units.find(x => x.n === latest.u) || { name: '' };
     document.getElementById('ctaNew').href = href(latest);
     document.getElementById('feat').href = href(latest);
     document.getElementById('feat').innerHTML = `<span class="rib">🆕 새로 올라온 탐험</span><div class="frame"><img src="assets/scenes/${latest.id}-big.webp" onerror="this.src='${thumb(latest)}'" alt="${esc(latest.t)} 문제 상황 그림"></div>
-      <div class="cap"><div><small>${crName(latest.course)} · ${latest.u}단원 ${esc(U.name || '')} · ${esc(latest.no)}</small><b>${esc(latest.t)}</b></div><span class="go">시작 ➜</span></div>`;
+      <div class="cap"><div><small>${crName(latest.course)} · ${latest.u}단원${U.name ? ' ' + esc(U.name) : ''} · ${esc(latest.no)}</small><b>${esc(latest.t)}</b></div><span class="go">시작 ➜</span></div>`;
   }
   const open = COURSES.filter(c => LS.some(l => l.course === c.id));
   document.getElementById('stats').innerHTML = [[LS.length, '공개된 탐험'], [open.length, '열린 학년·학기'], [gems.size, '내 보석 💎']].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
@@ -263,7 +266,8 @@ function paint() {
     <div class="spick">${COURSES.filter(c => c.grade === cg).map(c => `<button class="sbtn ${c.id === cur ? 'on' : ''}" data-c="${c.id}">${c.sem}학기 <small>${cnt(c.id) ? cnt(c.id) + '개' : '준비 중'}</small></button>`).join('')}</div>`;
   document.getElementById('mapTitle').textContent = `🗺️ ${crName(cur)} 탐험 지도`;
   /* 탐험 지도 */
-  const UNITS = CR(cur).units, CL = LS.filter(l => l.course === cur);
+  const CL = LS.filter(l => l.course === cur);
+  const UNITS = UN(cur);
   if (!UNITS.length) {
     document.getElementById('isles').innerHTML = '';
     document.getElementById('isles').style.display = 'none';
@@ -272,11 +276,11 @@ function paint() {
     document.getElementById('isles').style.display = '';
     if (sel && !UNITS.some(u => u.n === sel)) sel = 0;
     document.getElementById('isles').innerHTML = `<svg class="route" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12 C 18 2, 30 18, 46 9 S 74 2, 98 11" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="2 1.6" opacity=".9"/></svg><span class="boat" aria-hidden="true">⛵</span><span class="compass" aria-hidden="true">🧭</span>`
-      + UNITS.map((u, k) => { const n = CL.filter(l => l.u === u.n).length; return `<button class="isle ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}">${isleSVG(u, k)}<b>${u.n}. ${esc(u.name)}</b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
+      + UNITS.map((u, k) => { const n = CL.filter(l => l.u === u.n).length; return `<button class="isle ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}">${isleSVG(u, k)}<b>${u.name ? u.n + '. ' + esc(u.name) : u.n + '단원'}</b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
       + `<button class="isle all ${sel === 0 ? 'on' : ''}" data-u="0"><svg viewBox="0 0 160 136" aria-hidden="true"><circle cx="80" cy="62" r="44" fill="#fffbeb" stroke="#92400e" stroke-width="3"/><path d="M80 22 L88 62 L80 102 L72 62Z" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/><path d="M80 62 L88 62 L80 102 L72 62Z" fill="#cbd5e1"/><path d="M40 62 L80 54 L120 62 L80 70Z" fill="#94a3b8" opacity=".7"/><circle cx="80" cy="62" r="5" fill="#92400e"/></svg><b>전체 보기</b><span>${CL.length}개</span></button>`;
     const show = sel ? UNITS.filter(u => u.n === sel) : UNITS;
     document.getElementById('lessons').innerHTML = show.map(u => { const L = CL.filter(l => l.u === u.n);
-      return `<div class="ugroup"><div class="uh" style="--uc:${u.color}">${u.icon} ${u.n}단원 ${esc(u.name)} <small>${esc(u.island || '')} · ${L.length}개 탐험</small></div><div class="grid">${L.map(l => card(l, gems)).join('')}
+      return `<div class="ugroup"><div class="uh" style="--uc:${u.color}">${u.icon} ${u.n}단원 ${esc(u.name)} <small>${u.island ? esc(u.island) + ' · ' : ''}${L.length}개 탐험</small></div><div class="grid">${L.map(l => card(l, gems)).join('')}
         <div class="card soon"><i>🔒</i><b>다음 탐험 준비 중</b><span>새 차시가 차례로 열려요</span></div></div></div>`; }).join('');
   }
   /* 선생님 코너 */
