@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>십이지 수학탐험대 | SmartVibe</title>
+<meta name="description" content="SmartVibe 십이지 수학탐험대 — 12지신 탐험대와 악당을 물리치며 배우는 4학년 1학기 스토리 모드 수학">
+<meta property="og:title" content="십이지 수학탐험대 | SmartVibe"><meta property="og:description" content="12지신 탐험대와 함께하는 4학년 1학기 스토리 모드 수학"><meta property="og:image" content="assets/scenes/4-1-6-1-big.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1e1b4b;--sub:#475569;--night:#1e1b4b;--night2:#312e81;--gold:#fbbf24;--org:#f97316;--paper:#fffaf2;--line:#e9d5ff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:radial-gradient(circle at 1px 1px,rgba(124,58,237,.10) 1.5px,transparent 0) 0 0/26px 26px,linear-gradient(180deg,#fff7ed,#fdf2f8 45%,#ede9fe);min-height:100vh;word-break:keep-all}
+a{color:inherit}
+.wrap{width:min(1120px,100%);margin:0 auto;padding:0 16px}
+.fun{font-family:Jua,sans-serif;font-weight:400}
+/* 상단 바 */
+.top{position:sticky;top:0;z-index:20;background:rgba(30,27,75,.92);backdrop-filter:blur(8px);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:12px;height:58px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:Jua,sans-serif;font-size:1.25rem;white-space:nowrap}
+.logo img{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold)}
+.logo small{font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:.62rem;background:var(--gold);color:var(--night);border-radius:999px;padding:2px 8px;margin-left:2px}
+.nav{margin-left:auto;display:flex;gap:4px}
+.nav a{text-decoration:none;font-weight:800;font-size:.9rem;padding:8px 12px;border-radius:12px;color:#e0e7ff;white-space:nowrap}
+.nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+/* 히어로 */
+.hero{position:relative;overflow:hidden;margin-top:18px;border-radius:32px;background:radial-gradient(ellipse at 85% 0,rgba(251,191,36,.35),transparent 50%),linear-gradient(125deg,#1e1b4b,#4c1d95 55%,#be185d);color:#fff;box-shadow:0 10px 0 #15122f,0 20px 36px rgba(30,27,75,.25);display:grid;grid-template-columns:1.05fr 1fr;gap:24px;padding:34px 34px 30px;align-items:center}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.55) 1px,transparent 1.6px) 0 0/44px 44px;opacity:.25;pointer-events:none}
+.kick{display:inline-flex;gap:6px;align-items:center;font-weight:900;font-size:.82rem;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 14px}
+.hero h1{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.1;margin:12px 0 10px;text-shadow:0 4px 0 rgba(0,0,0,.25)}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lead{font-weight:700;font-size:1.02rem;line-height:1.7;opacity:.95;max-width:520px}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:1}
+.btn{font:inherit;font-weight:900;border:none;border-radius:16px;padding:12px 18px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .12s}
+.btn:hover{transform:translateY(-2px)}
+.btn.gold{background:linear-gradient(180deg,#fde047,#f59e0b);color:#422006;box-shadow:0 5px 0 #b45309}
+.btn.ghost{background:rgba(255,255,255,.14);color:#fff;border:2px solid rgba(255,255,255,.35)}
+.btn.p{background:#0f766e;color:#fff;box-shadow:0 4px 0 #134e4a}.btn.s{background:#f1f5f9;color:#334155;box-shadow:0 4px 0 #cbd5e1}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:1}
+.stat{background:rgba(255,255,255,.12);border-radius:16px;padding:8px 14px;min-width:96px}
+.stat b{display:block;font-family:Jua,sans-serif;font-weight:400;font-size:1.5rem;color:var(--gold);line-height:1.2}
+.stat span{font-size:.75rem;font-weight:800;opacity:.85}
+.feat{position:relative;z-index:1;text-decoration:none;display:block}
+.feat .frame{border-radius:24px;overflow:hidden;border:6px solid #fff;box-shadow:0 12px 0 rgba(0,0,0,.25);transform:rotate(1.2deg);transition:transform .2s;background:#312e81}
+.feat:hover .frame{transform:rotate(0) scale(1.02)}
+.feat img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.feat .rib{position:absolute;z-index:2;top:-12px;left:16px;background:linear-gradient(180deg,#fb7185,#e11d48);color:#fff;font-weight:900;font-size:.82rem;padding:6px 14px;border-radius:12px;box-shadow:0 4px 0 #9f1239;transform:rotate(-3deg)}
+.feat .cap{margin-top:14px;background:#fff;color:var(--ink);border-radius:18px;padding:10px 14px;box-shadow:0 5px 0 rgba(0,0,0,.2);display:flex;gap:10px;align-items:center}
+.feat .cap small{display:block;font-weight:800;color:#be185d;font-size:.75rem}
+.feat .cap b{font-family:Jua,sans-serif;font-weight:400;font-size:1.15rem}
+.feat .cap .go{margin-left:auto;font-weight:900;color:#be185d;white-space:nowrap}
+/* 캐릭터 행렬 */
+.parade{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:22px 0 4px}
+.parade img{width:62px;height:62px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 4px 0 rgba(30,27,75,.18);animation:bob 3s ease-in-out infinite}
+.parade img.v{border-color:#c4b5fd}
+.parade img:nth-child(2n){animation-delay:.5s}.parade img:nth-child(3n){animation-delay:1s}
+@keyframes bob{50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.parade img{animation:none}}
+/* 섹션 */
+.sec{margin-top:34px}
+.sh{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sh h2{font-family:Jua,sans-serif;font-weight:400;font-size:1.8rem;color:var(--night)}
+.sh p{font-weight:700;color:var(--sub);font-size:.92rem}
+/* 학습 흐름 */
+.flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.fs{background:#fff;border-radius:20px;padding:14px 12px;border:3px solid var(--c);box-shadow:0 5px 0 rgba(30,27,75,.12);text-align:center;position:relative}
+.fs i{font-style:normal;font-size:1.8rem;display:block}
+.fs b{display:block;font-family:Jua,sans-serif;font-weight:400;font-size:1.08rem;margin-top:4px;color:var(--c)}
+.fs span{display:block;font-size:.78rem;font-weight:700;color:var(--sub);margin-top:2px;line-height:1.45}
+.fs .n{position:absolute;top:-10px;left:10px;background:var(--c);color:#fff;font-weight:900;font-size:.72rem;border-radius:999px;padding:2px 9px}
+/* 학년·학기 고르기 */
+.picker{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px}
+.gpick{display:flex;gap:8px;flex-wrap:wrap}
+.gbtn{font:inherit;font-weight:900;border:3px solid #c4b5fd;background:#fff;color:#4c1d95;border-radius:16px;padding:9px 16px;cursor:pointer;box-shadow:0 4px 0 #ddd6fe;display:inline-flex;gap:6px;align-items:center}
+.gbtn span{background:#7c3aed;color:#fff;border-radius:999px;font-size:.72rem;padding:1px 8px}
+.gbtn.on{background:linear-gradient(180deg,#8b5cf6,#6d28d9);color:#fff;border-color:#6d28d9;box-shadow:0 4px 0 #4c1d95}.gbtn.on span{background:#fde047;color:#422006}
+.gbtn.empty{color:#94a3b8;border-color:#e2e8f0;box-shadow:0 4px 0 #e2e8f0}.gbtn.empty.on{color:#fff}
+.spick{display:flex;background:#fff;border-radius:16px;padding:4px;box-shadow:0 4px 0 #ddd6fe;border:3px solid #c4b5fd}
+.sbtn{font:inherit;font-weight:900;border:none;background:transparent;color:#4c1d95;border-radius:12px;padding:7px 14px;cursor:pointer}
+.sbtn small{font-weight:800;font-size:.72rem;opacity:.75;margin-left:2px}
+.sbtn.on{background:#fde047;color:#422006}
+/* 탐험 지도 (단원 섬) */
+.map{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:22px 18px 18px;border-radius:28px;overflow:hidden;background:radial-gradient(ellipse at 20% 30%,rgba(255,255,255,.35) 0 6%,transparent 7%) 0 0/120px 90px,repeating-radial-gradient(ellipse at 50% 120%,#7dd3fc 0 14px,#67c7f7 14px 16px),linear-gradient(180deg,#bae6fd,#38bdf8);box-shadow:inset 0 0 0 4px rgba(255,255,255,.6),0 8px 0 #0369a1}
+.map .route{position:absolute;left:3%;right:3%;top:22%;width:94%;height:40%;pointer-events:none}
+.map .boat{position:absolute;right:10px;bottom:8px;font-size:1.6rem;animation:sail 6s ease-in-out infinite}.map .compass{position:absolute;left:10px;bottom:6px;font-size:1.5rem;opacity:.85}
+@keyframes sail{50%{transform:translate(-14px,-3px) rotate(-4deg)}}
+.isle{position:relative;font:inherit;border:none;cursor:pointer;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--night);padding:2px;transition:transform .18s}
+.isle svg{width:100%;max-width:150px;height:auto;filter:drop-shadow(0 6px 0 rgba(3,105,161,.25))}
+.isle:hover{transform:translateY(-5px)}
+.isle b{font-family:Jua,sans-serif;font-weight:400;font-size:.98rem;line-height:1.2;text-align:center;background:#fff;border-radius:12px;padding:3px 10px;box-shadow:0 3px 0 rgba(3,105,161,.3);margin-top:-6px}
+.isle span{font-size:.7rem;font-weight:900;color:#075985;background:rgba(255,255,255,.75);border-radius:999px;padding:1px 8px}
+.isle.on{transform:translateY(-6px)}.isle.on svg{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 10px #fde047) drop-shadow(0 6px 0 rgba(3,105,161,.25))}.isle.on b{background:#fde047;color:#422006}
+.isle.dim svg{filter:grayscale(.6) opacity(.75)}
+
+/* 차시 카드 */
+.ugroup{margin-top:22px}
+.uh{display:flex;align-items:center;gap:10px;margin:0 4px 12px;font-family:Jua,sans-serif;font-size:1.35rem;color:var(--uc)}
+.uh small{font-family:'Noto Sans KR',sans-serif;font-weight:800;font-size:.78rem;color:var(--sub)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{position:relative;display:flex;flex-direction:column;text-decoration:none;background:#fff;border-radius:24px;border:4px solid var(--c);box-shadow:0 8px 0 rgba(30,27,75,.16);overflow:hidden;transition:transform .15s}
+.card:hover{transform:translateY(-4px)}
+.card .th{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,var(--c),#1e1b4b)}
+.card .th img{position:relative;display:block;width:100%;height:100%;object-fit:cover}
+.card .thfb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#bae6fd,#38bdf8)}.card .thfb svg{height:90%;width:auto}
+.card .no{position:absolute;top:10px;left:10px;background:var(--c);color:#fff;font-family:Jua,sans-serif;font-size:1rem;padding:3px 12px;border-radius:12px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.card .new{position:absolute;top:10px;right:10px;background:#e11d48;color:#fff;font-weight:900;font-size:.72rem;padding:3px 10px;border-radius:999px;box-shadow:0 3px 0 #9f1239}
+.card .gem{position:absolute;bottom:10px;right:10px;background:rgba(255,255,255,.92);font-weight:900;font-size:.75rem;padding:3px 10px;border-radius:999px;color:#7c2d12}
+.card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card .tt{display:flex;gap:10px;align-items:center}
+.ava{width:46px;height:46px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 0 0 3px var(--c);flex:none;margin-top:-34px;background:#fff7ed;display:flex;align-items:center;justify-content:center;font-size:1.6rem;position:relative}
+.card h3{font-family:Jua,sans-serif;font-weight:400;font-size:1.2rem;line-height:1.3}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tags span{font-size:.72rem;font-weight:800;background:#f1f5f9;border-radius:999px;padding:3px 9px;color:var(--sub)}
+.card .go{margin-top:auto;font-weight:900;color:var(--c)}
+.card.soon{border-style:dashed;border-color:#cbd5e1;box-shadow:none;background:rgba(255,255,255,.6);align-items:center;justify-content:center;text-align:center;padding:24px 16px;min-height:200px;color:#64748b;cursor:default}
+.card.soon:hover{transform:none}
+.card.soon i{font-style:normal;font-size:2rem}.card.soon b{font-family:Jua,sans-serif;font-weight:400;font-size:1.15rem;margin-top:6px}.card.soon span{font-size:.8rem;font-weight:700;margin-top:4px}
+/* 선생님 코너 */
+.teacher{background:#fff;border-radius:26px;padding:20px 22px;border:3px dashed #0f766e;display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:center}
+.teacher h3{font-family:Jua,sans-serif;font-weight:400;font-size:1.45rem;color:#134e4a}
+.teacher p{font-weight:700;color:#475569;margin-top:6px;line-height:1.65}
+.tbtns{display:flex;gap:10px;flex-wrap:wrap}
+.clsbar{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:800;font-size:.9rem}
+.clsbar .pill{background:#0f766e;color:#fff;border-radius:999px;padding:3px 12px}.clsbar .warn{color:#b45309}
+.foot{text-align:center;color:#64748b;font-weight:700;font-size:.85rem;padding:30px 0 40px}
+/* 반 설정 창 */
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.ov.hidden{display:none}
+.box{width:min(640px,100%);max-height:92vh;overflow:auto;background:#f0fdfa;border-radius:24px;border:5px solid #0f766e;padding:18px;box-shadow:0 12px 0 #134e4a}
+.box h3{font-family:Jua,sans-serif;font-weight:400;font-size:1.4rem;color:#134e4a;display:flex;justify-content:space-between;align-items:center}
+.box label{display:block;font-weight:900;color:#134e4a;margin-top:10px}.box small{font-weight:700;color:#64748b}
+.box input{display:block;width:100%;margin-top:4px;font:inherit;padding:10px 12px;border-radius:12px;border:2px solid #99f6e4}
+.box ol{margin:8px 0 0 20px;font-weight:700;line-height:1.9;color:#334155}
+.res{margin-top:12px;background:#fff;border-radius:16px;padding:12px;border:3px solid #99f6e4;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.res .lk{font-size:.75rem;word-break:break-all;background:#f1f5f9;border-radius:8px;padding:6px 8px;margin:4px 0}
+.x{border:none;background:#ccfbf1;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem}
+/* 반응형 */
+@media (max-width:900px){.hero{grid-template-columns:1fr;padding:26px 22px}.flow{grid-template-columns:repeat(3,minmax(0,1fr))}.map{grid-template-columns:repeat(4,minmax(0,1fr))}.teacher{grid-template-columns:1fr}}
+@media (max-width:560px){.gbtn{padding:8px 12px}.picker{gap:8px}.top .wrap{height:54px}.logo{font-size:1.05rem}.logo small{display:none}.nav a{padding:7px 8px;font-size:.8rem}.nav a.hm{display:none}
+  .hero{border-radius:24px;padding:22px 16px;margin-top:12px}.hero p.lead{font-size:.95rem}.btn{padding:11px 14px}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}.map{display:flex;overflow-x:auto;gap:10px;padding:14px;scroll-snap-type:x mandatory}.isle{flex:none;width:120px;scroll-snap-align:start}.isle b{font-size:.85rem}.map .route{display:none}.card.soon{min-height:110px;padding:16px}
+  .sh h2{font-size:1.5rem}.parade img{width:48px;height:48px}.grid{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#"><img src="assets/hub/jaram.jpg" alt="">십이지 수학탐험대<small>SmartVibe</small></a>
+  <nav class="nav"><a href="#map">🗺️ 탐험 지도</a><a class="hm" href="#flow">🧭 학습 흐름</a><a href="#teacher">👩‍🏫 선생님</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div style="position:relative;z-index:1">
+      <span class="kick">⚔️ 초등 수학 · 스토리 모드</span>
+      <h1>십이지<br><em>수학탐험대</em></h1>
+      <p class="lead">12지신 탐험대와 함께 학년별 수학 세계를 지키는 탐험! 악당들이 망가뜨린 수학 세계를 되찾아요. 개념 도구로 직접 탐험하고, 실생활 문제와 수학 게임으로 실력을 키워요!</p>
+      <div class="cta"><a class="btn gold" id="ctaNew" href="#">▶ 최신 탐험 시작</a><a class="btn ghost" href="#map">🗺️ 탐험 지도 보기</a></div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <a class="feat" id="feat" href="#"></a>
+  </section>
+
+  <div class="parade" aria-hidden="true">
+    <img src="assets/hub/jaram.jpg" alt=""><img src="assets/hub/ujik.jpg" alt=""><img src="assets/hub/beom.jpg" alt=""><img src="assets/hub/tori.jpg" alt=""><img src="assets/hub/yong.jpg" alt=""><img src="assets/hub/seulgi.jpg" alt=""><img class="v" src="assets/hub/bbidak.jpg" alt=""><img class="v" src="assets/hub/darkmong.jpg" alt="">
+  </div>
+
+  <section class="sec" id="flow">
+    <div class="sh"><h2>🧭 한 차시는 이렇게 탐험해요</h2><p>오늘의 문제에서 출발해 악당 소굴의 보드게임까지!</p></div>
+    <div class="flow">
+      <div class="fs" style="--c:#e11d48"><span class="n">1</span><i>🎯</i><b>오늘의 문제</b><span>악당이 낸 실생활 문제로 학습 목표 찾기</span></div>
+      <div class="fs" style="--c:#2563eb"><span class="n">2</span><i>🧪</i><b>개념 도구</b><span>끌고 놓으며 직접 조작해 개념 발견</span></div>
+      <div class="fs" style="--c:#ea580c"><span class="n">3</span><i>✏️</i><b>기본 문제</b><span>삐딱이의 함정 4개 돌파</span></div>
+      <div class="fs" style="--c:#6d28d9"><span class="n">4</span><i>👑</i><b>보스전</b><span>다크몽의 방어막을 깨는 점프 문제</span></div>
+      <div class="fs" style="--c:#0d9488"><span class="n">5</span><i>🎮</i><b>악당 소굴</b><span>문제은행 · 미니게임 3종</span></div>
+      <div class="fs" style="--c:#b45309"><span class="n">6</span><i>🎲</i><b>보드게임</b><span>컴퓨터·친구와 대결하고 오답노트로 정리</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="map">
+    <div class="sh"><h2 id="mapTitle">🗺️ 탐험 지도</h2><p>학년과 학기를 고르고, 섬을 누르면 그 단원의 탐험이 보여요.</p></div>
+    <div class="picker" id="picker"></div>
+    <div class="map" id="isles"></div>
+    <div id="lessons"></div>
+  </section>
+
+  <section class="sec" id="teacher">
+    <div class="teacher">
+      <div><h3>👩‍🏫 선생님 코너</h3>
+        <p>우리 반 구글 시트를 연결하면 학생 기록이 선생님 시트로 모여요. 단원 마무리의 <b>관리자 탭</b>에서 제출 현황과 많이 틀린 문항을 확인할 수 있어요. 학생 정보는 <b>학번·이름</b>만 받아요.</p>
+        <div class="clsbar" id="clsbar"></div></div>
+      <div class="tbtns"><button class="btn p" data-h="setup">🔗 내 반 설정 · 학생 링크 만들기</button><a class="btn s" id="admLink" href="4-1-1-U-단원마무리.html?admin">📊 관리자 탭</a><a class="btn s" href="guide.html">📘 설치 안내</a></div>
+    </div>
+  </section>
+  <p class="foot">SmartVibe | 십이지 수학탐험대 · Instagram @smartvibe_edu</p>
+</main>
+
+<div class="ov hidden" id="ov"><div class="box"><h3>👩‍🏫 내 반 설정 <button class="x" data-h="close" aria-label="닫기">✕</button></h3>
+  <ol><li>구글 시트에 Apps Script를 붙여 넣고 웹 앱으로 배포해요. (<a href="guide.html">설치 안내</a>)</li><li>웹 앱 주소와 학급 코드를 넣어요.</li><li>만들어진 링크·QR을 학생에게 나눠 줘요.</li></ol>
+  <label>Apps Script 웹 앱 주소<input id="u" placeholder="https://script.google.com/macros/s/…/exec"></label>
+  <label>학급 코드 <small>(예: 4-3)</small><input id="c" maxlength="20" placeholder="4-3"></label>
+  <div style="margin-top:12px"><button class="btn p" data-h="make">🔗 학생용 링크 만들기</button></div><div id="out"></div></div></div>
+
+<script src="lessons.js"></script>
+<script>
+const store = { get(k, d = '') { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const qp = new URLSearchParams(location.search);
+if (qp.get('webhook')) store.set('sv_webhook', qp.get('webhook').trim());
+if (qp.get('class')) store.set('sv_class', qp.get('class').trim());
+const COURSES = window.SV_COURSES || [], LS = (window.SV_LESSONS || []).map(([u, no, t, f, img, c, tags, added]) => { const id = (f.match(/\d-\d-\d+-[0-9U]+/) || [''])[0]; return { u, no, t, f, img, c, tags: tags || [], added: added || '', id, course: id.split('-').slice(0, 2).join('-') }; });
+const DAY = 864e5, isNew = l => l.added && (Date.now() - new Date(l.added + 'T00:00:00').getTime()) < 14 * DAY;
+const latest = LS.filter(l => l.added).sort((a, b) => a.added < b.added ? 1 : -1)[0] || LS[LS.length - 1];
+const CR = id => COURSES.find(c => c.id === id) || { id, units: [] }, crName = id => { const [g, s] = id.split('-'); return `${g}학년 ${s}학기`; };
+/* 이 기기에서 얻은 보석 (차시 앱이 저장한 기록) */
+function myGems() { const s = new Set(); try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('sv_gems_')) Object.keys(JSON.parse(localStorage.getItem(k) || '{}')).forEach(x => s.add(x)); } } catch (e) {} return s; }
+function params() { const q = new URLSearchParams(), u = store.get('sv_webhook'), c = store.get('sv_class'); if (u) q.set('webhook', u); if (c) q.set('class', c); const s = q.toString(); return s ? '?' + s : ''; }
+const href = l => encodeURI(l.f) + params();
+const thumb = l => `assets/scenes/${l.id}.webp`;
+const ava = l => l.img.startsWith('emoji:') ? `<span class="ava">${l.img.slice(6)}</span>` : `<img class="ava" src="assets/hub/${l.img}.jpg" alt="">`;
+let cur = qp.get('course') || store.get('sv_course') || (latest ? latest.course : '4-1'); if (!COURSES.some(c => c.id === cur)) cur = latest ? latest.course : (COURSES[0] || {}).id;
+let sel = latest && latest.course === cur ? latest.u : 0;
+/* ---------- 탐험 지도 섬 그림 (그림 파일 없이 그려요) ---------- */
+const ISL_BASE = (c, k) => `<ellipse cx="80" cy="118" rx="70" ry="16" fill="#fff" opacity=".45"/><ellipse cx="80" cy="112" rx="64" ry="20" fill="#fde68a"/><ellipse cx="80" cy="108" rx="64" ry="18" fill="#fcd34d"/>
+  <path d="M22 104 C24 80 48 70 80 70 C112 70 136 80 138 104 C120 112 40 112 22 104Z" fill="url(#gr${k})"/><path d="M30 100 C46 92 60 96 70 92" stroke="#15803d" stroke-width="2" fill="none" opacity=".4"/>
+  <defs><linearGradient id="gr${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#16a34a"/></linearGradient></defs>`;
+const PALM = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M0 0 C2 -10 1 -18 -2 -26" stroke="#92400e" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M-2 -26 C-14 -30 -20 -24 -22 -18 M-2 -26 C10 -32 18 -26 20 -20 M-2 -26 C-6 -38 -16 -38 -20 -34 M-2 -26 C2 -38 12 -40 16 -34" stroke="#16a34a" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
+const LAND = {
+  castle: c => `<rect x="52" y="44" width="56" height="44" rx="3" fill="#e0e7ff" stroke="#3730a3" stroke-width="2.5"/><rect x="44" y="34" width="18" height="54" rx="2" fill="#c7d2fe" stroke="#3730a3" stroke-width="2.5"/><rect x="98" y="34" width="18" height="54" rx="2" fill="#c7d2fe" stroke="#3730a3" stroke-width="2.5"/>
+    <path d="M42 34 L53 18 L64 34Z M96 34 L107 18 L118 34Z" fill="${c}" stroke="#3730a3" stroke-width="2"/><path d="M68 60 a12 12 0 0 1 24 0 V88 H68Z" fill="#3730a3"/><path d="M107 18 V6 L118 10 L107 14" fill="#fbbf24" stroke="#92400e" stroke-width="1.5"/>
+    <rect x="58" y="50" width="6" height="8" rx="1" fill="#fde68a"/><rect x="96" y="50" width="6" height="8" rx="1" fill="#fde68a"/>`,
+  forest: c => `<path d="M40 88 L58 40 L76 88Z" fill="#16a34a" stroke="#14532d" stroke-width="2.5"/><path d="M70 88 L92 28 L114 88Z" fill="#22c55e" stroke="#14532d" stroke-width="2.5"/><path d="M104 88 L118 54 L132 88Z" fill="#4ade80" stroke="#14532d" stroke-width="2.5"/>
+    <path d="M92 28 L92 88" stroke="#14532d" stroke-width="1.5" opacity=".35"/><path d="M60 64 A22 22 0 0 1 82 42" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/><path d="M60 64 L82 64 M60 64 L76 48" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`,
+  tent: c => `<path d="M38 88 L60 46 L82 88Z" fill="#fff" stroke="#9a3412" stroke-width="2.5"/><path d="M60 46 L48 88 M60 46 L72 88" stroke="${c}" stroke-width="5"/><path d="M78 88 L104 36 L130 88Z" fill="${c}" stroke="#9a3412" stroke-width="2.5"/><path d="M104 36 L94 88 M104 36 L114 88" stroke="#fff" stroke-width="5"/>
+    <path d="M104 36 V22 L114 26 L104 30" fill="#fde047" stroke="#9a3412" stroke-width="1.5"/><circle cx="40" cy="30" r="8" fill="#f472b6"/><circle cx="52" cy="22" r="7" fill="#60a5fa"/><path d="M40 38 L46 60 M52 29 L50 50" stroke="#64748b" stroke-width="1"/>`,
+  theater: c => `<rect x="42" y="46" width="76" height="42" rx="4" fill="#fef3c7" stroke="#312e81" stroke-width="2.5"/><path d="M38 46 L80 22 L122 46Z" fill="${c}" stroke="#312e81" stroke-width="2.5"/>
+    <path d="M50 56 H110 V88 H50Z" fill="#1e1b4b"/><path d="M50 56 C58 70 56 80 50 88Z M110 56 C102 70 104 80 110 88Z" fill="#dc2626"/><rect x="66" y="66" width="12" height="12" fill="#a5b4fc"/><rect x="82" y="62" width="12" height="16" transform="rotate(10 88 70)" fill="#818cf8" opacity=".7"/><circle cx="80" cy="35" r="5" fill="#fde047"/>`,
+  factory: c => `<rect x="40" y="56" width="80" height="32" rx="3" fill="#e2e8f0" stroke="#334155" stroke-width="2.5"/><path d="M40 56 L56 44 V56 L72 44 V56 L88 44 V56" fill="#cbd5e1" stroke="#334155" stroke-width="2.5"/>
+    <rect x="96" y="40" width="7" height="16" fill="#f97316" stroke="#334155" stroke-width="1.5"/><rect x="106" y="28" width="7" height="28" fill="${c}" stroke="#334155" stroke-width="1.5"/><rect x="116" y="34" width="7" height="22" fill="#22c55e" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="110" cy="20" r="5" fill="#fff" opacity=".9"/><circle cx="117" cy="13" r="4" fill="#fff" opacity=".8"/><rect x="50" y="66" width="10" height="10" fill="#93c5fd"/><rect x="66" y="66" width="10" height="10" fill="#93c5fd"/><rect x="84" y="66" width="12" height="22" fill="#475569"/>`,
+  tower: c => `<path d="M64 88 L70 30 H90 L96 88Z" fill="#fff" stroke="#831843" stroke-width="2.5"/><path d="M67 62 H93 M68 48 H92" stroke="${c}" stroke-width="5"/><rect x="68" y="20" width="24" height="12" rx="2" fill="#fde047" stroke="#831843" stroke-width="2"/><path d="M66 20 L80 8 L94 20Z" fill="${c}" stroke="#831843" stroke-width="2"/>
+    <path d="M92 26 L128 16 M92 26 L126 34" stroke="#fde047" stroke-width="3" opacity=".8"/><g fill="#fbcfe8" stroke="#831843" stroke-width="1.2"><rect x="104" y="64" width="9" height="9"/><rect x="114" y="64" width="9" height="9"/><rect x="104" y="74" width="9" height="9"/><rect x="114" y="74" width="9" height="9" fill="#fde047"/></g>`,
+  palm: c => `<circle cx="80" cy="56" r="14" fill="${c}" opacity=".25"/>`
+};
+function isleSVG(u, k) {
+  const L = LAND[u.land] || LAND.palm, palms = u.land === 'forest' ? '' : PALM(32, 100, .8) + PALM(132, 98, .7);
+  return `<svg viewBox="0 0 160 136" aria-hidden="true">${ISL_BASE(u.color, k)}${palms}${L(u.color)}</svg>`;
+}
+function card(l, gems) {
+  return `<a class="card" style="--c:${l.c}" href="${href(l)}"><div class="th"><div class="thfb">${(() => { const U = CR(l.course).units.find(x => x.n === l.u); return U ? isleSVG(U, 'c' + l.id.replace(/\W/g, '')) : ''; })()}</div><img src="${thumb(l)}" alt="" loading="lazy" onerror="this.remove()"><span class="no">${esc(l.no)}</span>${isNew(l) ? '<span class="new">NEW</span>' : ''}${gems.has(l.id) ? '<span class="gem">💎 보석 획득</span>' : ''}</div>
+    <div class="body"><div class="tt">${ava(l)}<h3>${esc(l.t)}</h3></div><div class="tags">${l.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div><span class="go">▶ 탐험 시작</span></div></a>`;
+}
+function paint() {
+  const gems = myGems(), p = params();
+  /* 히어로 */
+  if (latest) {
+    const U = CR(latest.course).units.find(x => x.n === latest.u) || {};
+    document.getElementById('ctaNew').href = href(latest);
+    document.getElementById('feat').href = href(latest);
+    document.getElementById('feat').innerHTML = `<span class="rib">🆕 새로 올라온 탐험</span><div class="frame"><img src="assets/scenes/${latest.id}-big.webp" onerror="this.src='${thumb(latest)}'" alt="${esc(latest.t)} 문제 상황 그림"></div>
+      <div class="cap"><div><small>${crName(latest.course)} · ${latest.u}단원 ${esc(U.name || '')} · ${esc(latest.no)}</small><b>${esc(latest.t)}</b></div><span class="go">시작 ➜</span></div>`;
+  }
+  const open = COURSES.filter(c => LS.some(l => l.course === c.id));
+  document.getElementById('stats').innerHTML = [[LS.length, '공개된 탐험'], [open.length, '열린 학년·학기'], [gems.size, '내 보석 💎']].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+  /* 학년·학기 고르기 */
+  const grades = [...new Set(COURSES.map(c => c.grade))], cg = +cur.split('-')[0], cnt = id => LS.filter(l => l.course === id).length;
+  document.getElementById('picker').innerHTML = `<div class="gpick">${grades.map(g => { const n = COURSES.filter(c => c.grade === g).reduce((a, c) => a + cnt(c.id), 0); return `<button class="gbtn ${g === cg ? 'on' : ''} ${n ? '' : 'empty'}" data-g="${g}">${g}학년${n ? `<span>${n}</span>` : ''}</button>`; }).join('')}</div>
+    <div class="spick">${COURSES.filter(c => c.grade === cg).map(c => `<button class="sbtn ${c.id === cur ? 'on' : ''}" data-c="${c.id}">${c.sem}학기 <small>${cnt(c.id) ? cnt(c.id) + '개' : '준비 중'}</small></button>`).join('')}</div>`;
+  document.getElementById('mapTitle').textContent = `🗺️ ${crName(cur)} 탐험 지도`;
+  /* 탐험 지도 */
+  const UNITS = CR(cur).units, CL = LS.filter(l => l.course === cur);
+  if (!UNITS.length) {
+    document.getElementById('isles').innerHTML = '';
+    document.getElementById('isles').style.display = 'none';
+    document.getElementById('lessons').innerHTML = `<div class="card soon" style="margin-top:6px"><i>🧭</i><b>${crName(cur)} 탐험은 준비 중이에요</b><span>탐험대가 새로운 섬을 지도에 그리고 있어요. 곧 열려요!</span></div>`;
+  } else {
+    document.getElementById('isles').style.display = '';
+    if (sel && !UNITS.some(u => u.n === sel)) sel = 0;
+    document.getElementById('isles').innerHTML = `<svg class="route" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12 C 18 2, 30 18, 46 9 S 74 2, 98 11" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="2 1.6" opacity=".9"/></svg><span class="boat" aria-hidden="true">⛵</span><span class="compass" aria-hidden="true">🧭</span>`
+      + UNITS.map((u, k) => { const n = CL.filter(l => l.u === u.n).length; return `<button class="isle ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}">${isleSVG(u, k)}<b>${u.n}. ${esc(u.name)}</b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
+      + `<button class="isle all ${sel === 0 ? 'on' : ''}" data-u="0"><svg viewBox="0 0 160 136" aria-hidden="true"><circle cx="80" cy="62" r="44" fill="#fffbeb" stroke="#92400e" stroke-width="3"/><path d="M80 22 L88 62 L80 102 L72 62Z" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/><path d="M80 62 L88 62 L80 102 L72 62Z" fill="#cbd5e1"/><path d="M40 62 L80 54 L120 62 L80 70Z" fill="#94a3b8" opacity=".7"/><circle cx="80" cy="62" r="5" fill="#92400e"/></svg><b>전체 보기</b><span>${CL.length}개</span></button>`;
+    const show = sel ? UNITS.filter(u => u.n === sel) : UNITS;
+    document.getElementById('lessons').innerHTML = show.map(u => { const L = CL.filter(l => l.u === u.n);
+      return `<div class="ugroup"><div class="uh" style="--uc:${u.color}">${u.icon} ${u.n}단원 ${esc(u.name)} <small>${esc(u.island || '')} · ${L.length}개 탐험</small></div><div class="grid">${L.map(l => card(l, gems)).join('')}
+        <div class="card soon"><i>🔒</i><b>다음 탐험 준비 중</b><span>새 차시가 차례로 열려요</span></div></div></div>`; }).join('');
+  }
+  /* 선생님 코너 */
+  const c = store.get('sv_class'), u = store.get('sv_webhook');
+  document.getElementById('clsbar').innerHTML = u ? `🏫 <span class="pill">${esc(c || '학급 코드 없음')}</span> 반 시트로 기록이 제출돼요.` : `<span class="warn">ℹ️ 아직 학급 시트가 연결되지 않았어요.</span>`;
+  document.getElementById('admLink').href = '4-1-1-U-단원마무리.html' + (p ? p + '&admin' : '?admin');
+}
+paint();
+const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
+document.addEventListener('click', e => {
+  const isle = e.target.closest('[data-u]'); if (isle) { sel = +isle.dataset.u; paint(); return; }
+  const gb = e.target.closest('[data-g]'); if (gb) { const g = +gb.dataset.g, cs = COURSES.filter(c => c.grade === g); cur = (cs.find(c => LS.some(l => l.course === c.id)) || cs[0]).id; sel = 0; store.set('sv_course', cur); paint(); return; }
+  const cb = e.target.closest('[data-c]'); if (cb) { cur = cb.dataset.c; sel = 0; store.set('sv_course', cur); paint(); return; }
+  const t = e.target.closest('[data-h]'); if (!t) return; const a = t.dataset.h, ov = document.getElementById('ov');
+  if (a === 'setup') { document.getElementById('u').value = store.get('sv_webhook'); document.getElementById('c').value = store.get('sv_class'); ov.classList.remove('hidden'); }
+  if (a === 'close') ov.classList.add('hidden');
+  if (a === 'copy') navigator.clipboard.writeText(t.dataset.v).then(() => { t.textContent = '✅ 복사됨'; });
+  if (a === 'make') {
+    const u = document.getElementById('u').value.trim(), c = document.getElementById('c').value.trim(), out = document.getElementById('out');
+    if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(u)) { out.innerHTML = '<p style="color:#b91c1c;font-weight:800;margin-top:10px">⚠️ 웹 앱 주소는 https://script.google.com/macros/s/…/exec 모양이에요.</p>'; return; }
+    store.set('sv_webhook', u); store.set('sv_class', c); paint();
+    const q = new URLSearchParams({ webhook: u }); if (c) q.set('class', c); const link = base() + 'index.html?' + q.toString();
+    out.innerHTML = `<div class="res"><div style="flex:1;min-width:220px"><b>⭐ 우리 반 학생용 링크</b><div class="lk">${esc(link)}</div><button class="btn s" data-h="copy" data-v="${esc(link)}">📋 복사</button></div><div id="qr"></div></div>`;
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    s.onload = () => new QRCode(document.getElementById('qr'), { text: link, width: 160, height: 160 }); s.onerror = () => { document.getElementById('qr').textContent = 'QR은 인터넷 연결 시 만들어져요.'; };
+    document.head.appendChild(s);
+  }
+});
+</script></body></html>

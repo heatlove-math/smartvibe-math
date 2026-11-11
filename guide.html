@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설치 안내 · SmartVibe 십이지 수학탐험대</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:'Noto Sans KR',sans-serif;color:#1f2a44;background:#f0fdfa;line-height:1.75}
+.wrap{width:min(860px,100%);margin:0 auto;padding:22px 16px 50px}
+h1{font-family:Jua,sans-serif;font-weight:400;font-size:2rem;color:#134e4a;margin:0}
+.sub{color:#475569;font-weight:700}
+.step{background:#fff;border-radius:20px;padding:16px 20px;margin-top:16px;border:3px solid #99f6e4;box-shadow:0 5px 0 #5eead4}
+.step h2{font-family:Jua,sans-serif;font-weight:400;font-size:1.35rem;margin:0 0 6px;color:#0f766e}
+.step h2 b{display:inline-block;background:#0f766e;color:#fff;border-radius:10px;padding:0 10px;margin-right:6px}
+ol,ul{margin:6px 0 0 20px;padding:0}li{margin:2px 0;font-weight:600}
+code{background:#f1f5f9;border-radius:6px;padding:1px 6px;font-size:.9em}
+pre{background:#0f172a;color:#e2e8f0;border-radius:14px;padding:14px;overflow:auto;max-height:360px;font-size:.78rem;line-height:1.5}
+.btn{font:inherit;font-weight:900;border:none;border-radius:12px;padding:9px 16px;cursor:pointer;background:#0f766e;color:#fff;box-shadow:0 4px 0 #134e4a}
+.tip{background:#fef3c7;border-radius:12px;padding:8px 12px;font-weight:700;color:#92400e;margin-top:8px}
+.warn{background:#fee2e2;border-radius:12px;padding:8px 12px;font-weight:700;color:#991b1b;margin-top:8px}
+a{color:#0f766e;font-weight:900}
+</style></head><body><div class="wrap">
+<p><a href="index.html">← 1단원 입구로</a></p>
+<h1>📘 우리 반에 연결하기 (선생님용)</h1>
+<p class="sub">구글 시트 하나와 Apps Script만 있으면, 학생 기록이 선생님 시트로 모이고 관리자 탭에서 많이 틀린 문항을 볼 수 있어요. 처음 한 번, 10분 정도 걸려요.</p>
+
+<div class="step"><h2><b>1</b>구글 시트 만들기</h2><ol><li>구글 드라이브에서 <b>새 구글 시트</b>를 만들고 이름을 정해요. (예: 4-3 수학탐험대 기록)</li><li>시트 공유 설정은 <b>비공개(나만)</b>로 두세요. 학생 이름·학번이 들어가요.</li></ol></div>
+
+<div class="step"><h2><b>2</b>Apps Script 붙여 넣기</h2><ol><li>시트 메뉴 <b>확장 프로그램 → Apps Script</b>를 열어요.</li><li>원래 있던 코드를 모두 지우고, 아래 코드를 <b>통째로</b> 붙여 넣어요.</li><li>맨 위 <code>ADMIN_PASSWORD</code>의 <code>'여기에-비밀번호'</code>를 <b>선생님만 아는 비밀번호</b>로 바꾸고 저장(💾)해요.</li></ol>
+<p style="margin:10px 0 6px"><button class="btn" id="cp">📋 Apps Script 코드 복사</button></p>
+<pre id="code">/**
+ * SmartVibe | 십이지 수학탐험대 — 학급 기록 서버 (Apps Script v2)
+ * ------------------------------------------------------------------
+ * 1) 구글 시트 &gt; 확장 프로그램 &gt; Apps Script 에 이 코드를 통째로 붙여 넣어요.
+ * 2) 아래 ADMIN_PASSWORD 를 선생님만 아는 비밀번호로 바꿔요. (학생 링크에는 절대 들어가지 않아요)
+ * 3) 배포 &gt; 새 배포 &gt; 유형: 웹 앱 / 실행: 나 / 액세스 권한: 모든 사용자 → 배포 → 웹 앱 URL 복사
+ * 4) 앱의 「👩‍🏫 내 반 설정」에 그 URL과 학급 코드를 넣고 학생용 링크를 만들어요.
+ *
+ * 시트 구성 (처음 제출이 들어오면 자동으로 만들어져요)
+ *   결과      : 제출 1건 = 1줄 (점수·소요 시간·오답)
+ *   문항      : 문항 1개 = 1줄 (처음에 맞혔는지 · 처음 고른 오답 · 정답) → 관리자 탭 문항 분석
+ *   보석현황  : 차시 보석 획득 기록
+ */
+var ADMIN_PASSWORD = &#x27;여기에-비밀번호&#x27;;   // ← 꼭 바꿔 주세요!
+var VERSION = 2;
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var d = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var now = new Date();
+    var cls = String(d.classCode || &#x27;&#x27;);
+    var lesson = String(d.lessonId || d.unitId || &#x27;&#x27;);
+
+    var log = sheet_(ss, &#x27;결과&#x27;, [&#x27;제출시각&#x27;, &#x27;학급&#x27;, &#x27;학번&#x27;, &#x27;이름&#x27;, &#x27;차시코드&#x27;, &#x27;단원/차시&#x27;, &#x27;세트&#x27;, &#x27;점수&#x27;, &#x27;세트1점수&#x27;, &#x27;세트2점수&#x27;, &#x27;소요시간(초)&#x27;, &#x27;보석&#x27;, &#x27;보석조각&#x27;, &#x27;오답목록&#x27;]);
+    log.appendRow([now, cls, &quot;&#x27;&quot; + (d.studentId || &#x27;&#x27;), d.studentName || &#x27;&#x27;, lesson, d.unit || &#x27;&#x27;, d.setName || &#x27;&#x27;,
+      num_(d.score), num_(d.set1Score), num_(d.set2Score), num_(d.elapsedSec), d.gemEarned ? &#x27;💎&#x27; : &#x27;&#x27;, d.fragments == null ? &#x27;&#x27; : d.fragments, (d.wrongText || &#x27;&#x27;).slice(0, 45000)]);
+
+    var items = d.items || [];
+    if (items.length) {
+      var it = sheet_(ss, &#x27;문항&#x27;, [&#x27;제출시각&#x27;, &#x27;학급&#x27;, &#x27;학번&#x27;, &#x27;이름&#x27;, &#x27;차시코드&#x27;, &#x27;문항ID&#x27;, &#x27;구분&#x27;, &#x27;문항&#x27;, &#x27;처음정답&#x27;, &#x27;시도&#x27;, &#x27;처음오답&#x27;, &#x27;정답&#x27;, &#x27;문제&#x27;]);
+      var rows = items.slice(0, 120).map(function (x) {
+        return [now, cls, &quot;&#x27;&quot; + (d.studentId || &#x27;&#x27;), d.studentName || &#x27;&#x27;, lesson, String(x.qid || &#x27;&#x27;), x.kind || &#x27;&#x27;, String(x.label || &#x27;&#x27;).slice(0, 200),
+          x.first ? &#x27;O&#x27; : &#x27;X&#x27;, num_(x.tries), String(x.my || &#x27;&#x27;).slice(0, 200), String(x.ans || &#x27;&#x27;).slice(0, 200), String(x.q || &#x27;&#x27;).slice(0, 300)];
+      });
+      it.getRange(it.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
+    }
+
+    if (d.gemEarned) {
+      var g = sheet_(ss, &#x27;보석현황&#x27;, [&#x27;학급&#x27;, &#x27;학번&#x27;, &#x27;이름&#x27;, &#x27;차시코드&#x27;, &#x27;보석&#x27;, &#x27;획득시각&#x27;]);
+      var has = g.getDataRange().getValues().some(function (r) { return String(r[1]).replace(&quot;&#x27;&quot;, &#x27;&#x27;) === String(d.studentId) &amp;&amp; String(r[3]) === lesson; });
+      if (!has) g.appendRow([cls, &quot;&#x27;&quot; + (d.studentId || &#x27;&#x27;), d.studentName || &#x27;&#x27;, lesson, d.gemAnimal || &#x27;💎&#x27;, now]);
+    }
+    return json_({ ok: true, v: VERSION });
+  } catch (err) {
+    return json_({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** 관리자 탭이 부르는 곳 — 비밀번호가 맞을 때만 데이터를 돌려줘요. (JSONP 지원) */
+function doGet(e) {
+  var p = e.parameter || {}, out;
+  if (p.action === &#x27;ping&#x27;) out = { ok: true, v: VERSION, title: SpreadsheetApp.getActiveSpreadsheet().getName() };
+  else if (p.action === &#x27;stats&#x27;) {
+    if (!check_(p.key)) out = { ok: false, error: &#x27;비밀번호가 맞지 않아요.&#x27; };
+    else {
+      var ss = SpreadsheetApp.getActiveSpreadsheet(), cls = String(p[&#x27;class&#x27;] || &#x27;&#x27;), unit = String(p.unit || &#x27;&#x27;);
+      out = { ok: true, v: VERSION, title: ss.getName(), results: rows_(ss, &#x27;결과&#x27;, cls, unit, 2000), items: rows_(ss, &#x27;문항&#x27;, cls, unit, 15000) };
+    }
+  } else out = { ok: true, v: VERSION, msg: &#x27;SmartVibe 학급 기록 서버가 잘 작동하고 있어요.&#x27; };
+  var body = JSON.stringify(out);
+  if (p.callback &amp;&amp; /^[\w.$]+$/.test(p.callback))
+    return ContentService.createTextOutput(p.callback + &#x27;(&#x27; + body + &#x27;)&#x27;).setMimeType(ContentService.MimeType.JAVASCRIPT);
+  return json_(out);
+}
+
+/* ---------- 도우미 ---------- */
+function check_(key) {
+  if (!ADMIN_PASSWORD || ADMIN_PASSWORD === &#x27;여기에-비밀번호&#x27;) return false;   // 비밀번호를 바꾸기 전에는 조회 불가
+  return String(key || &#x27;&#x27;) === String(ADMIN_PASSWORD);
+}
+function sheet_(ss, name, head) {
+  var s = ss.getSheetByName(name);
+  if (s &amp;&amp; s.getLastRow() &gt; 0 &amp;&amp; String(s.getRange(1, 2).getValue()) !== head[1]) {   // 예전(v1) 시트는 이름을 바꿔 보관해요
+    s.setName(name + &#x27;(이전 &#x27; + Utilities.formatDate(new Date(), &#x27;Asia/Seoul&#x27;, &#x27;MMdd-HHmm&#x27;) + &#x27;)&#x27;); s = null;
+  }
+  if (!s) { s = ss.insertSheet(name); s.appendRow(head); s.setFrozenRows(1); s.getRange(1, 1, 1, head.length).setFontWeight(&#x27;bold&#x27;).setBackground(&#x27;#fef3c7&#x27;); }
+  else if (s.getLastRow() === 0) s.appendRow(head);
+  return s;
+}
+function rows_(ss, name, cls, unit, max) {
+  var s = ss.getSheetByName(name); if (!s || s.getLastRow() &lt; 2) return [];
+  var v = s.getDataRange().getValues(), head = v[0], out = [];
+  var iCls = head.indexOf(&#x27;학급&#x27;), iLes = head.indexOf(&#x27;차시코드&#x27;);
+  for (var r = v.length - 1; r &gt;= 1 &amp;&amp; out.length &lt; max; r--) {
+    var row = v[r];
+    if (cls &amp;&amp; iCls &gt;= 0 &amp;&amp; String(row[iCls]) !== cls) continue;
+    if (unit &amp;&amp; iLes &gt;= 0 &amp;&amp; String(row[iLes]).indexOf(unit) !== 0) continue;
+    var o = {};
+    for (var c = 0; c &lt; head.length; c++) o[head[c]] = row[c] instanceof Date ? row[c].toISOString() : String(row[c]).replace(/^&#x27;/, &#x27;&#x27;);
+    out.push(o);
+  }
+  return out.reverse();
+}
+function num_(x) { return x == null || x === &#x27;&#x27; ? &#x27;&#x27; : Number(x); }
+function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+</pre>
+<div class="tip">💡 비밀번호는 선생님의 Apps Script 안에만 있어요. 학생용 링크나 앱 화면에는 들어가지 않아요.</div></div>
+
+<div class="step"><h2><b>3</b>웹 앱으로 배포하기</h2><ol><li>오른쪽 위 <b>배포 → 새 배포</b> → 톱니바퀴에서 <b>웹 앱</b>을 골라요.</li><li><b>다음 사용자 인증 정보로 실행: 나</b> / <b>액세스 권한이 있는 사용자: 모든 사용자</b></li><li><b>배포</b>를 누르고 권한을 허용해요. (처음 한 번 "확인되지 않은 앱" 화면이 나오면 <b>고급 → 이동</b>)</li><li>나온 <b>웹 앱 URL</b>(https://script.google.com/macros/s/…/exec)을 복사해요.</li></ol>
+<div class="warn">⚠️ 코드를 고친 뒤에는 <b>배포 → 배포 관리 → 수정 → 새 버전</b>으로 다시 배포해야 반영돼요. (URL은 그대로예요)</div></div>
+
+<div class="step"><h2><b>4</b>학생용 링크 만들기</h2><ol><li><a href="index.html">1단원 입구</a>의 <b>👩‍🏫 내 반 설정</b>에 웹 앱 URL과 <b>학급 코드</b>(예: 4-3)를 넣어요.</li><li>만들어진 <b>학생용 링크·QR</b>을 클래스룸·패들렛 등에 올려요.</li><li>학생은 그 링크로 들어와 공부하고, 결과 화면에서 <b>제출하기</b>를 누르면 끝!</li></ol>
+<div class="tip">💡 여러 반을 맡으셨다면 시트 하나에 학급 코드만 다르게 해서 링크를 반마다 만들면 돼요.</div></div>
+
+<div class="step"><h2><b>5</b>관리자 탭에서 확인하기</h2><ul><li><b>단원 마무리</b> 앱의 탭 줄에 있는 <b>👩‍🏫 관리자</b> (또는 입구의 📊 관리자 탭 열기)</li><li>웹 앱 URL · 학급 코드 · 비밀번호를 넣고 <b>불러오기</b></li><li>제출 현황(학생 × 차시), <b>많이 틀린 문항 TOP</b>, 문항별 정답률과 많이 고른 오답, 학생별 오답, CSV 내려받기</li><li>설치 전에도 <b>👀 예시 데이터로 미리 보기</b>로 화면을 볼 수 있어요.</li></ul></div>
+
+<div class="step"><h2><b>+</b>GitHub Pages로 올리기 (앱을 만든 선생님)</h2><ol><li>GitHub에서 새 저장소(public)를 만들고 이 폴더의 파일을 모두 올려요. <code>index.html</code>이 맨 위에 있어야 해요.</li><li><b>Settings → Pages → Branch: main / root</b> → 저장</li><li>잠시 뒤 <code>https://아이디.github.io/저장소이름/</code> 주소가 생겨요. 이 주소를 다른 선생님께 공유하면, 각 선생님이 2~4단계만 하면 돼요.</li></ol>
+<div class="tip">💡 <code>assets/</code> 폴더(캐릭터 그림)도 꼭 함께 올려야 그림이 보여요. 없으면 이모지로 바뀌어 보여요.</div></div>
+
+<div class="step"><h2><b>?</b>자주 묻는 질문</h2><ul>
+<li><b>제출했는데 시트에 안 보여요.</b> → 배포 액세스가 "모든 사용자"인지, URL이 <code>/exec</code>로 끝나는지 확인해요.</li>
+<li><b>관리자 탭에서 "비밀번호가 맞지 않아요"</b> → 코드의 비밀번호를 바꾼 뒤 <b>새 버전으로 다시 배포</b>했는지 확인해요.</li>
+<li><b>예전 버전 시트를 쓰고 있었어요.</b> → v2가 첫 제출을 받을 때 예전 <code>결과</code> 시트는 <code>결과(이전 …)</code>로 이름을 바꿔 보관하고 새 시트를 만들어요.</li>
+<li><b>학생 오답노트는 어디에 저장되나요?</b> → 학생 기기에 학번별로 저장돼요. 다른 기기에서는 보이지 않아요.</li>
+<li><b>개인정보</b> → 학번·이름·학습 기록이 선생님 시트에 저장돼요. 학교 정책에서 구글 시트 사용이 허용되는지 확인하고, 시트는 비공개로 두세요.</li></ul></div>
+<p class="sub" style="text-align:center;margin-top:24px">SmartVibe | 십이지 수학탐험대 · Instagram @smartvibe_edu</p>
+</div>
+<script>document.getElementById('cp').onclick = function () { navigator.clipboard.writeText(document.getElementById('code').textContent).then(() => { this.textContent = '✅ 복사했어요!'; }); };</script>
+</body></html>
