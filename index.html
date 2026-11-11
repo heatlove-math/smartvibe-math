@@ -238,7 +238,8 @@ function myGems() { const s = new Set(); try { for (let i = 0; i < localStorage.
 function params() { const q = new URLSearchParams(), u = store.get('sv_webhook'), c = store.get('sv_class'); if (u) q.set('webhook', u); if (c) q.set('class', c); const s = q.toString(); return s ? '?' + s : ''; }
 const href = l => encodeURI(l.f) + params();
 const thumb = l => `assets/scenes/${l.id}.webp`;
-const ava = l => l.img.startsWith('emoji:') ? `<span class="ava">${l.img.slice(6)}</span>` : `<img class="ava" src="assets/hub/${l.img}.jpg" alt="">`;
+const AVA_EMO = { jaram: '🐭', ujik: '🐮', beom: '🐯', tori: '🐰', yong: '🐲', seulgi: '🐍', dalli: '🐴', monggeul: '🐑', jaejae: '🐵', kkokko: '🐔', mungchi: '🐶', boksil: '🐷', bbidak: '😈', darkmong: '👑' };
+const ava = l => l.img.startsWith('emoji:') ? `<span class="ava">${l.img.slice(6)}</span>` : `<img class="ava" src="assets/hub/${l.img}.jpg" alt="" onerror="this.outerHTML='<span class=&quot;ava&quot;>${AVA_EMO[l.img] || '⭐'}</span>'">`;
 let cur = qp.get('course') || store.get('sv_course') || (latest ? latest.course : '4-1'); if (!COURSES.some(c => c.id === cur)) cur = latest ? latest.course : (COURSES[0] || {}).id;
 let sel = latest && latest.course === cur ? latest.u : 0;
 /* ---------- 탐험 지도 섬 그림 (그림 파일 없이 그려요) ---------- */
