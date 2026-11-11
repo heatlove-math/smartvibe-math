@@ -77,6 +77,20 @@ a{color:inherit}
 .sbtn{font:inherit;font-weight:900;border:none;background:transparent;color:#4c1d95;border-radius:12px;padding:7px 14px;cursor:pointer}
 .sbtn small{font-weight:800;font-size:.72rem;opacity:.75;margin-left:2px}
 .sbtn.on{background:#fde047;color:#422006}
+/* 그림 지도 (수학 탐험지도 그림 + 섬 단추) */
+.map.pmap{display:block;padding:0;aspect-ratio:16/9;background:#38bdf8}
+.pmimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.pspot{position:absolute;transform:translate(-50%,-50%);font:inherit;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0;z-index:2}
+.pspot .ring{display:block;width:clamp(56px,11vw,130px);aspect-ratio:1;border-radius:50%;transition:box-shadow .18s,background .18s}
+.pspot:hover .ring{background:rgba(255,255,255,.18);box-shadow:0 0 0 4px rgba(255,255,255,.8)}
+.pspot.on .ring{background:rgba(253,224,71,.22);box-shadow:0 0 0 5px #fde047,0 0 26px 8px rgba(253,224,71,.65)}
+.pspot b em{font-style:normal}.pspot b{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(.72rem,1.4vw,1rem);background:#fff;color:var(--night);border-radius:12px;padding:3px 10px;box-shadow:0 3px 0 rgba(3,105,161,.35);white-space:nowrap}
+.pspot.on b{background:#fde047;color:#422006}
+.pspot span{font-size:clamp(.6rem,1vw,.72rem);font-weight:900;color:#075985;background:rgba(255,255,255,.88);border-radius:999px;padding:1px 8px}
+.pspot.dim .ring{background:rgba(15,23,42,.25)}
+.pall{position:absolute;right:12px;bottom:12px;z-index:3;font:inherit;font-weight:900;border:none;cursor:pointer;background:#fff;color:var(--night);border-radius:14px;padding:8px 14px;box-shadow:0 4px 0 rgba(3,105,161,.35)}
+.pall.on{background:#fde047;color:#422006}.pall small{font-weight:800;opacity:.75}
+@media (max-width:560px){.map.pmap{display:block!important;overflow:hidden;padding:0}.pspot b{padding:1px 8px;font-size:.8rem}.pspot b .nm{display:none}.pspot .ring{width:46px}.pspot span{display:none}.pall{right:8px;bottom:8px;padding:5px 9px;font-size:.78rem}}
 /* 탐험 지도 (단원 섬) */
 .map{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:22px 18px 18px;border-radius:28px;overflow:hidden;background:radial-gradient(ellipse at 20% 30%,rgba(255,255,255,.35) 0 6%,transparent 7%) 0 0/120px 90px,repeating-radial-gradient(ellipse at 50% 120%,#7dd3fc 0 14px,#67c7f7 14px 16px),linear-gradient(180deg,#bae6fd,#38bdf8);box-shadow:inset 0 0 0 4px rgba(255,255,255,.6),0 8px 0 #0369a1}
 .map .route{position:absolute;left:3%;right:3%;top:22%;width:94%;height:40%;pointer-events:none}
@@ -141,7 +155,7 @@ a{color:inherit}
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="#"><img src="assets/hub/jaram.jpg" alt="">십이지 수학탐험대<small>SmartVibe</small></a>
-  <nav class="nav"><a href="#map">🗺️ 탐험 지도</a><a class="hm" href="#flow">🧭 학습 흐름</a><a href="#teacher">👩‍🏫 선생님</a></nav>
+  <nav class="nav"><a href="#map">🗺️ 수학 탐험지도</a><a class="hm" href="#flow">🧭 학습 흐름</a><a href="#teacher">👩‍🏫 선생님</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -150,7 +164,7 @@ a{color:inherit}
       <span class="kick">⚔️ 초등 수학 · 스토리 모드</span>
       <h1>십이지<br><em>수학탐험대</em></h1>
       <p class="lead">12지신 탐험대와 함께 학년별 수학 세계를 지키는 탐험! 악당들이 망가뜨린 수학 세계를 되찾아요. 개념 도구로 직접 탐험하고, 실생활 문제와 수학 게임으로 실력을 키워요!</p>
-      <div class="cta"><a class="btn gold" id="ctaNew" href="#">▶ 최신 탐험 시작</a><a class="btn ghost" href="#map">🗺️ 탐험 지도 보기</a></div>
+      <div class="cta"><a class="btn gold" id="ctaNew" href="#">▶ 최신 탐험 시작</a><a class="btn ghost" href="#map">🗺️ 수학 탐험지도 보기</a></div>
       <div class="stats" id="stats"></div>
     </div>
     <a class="feat" id="feat" href="#"></a>
@@ -173,7 +187,7 @@ a{color:inherit}
   </section>
 
   <section class="sec" id="map">
-    <div class="sh"><h2 id="mapTitle">🗺️ 탐험 지도</h2><p>학년과 학기를 고르고, 섬을 누르면 그 단원의 탐험이 보여요.</p></div>
+    <div class="sh"><h2 id="mapTitle">🗺️ 수학 탐험지도</h2><p>학년과 학기를 고르고, 섬을 누르면 그 단원의 탐험이 보여요.</p></div>
     <div class="picker" id="picker"></div>
     <div class="map" id="isles"></div>
     <div id="lessons"></div>
@@ -264,20 +278,29 @@ function paint() {
   const grades = [...new Set(COURSES.map(c => c.grade))], cg = +cur.split('-')[0], cnt = id => LS.filter(l => l.course === id).length;
   document.getElementById('picker').innerHTML = `<div class="gpick">${grades.map(g => { const n = COURSES.filter(c => c.grade === g).reduce((a, c) => a + cnt(c.id), 0); return `<button class="gbtn ${g === cg ? 'on' : ''} ${n ? '' : 'empty'}" data-g="${g}">${g}학년${n ? `<span>${n}</span>` : ''}</button>`; }).join('')}</div>
     <div class="spick">${COURSES.filter(c => c.grade === cg).map(c => `<button class="sbtn ${c.id === cur ? 'on' : ''}" data-c="${c.id}">${c.sem}학기 <small>${cnt(c.id) ? cnt(c.id) + '개' : '준비 중'}</small></button>`).join('')}</div>`;
-  document.getElementById('mapTitle').textContent = `🗺️ ${crName(cur)} 탐험 지도`;
+  document.getElementById('mapTitle').textContent = `🗺️ ${crName(cur)} 수학 탐험지도`;
   /* 탐험 지도 */
   const CL = LS.filter(l => l.course === cur);
   const UNITS = UN(cur);
   if (!UNITS.length) {
     document.getElementById('isles').innerHTML = '';
     document.getElementById('isles').style.display = 'none';
-    document.getElementById('lessons').innerHTML = `<div class="card soon" style="margin-top:6px"><i>🧭</i><b>${crName(cur)} 탐험은 준비 중이에요</b><span>탐험대가 새로운 섬을 지도에 그리고 있어요. 곧 열려요!</span></div>`;
+    document.getElementById('lessons').innerHTML = `<div class="card soon" style="margin-top:6px"><i>🧭</i><b>${crName(cur)} 탐험은 준비 중이에요</b><span>탐험대가 새로운 섬을 지도에 그리고 있어요. 곧 열려요!</span>${COURSES.filter(c => LS.some(l => l.course === c.id)).map(c => `<button class="btn gold" style="margin-top:12px" data-c="${c.id}">👉 지금 열린 탐험: ${crName(c.id)} (${LS.filter(l => l.course === c.id).length}개) 바로 가기</button>`).join('')}</div>`;
   } else {
     document.getElementById('isles').style.display = '';
     if (sel && !UNITS.some(u => u.n === sel)) sel = 0;
+    const MAPIMG = CR(cur).map;
+    if (MAPIMG && UNITS.every(u => u.pos)) {
+      document.getElementById('isles').className = 'map pmap';
+      document.getElementById('isles').innerHTML = `<img class="pmimg" src="${MAPIMG}" alt="${crName(cur)} 수학 탐험지도">`
+        + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><i class="ring"></i><b><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
+        + `<button class="pall ${sel === 0 ? 'on' : ''}" data-u="0">🌏 전체 보기 <small>${CL.length}개</small></button>`;
+    } else {
+    document.getElementById('isles').className = 'map';
     document.getElementById('isles').innerHTML = `<svg class="route" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12 C 18 2, 30 18, 46 9 S 74 2, 98 11" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="2 1.6" opacity=".9"/></svg><span class="boat" aria-hidden="true">⛵</span><span class="compass" aria-hidden="true">🧭</span>`
       + UNITS.map((u, k) => { const n = CL.filter(l => l.u === u.n).length; return `<button class="isle ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}">${isleSVG(u, k)}<b>${u.name ? u.n + '. ' + esc(u.name) : u.n + '단원'}</b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
       + `<button class="isle all ${sel === 0 ? 'on' : ''}" data-u="0"><svg viewBox="0 0 160 136" aria-hidden="true"><circle cx="80" cy="62" r="44" fill="#fffbeb" stroke="#92400e" stroke-width="3"/><path d="M80 22 L88 62 L80 102 L72 62Z" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/><path d="M80 62 L88 62 L80 102 L72 62Z" fill="#cbd5e1"/><path d="M40 62 L80 54 L120 62 L80 70Z" fill="#94a3b8" opacity=".7"/><circle cx="80" cy="62" r="5" fill="#92400e"/></svg><b>전체 보기</b><span>${CL.length}개</span></button>`;
+    }
     const show = sel ? UNITS.filter(u => u.n === sel) : UNITS;
     document.getElementById('lessons').innerHTML = show.map(u => { const L = CL.filter(l => l.u === u.n);
       return `<div class="ugroup"><div class="uh" style="--uc:${u.color}">${u.icon} ${u.n}단원 ${esc(u.name)} <small>${u.island ? esc(u.island) + ' · ' : ''}${L.length}개 탐험</small></div><div class="grid">${L.map(l => card(l, gems)).join('')}
