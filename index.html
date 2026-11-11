@@ -80,17 +80,24 @@ a{color:inherit}
 /* 그림 지도 (수학 탐험지도 그림 + 섬 단추) */
 .map.pmap{display:block;padding:0;aspect-ratio:16/9;background:#38bdf8}
 .pmimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.pspot{position:absolute;transform:translate(-50%,-50%);font:inherit;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0;z-index:2}
-.pspot .ring{display:block;width:clamp(56px,11vw,130px);aspect-ratio:1;border-radius:50%;transition:box-shadow .18s,background .18s}
-.pspot:hover .ring{background:rgba(255,255,255,.18);box-shadow:0 0 0 4px rgba(255,255,255,.8)}
-.pspot.on .ring{background:rgba(253,224,71,.22);box-shadow:0 0 0 5px #fde047,0 0 26px 8px rgba(253,224,71,.65)}
-.pspot b em{font-style:normal}.pspot b{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(.72rem,1.4vw,1rem);background:#fff;color:var(--night);border-radius:12px;padding:3px 10px;box-shadow:0 3px 0 rgba(3,105,161,.35);white-space:nowrap}
-.pspot.on b{background:#fde047;color:#422006}
+.pspot{position:absolute;transform:translate(-50%,-50%);font:inherit;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding:0;z-index:3;width:13%;height:34%}
+.pspot b em{font-style:normal}.pspot b{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(.72rem,1.4vw,1rem);background:#fff;color:var(--night);border-radius:12px;padding:3px 10px;box-shadow:0 3px 0 rgba(3,105,161,.35);white-space:nowrap;transition:transform .18s}
+.pspot:hover b{transform:translateY(-3px)}
+.pspot.on b{background:#fde047;color:#422006;transform:scale(1.12)}
+.pspot.on b::before{content:'⚓ '}
 .pspot span{font-size:clamp(.6rem,1vw,.72rem);font-weight:900;color:#075985;background:rgba(255,255,255,.88);border-radius:999px;padding:1px 8px}
-.pspot.dim .ring{background:rgba(15,23,42,.25)}
+.pspot.dim b{opacity:.8}
+.pboat{position:absolute;z-index:2;width:9.5%;transform:translate(-50%,-88%);pointer-events:none;filter:drop-shadow(0 6px 4px rgba(3,60,110,.35))}
+.pboat img{display:block;width:100%;animation:bob 2.4s ease-in-out infinite;transform-origin:50% 90%}
+.pboat.flip img{transform:scaleX(-1);animation-name:bobf}
+.pboat.sail img{animation-duration:.9s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4%) rotate(2deg)}}
+@keyframes bobf{0%,100%{transform:scaleX(-1) translateY(0) rotate(-2deg)}50%{transform:scaleX(-1) translateY(-4%) rotate(2deg)}}
+.pwake{position:absolute;z-index:1;width:10px;height:5px;border-radius:50%;background:rgba(255,255,255,.85);transform:translate(-50%,-50%);pointer-events:none;animation:wake 1.2s ease-out forwards}
+@keyframes wake{to{opacity:0;transform:translate(-50%,-50%) scale(3,2)}}
 .pall{position:absolute;right:12px;bottom:12px;z-index:3;font:inherit;font-weight:900;border:none;cursor:pointer;background:#fff;color:var(--night);border-radius:14px;padding:8px 14px;box-shadow:0 4px 0 rgba(3,105,161,.35)}
 .pall.on{background:#fde047;color:#422006}.pall small{font-weight:800;opacity:.75}
-@media (max-width:560px){.map.pmap{display:block!important;overflow:hidden;padding:0}.pspot b{padding:1px 8px;font-size:.8rem}.pspot b .nm{display:none}.pspot .ring{width:46px}.pspot span{display:none}.pall{right:8px;bottom:8px;padding:5px 9px;font-size:.78rem}}
+@media (max-width:560px){.map.pmap{display:block!important;overflow:hidden;padding:0}.pspot b{padding:1px 8px;font-size:.8rem}.pspot b .nm{display:none}.pspot span{display:none}.pall{right:8px;bottom:8px;padding:5px 9px;font-size:.78rem}}
 /* 탐험 지도 (단원 섬) */
 .map{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:22px 18px 18px;border-radius:28px;overflow:hidden;background:radial-gradient(ellipse at 20% 30%,rgba(255,255,255,.35) 0 6%,transparent 7%) 0 0/120px 90px,repeating-radial-gradient(ellipse at 50% 120%,#7dd3fc 0 14px,#67c7f7 14px 16px),linear-gradient(180deg,#bae6fd,#38bdf8);box-shadow:inset 0 0 0 4px rgba(255,255,255,.6),0 8px 0 #0369a1}
 .map .route{position:absolute;left:3%;right:3%;top:22%;width:94%;height:40%;pointer-events:none}
@@ -258,6 +265,23 @@ function isleSVG(u, k) {
 /* 단원 목록을 아직 안 적은 학기라도 차시가 있으면 단원 섬을 저절로 만들어요 */
 function UN(id) { const C = CR(id); if (C.units.length) return C.units; const L = LS.filter(l => l.course === id);
   return [...new Set(L.map(l => l.u))].sort((a, b) => a - b).map(n => ({ n, name: '', icon: '🏝️', color: (L.find(l => l.u === n) || {}).c || '#0ea5e9', island: '', land: 'palm' })); }
+/* ⛵ 탐험선: 고른 섬의 선착장까지 섬을 차례로 들러 항해해요 */
+let boatAt = null, sailing = null;
+function dockOf(UNITS, n) { const u = UNITS.find(x => x.n === n); return u && (u.dock || u.pos); }
+function placeBoat(UNITS) { const b = document.getElementById('pboat'); if (!b) return; if (boatAt == null || !dockOf(UNITS, boatAt)) boatAt = sel || (UNITS[0] && UNITS[0].n); const d = dockOf(UNITS, boatAt); if (!d) return; b.style.left = d[0] + '%'; b.style.top = d[1] + '%'; }
+function sailTo(UNITS, to) {
+  const b = document.getElementById('pboat'); if (!b || !to || to === boatAt) return; if (sailing) cancelAnimationFrame(sailing);
+  const step = to > boatAt ? 1 : -1, pts = []; for (let n = boatAt; ; n += step) { const d = dockOf(UNITS, n); if (d) pts.push(d); if (n === to) break; }
+  if (pts.length < 2) { boatAt = to; placeBoat(UNITS); return; }
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, segT = reduce ? 1 : 900, total = segT * (pts.length - 1), t0 = performance.now(), map = b.parentElement;
+  b.classList.toggle('flip', step < 0); b.classList.add('sail'); let lastW = 0;
+  const tick = now => { const k = Math.min(1, (now - t0) / total), f = k * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)), e = f - i, s = e < .5 ? 2 * e * e : 1 - Math.pow(-2 * e + 2, 2) / 2;
+    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], x = x0 + (x1 - x0) * s, y = y0 + (y1 - y0) * s + Math.sin(e * Math.PI) * 4;
+    b.style.left = x + '%'; b.style.top = y + '%';
+    if (now - lastW > 90 && !reduce) { lastW = now; const w = document.createElement('i'); w.className = 'pwake'; w.style.left = (x - step * 3.5) + '%'; w.style.top = (y - .5) + '%'; map.appendChild(w); setTimeout(() => w.remove(), 1200); }
+    if (k < 1) sailing = requestAnimationFrame(tick); else { sailing = null; boatAt = to; b.classList.remove('sail'); } };
+  sailing = requestAnimationFrame(tick);
+}
 function card(l, gems) {
   return `<a class="card" style="--c:${l.c}" href="${href(l)}"><div class="th"><div class="thfb">${(() => { const U = UN(l.course).find(x => x.n === l.u); return U ? isleSVG(U, 'c' + l.id.replace(/\W/g, '')) : ''; })()}</div><img src="${thumb(l)}" alt="" loading="lazy" onerror="this.remove()"><span class="no">${esc(l.no)}</span>${isNew(l) ? '<span class="new">NEW</span>' : ''}${gems.has(l.id) ? '<span class="gem">💎 보석 획득</span>' : ''}</div>
     <div class="body"><div class="tt">${ava(l)}<h3>${esc(l.t)}</h3></div><div class="tags">${l.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div><span class="go">▶ 탐험 시작</span></div></a>`;
@@ -290,11 +314,13 @@ function paint() {
     document.getElementById('isles').style.display = '';
     if (sel && !UNITS.some(u => u.n === sel)) sel = 0;
     const MAPIMG = CR(cur).map;
-    if (MAPIMG && UNITS.every(u => u.pos)) {
+    if (MAPIMG && !(window.__mapFail || {})[MAPIMG] && UNITS.every(u => u.pos)) {
       document.getElementById('isles').className = 'map pmap';
-      document.getElementById('isles').innerHTML = `<img class="pmimg" src="${MAPIMG}" alt="${crName(cur)} 수학 탐험지도">`
-        + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><i class="ring"></i><b><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
-        + `<button class="pall ${sel === 0 ? 'on' : ''}" data-u="0">🌏 전체 보기 <small>${CL.length}개</small></button>`;
+      document.getElementById('isles').innerHTML = `<img class="pmimg" src="${MAPIMG}" alt="" onerror="(window.__mapFail = window.__mapFail || {})[this.getAttribute('src')] = 1; paint();">`
+        + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><b><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
+        + `<button class="pall ${sel === 0 ? 'on' : ''}" data-u="0">🌏 전체 보기 <small>${CL.length}개</small></button>`
+        + `<div class="pboat" id="pboat"><img src="assets/scenes/ship.webp" alt=""></div>`;
+      placeBoat(UNITS);
     } else {
     document.getElementById('isles').className = 'map';
     document.getElementById('isles').innerHTML = `<svg class="route" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12 C 18 2, 30 18, 46 9 S 74 2, 98 11" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="2 1.6" opacity=".9"/></svg><span class="boat" aria-hidden="true">⛵</span><span class="compass" aria-hidden="true">🧭</span>`
@@ -314,9 +340,9 @@ function paint() {
 paint();
 const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
 document.addEventListener('click', e => {
-  const isle = e.target.closest('[data-u]'); if (isle) { sel = +isle.dataset.u; paint(); return; }
-  const gb = e.target.closest('[data-g]'); if (gb) { const g = +gb.dataset.g, cs = COURSES.filter(c => c.grade === g); cur = (cs.find(c => LS.some(l => l.course === c.id)) || cs[0]).id; sel = 0; store.set('sv_course', cur); paint(); return; }
-  const cb = e.target.closest('[data-c]'); if (cb) { cur = cb.dataset.c; sel = 0; store.set('sv_course', cur); paint(); return; }
+  const isle = e.target.closest('[data-u]'); if (isle) { sel = +isle.dataset.u; paint(); if (sel) sailTo(UN(cur), sel); return; }
+  const gb = e.target.closest('[data-g]'); if (gb) { const g = +gb.dataset.g, cs = COURSES.filter(c => c.grade === g); cur = (cs.find(c => LS.some(l => l.course === c.id)) || cs[0]).id; sel = 0; boatAt = null; store.set('sv_course', cur); paint(); return; }
+  const cb = e.target.closest('[data-c]'); if (cb) { cur = cb.dataset.c; sel = 0; boatAt = null; store.set('sv_course', cur); paint(); return; }
   const t = e.target.closest('[data-h]'); if (!t) return; const a = t.dataset.h, ov = document.getElementById('ov');
   if (a === 'setup') { document.getElementById('u').value = store.get('sv_webhook'); document.getElementById('c').value = store.get('sv_class'); ov.classList.remove('hidden'); }
   if (a === 'close') ov.classList.add('hidden');
