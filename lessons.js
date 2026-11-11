@@ -17,7 +17,7 @@ window.SV_COURSES = [
   { id: '2-2', grade: 2, sem: 2, units: [] },
   { id: '3-1', grade: 3, sem: 1, units: [] },
   { id: '3-2', grade: 3, sem: 2, units: [] },
-  { id: '4-1', grade: 4, sem: 1, map: 'assets/scenes/map-4-1b.webp', units: [
+  { id: '4-1', grade: 4, sem: 1, map: 'assets/scenes/map-4-1.webp?v=2', units: [
     { n: 1, name: '큰 수', icon: '📘', color: '#2563eb', glow: ['assets/scenes/glow-4-1-1.webp', 0.15, 15.16, 18.75, 45.35], island: '큰 수 왕국', pos: [9.5, 41], dock: [10.5, 75], land: 'castle' },
     { n: 2, name: '각도', icon: '📐', color: '#15803d', glow: ['assets/scenes/glow-4-1-2.webp', 16.89, 23.4, 17.26, 38.7], island: '각도 숲', pos: [25.5, 44], dock: [24.5, 78], land: 'forest' },
     { n: 3, name: '곱셈과 나눗셈', icon: '✖️', color: '#c2410c', glow: ['assets/scenes/glow-4-1-3.webp', 32.66, 24.73, 17.78, 40.69], island: '곱셈 축제 마을', pos: [41.5, 44], dock: [41.5, 78], land: 'tent' },
