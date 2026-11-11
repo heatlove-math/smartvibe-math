@@ -8,7 +8,8 @@
    · 올린 날을 쓰면 14일 동안 NEW 표시가 붙고, 가장 최근 차시가 첫 화면 「새로 올라온 탐험」에 나와요.
    ===================================================================== */
 window.SV_COURSES = [
-  /* 학년·학기마다 단원 목록을 넣어요. land: 섬 그림 (castle 성 · forest 숲 · tent 축제 천막 · theater 극장 · factory 공장 · tower 등대, 없으면 야자수 섬)
+  /* 학년·학기마다 단원 목록을 넣어요. map: 그 학기 수학 탐험지도 그림, pos: [가로 %, 세로 %] 그림 속 섬 위치
+      land: 섬 그림 (castle 성 · forest 숲 · tent 축제 천막 · theater 극장 · factory 공장 · tower 등대, 없으면 야자수 섬)
       단원이 아직 없으면 units: [] 로 두면 「준비 중」으로 보여요. */
   { id: '1-1', grade: 1, sem: 1, units: [] },
   { id: '1-2', grade: 1, sem: 2, units: [] },
@@ -16,13 +17,13 @@ window.SV_COURSES = [
   { id: '2-2', grade: 2, sem: 2, units: [] },
   { id: '3-1', grade: 3, sem: 1, units: [] },
   { id: '3-2', grade: 3, sem: 2, units: [] },
-  { id: '4-1', grade: 4, sem: 1, units: [
-    { n: 1, name: '큰 수', icon: '📘', color: '#2563eb', island: '큰 수 왕국', land: 'castle' },
-    { n: 2, name: '각도', icon: '📐', color: '#15803d', island: '각도 숲', land: 'forest' },
-    { n: 3, name: '곱셈과 나눗셈', icon: '✖️', color: '#c2410c', island: '곱셈 축제 마을', land: 'tent' },
-    { n: 4, name: '평면도형의 이동', icon: '🔷', color: '#4338ca', island: '그림자 극장', land: 'theater' },
-    { n: 5, name: '막대그래프', icon: '📊', color: '#b45309', island: '그래프 공장', land: 'factory' },
-    { n: 6, name: '규칙과 관계', icon: '🔢', color: '#db2777', island: '숫자 섬', land: 'tower' }] },
+  { id: '4-1', grade: 4, sem: 1, map: 'assets/scenes/map-4-1.webp', units: [
+    { n: 1, name: '큰 수', icon: '📘', color: '#2563eb', island: '큰 수 왕국', pos: [9.5, 41], land: 'castle' },
+    { n: 2, name: '각도', icon: '📐', color: '#15803d', island: '각도 숲', pos: [25.5, 44], land: 'forest' },
+    { n: 3, name: '곱셈과 나눗셈', icon: '✖️', color: '#c2410c', island: '곱셈 축제 마을', pos: [41.5, 44], land: 'tent' },
+    { n: 4, name: '평면도형의 이동', icon: '🔷', color: '#4338ca', island: '그림자 극장', pos: [57.5, 48], land: 'theater' },
+    { n: 5, name: '막대그래프', icon: '📊', color: '#b45309', island: '그래프 공장', pos: [74, 48], land: 'factory' },
+    { n: 6, name: '규칙과 관계', icon: '🔢', color: '#db2777', island: '숫자 섬', pos: [91, 47], land: 'tower' }] },
   { id: '4-2', grade: 4, sem: 2, units: [] },
   { id: '5-1', grade: 5, sem: 1, units: [] },
   { id: '5-2', grade: 5, sem: 2, units: [] },
