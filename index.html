@@ -87,6 +87,11 @@ a{color:inherit}
 .pspot.on b::before{content:'⚓ '}
 .pspot span{font-size:clamp(.6rem,1vw,.72rem);font-weight:900;color:#075985;background:rgba(255,255,255,.88);border-radius:999px;padding:1px 8px}
 .pspot.dim b{opacity:.8}
+.pglow{position:absolute;z-index:1;pointer-events:none;opacity:0;transition:opacity .35s;filter:drop-shadow(0 0 6px rgba(253,224,71,.9))}
+.pglow.lit{opacity:1}
+.pglow.on{opacity:1;animation:gpulse 1.8s ease-in-out infinite}
+@keyframes gpulse{50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.pglow.on{animation:none}}
 .pboat{position:absolute;z-index:2;width:9.5%;transform:translate(-50%,-88%);pointer-events:none;filter:drop-shadow(0 6px 4px rgba(3,60,110,.35))}
 .pboat img{display:block;width:100%;animation:bob 2.4s ease-in-out infinite;transform-origin:50% 90%}
 .pboat.flip img{transform:scaleX(-1);animation-name:bobf}
@@ -217,7 +222,7 @@ a{color:inherit}
   <label>학급 코드 <small>(예: 4-3)</small><input id="c" maxlength="20" placeholder="4-3"></label>
   <div style="margin-top:12px"><button class="btn p" data-h="make">🔗 학생용 링크 만들기</button></div><div id="out"></div></div></div>
 
-<script src="lessons.js"></script>
+<script>/* 차시 목록은 항상 최신으로 (브라우저 기억 무시) */document.write('<script src="lessons.js?t=' + Date.now() + '"><\/script>');</script>
 <script>
 const store = { get(k, d = '') { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -267,7 +272,8 @@ function UN(id) { const C = CR(id); if (C.units.length) return C.units; const L 
   return [...new Set(L.map(l => l.u))].sort((a, b) => a - b).map(n => ({ n, name: '', icon: '🏝️', color: (L.find(l => l.u === n) || {}).c || '#0ea5e9', island: '', land: 'palm' })); }
 /* ⛵ 탐험선: 고른 섬의 선착장까지 섬을 차례로 들러 항해해요 */
 let boatAt = null, sailing = null;
-function dockOf(UNITS, n) { const u = UNITS.find(x => x.n === n); return u && (u.dock || u.pos); }
+function dockOf(UNITS, n) { const u = UNITS.find(x => x.n === n); return u && (u.dock || (u.pos && [u.pos[0] + 1, u.pos[1] + 34])); }
+function lit(n, on) { const g = document.querySelector('.pglow[data-g="' + n + '"]'); if (g) g.classList.toggle('lit', on); }
 function placeBoat(UNITS) { const b = document.getElementById('pboat'); if (!b) return; if (boatAt == null || !dockOf(UNITS, boatAt)) boatAt = sel || (UNITS[0] && UNITS[0].n); const d = dockOf(UNITS, boatAt); if (!d) return; b.style.left = d[0] + '%'; b.style.top = d[1] + '%'; }
 function sailTo(UNITS, to) {
   const b = document.getElementById('pboat'); if (!b || !to || to === boatAt) return; if (sailing) cancelAnimationFrame(sailing);
@@ -278,8 +284,9 @@ function sailTo(UNITS, to) {
   const tick = now => { const k = Math.min(1, (now - t0) / total), f = k * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)), e = f - i, s = e < .5 ? 2 * e * e : 1 - Math.pow(-2 * e + 2, 2) / 2;
     const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], x = x0 + (x1 - x0) * s, y = y0 + (y1 - y0) * s + Math.sin(e * Math.PI) * 4;
     b.style.left = x + '%'; b.style.top = y + '%';
+    const near = e < .5 ? i : i + 1, nn = (boatAt != null ? boatAt : to) + near * step; if (nn !== window.__lastLit) { if (window.__lastLit != null && window.__lastLit !== to) lit(window.__lastLit, false); lit(nn, true); window.__lastLit = nn; }
     if (now - lastW > 90 && !reduce) { lastW = now; const w = document.createElement('i'); w.className = 'pwake'; w.style.left = (x - step * 3.5) + '%'; w.style.top = (y - .5) + '%'; map.appendChild(w); setTimeout(() => w.remove(), 1200); }
-    if (k < 1) sailing = requestAnimationFrame(tick); else { sailing = null; boatAt = to; b.classList.remove('sail'); } };
+    if (k < 1) sailing = requestAnimationFrame(tick); else { sailing = null; if (window.__lastLit != null && window.__lastLit !== to) lit(window.__lastLit, false); window.__lastLit = null; boatAt = to; b.classList.remove('sail'); } };
   sailing = requestAnimationFrame(tick);
 }
 function card(l, gems) {
@@ -319,6 +326,7 @@ function paint() {
       document.getElementById('isles').innerHTML = `<img class="pmimg" src="${MAPIMG}" alt="" onerror="(window.__mapFail = window.__mapFail || {})[this.getAttribute('src')] = 1; paint();">`
         + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><b><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
         + `<button class="pall ${sel === 0 ? 'on' : ''}" data-u="0">🌏 전체 보기 <small>${CL.length}개</small></button>`
+        + UNITS.filter(u => u.glow).map(u => `<img class="pglow ${sel === u.n ? 'on' : ''}" data-g="${u.n}" src="${u.glow[0]}" alt="" style="left:${u.glow[1]}%;top:${u.glow[2]}%;width:${u.glow[3]}%;height:${u.glow[4]}%">`).join('')
         + `<div class="pboat" id="pboat"><img src="assets/scenes/ship.webp" alt=""></div>`;
       placeBoat(UNITS);
     } else {
