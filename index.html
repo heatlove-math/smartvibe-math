@@ -85,7 +85,7 @@ a{color:inherit}
 .pspot:hover b{transform:translateY(-3px)}
 .pspot.on b{background:#fde047;color:#422006;transform:scale(1.12)}
 .pspot.on b::before{content:'⚓ '}
-.pspot span{font-size:clamp(.6rem,1vw,.72rem);font-weight:900;color:#075985;background:rgba(255,255,255,.88);border-radius:999px;padding:1px 8px}
+.pspot>span{font-size:clamp(.6rem,1vw,.72rem);font-weight:900;color:#075985;background:rgba(255,255,255,.88);border-radius:999px;padding:1px 8px}
 .pspot.dim b{opacity:.8}
 .pglow{position:absolute;z-index:1;pointer-events:none;opacity:0;transition:opacity .35s;filter:drop-shadow(0 0 6px rgba(253,224,71,.9))}
 .pglow.lit{opacity:1}
@@ -96,13 +96,31 @@ a{color:inherit}
 .pboat img{display:block;width:100%;animation:bob 2.4s ease-in-out infinite;transform-origin:50% 90%}
 .pboat.flip img{transform:scaleX(-1);animation-name:bobf}
 .pboat.sail img{animation-duration:.9s}
+.ptrain{width:10.5%;transform:translate(-50%,-90%);filter:drop-shadow(0 0 8px rgba(103,232,249,.75))}
+.ptrain .ptwrap{display:block;position:relative;animation:tbob 1.6s ease-in-out infinite}
+.ptrain img{animation:none!important;transform:none!important}
+.ptrain .pface{position:absolute;left:61.2%;top:42.6%;width:13.5%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;transform:translate(-50%,-50%)!important}
+.ptrain.flip .ptwrap{transform:scaleX(-1)}
+.ptrain.sail .ptwrap{animation:tbob .35s ease-in-out infinite}
+@keyframes tbob{0%,100%{translate:0 0}50%{translate:0 -3%}}
+.prail{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+.prail polyline{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.prail .rdim{stroke:rgba(30,10,55,.62);stroke-width:11}
+.prail .ron{stroke:rgba(165,243,252,.9);stroke-width:4;filter:drop-shadow(0 0 4px #22d3ee)}
+.prail .rtrail{stroke:#fef9c3;stroke-width:5;filter:drop-shadow(0 0 6px #facc15)}
+.pflash{position:absolute;z-index:2;width:7%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;border:3px solid #fde047;box-shadow:0 0 18px #facc15;animation:pflash .9s ease-out forwards}
+@keyframes pflash{0%{opacity:1;scale:.2}100%{opacity:0;scale:1.6}}
+.ptmap .pspot.on b::before{content:'🚉 '}
+.ptmap .pglow.on,.ptmap .pglow.lit{filter:drop-shadow(0 0 7px #fde047) drop-shadow(0 0 14px rgba(250,204,21,.8))}
+.pspot b.wrap{white-space:normal;max-width:100%;text-align:center;line-height:1.15}
+
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4%) rotate(2deg)}}
 @keyframes bobf{0%,100%{transform:scaleX(-1) translateY(0) rotate(-2deg)}50%{transform:scaleX(-1) translateY(-4%) rotate(2deg)}}
 .pwake{position:absolute;z-index:1;width:10px;height:5px;border-radius:50%;background:rgba(255,255,255,.85);transform:translate(-50%,-50%);pointer-events:none;animation:wake 1.2s ease-out forwards}
 @keyframes wake{to{opacity:0;transform:translate(-50%,-50%) scale(3,2)}}
 .pall{position:absolute;right:12px;bottom:12px;z-index:3;font:inherit;font-weight:900;border:none;cursor:pointer;background:#fff;color:var(--night);border-radius:14px;padding:8px 14px;box-shadow:0 4px 0 rgba(3,105,161,.35)}
 .pall.on{background:#fde047;color:#422006}.pall small{font-weight:800;opacity:.75}
-@media (max-width:560px){.map.pmap{display:block!important;overflow:hidden;padding:0}.pspot b{padding:1px 8px;font-size:.8rem}.pspot b .nm{display:none}.pspot span{display:none}.pall{right:8px;bottom:8px;padding:5px 9px;font-size:.78rem}}
+@media (max-width:560px){.map.pmap{display:block!important;overflow:hidden;padding:0}.pspot b{padding:1px 8px;font-size:.8rem}.pspot b .nm{display:none}.pspot>span{display:none}.pall{right:8px;bottom:8px;padding:5px 9px;font-size:.78rem}}
 /* 탐험 지도 (단원 섬) */
 .map{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:22px 18px 18px;border-radius:28px;overflow:hidden;background:radial-gradient(ellipse at 20% 30%,rgba(255,255,255,.35) 0 6%,transparent 7%) 0 0/120px 90px,repeating-radial-gradient(ellipse at 50% 120%,#7dd3fc 0 14px,#67c7f7 14px 16px),linear-gradient(180deg,#bae6fd,#38bdf8);box-shadow:inset 0 0 0 4px rgba(255,255,255,.6),0 8px 0 #0369a1}
 .map .route{position:absolute;left:3%;right:3%;top:22%;width:94%;height:40%;pointer-events:none}
@@ -276,7 +294,35 @@ let boatAt = null, sailing = null;
 function dockOf(UNITS, n) { const u = UNITS.find(x => x.n === n); return u && (u.dock || (u.pos && [u.pos[0] + 1, u.pos[1] + 34])); }
 function lit(n, on) { const g = document.querySelector('.pglow[data-g="' + n + '"]'); if (g) g.classList.toggle('lit', on); }
 function placeBoat(UNITS) { const b = document.getElementById('pboat'); if (!b) return; if (boatAt == null || !dockOf(UNITS, boatAt)) boatAt = sel || (UNITS[0] && UNITS[0].n); const d = dockOf(UNITS, boatAt); if (!d) return; b.style.left = d[0] + '%'; b.style.top = d[1] + '%'; }
+/* 🚄 빛의 레일 열차 (ride: 'train') — 레일(rail)을 따라 거쳐 가는 역을 지나 달려가요 */
+function heroKey() { try { const h = localStorage.getItem('sv56:hero'); return h === 'arin' ? 'arin' : 'siwoo'; } catch (e) { return 'siwoo'; } }
+const RAIL_AR = 752 / 1344;
+function railIdx(rail, d) { let k = 0, b = 1e9; rail.forEach((p, i) => { const q = Math.hypot(p[0] - d[0], (p[1] - d[1]) * RAIL_AR); if (q < b) { b = q; k = i; } }); return k; }
+const railPts = pts => pts.map(p => p[0] + ',' + p[1]).join(' ');
+function railSVG(C, UNITS, CL) { const R = C.rail || []; if (R.length < 2) return '';
+  const open = Math.max(0, ...UNITS.filter(u => CL.some(l => l.u === u.n)).map(u => u.n)), ou = UNITS.find(u => u.n === open), k = ou ? railIdx(R, ou.dock) : 0;
+  return `<svg class="prail" viewBox="0 0 100 100" preserveAspectRatio="none">${k < R.length - 1 ? `<polyline class="rdim" points="${railPts(R.slice(k))}"/>` : ''}${k > 0 ? `<polyline class="ron" points="${railPts(R.slice(0, k + 1))}"/>` : ''}<polyline class="rtrail" id="rtrail" points=""/></svg>`; }
+function trainTo(UNITS, to) {
+  const b = document.getElementById('pboat'), R = CR(cur).rail; if (!b || !R || !to || to === boatAt) return; if (sailing) cancelAnimationFrame(sailing);
+  const from = boatAt, d0 = dockOf(UNITS, from), d1 = dockOf(UNITS, to); if (!d0 || !d1) { boatAt = to; placeBoat(UNITS); return; }
+  const i0 = railIdx(R, d0), i1 = railIdx(R, d1), step = i1 > i0 ? 1 : -1, pts = [d0]; for (let i = i0 + step; i !== i1; i += step) pts.push(R[i]); pts.push(d1);
+  const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], (pts[i][1] - pts[i - 1][1]) * RAIL_AR));
+  const tot = L[L.length - 1] || 1, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, dur = reduce ? 1 : Math.min(2000, 700 + tot * 22), t0 = performance.now(), map = b.parentElement, tr = document.getElementById('rtrail');
+  const stops = UNITS.map(u => ({ n: u.n, d: dockOf(UNITS, u.n) })).filter(x => x.d);
+  b.classList.toggle('flip', step < 0); b.classList.add('sail'); let lastN = null;
+  const at = dist => { let i = 1; while (i < L.length - 1 && L[i] < dist) i++; const e = (dist - L[i - 1]) / ((L[i] - L[i - 1]) || 1); return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * e, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * e, i]; };
+  const tick = now => { const k = Math.min(1, (now - t0) / dur), s = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, [x, y, i] = at(s * tot);
+    b.style.left = x + '%'; b.style.top = y + '%';
+    if (tr) tr.setAttribute('points', railPts(pts.slice(0, i).concat([[x, y]])));
+    const near = stops.find(st => Math.hypot(st.d[0] - x, (st.d[1] - y) * RAIL_AR) < 2.2); if (near && near.n !== lastN) { if (lastN != null && lastN !== to) lit(lastN, false); lit(near.n, true); lastN = near.n; }
+    if (k < 1) sailing = requestAnimationFrame(tick);
+    else { sailing = null; if (lastN != null && lastN !== to) lit(lastN, false); boatAt = to; b.classList.remove('sail');
+      if (!reduce) { const f = document.createElement('i'); f.className = 'pflash'; f.style.left = d1[0] + '%'; f.style.top = d1[1] + '%'; map.appendChild(f); setTimeout(() => f.remove(), 950); }
+      if (tr) setTimeout(() => { if (!sailing) tr.setAttribute('points', ''); }, 700); } };
+  sailing = requestAnimationFrame(tick);
+}
 function sailTo(UNITS, to) {
+  if (CR(cur).ride === 'train') return trainTo(UNITS, to);
   const b = document.getElementById('pboat'); if (!b || !to || to === boatAt) return; if (sailing) cancelAnimationFrame(sailing);
   const step = to > boatAt ? 1 : -1, pts = []; for (let n = boatAt; ; n += step) { const d = dockOf(UNITS, n); if (d) pts.push(d); if (n === to) break; }
   if (pts.length < 2) { boatAt = to; placeBoat(UNITS); return; }
@@ -323,12 +369,12 @@ function paint() {
     if (sel && !UNITS.some(u => u.n === sel)) sel = 0;
     const MAPIMG = CR(cur).map;
     if (MAPIMG && !(window.__mapFail || {})[MAPIMG] && UNITS.every(u => u.pos)) {
-      document.getElementById('isles').className = 'map pmap';
+      document.getElementById('isles').className = 'map pmap' + (CR(cur).ride === 'train' ? ' ptmap' : '');
       document.getElementById('isles').innerHTML = `<img class="pmimg" src="${MAPIMG}" alt="" onerror="(window.__mapFail = window.__mapFail || {})[this.getAttribute('src')] = 1; paint();">`
-        + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><b><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
+        + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><b class="${u.name.length > 10 ? 'wrap' : ''}"><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
         + `<button class="pall ${sel === 0 ? 'on' : ''}" data-u="0">🌏 전체 보기 <small>${CL.length}개</small></button>`
         + UNITS.filter(u => u.glow).map(u => `<img class="pglow ${sel === u.n ? 'on' : ''}" data-g="${u.n}" src="${u.glow[0]}" alt="" style="left:${u.glow[1]}%;top:${u.glow[2]}%;width:${u.glow[3]}%;height:${u.glow[4]}%">`).join('')
-        + `<div class="pboat" id="pboat"><img src="assets/scenes/ship.webp" alt=""></div>`;
+        + (CR(cur).ride === 'train' ? railSVG(CR(cur), UNITS, CL) + `<div class="pboat ptrain" id="pboat"><span class="ptwrap"><img src="${CR(cur).vehicle}" alt=""><img class="pface" src="assets/g56/hub/${heroKey()}.jpg" alt="" onerror="this.remove()"></span></div>` : `<div class="pboat" id="pboat"><img src="assets/scenes/ship.webp" alt=""></div>`);
       placeBoat(UNITS);
     } else {
     document.getElementById('isles').className = 'map';
