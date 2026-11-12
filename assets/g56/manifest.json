@@ -1,0 +1,221 @@
+{
+ "zodiac": {
+  "horse": {
+   "name": "달리",
+   "src": "달리와 함께하는 속력 수학 모험.png"
+  },
+  "sheep": {
+   "name": "몽글이",
+   "src": "몽글이의 치유 마법 수학 프로필.png"
+  },
+  "tiger": {
+   "name": "범이",
+   "src": "범이 호랑이 수학 전략가 캐릭터 시트.png"
+  },
+  "pig": {
+   "name": "복실이",
+   "src": "복실이 황금 수호기사 수학 도감.png"
+  },
+  "rat": {
+   "name": "자람이",
+   "src": "수학 도적 쥐 자람이 카드.png"
+  },
+  "dog": {
+   "name": "뭉치",
+   "src": "스마트바이브 수학 모험_ 뭉치의 대칭 탐험.png"
+  },
+  "snake": {
+   "name": "슬기",
+   "src": "슬기와 함께하는 분수·소수 모험.png"
+  },
+  "dragon": {
+   "name": "용용이",
+   "src": "용용이의 도형과 공간 마법 탐험.png"
+  },
+  "rooster": {
+   "name": "꼬꼬",
+   "src": "음유시인 꼬꼬의 수학 모험.png"
+  },
+  "monkey": {
+   "name": "재재",
+   "src": "재재의 논리 수학 모험 포스터.png"
+  },
+  "ox": {
+   "name": "우직이",
+   "src": "측정과 단위 변환의 수호자 우직이.png"
+  },
+  "rabbit": {
+   "name": "토리",
+   "src": "토리의 규칙과 패턴 수학 모험.png"
+  }
+ },
+ "heroes": {
+  "siwoo": {
+   "rooster": {
+    "partner": "꼬꼬",
+    "src": "강시우와 꼬꼬의 환상 하모니.png"
+   },
+   "horse": {
+    "partner": "달리",
+    "src": "강시우와 달리의 속력 모험.png"
+   },
+   "sheep": {
+    "partner": "몽글이",
+    "src": "강시우와 몽글이의 수학 모험 카드.png"
+   },
+   "dog": {
+    "partner": "뭉치",
+    "src": "강시우와 뭉치의 수호 융합 모험.png"
+   },
+   "tiger": {
+    "partner": "범이",
+    "src": "강시우와 범이의 수학 모험.png"
+   },
+   "snake": {
+    "partner": "슬기",
+    "src": "강시우와 슬기의 수학 융합 모험.png"
+   },
+   "dragon": {
+    "partner": "용용이",
+    "src": "강시우와 용용이의 융합 모험.png"
+   },
+   "ox": {
+    "partner": "우직이",
+    "src": "강시우와 우직이의 수학 모험 (1).png"
+   },
+   "rat": {
+    "partner": "자람이",
+    "src": "강시우와 자람이의 수학 모험 profile infographic.png"
+   },
+   "monkey": {
+    "partner": "재재",
+    "src": "강시우와 재재의 수학 모험 프로필.png"
+   },
+   "rabbit": {
+    "partner": "토리",
+    "src": "강시우와 토리의 수학 모험 프로필.png"
+   },
+   "pig": {
+    "partner": "복실이",
+    "src": "복실이와 함께하는 황금 수호기사 모험.png"
+   }
+  },
+  "arin": {
+   "rooster": {
+    "partner": "꼬꼬",
+    "src": "윤아린과 꼬꼬의 환상 하모니.png"
+   },
+   "horse": {
+    "partner": "달리",
+    "src": "윤아린과 달리의 수학 모험 도감.png"
+   },
+   "sheep": {
+    "partner": "몽글이",
+    "src": "윤아린과 몽글이의 힐링 수학 모험.png"
+   },
+   "dog": {
+    "partner": "뭉치",
+    "src": "윤아린과 뭉치의 수학 모험 도감.png"
+   },
+   "tiger": {
+    "partner": "범이",
+    "src": "윤아린과 범이의 수학 모험 (1).png"
+   },
+   "pig": {
+    "partner": "복실이",
+    "src": "윤아린과 복실이의 수학 모험.png"
+   },
+   "snake": {
+    "partner": "슬기",
+    "src": "윤아린과 슬기의 수학 모험 시트.png"
+   },
+   "dragon": {
+    "partner": "용용이",
+    "src": "윤아린과 용용이의 핑크빛 융합 모험.png"
+   },
+   "ox": {
+    "partner": "우직이",
+    "src": "윤아린과 우직이의 수학 모험 (1).png"
+   },
+   "rat": {
+    "partner": "자람이",
+    "src": "윤아린과 자람이의 수학 모험 시트.png"
+   },
+   "monkey": {
+    "partner": "재재",
+    "src": "윤아린과 재재의 수학 모험 프로필.png"
+   },
+   "rabbit": {
+    "partner": "토리",
+    "src": "윤아린과 토리의 수학 마법 모험.png"
+   }
+  }
+ },
+ "villains": {
+  "darkarea": {
+   "name": "다크아레아",
+   "unit": "5-1-6",
+   "src": "다크아레아_ 넓이의 침식자.png"
+  },
+  "disbalance": {
+   "name": "디스밸런스",
+   "unit": "5-1-5",
+   "src": "디스밸런스의 불균형 프로필 카드.png"
+  },
+  "denom": {
+   "name": "분모귀신",
+   "unit": "5-1-4",
+   "src": "분모귀신의 네온 수학 프로필.png"
+  },
+  "bracket": {
+   "name": "브래킷",
+   "unit": "5-1-1",
+   "src": "브래킷_ 괄호 파괴자 프로필.png"
+  },
+  "spiral": {
+   "name": "스파이럴",
+   "unit": "5-1-3",
+   "src": "스파이럴_ 순환의 교란자.png"
+  },
+  "veil": {
+   "name": "베일",
+   "unit": "5-1 최종 보스",
+   "src": "은폐의 마도사 베일 프로필 포스터.png"
+  },
+  "fracture": {
+   "name": "파편마",
+   "unit": "5-1-2",
+   "src": "파편마의 배수 교란 프로필 카드.png"
+  },
+  "divide": {
+   "name": "디바이드",
+   "unit": "6-1-1",
+   "src": "네온 보라빛 역수 파괴자 디바이드.png"
+  },
+  "chartmaster": {
+   "name": "차트 마스터",
+   "unit": "6-1-5",
+   "src": "네온 차트 마스터_ 데이터 조작자.png"
+  },
+  "ratio": {
+   "name": "라티오",
+   "unit": "6-1-4",
+   "src": "라티오의 비율 조작 프로필 카드.png"
+  },
+  "volumeking": {
+   "name": "볼륨 킹",
+   "unit": "6-1-6",
+   "src": "볼륨 킹_ 입체 측정의 제왕.png"
+  },
+  "decimal": {
+   "name": "데시말",
+   "unit": "6-1-3",
+   "src": "소수점 표류자 데시말 프로필.png"
+  },
+  "polygon": {
+   "name": "폴리곤",
+   "unit": "6-1-2",
+   "src": "폴리곤 입체 왜곡자 프로필ері.png"
+  }
+ }
+}
