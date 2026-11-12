@@ -301,7 +301,7 @@ function paint() {
     const U = CR(latest.course).units.find(x => x.n === latest.u) || { name: '' };
     document.getElementById('ctaNew').href = href(latest);
     document.getElementById('feat').href = href(latest);
-    document.getElementById('feat').innerHTML = `<span class="rib">🆕 새로 올라온 탐험</span><div class="frame"><img src="assets/scenes/${latest.id}-big.webp" onerror="this.src='${thumb(latest)}'" alt="${esc(latest.t)} 문제 상황 그림"></div>
+    document.getElementById('feat').innerHTML = `<span class="rib">🆕 새로 올라온 탐험</span><div class="frame"><img src="assets/scenes/${latest.id}-big.webp" data-fb="${thumb(latest)}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb=''}else{this.onerror=null;this.src='${(CR(latest.course).map || 'assets/scenes/map-4-1.webp').split('?')[0]}'}" alt="${esc(latest.t)} 문제 상황 그림"></div>
       <div class="cap"><div><small>${crName(latest.course)} · ${latest.u}단원${U.name ? ' ' + esc(U.name) : ''} · ${esc(latest.no)}</small><b>${esc(latest.t)}</b></div><span class="go">시작 ➜</span></div>`;
   }
   const open = COURSES.filter(c => LS.some(l => l.course === c.id));
