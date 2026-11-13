@@ -683,7 +683,7 @@
 
   <!-- ===== 세트 탭 ===== -->
   <nav id="tabs" class="settabs">
-    <button data-act="tab" data-v="s1" class="settab on"><span class="ic" id="tabIc1">📘</span><span><span class="t">세트 1 · 개념 형성편</span><br><span class="s">CH.1 봉인 5개 → CH.2 삐딱이의 함정 → CH.3 점프 시련</span></span></button>
+    <button data-act="tab" data-v="s1" class="settab on"><span class="ic" id="tabIc1">📘</span><span><span class="t">세트 1 · 개념 형성편</span><br><span class="s">CH.1 봉인 4개 → CH.2 삐딱이의 함정 → CH.3 점프 시련</span></span></button>
     <button data-act="tab" data-v="s2" class="settab"><span class="ic" id="tabIc2">🎮</span><span><span class="t">세트 2 · 적용 &amp; 발전편</span><br><span class="s">CH.4 악당 소굴(문제은행·게임·보드) → CH.5 최종 결전</span></span></button>
   </nav>
 
@@ -820,6 +820,8 @@ const PLAYER_COLORS = ['#ff8a1f', '#2f8ff5', '#17b877', '#a05cf5'];
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const escB = x => esc(x).replace(/&lt;(\/?)(b|br|small|sub|sup)&gt;/g, '<$1$2>');
 const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -1624,7 +1626,7 @@ function partInner(p) {
       <div class="mt-2 text-xs font-bold">글씨 인식이 어려우면 숫자로 입력: <input id="typed-${p.key}" class="typed" inputmode="numeric" maxlength="8"></div>`;
   }
   const fb = st.fb[p.key];
-  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
   return h;
 }
 function renderPart(key) {
@@ -1639,7 +1641,7 @@ function finishPart(key, ok, given, extraMsg, srcEl) {
   if (ok) { Sound.correct(); say(pick(['정답! 잘했어 👏', '맞았어! 역시 탐험대원!', '완벽해! 🎉'])); }
   else { Sound.wrong(); say('괜찮아, 힌트를 보고 다시 도전해 보자!'); }
   if (!ok && partMode(p) === 'write') {
-    const fbEl = $('#fb-' + key); if (fbEl) fbEl.innerHTML = charSay('no', esc(st.fb[key].msg));
+    const fbEl = $('#fb-' + key); if (fbEl) fbEl.innerHTML = charSay('no', escB(st.fb[key].msg));
   } else renderPart(key);
   if (ok) FX.burst($('#part-' + key), 30);
 }
@@ -1957,14 +1959,14 @@ function renderDrill() {
       <div class="paws" style="margin:0">${d.qs.map((_, i) => `<span class="${i < d.idx ? 'on' : (i === d.idx ? 'cur' : '')}">🐾</span>`).join('')}</div>
       <span class="streak">${d.streak >= 2 ? `🔥 ${d.streak}연속!` : `문제 ${d.idx + 1}/${d.qs.length}`}</span>
     </div>
-    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], esc(q.text))}</div>
+    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], escB(q.text))}</div>
     <div class="choices">${q.choices.map(c => {
       const good = a && c === q.ans, bad = a && !a.ok && c === a.given;
       return `<button class="choice ${good ? 'good' : ''} ${bad ? 'bad' : ''}" data-act="drill-pick" data-v="${esc(c)}" ${a ? 'disabled' : ''}>${esc(c)}</button>`;
     }).join('')}</div>
     ${a ? '' : `<div class="row mt-3"><button class="btn btn-sub" data-act="drill-hint">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
     ${!a && d.hint ? charSay('hint', '💡 ' + esc(drillHint(q.text))) : ''}
-    ${a ? charSay(a.ok ? 'ok' : 'no', esc(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
+    ${a ? charSay(a.ok ? 'ok' : 'no', escB(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
   </div>`;
 }
 function startDrill(level) {
@@ -2225,7 +2227,7 @@ function newBoard(mode) {
 function renderBoardPage() {
   const st = state.s2, body = $('#s2body');
   if (!st.board) {
-    const M = [['ai', avatar(GUIDE() === 'tiger' ? 'ox' : 'tiger', 42, 'determined'), '컴퓨터와 대결', `${CHARS[GUIDE()].name} vs ${CHARS[GUIDE() === 'tiger' ? 'ox' : 'tiger'].name} · 기록 제출`], ['multi', '👥', '2~4인 대결', '친구들과 한 화면에서 차례로!']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#dcf8ec">🎲</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">반쪽이의 만(10000) 벨 · 먼저 10000 모으기</h2><p class="sub" style="margin:3px 0 0">주사위를 굴려 1000원 지폐를 모아요. <b>1000이 10개(=10000)</b>를 먼저 채우면 승리! (최대 ${B_MAX_ROUNDS}바퀴)</p></div></div>
       ${vSay('half', '주사위를 반쪽으로 만들어 줄까? 1만? 0.5만? 헷갈리지~')}<div class="modecards mt-3">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
@@ -2260,7 +2262,7 @@ function renderBoard() {
   if (b.quiz) {
     const q = b.quiz, d = q.done;
     pop = `<div class="bpop"><div class="center fun" style="font-size:1.2rem">❓ 퀴즈 칸! <span style="color:${cur.color}">${esc(cur.name)}</span> · 맞히면 +2000</div>
-      <div class="center font-black" style="font-size:1.05rem">${esc(q.text)}</div>
+      <div class="center font-black" style="font-size:1.05rem">${escB(q.text)}</div>
       <div class="choices" style="grid-template-columns:1fr 1fr">${q.choices.map(c => `<button class="choice ${d && c === q.ans ? 'good' : ''} ${d && !d.ok && c === d.val ? 'bad' : ''}" style="font-size:1.15rem;padding:10px 4px" data-act="board-pick" data-v="${esc(c)}" ${d ? 'disabled' : ''}>${esc(c)}</button>`).join('')}</div>
       ${d ? charSay(d.ok ? 'ok' : 'no', d.ok ? '정답! +2000원 획득! 👏' : '아쉬워요. ' + esc(q.explain), 44, true) : ''}</div>`;
   } else if (b.chance) {
@@ -2575,9 +2577,9 @@ function buildS2Exam(c) {
   const mcs = ex.items.filter(q => q.mode === 'mc'), sas = ex.items.filter(q => q.mode === 'sa'), roman = ['Ⅰ', 'Ⅱ', 'Ⅲ'];
   let no = 0, sec = 0, body = '';
   if (mcs.length) body += `<div class="p-sec2">${roman[sec++]}. 객관식 — 알맞은 답을 고르세요.</div>` + mcs.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
   if (sas.length) body += `<div class="p-sec2">${roman[sec++]}. 단답형 — 답을 쓰세요.</div>` + sas.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
   if (ex.essays.length) body += `<div class="p-sec2">${roman[sec++]}. 서술형 — 풀이 과정을 자세히 쓰세요.</div>` + ex.essays.map(e => { e.no = ++no;
     return `<div class="p-q"><div class="p-qt"><b>${e.no}.</b> ${esc(e.q)} <span class="pt">[${e.pt}점]</span></div><div class="p-work tall">풀이</div></div>`; }).join('');
   let h = `<div class="sheet">` + pHead('🎮 세트 2 · 단원 평가', '1단원 큰 수 · 10000 알아보기', `<td class="sc">점수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 100</td>`)
@@ -2691,7 +2693,7 @@ function showTab(k) {
   $$('#tabs .settab').forEach(b => b.classList.toggle('on', b.dataset.v === k));
   $('#sec-s1').classList.toggle('hidden', k !== 's1'); $('#sec-s2').classList.toggle('hidden', k !== 's2');
   touch(k); (k === 's1' ? renderS1 : renderS2)();
-  say(k === 's1' ? 'CH.1~3! 봉인 5개를 풀고 삐딱이의 함정을 지나 점프 시련까지 가 보자!' : 'CH.4~5! 악당 소굴을 지나 다크몽과 최종 결전이야!');
+  say(k === 's1' ? 'CH.1~3! 봉인 4개를 풀고 삐딱이의 함정을 지나 점프 시련까지 가 보자!' : 'CH.4~5! 악당 소굴을 지나 다크몽과 최종 결전이야!');
 }
 function toggleFull() {
   try {
@@ -2826,7 +2828,7 @@ const Gems = {
   frag() {
     const st = state.s1; if (!st) return [false, false, false];
     const ok = x => st.rec[x] && st.rec[x].solved;
-    return [Object.keys(st.badges).length >= 5, ['b1', 'b2', 'b3r', 'b3w'].every(ok), ['j1', 'j2', 'j3'].every(ok)];
+    return [Object.keys(st.badges).length >= 4, ['b1', 'b2', 'b3r', 'b3w'].every(ok), ['j1', 'j2', 'j3'].every(ok)];
   },
   html(k, px, off, pop) {
     const c = CHARS[k] || CHARS.rat;
@@ -3051,7 +3053,7 @@ function bossHead() {
 
 /* ---------- 챕터 ---------- */
 const CHAPTERS = [
-  { n: 1, v: 'bbidak', icon: '🔒', title: '봉인된 천의 방', sub: '개념 탐험 · 봉인 5개',   go: ['s1', 'concept'] },
+  { n: 1, v: 'bbidak', icon: '🔒', title: '봉인된 천의 방', sub: '개념 탐험 · 봉인 4개',   go: ['s1', 'concept'] },
   { n: 2, v: 'bbidak', icon: '✏️', title: '삐딱이의 함정',   sub: '기본 문제 3개',         go: ['s1', 'basic'] },
   { n: 3, v: 'bbidak', icon: '🚀', title: '세 개의 시련',     sub: '점프 문제 3개',         go: ['s1', 'jump'] },
   { n: 4, v: 'dark',   icon: '🎮', title: '악당 소굴',         sub: '시간도둑 · 뒤죽이 · 반쪽이', go: ['s2', 'drill'] },
@@ -3059,7 +3061,7 @@ const CHAPTERS = [
 ];
 const STEP_CH = { 's1:concept': 1, 's1:basic': 2, 's1:jump': 3, 's1:result': 3, 's2:drill': 4, 's2:game': 4, 's2:board': 4, 's2:result': 5 };
 const STEP_V = {
-  's1:concept': { v: 'bbidak', m: '봉인 5개를 모두 풀어 1000이 10개면 10000이라는 걸 증명하자!' },
+  's1:concept': { v: 'bbidak', m: '봉인 4개를 모두 풀어 1000이 10개면 10000이라는 걸 증명하자!' },
   's1:basic':   { v: 'bbidak', m: '삐딱이가 바꿔 놓은 수를 바르게 고쳐 쓰자!' },
   's1:jump':    { v: 'bbidak', m: '세 가지 시련을 넘어 삐딱이를 쓰러뜨리자!' },
   's1:result':  { v: 'bbidak', m: '천의 방 탈환 보고! 결과를 선생님께 제출하자.' },
@@ -3099,7 +3101,7 @@ const BEATS = {
     btns: [{ t: '스토리로 돌아가기', act: 'scene', to: 'prologue' }, { t: '닫기', c: 'btn-sub', act: 'close' }]
   },
   ch1: {
-    cap: 'CHAPTER 1 CLEAR', ttl: '봉인 5개 해제!', v: 'bbidak', pose: 'angry',
+    cap: 'CHAPTER 1 CLEAR', ttl: '봉인 4개 해제!', v: 'bbidak', pose: 'angry',
     lines: [
       { w: 'narr', t: '다섯 개의 도구로 모두 10000을 만들자, 천의 방 봉인이 빛을 내며 풀렸다.' },
       { w: 'bbidak', p: 'angry', t: '말도 안 돼! 1000이 10개면… 정말 10000이 된다고?!' },
@@ -3250,7 +3252,7 @@ const Story = {
     p.halfHp = Math.max(0, 100 - Math.round(100 * ((bd.place ? 0.5 : 0) + (p.aHalf ? 0.5 : 0))));
     p.bbidak = p.bbiHp === 0; p.thief = p.thiefHp === 0; p.dwijuk = p.dwijukHp === 0; p.half = p.halfHp === 0;
     p.darkHp = Math.max(0, 100 - 25 * ([p.bbidak, p.thief, p.dwijuk, p.half].filter(Boolean).length));
-    p.ch = [p.badges >= 5, p.basic === 4, p.jump === 3, p.aThief && p.aDwijuk && p.aHalf, p.darkHp === 0];
+    p.ch = [p.badges >= 4, p.basic === 4, p.jump === 3, p.aThief && p.aDwijuk && p.aHalf, p.darkHp === 0];
     return p;
   },
   stepV() {
@@ -3359,7 +3361,7 @@ const Story = {
   sync() {
     const p = this.prog();
     this.paint();
-    if (p.badges >= 5) this.once('ch1', () => this.scene('ch1'));
+    if (p.badges >= 4) this.once('ch1', () => this.scene('ch1'));
     if (p.basic === 4) this.once('ch2', () => this.scene('ch2'));
     if (p.jump === 3) this.once('ch3', () => { try { FX.rain(200); Sound.win(); } catch (e) {} this.scene('ch3'); });
     if (p.thief) this.once('v-thief', () => this.scene('thief'));
@@ -3372,12 +3374,12 @@ const Story = {
     if (!card) return;
     let t, d;
     if (k === 's1') {
-      if (p.jump === 3 && p.badges >= 5 && p.basic === 4) {
+      if (p.jump === 3 && p.badges >= 4 && p.basic === 4) {
         t = '🏆 CH.3 클리어 — 천의 방 탈환!';
         d = '삐딱이를 쓰러뜨리고 9층 「천의 방」을 되찾았어요. 세트 2의 <b>악당 소굴</b>에서 시간도둑·뒤죽이·반쪽이를 물리치면 다크몽이 나타나요!';
       } else {
         t = '⚔️ 아직 삐딱이가 버티고 있어요 (HP ' + p.bbiHp + ')';
-        d = `봉인 ${p.badges}/5 · 기본 ${p.basic}/4 · 점프 ${p.jump}/3 — 남은 미션을 끝내면 삐딱이를 격파할 수 있어요.`;
+        d = `봉인 ${p.badges}/4 · 기본 ${p.basic}/4 · 점프 ${p.jump}/3 — 남은 미션을 끝내면 삐딱이를 격파할 수 있어요.`;
       }
     } else {
       const n = [p.bbidak, p.thief, p.dwijuk, p.half].filter(Boolean).length;
@@ -4375,7 +4377,7 @@ renderBoard = function () {
   if (b.quiz) {
     const q = b.quiz, d = q.done;
     pop = `<div class="bpop rbpop"><div class="rbcard quiz"><div class="rbch">❓ 퀴즈 카드 · <span style="color:${cur.color}">${esc(cur.name)}</span> <small>맞히면 ${BCFG.quizLab}</small></div>
-      <div class="rbq">${esc(q.text)}</div>
+      <div class="rbq">${escB(q.text)}</div>
       <div class="choices" style="grid-template-columns:1fr 1fr">${q.choices.map(c => `<button class="choice ${d && c === q.ans ? 'good' : ''} ${d && !d.ok && c === d.val ? 'bad' : ''}" style="font-size:1.15rem;padding:10px 4px" data-act="board-pick" data-v="${esc(c)}" ${d ? 'disabled' : ''}>${esc(c)}</button>`).join('')}</div>
       ${d ? charSay(d.ok ? 'ok' : 'no', d.ok ? `정답! ${BCFG.quizLab} 획득! 👏` : '아쉬워요. ' + esc(q.explain), 44, true) : ''}</div></div>`;
   } else if (b.chance) {
@@ -4573,7 +4575,7 @@ renderBoardPage = function () {
   const head = `<div class="stage-head"><span class="ti" style="background:#fef3c7">🔔</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">반쪽이의 만(10000) 벨 · 할리갈리 대결</h2><p class="sub" style="margin:3px 0 0">차례로 카드를 뒤집다가 <b>펼쳐진 카드의 합이 꼭 10000</b>이 되면 가장 먼저 벨을 쳐요! 맞히면 펼쳐진 카드를 모두 가져가요.</p></div></div>`;
   if (!st.board || !st.board.hg) {
     st.board = null;
-    const M = [['ai', avatar(GUIDE() === 'tiger' ? 'ox' : 'tiger', 42, 'determined'), '컴퓨터와 대결', `${CHARS[GUIDE()].name} vs ${CHARS[GUIDE() === 'tiger' ? 'ox' : 'tiger'].name} · 기록 제출`], ['multi', '👥', '2~4인 대결', '친구들과 한 화면에서! 벨이 사람 수만큼 나와요']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">${head}${vSay('half', '카드 합이 10000인지 헷갈리게 반쪽씩 숨겨 놓았지!')}
       <div class="hgintro"><div>${hgFace({ v: 3000, k: 'bill' })}${hgFace({ v: 7000, k: 'word' })}</div><div class="hgplus">3000 + 7000 = 10000 → 🔔!</div></div>
       <div class="modecards mt-3">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
@@ -5149,7 +5151,7 @@ const WN = (() => {
     const a = run.ans;
     o.innerHTML = `<div class="wnbox"><div class="wnhead"><span class="wnt">✏️ 다시 풀기 ${run.i + 1} / ${run.list.length}</span><button class="wnx" data-wn="close">✕</button></div>
       <div class="wnprog"><i style="width:${run.i / run.list.length * 100}%"></i></div>
-      <div class="wnrq">${tag(q)}<div class="wnq3">${esc(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
+      <div class="wnrq">${tag(q)}<div class="wnq3">${escB(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
         ${q.choices ? `<div class="wnch">${q.choices.map((c, k) => `<button class="wnc ${a ? (norm(c) === norm(q.ans) ? 'good' : a.v === c ? 'bad' : '') : ''}" data-wn="ans" data-v="${esc(c)}" ${a ? 'disabled' : ''}><b>${'①②③④⑤⑥'[k]}</b> ${esc(c)}</button>`).join('')}</div>`
         : `<div class="wnin"><input id="wnInput" inputmode="numeric" placeholder="답을 써요" ${a ? 'disabled' : ''} value="${a ? esc(a.v) : ''}"><button class="btn btn-primary" data-wn="type" ${a ? 'disabled' : ''}>확인</button></div>`}
         ${a ? `<div class="wnfb ${a.ok ? 'ok' : 'no'}">${a.ok ? '🎉 정답! 오답 탈출!' : `🤔 정답은 <b>${esc(q.ans)}</b>`}${q.ex ? `<div class="wnex">💡 ${esc(q.ex)}</div>` : ''}</div>` : ''}</div>
@@ -6126,7 +6128,7 @@ C.extra='<details class="sv-cast"><summary>🐭 십이지 수학 탐험대 친�
     const fb = X.fb;
     return `<div class="card sv-j0card" id="svj0"><div class="qhead"><div class="qno" style="background:#f59e0b">1</div><div class="qtext"><span class="qtag" style="background:#fef3c7;color:#b45309">점프 1 · 오늘의 문제</span> <b>${J0.label}</b><br>${C.problem}</div></div>
       <div class="sv-j1tag">${assessment().complete ? '📖 오늘의 문제 해결! 🔓 점프 문제 2~4가 열렸어요' : '📖 오늘 처음 만난 문제예요 · 해결하면 점프 문제 2~4가 열려요'}</div>
-      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea></div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
+      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea>${done ? '' : `<div class="sv-voice"><button type="button" class="btn btn-sub sv-mic" data-sv="voice-ex">🎤 말로 쓰기</button><div id="sv-voice-ex" class="sv-small sv-vmsg" role="status" aria-live="polite">단추를 누르고 어떻게 해결했는지 말해 보세요. 말한 내용이 글자로 들어가요.</div></div>`}</div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
       ${done ? `<div class="sv-goal-done">🎯 <b>학습 목표 도달!</b> ${esc(assessment().status)} · 🔓 점프 문제 2~4가 열렸어요.${J0.ok ? '<br>' + J0.ok : ''}</div><div class="sv-row"><button class="btn btn-sub" data-sv="j0-redo">🔁 다시 해 보기</button></div>`
         : `<div class="sv-row"><button class="btn btn-green" data-sv="j0-check">🔍 문제 해결!</button><button class="btn btn-sub" data-sv="j0-hint">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
       ${!done && X.hint >= 0 ? `<div class="mt-2">${charSay('hint', '💡 ' + J0.hints[X.hint % J0.hints.length])}</div>` : ''}
@@ -6228,6 +6230,17 @@ C.extra='<details class="sv-cast"><summary>🐭 십이지 수학 탐험대 친�
     else if (act === 'vhint') { s.goalAssessment.hintUsed = true; const m = $('#sv-verify-msg'); if (m) m.textContent = '💡 ' + C.verify.hint; persist(); }
     else if (act === 'resume') { const p = pending; pending = null; if (p) { state.s1 = Object.assign(state.s1, p.s1); ensure(); if (p.sid && !state.student.id) try { syncStudent(p.sid, p.sname); } catch (x) {} } renderS1(); toast('📂 하던 곳부터 이어서 해요!'); }
     else if (act === 'fresh') { pending = null; try { localStorage.removeItem(KEY); } catch (x) {} resetS1(); renderS1(); toast('✨ 새로 시작해요!'); }
+    else if (act === 'voice-ex') { /* 점프 1 설명 칸 말로 쓰기 */
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-ex');
+      if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
+      if (b.classList.contains('on') && recog) { try { recog.stop(); } catch (x) {} return; }
+      try { if (recog) recog.abort(); recog = new SR(); recog.lang = 'ko-KR'; recog.interimResults = false; recog.maxAlternatives = 1;
+        b.classList.add('on'); b.textContent = '⏹ 그만 말하기'; recog.onend = () => { b.classList.remove('on'); b.textContent = '🎤 말로 쓰기'; };
+        recog.onresult = ev => { const txt = ev.results[0][0].transcript, a = document.querySelector('textarea.sv-ex'); if (a) { a.value = (a.value ? a.value.trim() + ' ' : '') + txt; const X = state.s1.j0 || (state.s1.j0 = { a: {}, fb: null, hint: -1 }); X.ex = a.value; persist(); } if (st) st.textContent = '✅ 받아 적었어요. 글자를 확인하고 고칠 곳이 있으면 고쳐요. 더 말하려면 다시 눌러요.'; };
+        recog.onerror = ev => { if (st) st.textContent = ev.error === 'not-allowed' ? '마이크 사용이 막혀 있어요. 주소창의 🔒에서 마이크를 허용하거나 직접 써 주세요.' : '잘 듣지 못했어요. 다시 누르거나 직접 써 주세요.'; };
+        recog.start(); if (st) st.textContent = '🎤 듣고 있어요… 어떻게 해결했는지 말해 보세요.';
+      } catch (err) { if (st) st.textContent = '마이크를 쓸 수 없어요. 직접 써 주세요.'; }
+    }
     else if (act === 'voice') {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-msg');
       if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
@@ -6495,6 +6508,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .svbg-vs{display:flex;align-items:center;gap:12px;margin-top:6px;flex-wrap:wrap}
 .svbg-vs .fun{font-size:1.4rem;font-weight:900;color:#be123c}
 .svbg-vs .pslot{min-width:120px}
+
+.svbg-plr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-top:6px;padding:6px 8px;border-radius:12px;background:#f8fafc}.svbg-pln{display:inline-flex;align-items:center;gap:6px}
+
 </style>
 <script>
 /* =====================================================================
@@ -6521,6 +6537,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     LV_NM,
     k(a, b, c) { return [a, b, c][Math.max(1, Math.min(3, this.lv)) - 1]; },
     setLv(n) { this.lv = Math.max(1, Math.min(3, n)); LS.set('svbg:lv', this.lv); },
+    /* 함께 하기: 사람마다 자기 단계 (기존 게임용) */
+    plv: (() => { const v = LS.get('svbg:plv'); return Array.isArray(v) && v.length === 4 ? v : [2, 2, 2, 2]; })(),
+    setPlv(i, n) { this.plv[i] = Math.max(1, Math.min(3, n)); LS.set('svbg:plv', this.plv); },
+    solo() { return T(() => state.s2.bmode) !== 'multi'; },
+    pl(i) { if (this.solo()) return this.lv; const g = this.g(); return (g && g.plv && g.plv[i]) || this.plv[i] || 2; },
+    /* 함께 하기: 맞히면 ↑ · 틀리면 ↓ (연속 3번 정답 → 단계 UP, 연속 2번 오답 → 단계 DOWN) */
+    res(i, ok) {
+      const g = this.g(), A = this.A; if (!g || g.solo || !A || A.ownLv || !g.players || !g.players[i] || g.players[i].ai) return;
+      if (!g.plv) g.plv = g.players.map((_, k) => this.plv[k] || 2); if (!g.lvrun) g.lvrun = g.players.map(() => 0);
+      let r = g.lvrun[i], lv = g.plv[i], nm = E(g.players[i].name), msg = '';
+      r = ok ? Math.max(0, r) + 1 : Math.min(0, r) - 1;
+      if (r >= 3 && lv < 3) { lv++; r = 0; msg = `🔥 ${nm} 단계 UP → <b>${LV_NM[lv]}</b>`; }
+      else if (r <= -2 && lv > 1) { lv--; r = 0; msg = `🌱 ${nm} 단계 조정 → <b>${LV_NM[lv]}</b>`; }
+      g.lvrun[i] = r; if (lv !== g.plv[i]) { g.plv[i] = lv; T(() => A.onLv && A.onLv(g, i, lv)); setTimeout(() => this.toast(msg), 700); }
+    },
+    plvHTML() {
+      const p = T(() => state.party) || { n: 2, chars: [] }, n = p.n || 2;
+      return `<div class="svbg-lv svbg-plv" data-svbg-plv data-n="${n}"><div class="font-black">🎚️ 사람마다 단계 고르기 <small class="muted">(자기 수준에 맞는 문제를 받아요)</small></div>
+        ${Array.from({ length: n }, (_, i) => `<div class="svbg-plr"><span class="svbg-pln">${AV(p.chars[i], 26)} <b>${i + 1}P ${E(T(() => CHARS[p.chars[i]].name) || '')}</b></span><span class="seg">${[1, 2, 3].map(k => `<button class="${this.plv[i] === k ? 'on' : ''}" data-svbg="plv" data-v="${i}|${k}">${LV_NM[k]}</button>`).join('')}</span></div>`).join('')}
+        <p class="text-xs muted font-bold mt-1">${E(this.A && this.A.lvNote || '단계가 높을수록 더 어려운 문제를 받아요.')}<br>게임 중에는 연속 3번 맞히면 단계가 올라가고, 연속 2번 틀리면 내려가요.</p></div>`;
+    },
     key() { return 'svbg:' + T(() => CONFIG.LESSON_ID) || location.pathname; },
     g() { const A = this.A; return A && T(() => state.s2[A.key]) || null; },
     onBoard() { return T(() => state.s2.step === 'board' && state.tab === 's2') !== false && T(() => state.s2.step === 'board'); },
@@ -6530,15 +6567,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     lvHTML(note) {
       return `<div class="svbg-lv" data-svbg-lv><div class="font-black">🎚️ 난이도 <small class="muted">(혼자 할 때는 맞히는 만큼 단계가 저절로 바뀌어요)</small></div>
         <div class="seg mt-1">${[1, 2, 3].map(n => `<button class="${this.lv === n ? 'on' : ''}" data-svbg="lv" data-v="${n}">${LV_NM[n]}</button>`).join('')}</div>
-        <p class="text-xs muted font-bold mt-1">${note || (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
+        <p class="text-xs muted font-bold mt-1">${note || (this.A && this.A.lvNote ? E(this.A.lvNote) + '<br>' : '') + (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
     },
     criteriaHTML() {
-      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 차례 알림</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
+      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 사람마다 자기 수준</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
     },
     bar(g) {
       const A = this.A, P = g.players || [], t = g.turn ?? g.cur ?? 0, p = P[t] || {};
       const who = A.realtime ? `🔔 모두 함께! 빨리 보고 판단해요` : p.ai ? `${AV(p.char, 26)} <b>${E(p.name)}</b> 생각 중…` : `${AV(p.char, 26)} <b>${E(p.name)}</b> 차례예요!`;
-      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : ''}</div>
+      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : (!A.realtime && !A.ownLv && !p.ai ? `<span class="svbg-lvb">${LV_NM[this.pl(t)]}</span>` : '')}</div>
         <div class="svbg-btns">${A.hint ? '<button data-svbg="hint">💡 수학 힌트</button>' : ''}<button data-svbg="pause">⏸ 잠깐 멈춤</button><button data-svbg="again">🔁 처음부터</button><button data-svbg="quit">🚪 그만하기</button></div></div>`;
     },
     overlay(html, cls) {
@@ -6562,6 +6599,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const t = e.target.closest('[data-svbg]'); if (!t) return; const a = t.dataset.svbg, v = t.dataset.v; e.preventDefault(); e.stopPropagation();
       const g = this.g();
       if (a === 'lv') { this.setLv(+v); T(() => renderBoardPage()); return; }
+      if (a === 'plv') { const [i, k] = v.split('|').map(Number); this.setPlv(i, k); const box = $q('[data-svbg-plv]'); if (box) box.outerHTML = this.plvHTML(); return; }
       if (a === 'ready') { this.closeOv(); this.paused = false; T(() => this.A.onReady && this.A.onReady(g)); return; }
       if (a === 'pause') { this.paused = true; this.overlay(`<div class="svbg-ht">⏸ 잠깐 멈춤</div><p class="svbg-hs">선생님 말씀을 듣거나 쉬었다가<br>준비되면 계속해요.</p><button class="btn btn-primary btn-lg" data-svbg="resume-play">▶ 계속하기</button>`); return; }
       if (a === 'resume-play') { this.closeOv(); this.paused = false; return; }
@@ -6581,7 +6619,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A, g = this.g(); if (!A || !A.save) return;
       if (!g || g.over) { if (g && g.over) this.clearSave(); return; }
       const str = T(() => JSON.stringify(g)); if (!str || (!force && str === this._saveStr)) return; this._saveStr = str;
-      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, t: Date.now() });
+      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, plv: this.plv.slice(), t: Date.now() });
     },
     clearSave() { LS.del(this.key()); this._saveStr = ''; },
     saved() { const s = LS.get(this.key()); if (!s || Date.now() - s.t > 7 * 864e5) return null; return s; },
@@ -6590,7 +6628,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       ['busy', 'peeking', 'rang'].forEach(k => { if (k in g) g[k] = false; }); if ('lock' in g) g.lock = 0; if ('moving' in g) g.moving = -1;
       if (!g.solo && 'cover' in g) g.cover = true;
       T(() => { state.s2.bmode = s.mode; if (s.party) Object.assign(state.party, s.party); });
-      this.setLv(s.lv || this.lv); T(() => touch('s2'));
+      this.setLv(s.lv || this.lv); if (Array.isArray(s.plv)) s.plv.forEach((k, i) => this.setPlv(i, k)); T(() => touch('s2'));
       T(() => this.A.restore && this.A.restore(g));
       state.s2[this.A.key] = g; this._turn = null; this._soloOver = null;
       T(() => renderBoardPage()); this.toast('💾 지난 게임을 이어서 해요!');
@@ -6610,6 +6648,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A; if (!A) return; const body = $q('#s2body'); const g = this.g(), board = T(() => state.s2.step === 'board');
       if (!body || !board) { this._turn = null; return; }
       if (g && !g.over) {
+        if (!g.solo && !A.ownLv && !g.plv && g.players) { g.plv = g.players.map((_, k) => this.plv[k] || 2); g.lvrun = g.players.map(() => 0); }
         const t = g.turn ?? g.cur ?? 0, sig = t + '|' + (g.players || []).length;
         let bar = body.querySelector(':scope > .svbg-bar');
         const html = this.bar(g);
@@ -6635,6 +6674,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           const st = body.querySelector('[data-act="board-start"]');
           if (st && !body.querySelector('[data-svbg-crit]')) { const h = body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', `<div data-svbg-crit>${this.criteriaHTML()}</div>`); }
           if (st && !A.ownLv && !body.querySelector('[data-svbg-lv]') && T(() => state.s2.bmode) === 'ai') { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.lvHTML()); }
+          if (st && T(() => state.s2.bmode) === 'multi') { const ex = body.querySelector('[data-svbg-plv]'), n = T(() => state.party.n) || 2;
+            if (ex && +ex.dataset.n !== n) ex.remove();
+            if (!body.querySelector('[data-svbg-plv]')) { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.plvHTML()); } }
           const s = this.saved();
           if (st && s && !body.querySelector('[data-svbg-res]')) { const h = body.querySelector('[data-svbg-crit]') || body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', this.resumeHTML(s)); }
         }
@@ -6685,7 +6727,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           <div class="font-black mt-3">🙋 누구와 할까요?</div>
           <div class="modecards mt-1">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
           ${st.bmode === 'multi' ? T(() => partyHTML()) || '' : ''}
-          ${SVBG.lvHTML(st.bmode === 'multi' ? '함께 할 때는 모두 이 단계에서 시작하고, 사람마다 맞히는 만큼 단계가 따로 바뀌어요.' : '')}
+          ${st.bmode === 'multi' ? '' : SVBG.lvHTML()}
           ${st.bmode === 'multi' ? '<p class="center text-xs muted font-bold mt-2">함께 하기 결과는 수업 활동용이라 선생님께 제출되지 않아요.</p>' : ''}
           <div class="next-row"><button class="btn btn-primary btn-lg" data-act="board-start">${D.icon} ${D.startTxt}</button></div></div>`;
       } else {
@@ -6699,7 +6741,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const players = mkPlayers(st.bmode).map(p => Object.assign({}, p, { name: p.ai ? p.name : p.name }));
       if (st.bmode === 'ai') players[1].name = players[1].name.replace('(컴퓨터)', '(컴퓨터)');
       const n = players.length, g = { solo: st.bmode === 'ai', mode: D.mode, players, turn: 0, over: false, ranking: null, wrong: [], log: `${E(players[0].name)}부터 시작해요!`,
-        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: Array(n).fill(SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
+        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: players.map((P, i) => st.bmode === 'multi' ? (SVBG.plv[i] || 2) : SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
       if (D.mode === 'land') g.board = D.newBoard(SVBG.lv); else g.track = D.track || this.track();
       st.au = g; SVBG._turn = null; this.page(); T(() => say(D.startSay));
       if (D.mode === 'race') this.ask(g);
@@ -6824,6 +6866,17 @@ SVBG.use({ key: 'board', realtime: true, handoff: false, toast: false, save: fal
     return `펼쳐진 카드: <b>${eq}</b> = <b>${s.toLocaleString()}</b><div style="display:flex;gap:3px;margin:8px 0">${Array.from({ length: 10 }, (_, i) => `<span style="flex:1;height:22px;border-radius:5px;background:${i < n ? '#f59e0b' : '#e2e8f0'}"></span>`).join('')}</div>
       천 원 블록 10개가 꽉 차면 10000이에요! ${s === 10000 ? '<b>지금 딱 10000 → 🔔 벨!</b>' : s > 10000 ? '지금은 10000을 넘었어요. 벨을 치면 안 돼요!' : `10000까지 <b>${(10000 - s).toLocaleString()}</b> 더 있어야 해요.`}`; } });
 
+/* 👥 사람마다 자기 수준: 내가 뒤집는 카드 모양 (🌱 숫자·지폐 → 🌿 +「100이 몇 개」 → 🔥 +읽는 말) */
+SVBG.A.lvNote = '단계에 따라 내가 뒤집는 카드가 달라요 · 🌱 숫자·지폐 · 🌿 +「100이 몇 개」 · 🔥 +읽는 말';
+(function () { const KD = { 1: ['num', 'bill'], 2: ['num', 'bill', 'hund'], 3: ['num', 'word', 'hund', 'word', 'bill'] };
+  const _nb = newBoard; newBoard = function () { const b = _nb.apply(this, arguments);
+    try { if (b && b.hg) b.decks.forEach((d, i) => { const ks = KD[SVBG.pl(i)]; d.forEach(c => { c.k = ks[Math.floor(Math.random() * ks.length)]; }); }); } catch (e) {} return b; }; })();
+/* 게임 중 단계 바뀜: 벨을 맞게 치면 ↑, 잘못 치면 ↓ → 남은 카드 모양도 바뀌어요 */
+(function () { const KD = { 1: ['num', 'bill'], 2: ['num', 'bill', 'hund'], 3: ['num', 'word', 'hund', 'word', 'bill'] };
+  SVBG.A.onLv = (b, i, lv) => { const ks = KD[lv]; (b.decks[i] || []).forEach(c => { c.k = ks[Math.floor(Math.random() * ks.length)]; }); };
+  const _r = hgRing; hgRing = function (p) { const b = state.s2.board, can = b && b.hg && !b.over && !(b.lock > 0) && !b.rang, ok = can && hgSum(b) === 10000;
+    const r = _r.apply(this, arguments); if (can) SVBG.res(p, ok); return r; }; })();
+
 /* ---------- 🐾 캐릭터 고르기: 4학년 1학기에 나온 친구들 중에서 ---------- */
 (function () {
   const T = f => { try { return f(); } catch (e) { return undefined; } };
@@ -6876,7 +6929,280 @@ SVBG.use({ key: 'board', realtime: true, handoff: false, toast: false, save: fal
 })();
 
 
+
 </script>
 <!--BG-END-->
+<!--T111-START--><style>/* 4-1-1-1 개념 탐험 조작 도구 */
+.t11hub{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:640px){.t11hub{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.t11card .ancap{background:#eff6ff;border:2px solid #bfdbfe;border-radius:14px;padding:10px 14px;font-weight:800;color:#1e3a8a;margin:10px 0}
+.t11card .andone{background:#ecfdf5;border:2px solid #86efac;border-radius:14px;padding:12px 14px;font-weight:800;color:#166534;margin-top:10px;line-height:1.55}
+.t11steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.t11steps span{font-size:.8rem;font-weight:800;border-radius:999px;padding:3px 10px;background:#f1f5f9;color:#64748b}
+.t11steps span.cur{background:#fef3c7;color:#92400e}.t11steps span.ok{background:#dcfce7;color:#166534}
+.t11src{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:12px;padding:10px;border:2px dashed #cbd5e1;border-radius:16px;background:#f8fafc}
+.t11lab{width:100%;text-align:center;font-size:.82rem;font-weight:800;color:#64748b}
+.t11piece{display:inline-flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:2px solid #cbd5e1;border-radius:14px;padding:6px 12px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 3px 0 #94a3b8}
+.t11piece b{font-size:.9rem}.t11piece small{font-size:.72rem;color:#64748b;font-weight:800}
+.t11empty{color:#94a3b8;font-weight:800;font-size:.85rem}
+/* 수 모형 */
+.pv{display:inline-block;flex:none}
+.pv0{width:46px;height:46px;border-radius:6px;background:linear-gradient(135deg,#fde047,#f59e0b);box-shadow:inset 0 0 0 2px #b45309,3px 3px 0 #b45309}
+.pv1{width:30px;height:30px;border-radius:4px;background:repeating-linear-gradient(90deg,#60a5fa 0 5px,#3b82f6 5px 6px),#60a5fa;box-shadow:inset 0 0 0 2px #1d4ed8,3px 3px 0 #1e40af}
+.pv2{width:26px;height:26px;border-radius:3px;background:repeating-linear-gradient(0deg,#f9a8d4 0 2.3px,#ec4899 2.3px 2.6px),repeating-linear-gradient(90deg,transparent 0 2.3px,#ec4899 2.3px 2.6px);box-shadow:inset 0 0 0 1px #be185d}
+.pv3{width:6px;height:26px;border-radius:2px;background:repeating-linear-gradient(0deg,#86efac 0 2.3px,#16a34a 2.3px 2.6px);box-shadow:inset 0 0 0 1px #15803d}
+.pv4{width:7px;height:7px;border-radius:2px;background:#fb923c;box-shadow:inset 0 0 0 1px #c2410c}
+.t11num{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin:10px 0;flex-wrap:wrap}
+.t11num span{display:flex;flex-direction:column;align-items:center;min-width:44px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:4px 6px}
+.t11num span b{font-size:1.8rem;line-height:1.1;color:#0f172a;min-height:2rem}.t11num span small{font-size:.72rem;font-weight:800;color:#64748b}
+.t11num span.over{border-color:#ef4444;background:#fef2f2}.t11num span.over b{color:#dc2626}
+.t11num span.new{border-color:#f59e0b;background:#fffbeb;animation:t11pop .6s}
+.t11num em{font-style:normal;font-weight:900;font-size:1.2rem;color:#1d4ed8;margin-left:6px;align-self:center}
+.t11num.small span b{font-size:1.4rem}
+.t11mat{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;background:#fefce8;border:3px solid #fde68a;border-radius:16px;padding:8px}
+.t11mat.dzover{background:#fef9c3;border-color:#f59e0b}
+.t11col{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border-radius:12px;padding:6px 4px;min-height:150px}
+.t11col.man{background:#fff7ed}.t11ph{font-weight:900;color:#475569}
+.t11pile{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:3px;flex:1;max-width:100%}
+.t11col.bund .t11pile{animation:t11shake .45s 2}.t11col.bund .pv.go{animation:t11zip .9s forwards}
+.t11cnt{font-size:.75rem;font-weight:800;color:#64748b}
+@keyframes t11shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes t11zip{to{transform:translateX(-60px) scale(.3);opacity:0}}
+@keyframes t11pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media(max-width:560px){.t11col{min-height:120px}.pv1{width:22px;height:22px}.pv0{width:34px;height:34px}}
+/* 수직선 */
+.t11nl{position:relative;height:120px;margin:18px 26px 8px}
+.t11nl.dzover .bar{background:#f59e0b}
+.t11nl .bar{position:absolute;left:0;right:0;top:70px;height:6px;border-radius:3px;background:#334155}
+.t11nl .tk{position:absolute;top:62px;width:2px;height:22px;background:#334155;transform:translateX(-1px)}.t11nl .tk.big{width:3px;height:30px;top:58px}
+.t11nl .lb{position:absolute;top:94px;transform:translateX(-50%);font-weight:900;font-size:.92rem;white-space:nowrap}.t11nl .lb.end{color:#b91c1c}
+.t11flag{position:absolute;top:20px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:1.6rem;line-height:1}
+.t11flag small{font-size:.75rem;font-weight:900;background:#fff;border-radius:6px;padding:0 4px;margin-top:2px}
+.t11frog{position:absolute;top:36px;transform:translateX(-50%);font-size:1.7rem;transition:left .35s}
+.t11arc{position:absolute;top:50px;height:18px;border:2px dashed #16a34a;border-bottom:none;border-radius:50% 50% 0 0}
+.t11piece.flag,.t11piece.hop{padding:8px 14px}
+/* 만 상자 */
+.mbox{display:inline-flex;align-items:center;justify-content:center;width:46px;height:40px;border-radius:8px;background:linear-gradient(180deg,#fda4af,#e11d48);color:#fff;font-weight:900;box-shadow:0 3px 0 #9f1239}
+.t11shelf{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:flex-end;min-height:64px;background:linear-gradient(180deg,#fff,#fff1f2);border:3px solid #fecdd3;border-bottom:8px solid #be123c;border-radius:14px;padding:10px}
+.t11shelf.dzover{border-color:#f59e0b}.t11shelf .mbox{cursor:pointer}
+.t11tag{margin:10px auto 0;max-width:420px;text-align:center;font-size:1.3rem;font-weight:900;background:#fff;border:3px dashed #fb7185;border-radius:14px;padding:8px}
+.t11tag.dzover{border-color:#f59e0b;background:#fffbeb}.t11tag .slot{display:inline-block;min-width:110px;color:#be123c}
+.t11piece.word b{font-size:1.15rem}
+/* 저금통 */
+.t11bank{border:3px solid #86efac;border-radius:18px;background:#f0fdf4;padding:10px;text-align:center}
+.t11bank.dzover{border-color:#f59e0b;background:#fefce8}
+.t11bank .pig{display:flex;align-items:center;justify-content:center;gap:10px;font-size:2.2rem}.t11bank .pig b{font-size:1.6rem;color:#166534}.t11bank .pig small{font-size:.85rem;font-weight:800;color:#475569}
+.t11bank .in{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px;min-height:40px}
+.t11bank .in>span{cursor:pointer}.t11bank .sum{margin-top:4px;font-weight:800;color:#334155;font-size:.9rem}
+.bill{display:inline-flex;align-items:center;justify-content:center;width:58px;height:30px;border-radius:5px;background:linear-gradient(180deg,#a7f3d0,#34d399);border:2px solid #059669;font-size:.72rem;font-weight:900;color:#064e3b}
+.coin{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;font-size:.6rem;font-weight:900;border:2px solid}
+.coin.c5{background:#e5e7eb;border-color:#6b7280;color:#374151}.coin.c1{background:#fde68a;border-color:#b45309;color:#78350f;width:30px;height:30px}
+.t11cmp{display:flex;flex-direction:column;gap:6px;align-items:center;margin:8px 0;font-weight:800;color:#334155}
+.t11cmp .rd{background:#fff1f2;color:#be123c;border-radius:999px;padding:1px 10px;margin-left:6px}
+.t11cmp .pvrow{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px}
+.t11mb{cursor:grab;touch-action:none;display:inline-flex}
+.t11ham{margin-top:10px;border:3px dashed #94a3b8;border-radius:14px;padding:10px;text-align:center;font-weight:900;color:#475569;background:#f8fafc}
+.t11ham.dzover{border-color:#f59e0b;background:#fffbeb}
+#toast{pointer-events:none!important}
+</style>
+<script>
+/* =====================================================================
+   4-1-1-1 「10000 알아보기」 개념 탐험 — 조작 도구 4개 (다시 만듦)
+   ① 수 모형 상자 채우기  ② 수직선 10000 다가가기  ③ 만 상자 쌓기  ④ 저금통 10000원 만들기
+   학생이 직접 끌어 만들고, 화면은 그 결과(묶임·위치·합계)를 보여 줘요. 확인은 '만들어 보이기'로 해요.
+   ===================================================================== */
+(function () {
+  const NEW = [
+    { k: 'fill', icon: '🧱', name: '수 모형 상자 채우기', sub: '모자란 만큼 채우기', col: '#2f9bf5', bg: '#d9f1ff', title: '수 모형을 채워 10000을 만들어요', desc: '수 모형을 <b>끌어</b> 판에 놓아요. 같은 모형이 <b>10개</b> 모이면 한 자리 위 모형으로 묶여요.' },
+    { k: 'nl', icon: '🐸', name: '수직선 10000 다가가기', sub: '얼마 더 가면 10000?', col: '#ff8a1f', bg: '#fff0dc', title: '수직선에서 10000까지 남은 거리를 재어요', desc: '깃발을 <b>끌어</b> 수의 자리에 꽂고, 점프 카드를 <b>끌어</b> 10000까지 뛰어요.' },
+    { k: 'stack', icon: '📦', name: '만 상자 쌓기', sub: '몇만 만들고 읽기', col: '#ff5a76', bg: '#ffe3e8', title: '만 상자를 쌓아 몇만을 만들어요', desc: '만 상자를 <b>끌어</b> 선반에 쌓아요. 같은 개수의 천 판과 크기를 비교해 보세요.' },
+    { k: 'bank', icon: '🔨', name: '수 모형 교환소', sub: '여러 가지로 10000', col: '#1fc48a', bg: '#dcf8ec', title: '수 모형을 바꿔도 10000이에요', desc: '모형을 <b>망치 칸으로 끌어</b> 놓으면 한 자리 아래 모형 10개로 바뀌어요. 모두 합한 수를 살펴보세요.' }
+  ];
+  TOOLS.splice(0, TOOLS.length, ...NEW);
+  Object.keys(TOOL_V).forEach(k => delete TOOL_V[k]); Object.assign(TOOL_V, { fill: 'bbidak', nl: 'thief', stack: 'dwijuk', bank: 'half' });
+  Object.keys(TOOL_LINE).forEach(k => delete TOOL_LINE[k]);
+  Object.assign(TOOL_LINE, { fill: '9990에 무엇을 더해야 10000이 될까? 아무거나 넣어 보시지~', nl: '9800에서 10000까지? 아주아주 멀다구~', stack: '30000이 삼천이지? 만 상자는 내가 다 섞어 놨어!', bank: '10000원은 1000원짜리로만 만들 수 있다구! 다른 방법은 없어~' });
+  Object.keys(TOOL_M).forEach(k => delete TOOL_M[k]);
+  Object.assign(TOOL_M, { fill: '수 모형을 채워 10000을 만들고 삐딱이의 봉인을 풀자!', nl: '수직선에서 10000까지 남은 거리를 재어 시간도둑의 봉인을 풀자!', stack: '만 상자를 쌓고 바르게 읽어 뒤죽이의 봉인을 풀자!', bank: '저금통에 여러 방법으로 10000원을 모아 반쪽이의 봉인을 풀자!' });
+
+  /* ---------- 상태 ---------- */
+  const fresh = {
+    fill: () => ({ i: 0, cnt: null, bund: -1, won: false, fb: null }),
+    nl: () => ({ i: 0, flag: null, placed: false, hops: 0, won: false, fb: null }),
+    stack: () => ({ i: 0, n: 0, label: null, won: false, fb: null }),
+    bank: () => ({ i: 0, cnt: null, won: false, fb: null })
+  };
+  const V2 = () => { const c = state.s1.concept; if (!c.v2) c.v2 = {}; NEW.forEach(t => { if (!c.v2[t.k]) c.v2[t.k] = fresh[t.k](); }); if (!NEW.some(t => t.k === c.tool)) c.tool = 'fill'; return c.v2; };
+  const _reset = resetS1; resetS1 = function () { _reset.apply(this, arguments); state.s1.concept.tool = 'fill'; V2(); };
+  const snd = n => { try { Sound[n](); } catch (e) {} };
+  const fb = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
+  const done = k => !!state.s1.badges[k];
+  const SAY = (k, ok, msg, hint) => { V2()[k].fb = { ok, msg, hint }; };
+  const nextBtn = (k, last) => `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green btn-lg" data-t11="next" data-k="${k}">${last ? '🏅 봉인 풀기' : '다음 활동 ➜'}</button></div>`;
+  const replay = k => `<div class="rpbar"><button class="btn btn-sub rpbtn" data-t11="replay" data-k="${k}">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
+  const stepsBar = (list, i, k) => `<div class="t11steps">${list.map((x, j) => `<span class="${done(k) || j < i ? 'ok' : j === i ? 'cur' : ''}">${done(k) || j < i ? '✅' : j === i ? '👉' : '⬜'} ${x}</span>`).join('')}</div>`;
+
+  /* =====================================================================
+     ① 수 모형 상자 채우기
+     ===================================================================== */
+  const PL = ['만', '천', '백', '십', '일'], PV = [10000, 1000, 100, 10, 1];
+  const FILL = [{ s: [0, 0, 0, 0, 0], t: '천 모형 10개 모으기', q: '천 모형을 <b>하나씩</b> 끌어 판에 놓아 보세요. 천 모형이 <b>10개</b>가 되면 어떻게 될까요?', one: false },
+    { s: [0, 9, 9, 0, 0], t: '9900에 하나 더하기', q: '판에 <b>9900</b>이 있어요. 수 모형 <b>딱 하나</b>만 더해서 10000을 만들어요.', one: true },
+    { s: [0, 9, 9, 9, 0], t: '9990에 하나 더하기', q: '판에 <b>9990</b>이 있어요. 수 모형 <b>딱 하나</b>만 더해서 10000을 만들어요.', one: true },
+    { s: [0, 9, 9, 9, 9], t: '9999에 하나 더하기', q: '판에 <b>9999</b>가 있어요. 수 모형 <b>딱 하나</b>만 더해서 10000을 만들어요.', one: true }];
+  const blk = (p, n, cls) => Array.from({ length: n }, () => `<i class="pv pv${p} ${cls || ''}"></i>`).join('');
+  const numOf = c => c.reduce((s, x, i) => s + x * PV[i], 0);
+  function rFill(el) {
+    const S = V2().fill, F = FILL[Math.min(S.i, FILL.length - 1)];
+    if (!S.cnt) { S.cnt = F.s.slice(); S.added = 0; }
+    const c = S.cnt, n = numOf(c);
+    let h = stepsBar(FILL.map(x => x.t), S.i, 'fill');
+    if (done('fill') && S.i >= FILL.length) { el.innerHTML = h + `<div class="andone">🏅 봉인 해제! 1000이 10개면 10000, 9000보다 1000 큰 수 · 9900보다 100 큰 수 · 9990보다 10 큰 수 · 9999보다 1 큰 수가 모두 <b>10000</b>이에요.</div>` + replay('fill'); return; }
+    h += `<div class="ancap">${F.q}</div>`;
+    const lead = c.findIndex(x => x > 0);
+    h += `<div class="t11num">${c.map((d, i) => `<span class="${i === 0 && c[0] ? 'new' : ''} ${d >= 10 ? 'over' : ''}"><b>${lead < 0 ? (i === 4 ? 0 : '') : i < lead ? '' : d}</b><small>${PL[i]}</small></span>`).join('')}${S.bund >= 0 ? '<em>10개가 모였어요! 묶는 중…</em>' : `<em>= ${n}</em>`}</div>`;
+    h += `<div class="t11mat" data-dz="t11-mat" data-i="0">${PL.map((p, i) => `<div class="t11col ${i === 0 ? 'man' : ''} ${S.bund === i ? 'bund' : ''}"><div class="t11ph">${p}</div><div class="t11pile">${blk(i, Math.min(c[i], 10), S.bund === i ? 'go' : '')}</div><div class="t11cnt">${c[i]}개</div></div>`).join('')}</div>`;
+    if (!S.won) h += `<div class="t11src"><span class="t11lab">✋ 끌어서 판에 놓아요</span>${[1, 2, 3, 4].map(i => `<span class="t11piece" data-dg="t11-pv" data-v="${i}">${blk(i, 1)}<b>${PL[i]} 모형</b><small>${PV[i]}</small></span>`).join('')}</div>`
+      + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-t11="fill-reset">↺ 처음 판으로</button></div>`;
+    h += fb(S.fb) + (S.won ? nextBtn('fill', S.i === FILL.length - 1) : '');
+    el.innerHTML = h;
+  }
+  function fillAdd(p) {
+    const S = V2().fill, F = FILL[S.i]; if (S.won || S.bund >= 0) return;
+    if (F.one && S.added >= 1) { SAY('fill', false, '이번에는 <b>하나만</b> 더하기로 했어요. ↺ 처음 판으로 돌아가 다른 모형을 골라 봐요.', true); rFill($('#stage')); return; }
+    if (!F.one && p !== 1) { SAY('fill', false, '이번 활동은 <b>천 모형</b>을 모아 보는 거예요. 천 모형을 끌어 놓아요.', true); rFill($('#stage')); return; }
+    S.cnt[p]++; S.added++; S.fb = null; snd('pop');
+    const carry = () => { const c = S.cnt; let k = -1; for (let i = 4; i >= 1; i--) if (c[i] >= 10) { k = i; break; }
+      if (k < 0) { S.bund = -1; check(); rFill($('#stage')); return; }
+      S.bund = k; rFill($('#stage')); snd('whoosh');
+      setTimeout(() => { c[k] -= 10; c[k - 1]++; S.bund = -1; S.fb = { ok: true, hint: true, msg: `${PL[k]} 모형 <b>10개</b>가 모여 <b>${PL[k - 1]} 모형 1개</b>로 묶였어요!` }; rFill($('#stage')); setTimeout(carry, 650); }, 900); };
+    const check = () => { const n = numOf(S.cnt);
+      if (n === 10000) { S.won = true; snd('correct'); const st = [`천 모형 10개가 묶여 <b>만 모형 1개</b>! 1000이 10개면 <b>10000</b>이에요. 10000은 <b>만</b> 또는 <b>일만</b>이라고 읽어요.`, `9900에 <b>백 모형 1개</b>(100)를 더하니 백 → 천 → 만으로 차례로 묶였어요. <b>9900보다 100 큰 수는 10000</b>이에요.`, `9990에 <b>십 모형 1개</b>(10)를 더했더니 십 → 백 → 천 → 만까지 묶였어요. <b>9990보다 10 큰 수는 10000</b>이에요.`, `9999에 <b>일 모형 1개</b>(1)만 더해도 일 → 십 → 백 → 천 → 만, 모든 자리가 차례로 묶여요! <b>9999보다 1 큰 수는 10000</b>이에요.`][S.i];
+        S.fb = { ok: true, msg: st }; return; }
+      if (F.one) { S.fb = n > 10000 ? { ok: false, msg: `${n}이 되어 10000을 <b>넘었어요</b>. 어느 자리가 10개가 되어야 끝까지 묶일까요? ↺ 처음 판으로 돌아가 다시 골라요.` } : { ok: false, msg: `${n}이에요. 아직 10000이 <b>안 됐어요</b>. 비어 있는 가장 낮은 자리를 채울 모형을 생각해요. ↺ 처음 판으로` };
+        snd('wrong'); } };
+    carry();
+  }
+
+  /* =====================================================================
+     ② 수직선 10000 다가가기 (확대할수록 눈금이 작아져요)
+     ===================================================================== */
+  const NL = [{ a: 9000, u: 100, at: 9800, t: '9000~10000 (100씩 눈금)' }, { a: 9900, u: 10, at: 9950, t: '9900~10000 (10씩 눈금)' }, { a: 9990, u: 1, at: 9996, t: '9990~10000 (1씩 눈금)' }];
+  function rNl(el) {
+    const S = V2().nl; let h = stepsBar(NL.map(x => x.t), S.i, 'nl');
+    if (done('nl') && S.i >= NL.length) { el.innerHTML = h + `<div class="andone">🏅 봉인 해제! 수직선을 확대해도 끝은 늘 <b>10000</b>이에요. 10000은 9000보다 1000, 9900보다 100, 9990보다 10, 9999보다 1 큰 수예요.</div>` + replay('nl'); return; }
+    const L = NL[Math.min(S.i, NL.length - 1)], pct = v => (v - L.a) / (10000 - L.a) * 100, hopsNeed = (10000 - L.at) / L.u;
+    h += `<div class="ancap">${!S.placed ? `① 깃발을 끌어 <b>${L.at}</b>의 자리에 꽂아요. (눈금 한 칸은 <b>${L.u}</b>)` : S.won ? '도착!' : `② <b>+${L.u} 점프 카드</b>를 끌어 수직선에 놓을 때마다 개구리가 한 칸씩 뛰어요. 10000까지 뛰어 보세요!`}</div>`;
+    h += `<div class="t11nl" id="t11nl" data-dz="t11-nl" data-i="0"><div class="bar"></div>${Array.from({ length: 11 }, (_, j) => `<i class="tk ${j % 5 === 0 ? 'big' : ''}" style="left:${j * 10}%"></i>`).join('')}
+      <span class="lb" style="left:0">${L.a}</span><span class="lb end" style="left:100%">10000 🏁</span>
+      ${S.flag != null ? `<span class="t11flag ${S.placed ? 'set' : ''}" id="t11flag" style="left:${pct(S.flag)}%"><b>🚩</b>${S.placed ? `<small>${S.flag}</small>` : ''}</span>` : ''}
+      ${S.placed ? `<span class="t11frog" style="left:${pct(L.at + S.hops * L.u)}%">🐸</span>${Array.from({ length: S.hops }, (_, j) => `<span class="t11arc" style="left:${pct(L.at + j * L.u)}%;width:${pct(L.a + L.u)}%"></span>`).join('')}` : ''}</div>`;
+    if (!S.placed) h += `<div class="t11src"><span class="t11lab">✋ 깃발을 끌어 수직선에 꽂아요</span><span class="t11piece flag" data-dg="t11-flag" data-v="0"><b>🚩 깃발</b></span></div>`;
+    else if (!S.won) h += `<div class="t11src"><span class="t11lab">점프 ${S.hops}번</span><span class="t11piece hop" data-dg="t11-hop" data-v="${L.u}"><b>🐸 +${L.u} 점프</b></span><button class="btn btn-sub" data-t11="nl-back">↶ 한 번 되돌리기</button></div>`;
+    h += fb(S.fb) + (S.won ? nextBtn('nl', S.i === NL.length - 1) : '');
+    el.innerHTML = h;
+  }
+  function nlDrop(kind, x) {
+    const S = V2().nl, L = NL[S.i], bar = $('#t11nl'); if (!bar || S.won) return; const r = bar.getBoundingClientRect();
+    if (kind === 'flag') { const k = Math.max(0, Math.min(10, Math.round((x - r.left) / r.width * 10))), v = L.a + k * (10000 - L.a) / 10; S.flag = v;
+      if (v === L.at) { S.placed = true; S.fb = { ok: true, hint: true, msg: `${v}에 깃발을 꽂았어요! 이제 10000까지 뛰어 볼까요?` }; snd('correct'); }
+      else { S.fb = { ok: false, msg: `여기는 <b>${v}</b>이에요. 눈금 한 칸이 ${L.u}인 것을 생각하며 ${L.at}의 자리를 찾아요.` }; snd('wrong'); }
+      rNl($('#stage')); return; }
+    if (kind === 'hop') { S.hops++; snd('pop'); const now = L.at + S.hops * L.u;
+      if (now === 10000) { S.won = true; snd('correct'); S.fb = { ok: true, msg: `${L.u}씩 <b>${S.hops}번</b> 뛰어 10000에 도착! <b>${L.at}보다 ${(10000 - L.at)} 큰 수는 10000</b>이에요.${S.i === 0 ? ' 9900에서는 100만 더 가면 10000이네요.' : S.i === 1 ? ' 9990에서는 10만 더 가면 10000이에요.' : ' 9999에서는 1만 더 가면 10000이에요!'}` }; }
+      else S.fb = null; rNl($('#stage')); }
+  }
+
+  /* =====================================================================
+     ③ 만 상자 쌓기 (만 상자 ■개 = ■만 · 천 판 ■개와 크기 비교)
+     ===================================================================== */
+  const ST = [{ n: 3 }, { n: 7 }, { n: 5, chk: true }];
+  const KN = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
+  function rStack(el) {
+    const S = V2().stack; let h = stepsBar(ST.map(x => `${x.n * 10000} 만들기${x.chk ? ' (확인)' : ''}`), S.i, 'stack');
+    if (done('stack') && S.i >= ST.length) { el.innerHTML = h + `<div class="andone">🏅 봉인 해제! 10000이 ■개면 ■0000이고 <b>■만</b>이라고 읽어요. 만 상자 하나에는 천 판이 10개 들어 있어서, 3만은 3천보다 10배 커요.</div>` + replay('stack'); return; }
+    const T = ST[Math.min(S.i, ST.length - 1)], num = S.n * 10000;
+    h += `<div class="ancap">${T.chk ? `만 상자를 쌓아 <b>${T.n * 10000}</b>을 만들어 스스로 확인해요.` : `만 상자를 끌어 선반에 쌓아 <b>${T.n * 10000}</b>을 만들어요. 아래 줄에는 같은 개수의 <b>천 판</b>이 놓여요.`}</div>`;
+    h += `<div class="t11shelf" data-dz="t11-shelf" data-i="0">${Array.from({ length: S.n }, () => `<span class="mbox" data-t11="unbox" title="눌러서 빼기">만</span>`).join('') || '<span class="t11empty">선반이 비어 있어요</span>'}</div>`;
+    h += `<div class="t11cmp"><div><b>만 상자 ${S.n}개</b> = ${num}${S.n ? ` <span class="rd">${KN[S.n]}만</span>` : ''}</div><div><b>천 판 ${S.n}개</b> = ${S.n * 1000} <span class="pvrow">${Array.from({ length: S.n }, () => '<i class="pv pv1"></i>').join('')}</span></div></div>`;
+    h += `<div class="t11num small">${String(num).padStart(5, '0').split('').map((d, i) => `<span><b>${S.n || i === 4 ? d : ''}</b><small>${PL[i]}</small></span>`).join('')}</div>`;
+    if (!S.won) h += `<div class="t11src"><span class="t11lab">✋ 끌어서 선반에 쌓아요 · 쌓인 상자를 누르면 빠져요</span><span class="t11piece" data-dg="t11-box" data-v="1"><span class="mbox">만</span><b>만 상자</b><small>10000</small></span></div>`;
+    h += fb(S.fb) + (S.won ? nextBtn('stack', S.i === ST.length - 1) : '');
+    el.innerHTML = h;
+  }
+  function stackChk() { const S = V2().stack, T = ST[S.i]; if (S.n === T.n) { S.won = true; snd('correct');
+    S.fb = { ok: true, msg: `만 상자 ${T.n}개 = <b>${T.n * 10000}</b>, <b>${KN[T.n]}만</b>이라고 읽어요. 만의 자리 숫자가 ${T.n}이고 나머지 자리는 모두 0이에요. 천 판 ${T.n}개(${T.n * 1000})보다 10배 커요.` }; } }
+
+  /* =====================================================================
+     ④ 수 모형 교환소 (10000을 여러 가지 모형으로 바꿔 보기)
+     ===================================================================== */
+  const BK = [{ t: '만 모형 깨기', from: 0, q: '🔨 망치 칸으로 <b>만 모형</b>을 끌어 놓아 보세요. 무엇으로 바뀔까요?' },
+    { t: '천 모형 깨기', from: 1, q: '이번에는 <b>천 모형</b> 하나를 망치 칸으로 끌어 놓아 보세요.' },
+    { t: '백 모형 깨기 (확인)', from: 2, q: '<b>백 모형</b> 하나를 깨어도 모두 10000인지 스스로 확인해요.' }];
+  function rBank(el) {
+    const S = V2().bank; let h = stepsBar(BK.map(x => x.t), S.i, 'bank');
+    if (done('bank') && S.i >= BK.length) { el.innerHTML = h + `<div class="andone">🏅 봉인 해제! 10000은 1000이 10개, 1000이 9개와 100이 10개, … 처럼 여러 가지 모형으로 나타낼 수 있어요. 모형을 바꿔도 수의 크기는 그대로예요.</div>` + replay('bank'); return; }
+    const B = BK[Math.min(S.i, BK.length - 1)]; if (!S.cnt) S.cnt = S.i === 0 ? [1, 0, 0, 0, 0] : S.i === 1 ? [0, 10, 0, 0, 0] : [0, 9, 10, 0, 0];
+    const c = S.cnt, tot = numOf(c);
+    h += `<div class="ancap">${B.q}</div><div class="t11mat">${PL.map((p, i) => `<div class="t11col ${i === 0 ? 'man' : ''}"><div class="t11ph">${p}</div><div class="t11pile">${Array.from({ length: Math.min(c[i], 10) }, () => i < 4 ? `<span class="t11mb" data-dg="t11-mb" data-v="${i}">${blk(i, 1)}</span>` : blk(i, 1)).join('')}</div><div class="t11cnt">${c[i]}개</div></div>`).join('')}</div>`;
+    h += `<div class="t11cmp"><div><b>모두 ${tot}</b> = ${PL.map((p, i) => c[i] ? `${PV[i]}×${c[i]}` : '').filter(Boolean).join(' + ')}</div></div>`;
+    if (!S.won) h += `<div class="t11ham" data-dz="t11-ham" data-i="0">🔨 망치 칸<br><small>판의 모형을 끌어 놓으면 한 자리 아래 모형 10개로 바뀌어요</small></div>`;
+    h += fb(S.fb) + (S.won ? nextBtn('bank', S.i === BK.length - 1) : '');
+    el.innerHTML = h;
+  }
+  function bankBreak(p) { const S = V2().bank, B = BK[S.i]; if (S.won) return;
+    if (p !== B.from) { S.fb = { ok: false, hint: true, msg: `이번에는 <b>${PL[B.from]} 모형</b>을 깨 보기로 해요.` }; return; }
+    S.cnt[p]--; S.cnt[p + 1] += 10; snd('whoosh'); S.won = true;
+    S.fb = { ok: true, msg: [`만 모형 1개가 <b>천 모형 10개</b>로! 10000은 <b>1000이 10개</b>예요.`, `천 모형 1개가 <b>백 모형 10개</b>로! 이제 1000이 9개, 100이 10개 → 그래도 모두 <b>10000</b>이에요.`, `백 모형 하나가 <b>십 모형 10개</b>로! 9000 + 900 + 100 = <b>10000</b>, 크기는 그대로예요.`][S.i] }; }
+
+
+  /* ---------- 화면 ---------- */
+  const R = { fill: rFill, nl: rNl, stack: rStack, bank: rBank };
+  renderS1Concept = function () {
+    V2(); const c = state.s1.concept, t = TOOLS.find(x => x.k === c.tool) || TOOLS[0];
+    $('#s1body').innerHTML = `<div id="hubWrap"></div><div class="card t11card">
+      <div class="stage-head"><span class="ti" style="background:${t.bg}">${t.icon}</span><div><span class="stchap">CHAPTER 1 · 봉인 풀기 ${Object.keys(state.s1.badges).filter(k => TOOL_V[k]).length}/4</span><h2 class="h2">${t.title}</h2><p class="sub" style="margin:3px 0 0">${t.desc}</p></div></div>
+      ${vSay(TOOL_V[t.k], TOOL_LINE[t.k])}<div id="stage" class="mt-3"></div></div>
+      <div class="next-row"><button class="btn btn-primary btn-lg" data-act="step" data-v="basic">기본 문제 풀러 가기 ➜</button></div>`;
+    renderHub(); R[t.k]($('#stage'));
+  };
+  renderHub = function () {
+    const el = $('#hubWrap'); if (!el) return; const c = state.s1.concept, b = state.s1.badges, n = TOOLS.filter(t => b[t.k]).length;
+    el.innerHTML = `<div class="badgebar"><span class="fun" style="font-size:1.1rem">🏅 탐험 배지 ${n}/4</span><span class="slots">${TOOLS.map(t => `<span class="slot ${b[t.k] ? 'got' : ''}">${b[t.k] ? t.icon : ''}</span>`).join('')}</span><span class="muted font-bold" style="font-size:.85rem">도구마다 직접 만들어 보면 악당을 봉인하고 배지를 받아요!</span></div>
+      <div class="hub t11hub">${TOOLS.map(t => `<button class="tool ${t.k === c.tool ? 'on' : ''}" style="--tc:${t.col}" data-act="tool" data-v="${t.k}"><span class="tvf">${vFace(TOOL_V[t.k], 24, b[t.k] ? 'flee' : 'idle')}</span><span class="ti" style="background:${t.bg}">${t.icon}</span><b>${t.name}</b><small>${t.sub}</small>${b[t.k] ? '<span class="tok">✓</span>' : ''}</button>`).join('')}</div>`;
+  };
+  award = function (id) {
+    const b = state.s1.badges; if (b[id]) return; b[id] = true; const n = TOOLS.filter(t => b[t.k]).length;
+    setTimeout(() => { toast(`🏅 배지 획득! (${n}/4) ${TOOLS.find(t => t.k === id).name}`); FX.rain(n === 4 ? 220 : 80); snd('win');
+      if (n === 4) { say('개념 탐험 배지 4개를 모두 모았어! 이제 기본 문제로 가 보자!'); mood('cheer', 3200); } renderHub(); }, 500);
+  };
+  const LEN = { fill: FILL.length, nl: NL.length, stack: ST.length, bank: BK.length };
+  const re = () => { const k = state.s1.concept.tool; R[k] && R[k]($('#stage')); try { persist(); } catch (e) {} };
+
+  /* ---------- 끌기 ---------- */
+  DND.on('t11-pv', { drop(v, z) { if (z === 't11-mat') { touch('s1'); fillAdd(+v); } }, tap(v) { touch('s1'); fillAdd(+v); } });
+  let lastX = 0; document.addEventListener('pointerup', e => { lastX = e.clientX; }, true);
+  DND.on('t11-flag', { drop(v, z) { if (z === 't11-nl') { touch('s1'); nlDrop('flag', lastX); } } });
+  DND.on('t11-hop', { drop(v, z) { if (z === 't11-nl') { touch('s1'); nlDrop('hop'); } } });
+  DND.on('t11-box', { drop(v, z) { if (z !== 't11-shelf') return; const S = V2().stack; if (S.won) return; if (S.n >= 9) { S.fb = { ok: false, hint: true, msg: '선반에는 9개까지만 쌓을 수 있어요.' }; } else { S.n++; S.fb = null; snd('pop'); stackChk(); } touch('s1'); rStack($('#stage')); } });
+  DND.on('t11-mb', { drop(v, z) { if (z !== 't11-ham') return; touch('s1'); bankBreak(+v); rBank($('#stage')); } });
+
+  /* ---------- 단추 ---------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-t11]'); if (!b) return; const a = b.dataset.t11, k = b.dataset.k, X = V2();
+    if (a === 'fill-reset') { X.fill.cnt = null; X.fill.fb = null; X.fill.bund = -1; }
+    else if (a === 'nl-back') { if (X.nl.hops > 0) X.nl.hops--; X.nl.fb = null; }
+    else if (a === 'unbox') { if (!X.stack.won && X.stack.n > 0) X.stack.n--; }
+    else if (a === 'next') { const S = X[k]; S.i++; S.won = false; S.fb = null;
+      if (k === 'fill') S.cnt = null; if (k === 'nl') { S.flag = null; S.placed = false; S.hops = 0; } if (k === 'stack') { S.n = 0; } if (k === 'bank') S.cnt = null;
+      if (S.i >= LEN[k]) { award(k); if (S.rp) S.rp = false; } }
+    else if (a === 'replay') { X[k] = fresh[k](); X[k].rp = true; toast('🔄 처음부터 다시 조작해 봐요!'); }
+    touch('s1'); re();
+  });
+  try { if (state.s1) V2(); } catch (e) {}
+})();
+
+</script>
+<!--T111-END-->
 </body>
 </html>

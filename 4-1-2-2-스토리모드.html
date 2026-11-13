@@ -1121,6 +1121,8 @@ const PLAYER_COLORS = ['#ff8a1f', '#2f8ff5', '#17b877', '#a05cf5'];
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const escB = x => esc(x).replace(/&lt;(\/?)(b|br|small|sub|sup)&gt;/g, '<$1$2>');
 const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -2364,7 +2366,7 @@ function partInner(p) {
       <div class="mt-2 text-xs font-bold">글씨 인식이 어려우면 숫자로 입력: <input id="typed-${p.key}" class="typed" inputmode="numeric" maxlength="20"></div>`;
   }
   const fb = st.fb[p.key];
-  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
   return h;
 }
 function renderPart(key) {
@@ -2379,7 +2381,7 @@ function finishPart(key, ok, given, extraMsg) {
   recordAnswer('s1', key, p.label, ok, given); touch('s1');
   st.fb[key] = { ok, kind: ok ? 'ok' : 'no', msg: ok ? pick(PRAISE) + ' ' + p.ok : pick(CHEER) + ' ' + (extraMsg ? extraMsg + ' ' : '') + '💡 ' + p.hint };
   if (ok) { Sound.correct(); say(pick(PRAISE)); } else { Sound.wrong(); say('괜찮아, 힌트를 보고 다시 도전해 보자!'); }
-  if (!ok && partMode(p) === 'write') { const f = $('#fb-' + key); if (f) f.innerHTML = charSay('no', esc(st.fb[key].msg)); } else renderPart(key);
+  if (!ok && partMode(p) === 'write') { const f = $('#fb-' + key); if (f) f.innerHTML = charSay('no', escB(st.fb[key].msg)); } else renderPart(key);
   if (ok) FX.burst($('#part-' + key), 30);
   if (key[0] === 'j') bossRefresh();
 }
@@ -2542,7 +2544,7 @@ function j2HTML() {
   const reads = solved ? `<div class="j2read"><b>📖 이 수들을 네 자리씩 끊어 읽어 볼까요?</b>${p.order.map(id => `<div>${p.items[id].ic} ${esc(p.items[id].nm)} → <b>${fmt(p.items[id].km)}</b> = ${splitKo(p.items[id].km)} (${readKo(p.items[id].km)}) km</div>`).join('')}</div>` : '';
   return `<div class="j2grid">${cards}</div>${reads}
     ${solved ? '' : `<div class="row mt-2"><span class="font-black" style="font-size:.9rem">지금 ${jx.length}/${p.items.length}번째</span><button class="btn btn-sub" data-act="j2-reset">🔄 다시 고르기</button><button class="btn btn-sub" data-act="phint" data-k="j2">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
-    <div id="fb-j2">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+    <div id="fb-j2">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
 }
 function j2Pick(id) {
   const p = PARTS.j2, jx = jxs().j2, rec = RV('j2'); if (rec && rec.solved) return;
@@ -2591,7 +2593,7 @@ function j3HTML() {
   const why = solved ? `<div class="j2read"><b>📖 하나씩 확인해 볼까요?</b>${p.chips.map(c => `<div>${c.g ? '✅' : '❌'} ${esc(c.t)} — ${esc(c.why)}</div>`).join('')}</div>` : '';
   return `<div class="j3grid">${chips}</div>${why}
     ${solved ? '' : `<div class="row mt-2"><span class="font-black" style="font-size:.9rem">고른 것 ${sel.length}개</span><button class="btn btn-green" data-act="j3-ok" ${sel.length ? '' : 'disabled'}>✅ 확인하기</button><button class="btn btn-sub" data-act="phint" data-k="j3">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
-    <div id="fb-j3">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+    <div id="fb-j3">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
 }
 function j3Tog(i) {
   const rec = RV('j3'); if (rec && rec.solved) return;
@@ -2722,14 +2724,14 @@ function renderDrill() {
       <div class="paws" style="margin:0">${d.qs.map((_, i) => `<span class="${i < d.idx ? 'on' : (i === d.idx ? 'cur' : '')}">🐾</span>`).join('')}</div>
       <span class="streak">${d.streak >= 2 ? `🔥 ${d.streak}연속!` : `문제 ${d.idx + 1}/${d.qs.length}`}</span>
     </div>
-    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], esc(q.text))}</div>
+    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], escB(q.text))}</div>
     <div class="choices">${q.choices.map(c => {
       const good = a && c === q.ans, bad = a && !a.ok && c === a.given;
       return `<button class="choice ${good ? 'good' : ''} ${bad ? 'bad' : ''}" data-act="drill-pick" data-v="${esc(c)}" ${a ? 'disabled' : ''}>${esc(c)}</button>`;
     }).join('')}</div>
     ${a ? '' : `<div class="row mt-3"><button class="btn btn-sub" data-act="drill-hint">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
     ${!a && d.hint ? charSay('hint', '💡 ' + esc(drillHint(q.text))) : ''}
-    ${a ? charSay(a.ok ? 'ok' : 'no', esc(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
+    ${a ? charSay(a.ok ? 'ok' : 'no', escB(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
   </div>`;
 }
 function startDrill(level) {
@@ -3323,7 +3325,7 @@ function startAU() {
 function renderBoardPage() {
   const st = state.s2, body = $('#s2body');
   if (!st.au) {
-    const M = [['ai', '🤖', '컴퓨터와 대결', `${CHARS[GUIDE()].name} vs ${CHARS[GUIDE() === 'tiger' ? 'ox' : 'tiger'].name} · 기록 제출`], ['multi', '👥', '2~4인 대결', '친구들과 한 화면에서 차례로! (전자칠판 가능)']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#e0f2fe">💎</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">우주 수호석 억·조 경매전</h2>
       <p class="sub" style="margin:3px 0 0">반쪽이가 흩어 놓은 <b>우주 수호석</b>을 경매로 되찾아요. 각자 <b>예산 100조 원</b>! 주사위로 이동하다 💎 칸에서 경매가 열려요.</p></div></div>
@@ -3769,9 +3771,9 @@ function buildS2Exam(c) {
   const mcs = ex.items.filter(q => q.mode === 'mc'), sas = ex.items.filter(q => q.mode === 'sa'), roman = ['Ⅰ', 'Ⅱ', 'Ⅲ'];
   let no = 0, sec = 0, body = '';
   if (mcs.length) body += `<div class="p-sec2">${roman[sec++]}. 객관식 — 알맞은 답을 고르세요.</div>` + mcs.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
   if (sas.length) body += `<div class="p-sec2">${roman[sec++]}. 단답형 — 답을 쓰세요.</div>` + sas.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
   if (ex.essays.length) body += `<div class="p-sec2">${roman[sec++]}. 서술형 — 풀이 과정을 자세히 쓰세요.</div>` + ex.essays.map(e => { e.no = ++no;
     return `<div class="p-q"><div class="p-qt"><b>${e.no}.</b> ${esc(e.q)} <span class="pt">[${e.pt}점]</span></div><div class="p-work tall">풀이</div></div>`; }).join('');
   let h = `<div class="sheet">` + pHead('🎮 세트 2 · 단원 평가', '1단원 큰 수 · 4차시 억과 조 알아보기 (네 자리씩 끊어 읽기)', `<td class="sc">점수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 100</td>`)
@@ -4713,7 +4715,7 @@ function st_set_magnet(nx) { state.s1.magnet = nx; }
 function lairModeHTML() {
   const party = state.s2.gmode === 'party';
   return `<div class="mt-3"><div class="font-black">🎮 누구와 겨룰까요?</div>
-    <div class="seg mt-1"><button class="${party ? '' : 'on'}" data-act="lair-mode" data-v="solo">🙋 혼자 하기</button><button class="${party ? 'on' : ''}" data-act="lair-mode" data-v="party">👥 2~4인 대결 (전자칠판)</button></div>
+    <div class="seg mt-1"><button class="${party ? '' : 'on'}" data-act="lair-mode" data-v="solo">👤 혼자 하기</button><button class="${party ? 'on' : ''}" data-act="lair-mode" data-v="party">👥 함께 하기 (2~4인)</button></div>
     ${party ? partyHTML() + '<p class="center text-xs muted font-bold mt-2">한 화면을 돌려 가며 한 명씩 도전해요(시간은 조금 짧아져요). 점수가 가장 높은 친구가 우승! 수업 활동용이라 결과 점수에는 들어가지 않아요. 상단 🖥 단추로 큰 화면 모드를 켤 수 있어요.</p>' : ''}</div>`;
 }
 function startPartyLair(id) {
@@ -6225,14 +6227,14 @@ renderDrill = function () {
       <div class="paws" style="margin:0">${d.qs.map((_, i) => `<span class="${i < d.idx ? 'on' : (i === d.idx ? 'cur' : '')}">🐾</span>`).join('')}</div>
       <span class="streak">${d.streak >= 2 ? `🔥 ${d.streak}연속!` : `문제 ${d.idx + 1}/${d.qs.length}`}</span>
     </div>
-    <div class="mt-3">${qHead(d.idx + 1, col, esc(q.text))}</div>${q.img ? `<div class="drimg">${q.img}</div>` : ''}
+    <div class="mt-3">${qHead(d.idx + 1, col, escB(q.text))}</div>${q.img ? `<div class="drimg">${q.img}</div>` : ''}
     <div class="choices">${q.choices.map(c => {
       const good = a && c === q.ans, bad = a && !a.ok && c === a.given;
       return `<button class="choice ${good ? 'good' : ''} ${bad ? 'bad' : ''}" data-act="drill-pick" data-v="${esc(c)}" ${a ? 'disabled' : ''}>${esc(c)}</button>`;
     }).join('')}</div>
     ${a ? '' : `<div class="row mt-3"><button class="btn btn-sub" data-act="drill-hint">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
     ${!a && d.hint ? charSay('hint', '💡 ' + esc(q.hint || '각도기의 중심은 꼭짓점에, 밑금은 한 변에! 밑금에 맞춘 변 쪽의 0에서 시작하는 눈금을 읽어요.')) : ''}
-    ${a ? charSay(a.ok ? 'ok' : 'no', esc(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
+    ${a ? charSay(a.ok ? 'ok' : 'no', escB(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
   </div>`;
 };
 
@@ -6486,7 +6488,7 @@ startAU = function () { const st = state.s2; moodBase('idle'); touch('s2'); st.a
 renderBoardPage = function () {
   const st = state.s2, body = $('#s2body');
   if (!st.au) {
-    const M = [['ai', '🤖', '컴퓨터와 대결', `${CHARS[GUIDE()].name} vs ${CHARS[GUIDE() === 'tiger' ? 'ox' : 'tiger'].name} · 기록 제출`], ['multi', '👥', '2인 대결', '친구와 한 화면에서 번갈아! (전자칠판 가능)']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#dcfce7">📡</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">반쪽이의 각도기 레이스</h2>
       <p class="sub" style="margin:3px 0 0">반쪽이가 숲 놀이터 호수에 <b>잠수함 3척</b>을 숨겼어요. 각도기 모양의 레이더로 위치를 찾아 먼저 모두 격침하면 승리!</p></div></div>
@@ -6533,9 +6535,9 @@ buildS2Exam = function (c) {
   const img = q => q.img ? pFig(q.img) : '';
   let no = 0, sec = 0, body = '';
   if (mcs.length) body += `<div class="p-sec2">${roman[sec++]}. 객관식 — 알맞은 답을 고르세요.</div>` + mcs.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
   if (sas.length) body += `<div class="p-sec2">${roman[sec++]}. 단답형 — 답을 쓰세요.</div>` + sas.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
   if (ex.essays.length) body += `<div class="p-sec2">${roman[sec++]}. 서술형 — 풀이 과정을 자세히 쓰세요.</div>` + ex.essays.map(e => { e.no = ++no;
     return `<div class="p-q"><div class="p-qt"><b>${e.no}.</b> ${esc(e.q)} <span class="pt">[${e.pt}점]</span></div><div class="p-work tall">풀이</div></div>`; }).join('');
   let h = `<div class="sheet">` + pHead('🎮 세트 2 · 단원 평가', '2단원 각도 · 2차시 각의 크기 재기 (각도기 · 1°)', `<td class="sc">점수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 100</td>`)
@@ -7269,7 +7271,7 @@ const WN = (() => {
     const a = run.ans;
     o.innerHTML = `<div class="wnbox"><div class="wnhead"><span class="wnt">✏️ 다시 풀기 ${run.i + 1} / ${run.list.length}</span><button class="wnx" data-wn="close">✕</button></div>
       <div class="wnprog"><i style="width:${run.i / run.list.length * 100}%"></i></div>
-      <div class="wnrq">${tag(q)}<div class="wnq3">${esc(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
+      <div class="wnrq">${tag(q)}<div class="wnq3">${escB(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
         ${q.choices ? `<div class="wnch">${q.choices.map((c, k) => `<button class="wnc ${a ? (norm(c) === norm(q.ans) ? 'good' : a.v === c ? 'bad' : '') : ''}" data-wn="ans" data-v="${esc(c)}" ${a ? 'disabled' : ''}><b>${'①②③④⑤⑥'[k]}</b> ${esc(c)}</button>`).join('')}</div>`
         : `<div class="wnin"><input id="wnInput" inputmode="numeric" placeholder="답을 써요" ${a ? 'disabled' : ''} value="${a ? esc(a.v) : ''}"><button class="btn btn-primary" data-wn="type" ${a ? 'disabled' : ''}>확인</button></div>`}
         ${a ? `<div class="wnfb ${a.ok ? 'ok' : 'no'}">${a.ok ? '🎉 정답! 오답 탈출!' : `🤔 정답은 <b>${esc(q.ans)}</b>`}${q.ex ? `<div class="wnex">💡 ${esc(q.ex)}</div>` : ''}</div>` : ''}</div>
@@ -8144,7 +8146,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const fb = X.fb;
     return `<div class="card sv-j0card" id="svj0"><div class="qhead"><div class="qno" style="background:#f59e0b">1</div><div class="qtext"><span class="qtag" style="background:#fef3c7;color:#b45309">점프 1 · 오늘의 문제</span> <b>${J0.label}</b><br>${C.problem}</div></div>
       <div class="sv-j1tag">${assessment().complete ? '📖 오늘의 문제 해결! 🔓 점프 문제 2~4가 열렸어요' : '📖 오늘 처음 만난 문제예요 · 해결하면 점프 문제 2~4가 열려요'}</div>
-      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea></div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
+      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea>${done ? '' : `<div class="sv-voice"><button type="button" class="btn btn-sub sv-mic" data-sv="voice-ex">🎤 말로 쓰기</button><div id="sv-voice-ex" class="sv-small sv-vmsg" role="status" aria-live="polite">단추를 누르고 어떻게 해결했는지 말해 보세요. 말한 내용이 글자로 들어가요.</div></div>`}</div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
       ${done ? `<div class="sv-goal-done">🎯 <b>학습 목표 도달!</b> ${esc(assessment().status)} · 🔓 점프 문제 2~4가 열렸어요.${J0.ok ? '<br>' + J0.ok : ''}</div><div class="sv-row"><button class="btn btn-sub" data-sv="j0-redo">🔁 다시 해 보기</button></div>`
         : `<div class="sv-row"><button class="btn btn-green" data-sv="j0-check">🔍 문제 해결!</button><button class="btn btn-sub" data-sv="j0-hint">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
       ${!done && X.hint >= 0 ? `<div class="mt-2">${charSay('hint', '💡 ' + J0.hints[X.hint % J0.hints.length])}</div>` : ''}
@@ -8246,6 +8248,17 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     else if (act === 'vhint') { s.goalAssessment.hintUsed = true; const m = $('#sv-verify-msg'); if (m) m.textContent = '💡 ' + C.verify.hint; persist(); }
     else if (act === 'resume') { const p = pending; pending = null; if (p) { state.s1 = Object.assign(state.s1, p.s1); ensure(); if (p.sid && !state.student.id) try { syncStudent(p.sid, p.sname); } catch (x) {} } renderS1(); toast('📂 하던 곳부터 이어서 해요!'); }
     else if (act === 'fresh') { pending = null; try { localStorage.removeItem(KEY); } catch (x) {} resetS1(); renderS1(); toast('✨ 새로 시작해요!'); }
+    else if (act === 'voice-ex') { /* 점프 1 설명 칸 말로 쓰기 */
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-ex');
+      if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
+      if (b.classList.contains('on') && recog) { try { recog.stop(); } catch (x) {} return; }
+      try { if (recog) recog.abort(); recog = new SR(); recog.lang = 'ko-KR'; recog.interimResults = false; recog.maxAlternatives = 1;
+        b.classList.add('on'); b.textContent = '⏹ 그만 말하기'; recog.onend = () => { b.classList.remove('on'); b.textContent = '🎤 말로 쓰기'; };
+        recog.onresult = ev => { const txt = ev.results[0][0].transcript, a = document.querySelector('textarea.sv-ex'); if (a) { a.value = (a.value ? a.value.trim() + ' ' : '') + txt; const X = state.s1.j0 || (state.s1.j0 = { a: {}, fb: null, hint: -1 }); X.ex = a.value; persist(); } if (st) st.textContent = '✅ 받아 적었어요. 글자를 확인하고 고칠 곳이 있으면 고쳐요. 더 말하려면 다시 눌러요.'; };
+        recog.onerror = ev => { if (st) st.textContent = ev.error === 'not-allowed' ? '마이크 사용이 막혀 있어요. 주소창의 🔒에서 마이크를 허용하거나 직접 써 주세요.' : '잘 듣지 못했어요. 다시 누르거나 직접 써 주세요.'; };
+        recog.start(); if (st) st.textContent = '🎤 듣고 있어요… 어떻게 해결했는지 말해 보세요.';
+      } catch (err) { if (st) st.textContent = '마이크를 쓸 수 없어요. 직접 써 주세요.'; }
+    }
     else if (act === 'voice') {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-msg');
       if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
@@ -8518,6 +8531,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .svbg-vs{display:flex;align-items:center;gap:12px;margin-top:6px;flex-wrap:wrap}
 .svbg-vs .fun{font-size:1.4rem;font-weight:900;color:#be123c}
 .svbg-vs .pslot{min-width:120px}
+
+.svbg-plr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-top:6px;padding:6px 8px;border-radius:12px;background:#f8fafc}.svbg-pln{display:inline-flex;align-items:center;gap:6px}
+
 </style>
 <script>
 /* =====================================================================
@@ -8544,6 +8560,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     LV_NM,
     k(a, b, c) { return [a, b, c][Math.max(1, Math.min(3, this.lv)) - 1]; },
     setLv(n) { this.lv = Math.max(1, Math.min(3, n)); LS.set('svbg:lv', this.lv); },
+    /* 함께 하기: 사람마다 자기 단계 (기존 게임용) */
+    plv: (() => { const v = LS.get('svbg:plv'); return Array.isArray(v) && v.length === 4 ? v : [2, 2, 2, 2]; })(),
+    setPlv(i, n) { this.plv[i] = Math.max(1, Math.min(3, n)); LS.set('svbg:plv', this.plv); },
+    solo() { return T(() => state.s2.bmode) !== 'multi'; },
+    pl(i) { if (this.solo()) return this.lv; const g = this.g(); return (g && g.plv && g.plv[i]) || this.plv[i] || 2; },
+    /* 함께 하기: 맞히면 ↑ · 틀리면 ↓ (연속 3번 정답 → 단계 UP, 연속 2번 오답 → 단계 DOWN) */
+    res(i, ok) {
+      const g = this.g(), A = this.A; if (!g || g.solo || !A || A.ownLv || !g.players || !g.players[i] || g.players[i].ai) return;
+      if (!g.plv) g.plv = g.players.map((_, k) => this.plv[k] || 2); if (!g.lvrun) g.lvrun = g.players.map(() => 0);
+      let r = g.lvrun[i], lv = g.plv[i], nm = E(g.players[i].name), msg = '';
+      r = ok ? Math.max(0, r) + 1 : Math.min(0, r) - 1;
+      if (r >= 3 && lv < 3) { lv++; r = 0; msg = `🔥 ${nm} 단계 UP → <b>${LV_NM[lv]}</b>`; }
+      else if (r <= -2 && lv > 1) { lv--; r = 0; msg = `🌱 ${nm} 단계 조정 → <b>${LV_NM[lv]}</b>`; }
+      g.lvrun[i] = r; if (lv !== g.plv[i]) { g.plv[i] = lv; T(() => A.onLv && A.onLv(g, i, lv)); setTimeout(() => this.toast(msg), 700); }
+    },
+    plvHTML() {
+      const p = T(() => state.party) || { n: 2, chars: [] }, n = p.n || 2;
+      return `<div class="svbg-lv svbg-plv" data-svbg-plv data-n="${n}"><div class="font-black">🎚️ 사람마다 단계 고르기 <small class="muted">(자기 수준에 맞는 문제를 받아요)</small></div>
+        ${Array.from({ length: n }, (_, i) => `<div class="svbg-plr"><span class="svbg-pln">${AV(p.chars[i], 26)} <b>${i + 1}P ${E(T(() => CHARS[p.chars[i]].name) || '')}</b></span><span class="seg">${[1, 2, 3].map(k => `<button class="${this.plv[i] === k ? 'on' : ''}" data-svbg="plv" data-v="${i}|${k}">${LV_NM[k]}</button>`).join('')}</span></div>`).join('')}
+        <p class="text-xs muted font-bold mt-1">${E(this.A && this.A.lvNote || '단계가 높을수록 더 어려운 문제를 받아요.')}<br>게임 중에는 연속 3번 맞히면 단계가 올라가고, 연속 2번 틀리면 내려가요.</p></div>`;
+    },
     key() { return 'svbg:' + T(() => CONFIG.LESSON_ID) || location.pathname; },
     g() { const A = this.A; return A && T(() => state.s2[A.key]) || null; },
     onBoard() { return T(() => state.s2.step === 'board' && state.tab === 's2') !== false && T(() => state.s2.step === 'board'); },
@@ -8553,15 +8590,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     lvHTML(note) {
       return `<div class="svbg-lv" data-svbg-lv><div class="font-black">🎚️ 난이도 <small class="muted">(혼자 할 때는 맞히는 만큼 단계가 저절로 바뀌어요)</small></div>
         <div class="seg mt-1">${[1, 2, 3].map(n => `<button class="${this.lv === n ? 'on' : ''}" data-svbg="lv" data-v="${n}">${LV_NM[n]}</button>`).join('')}</div>
-        <p class="text-xs muted font-bold mt-1">${note || (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
+        <p class="text-xs muted font-bold mt-1">${note || (this.A && this.A.lvNote ? E(this.A.lvNote) + '<br>' : '') + (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
     },
     criteriaHTML() {
-      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 차례 알림</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
+      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 사람마다 자기 수준</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
     },
     bar(g) {
       const A = this.A, P = g.players || [], t = g.turn ?? g.cur ?? 0, p = P[t] || {};
       const who = A.realtime ? `🔔 모두 함께! 빨리 보고 판단해요` : p.ai ? `${AV(p.char, 26)} <b>${E(p.name)}</b> 생각 중…` : `${AV(p.char, 26)} <b>${E(p.name)}</b> 차례예요!`;
-      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : ''}</div>
+      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : (!A.realtime && !A.ownLv && !p.ai ? `<span class="svbg-lvb">${LV_NM[this.pl(t)]}</span>` : '')}</div>
         <div class="svbg-btns">${A.hint ? '<button data-svbg="hint">💡 수학 힌트</button>' : ''}<button data-svbg="pause">⏸ 잠깐 멈춤</button><button data-svbg="again">🔁 처음부터</button><button data-svbg="quit">🚪 그만하기</button></div></div>`;
     },
     overlay(html, cls) {
@@ -8585,6 +8622,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const t = e.target.closest('[data-svbg]'); if (!t) return; const a = t.dataset.svbg, v = t.dataset.v; e.preventDefault(); e.stopPropagation();
       const g = this.g();
       if (a === 'lv') { this.setLv(+v); T(() => renderBoardPage()); return; }
+      if (a === 'plv') { const [i, k] = v.split('|').map(Number); this.setPlv(i, k); const box = $q('[data-svbg-plv]'); if (box) box.outerHTML = this.plvHTML(); return; }
       if (a === 'ready') { this.closeOv(); this.paused = false; T(() => this.A.onReady && this.A.onReady(g)); return; }
       if (a === 'pause') { this.paused = true; this.overlay(`<div class="svbg-ht">⏸ 잠깐 멈춤</div><p class="svbg-hs">선생님 말씀을 듣거나 쉬었다가<br>준비되면 계속해요.</p><button class="btn btn-primary btn-lg" data-svbg="resume-play">▶ 계속하기</button>`); return; }
       if (a === 'resume-play') { this.closeOv(); this.paused = false; return; }
@@ -8604,7 +8642,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A, g = this.g(); if (!A || !A.save) return;
       if (!g || g.over) { if (g && g.over) this.clearSave(); return; }
       const str = T(() => JSON.stringify(g)); if (!str || (!force && str === this._saveStr)) return; this._saveStr = str;
-      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, t: Date.now() });
+      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, plv: this.plv.slice(), t: Date.now() });
     },
     clearSave() { LS.del(this.key()); this._saveStr = ''; },
     saved() { const s = LS.get(this.key()); if (!s || Date.now() - s.t > 7 * 864e5) return null; return s; },
@@ -8613,7 +8651,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       ['busy', 'peeking', 'rang'].forEach(k => { if (k in g) g[k] = false; }); if ('lock' in g) g.lock = 0; if ('moving' in g) g.moving = -1;
       if (!g.solo && 'cover' in g) g.cover = true;
       T(() => { state.s2.bmode = s.mode; if (s.party) Object.assign(state.party, s.party); });
-      this.setLv(s.lv || this.lv); T(() => touch('s2'));
+      this.setLv(s.lv || this.lv); if (Array.isArray(s.plv)) s.plv.forEach((k, i) => this.setPlv(i, k)); T(() => touch('s2'));
       T(() => this.A.restore && this.A.restore(g));
       state.s2[this.A.key] = g; this._turn = null; this._soloOver = null;
       T(() => renderBoardPage()); this.toast('💾 지난 게임을 이어서 해요!');
@@ -8633,6 +8671,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A; if (!A) return; const body = $q('#s2body'); const g = this.g(), board = T(() => state.s2.step === 'board');
       if (!body || !board) { this._turn = null; return; }
       if (g && !g.over) {
+        if (!g.solo && !A.ownLv && !g.plv && g.players) { g.plv = g.players.map((_, k) => this.plv[k] || 2); g.lvrun = g.players.map(() => 0); }
         const t = g.turn ?? g.cur ?? 0, sig = t + '|' + (g.players || []).length;
         let bar = body.querySelector(':scope > .svbg-bar');
         const html = this.bar(g);
@@ -8658,6 +8697,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           const st = body.querySelector('[data-act="board-start"]');
           if (st && !body.querySelector('[data-svbg-crit]')) { const h = body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', `<div data-svbg-crit>${this.criteriaHTML()}</div>`); }
           if (st && !A.ownLv && !body.querySelector('[data-svbg-lv]') && T(() => state.s2.bmode) === 'ai') { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.lvHTML()); }
+          if (st && T(() => state.s2.bmode) === 'multi') { const ex = body.querySelector('[data-svbg-plv]'), n = T(() => state.party.n) || 2;
+            if (ex && +ex.dataset.n !== n) ex.remove();
+            if (!body.querySelector('[data-svbg-plv]')) { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.plvHTML()); } }
           const s = this.saved();
           if (st && s && !body.querySelector('[data-svbg-res]')) { const h = body.querySelector('[data-svbg-crit]') || body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', this.resumeHTML(s)); }
         }
@@ -8708,7 +8750,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           <div class="font-black mt-3">🙋 누구와 할까요?</div>
           <div class="modecards mt-1">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
           ${st.bmode === 'multi' ? T(() => partyHTML()) || '' : ''}
-          ${SVBG.lvHTML(st.bmode === 'multi' ? '함께 할 때는 모두 이 단계에서 시작하고, 사람마다 맞히는 만큼 단계가 따로 바뀌어요.' : '')}
+          ${st.bmode === 'multi' ? '' : SVBG.lvHTML()}
           ${st.bmode === 'multi' ? '<p class="center text-xs muted font-bold mt-2">함께 하기 결과는 수업 활동용이라 선생님께 제출되지 않아요.</p>' : ''}
           <div class="next-row"><button class="btn btn-primary btn-lg" data-act="board-start">${D.icon} ${D.startTxt}</button></div></div>`;
       } else {
@@ -8722,7 +8764,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const players = mkPlayers(st.bmode).map(p => Object.assign({}, p, { name: p.ai ? p.name : p.name }));
       if (st.bmode === 'ai') players[1].name = players[1].name.replace('(컴퓨터)', '(컴퓨터)');
       const n = players.length, g = { solo: st.bmode === 'ai', mode: D.mode, players, turn: 0, over: false, ranking: null, wrong: [], log: `${E(players[0].name)}부터 시작해요!`,
-        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: Array(n).fill(SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
+        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: players.map((P, i) => st.bmode === 'multi' ? (SVBG.plv[i] || 2) : SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
       if (D.mode === 'land') g.board = D.newBoard(SVBG.lv); else g.track = D.track || this.track();
       st.au = g; SVBG._turn = null; this.page(); T(() => say(D.startSay));
       if (D.mode === 'race') this.ask(g);
@@ -8977,7 +9019,35 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   } catch (e) {}
 })();
 
+
 </script>
 <!--BG-END-->
+<!--RV-START--><style>.rvcard{background:#ecfeff;border:2px solid #67e8f9;border-radius:14px;padding:10px 14px;font-weight:800;color:#155e75;margin:6px auto;max-width:640px;text-align:center;line-height:1.55}</style><script>
+/* 개념 도구 안의 묻고 답하기 단계를 '조작 결과 정리'로 바꿔요: 보기 단추 대신 조작으로 드러난 사실을 보여 주고 확인만 해요 */
+(function () {
+  const A = k => { try { return AN_()[k] || {}; } catch (e) { return {}; } };
+  const RV = {
+    'sl1-q': () => ({ v: '위치', s: '두두를 여러 방향으로 밀어 보니 <b>위치만</b> 바뀌고, 모양·크기·변의 수는 그대로였어요.' }),
+    'sl2-q': () => { const t = A('arrow'); const v = slSay(t.dir, t.n); return { v, s: `가에서 나로 그은 화살표를 따라 모눈 칸을 세어 보면 <b>${v}</b>예요.` }; },
+    'sl4-q': () => ({ v: '밀기는 방향을 바꿀 수 없어서', s: '조각 다는 돌려야 들어가는 모양이에요. 밀기는 <b>방향을 바꿀 수 없어서</b> 밀기만으로는 맞출 수 없어요.' }),
+    'bd-p': () => { const t = A('build'); return { v: t.d.rows[dsMaxI(t.d)][0], s: '표의 수만큼 막대를 직접 세워 보면, 수가 클수록 막대가 길어요. 이제 막대를 세워 봐요.', b: '막대 세우러 가기' }; },
+    'bd-q': () => ({ v: '가로: 학급 · 세로: 책의 수', s: '세운 그래프를 보면 <b>가로</b>에는 학급 이름이, <b>세로</b>에는 책의 수 눈금이 있어요.' }),
+    'fl-p': () => ({ v: '길이는 그대로예요', s: '세로 막대그래프를 가로로 눕혀 직접 그려 보며 막대의 길이를 견주어 봐요.', b: '가로로 그려 보기' }),
+    'fl-q': () => ({ v: '학생 수', s: '눕혀 그린 그래프에서는 <b>가로</b>가 학생 수, <b>세로</b>가 활동을 나타내요. 막대의 길이는 그대로예요.' }),
+    't3-ans': () => { const t = A('unit'); return { v: t.opts.ans, s: `채운 조각 수를 세어 보면: <b>${t.opts.ans}</b>.` }; },
+    't4-why': () => ({ v: '눈금 한 칸의 크기가 서로 달라서', s: '표를 보면 같은 각인데 칸 수가 달라요. 도하의 눈금자는 직각이 3칸, 유주의 눈금자는 6칸이라 <b>눈금 한 칸의 크기가 서로 달라서</b>예요.' }),
+    'd1-q': () => ({ v: '90°', s: '1° 조각 90개가 모여 직각을 꽉 채웠어요. 그래서 <b>직각 = 90°</b>예요.' }),
+    'd1-q3': () => ({ v: '30°', s: '직각 90°를 3칸으로 나누면 한 칸은 <b>30°</b>예요.' }),
+    'lk-q': () => { const d = A('look').d || 90; return { v: '180', s: `빨간 선이 가리키는 두 수: 바깥쪽 <b>${d}</b>, 안쪽 <b>${180 - d}</b> → 더하면 <b>180</b>! 위에서 선을 돌려 다른 곳도 확인해 보세요.` }; }
+  };
+  function scan() { const tb = document.getElementById('toolBody'); if (!tb) return;
+    tb.querySelectorAll('[data-an]').forEach(b => { const a = b.dataset.an; if (!RV[a] || b.dataset.rv) return; const row = b.parentElement; if (!row || row.dataset.rvd) return;
+      let r; try { r = RV[a](); } catch (e) { return; } row.dataset.rvd = '1';
+      const q = row.previousElementSibling; if (q && /\?|까요|골라요/.test(q.textContent) && !q.classList.contains('antbl')) q.style.display = 'none';
+      row.innerHTML = `<div class="rvcard">🔎 ${r.s}</div><button class="btn btn-green" data-an="${a}" data-v="${esc(r.v)}" data-rv="1">✅ ${r.b || '확인했어요'}</button>`; row.style.flexDirection = 'column'; row.style.alignItems = 'center'; }); }
+  new MutationObserver(() => scan()).observe(document.body, { childList: true, subtree: true }); setTimeout(scan, 500);
+})();
+
+</script><!--RV-END-->
 </body>
 </html>

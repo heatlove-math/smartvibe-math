@@ -1214,6 +1214,8 @@ const PLAYER_COLORS = ['#ff8a1f', '#2f8ff5', '#17b877', '#a05cf5'];
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const escB = x => esc(x).replace(/&lt;(\/?)(b|br|small|sub|sup)&gt;/g, '<$1$2>');
 const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -2007,7 +2009,7 @@ function dTab(rows, hi, same) {
 const digitTable = (n, hi) => dTab([{ n }], hi);
 const symBtns = (act, dis) => `<div class="symrow">${[['&gt;', '>'], ['=', '='], ['&lt;', '<']].map(([h, v]) => `<button class="symbtn" data-act="${act}" data-v="${h}" ${dis ? 'disabled' : ''} aria-label="${v === '>' ? '크다' : v === '<' ? '작다' : '같다'}">${h}</button>`).join('')}</div>`;
 const cmpBox = (a, fa, b, fb2, mid) => `<div class="cmpbig"><div class="cmpnum">${esc(fmtF(a, fa))}<small>${fa === 'd' ? '숫자로 쓴 수' : fa === 'k' ? '네 자리씩 끊어 쓴 수' : '읽은 말'}</small></div><div class="cmpo">${esc(mid || '○')}</div><div class="cmpnum">${esc(fmtF(b, fb2))}<small>${fb2 === 'd' ? '숫자로 쓴 수' : fb2 === 'k' ? '네 자리씩 끊어 쓴 수' : '읽은 말'}</small></div></div>`;
-const tfb = fb => fb ? charSay(fb.ok ? 'ok' : 'no', esc(fb.msg), 48, true) : '';
+const tfb = fb => fb ? charSay(fb.ok ? 'ok' : 'no', escB(fb.msg), 48, true) : '';
 function toolCard(vk, title, sub, taunt, inner, notes) {
   const V = VILLAINS[vk];
   return `<div class="card" style="border-color:${V.color}">
@@ -2043,7 +2045,7 @@ function renderBadges() {
   const b = state.s1.badges, n = Object.keys(b).length;
   el.innerHTML = `<div class="badgebar"><span class="fun" style="font-size:1.1rem">🎖 탐험 배지 ${n}/${BADGES.length}</span>
     <span class="slots">${BADGES.map(([id, nm, ic]) => `<span class="slot ${b[id] ? 'got' : ''}" title="${nm}">${b[id] ? ic : ''}</span>`).join('')}</span>
-    <span class="muted" style="font-weight:700;font-size:.82rem">${n >= BADGES.length ? '도구 6개 완료! 기본 문제로 가요 ➜' : '도구마다 미션을 끝내면 악당을 봉인하고 배지를 받아요!'}</span></div>`;
+    <span class="muted" style="font-weight:700;font-size:.82rem">${n >= BADGES.length ? '도구 4개 완료! 기본 문제로 가요 ➜' : '도구마다 미션을 끝내면 악당을 봉인하고 배지를 받아요!'}</span></div>`;
 }
 function award(id) {
   const b = state.s1.badges; if (b[id]) return;
@@ -2051,7 +2053,7 @@ function award(id) {
   setTimeout(() => {
     toast(`🎖 배지 획득! (${n}/${BADGES.length}) ${nm}`); FX.rain(n === BADGES.length ? 220 : 90);
     try { Sound.seal(); } catch (e) {}
-    if (n === BADGES.length) { say('배지 6개 완성! 기울어진 수의 저울이 바로 섰어. 이제 기본 문제로 가 보자!'); mood('cheer', 3200); try { Sound.win(); } catch (e) {} }
+    if (n === BADGES.length) { say('배지 4개 완성! 기울어진 수의 저울이 바로 섰어. 이제 기본 문제로 가 보자!'); mood('cheer', 3200); try { Sound.win(); } catch (e) {} }
     renderBadges(); renderTool();
   }, 450);
 }
@@ -2389,7 +2391,7 @@ function partInner(p) {
       <div class="mt-2 text-xs font-bold">글씨 인식이 어려우면 숫자로 입력: <input id="typed-${p.key}" class="typed" inputmode="numeric" maxlength="20"></div>`;
   }
   const fb = st.fb[p.key];
-  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
   return h;
 }
 function renderPart(key) {
@@ -2404,7 +2406,7 @@ function finishPart(key, ok, given, extraMsg) {
   recordAnswer('s1', key, p.label, ok, given); touch('s1');
   st.fb[key] = { ok, kind: ok ? 'ok' : 'no', msg: ok ? pick(PRAISE) + ' ' + p.ok : pick(CHEER) + ' ' + (extraMsg ? extraMsg + ' ' : '') + '💡 ' + p.hint };
   if (ok) { Sound.correct(); say(pick(PRAISE)); } else { Sound.wrong(); say('괜찮아, 힌트를 보고 다시 도전해 보자!'); }
-  if (!ok && partMode(p) === 'write') { const f = $('#fb-' + key); if (f) f.innerHTML = charSay('no', esc(st.fb[key].msg)); } else renderPart(key);
+  if (!ok && partMode(p) === 'write') { const f = $('#fb-' + key); if (f) f.innerHTML = charSay('no', escB(st.fb[key].msg)); } else renderPart(key);
   if (ok) FX.burst($('#part-' + key), 30);
   if (key[0] === 'j') bossRefresh();
 }
@@ -2542,7 +2544,7 @@ function j2HTML() {
   const reads = solved ? `<div class="j2read"><b>📖 숫자로 바꿔 나란히 놓아 볼까요?</b>${p.order.map((id, k) => `<div>${k + 1}등 ${p.items[id].ic} ${esc(p.items[id].nm)} → <b>${fmt(p.items[id].v)}</b> (${dlen(p.items[id].v)}자리)</div>`).join('')}</div>` : '';
   return `<div class="j2grid">${cards}</div>${reads}
     ${solved ? '' : `<div class="row mt-2"><span class="font-black" style="font-size:.9rem">지금 ${jx.length + 1}등을 고를 차례</span><button class="btn btn-sub" data-act="j2-reset">🔄 다시 고르기</button><button class="btn btn-sub" data-act="phint" data-k="j2">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
-    <div id="fb-j2">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+    <div id="fb-j2">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
 }
 function j2Pick(id) {
   const p = PARTS.j2, jx = jxs().j2, rec = state.s1.rec.j2; if (rec && rec.solved) return;
@@ -2584,7 +2586,7 @@ function j3HTML() {
   const why = solved ? `<div class="j2read"><b>📖 하나씩 확인해 볼까요?</b>${p.chips.map(d => `<div>${p.set.includes(d) ? '✅' : '❌'} □=${d} → ${fmt(X(d))} ${X(d) > p.lo ? '' : '(왼쪽 수보다 작거나 같아요)'}${X(d) < p.hi ? '' : '(오른쪽 수보다 크거나 같아요)'}</div>`).join('')}</div>` : '';
   return `<div class="dchips">${chips}</div>${why}
     ${solved ? '' : `<div class="row mt-2"><span class="font-black" style="font-size:.9rem">고른 숫자 ${sel.length}개</span><button class="btn btn-green" data-act="j3-ok" ${sel.length ? '' : 'disabled'}>✅ 확인하기</button><button class="btn btn-sub" data-act="phint" data-k="j3">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
-    <div id="fb-j3">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+    <div id="fb-j3">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
 }
 function j3Tog(d) {
   const rec = state.s1.rec.j3; if (rec && rec.solved) return;
@@ -2694,14 +2696,14 @@ function renderDrill() {
       <div class="paws" style="margin:0">${d.qs.map((_, i) => `<span class="${i < d.idx ? 'on' : (i === d.idx ? 'cur' : '')}">🐾</span>`).join('')}</div>
       <span class="streak">${d.streak >= 2 ? `🔥 ${d.streak}연속!` : `문제 ${d.idx + 1}/${d.qs.length}`}</span>
     </div>
-    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], esc(q.text))}</div>
+    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], escB(q.text))}</div>
     <div class="choices"${symOnly ? ' style="grid-template-columns:repeat(3,minmax(0,1fr));max-width:420px;margin:0 auto"' : ''}>${q.choices.map(c => {
       const good = a && c === q.ans, bad = a && !a.ok && c === a.given;
       return `<button class="choice ${good ? 'good' : ''} ${bad ? 'bad' : ''}" style="${symOnly ? 'font-size:2.2rem' : (c.length > 12 ? 'font-size:1rem' : '')}" data-act="drill-pick" data-v="${esc(c)}" ${a ? 'disabled' : ''}>${esc(c)}</button>`;
     }).join('')}</div>
     ${a ? '' : `<div class="row mt-3"><button class="btn btn-sub" data-act="drill-hint">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
     ${!a && d.hint ? charSay('hint', '💡 ' + esc(drillHint(q.text))) : ''}
-    ${a ? charSay(a.ok ? 'ok' : 'no', esc(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
+    ${a ? charSay(a.ok ? 'ok' : 'no', escB(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
   </div>`;
 }
 function startDrill(level) {
@@ -3158,7 +3160,7 @@ function startDV() {
 function renderBoardPage() {
   const st = state.s2, body = $('#s2body');
   if (!st.dv) {
-    const M = [['ai', '🤖', '반쪽이(컴퓨터)와 대결', `${CHARS[GUIDE()].name} vs 반쪽이 · 기록 제출`], ['multi', '👥', '2~4인 대결', '친구들과 한 화면에서 돌려 가며! (전자칠판 가능)']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#ffe4ea">🔐</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">다빈치 코드 금고 — 큰 수 타일 추리 대결</h2>
       <p class="sub" style="margin:3px 0 0">보드게임 <b>「다빈치 코드」</b>의 원리를 큰 수로 바꿨어요. 모든 타일은 <b>작은 수 → 큰 수</b> 순서로 놓여 있어서, 공개된 타일을 단서로 숨은 수의 <b>범위</b>를 추리할 수 있어요!</p></div></div>
@@ -3553,9 +3555,9 @@ function buildS2Exam(c) {
   const mcs = ex.items.filter(q => q.mode === 'mc'), sas = ex.items.filter(q => q.mode === 'sa'), roman = ['Ⅰ', 'Ⅱ', 'Ⅲ'];
   let no = 0, sec = 0, body = '';
   if (mcs.length) body += `<div class="p-sec2">${roman[sec++]}. 객관식 — 알맞은 답을 고르세요.</div>` + mcs.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
   if (sas.length) body += `<div class="p-sec2">${roman[sec++]}. 단답형 — 답을 쓰세요.</div>` + sas.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
   if (ex.essays.length) body += `<div class="p-sec2">${roman[sec++]}. 서술형 — 풀이 과정을 자세히 쓰세요.</div>` + ex.essays.map(e => { e.no = ++no;
     return `<div class="p-q"><div class="p-qt"><b>${e.no}.</b> ${esc(e.q)} <span class="pt">[${e.pt}점]</span></div><div class="p-work tall">풀이</div></div>`; }).join('');
   let h = `<div class="sheet">` + pHead('🎮 세트 2 · 단원 평가', '1단원 큰 수 · 5차시 수의 크기 비교', `<td class="sc">점수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 100</td>`)
@@ -3823,7 +3825,7 @@ function init() {
   }, 500);
 }
 /* =====================================================================
-   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 6개·기본 문제·다크몽 보스전)
+   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 4개·기본 문제·다크몽 보스전)
    보석은 학번별로 이 기기에 저장돼요. (제출하면 시트 '보석현황'에도 기록)
    ===================================================================== */
 CONFIG.LESSON_ID = CONFIG.LESSON_ID || '4-1-1-5';
@@ -3856,7 +3858,7 @@ const Gems = {
       <div style="margin:10px 0">${this.html(k, 120, false, true)}</div>
       <div class="font-black" style="font-size:1.1rem">${esc(c.name)} 보석을 얻었어요!</div>
       <div class="font-bold muted mt-1">${esc(CONFIG.UNIT)}</div>
-      <div class="mt-2 font-bold">✅ 개념 도구 6개 · ✅ 기본 문제 · ✅ 다크몽 금고</div>
+      <div class="mt-2 font-bold">✅ 개념 도구 4개 · ✅ 기본 문제 · ✅ 다크몽 금고</div>
       <div class="row mt-3" style="justify-content:center"><button class="btn btn-primary" data-gem="box">💎 보석함 보기</button><button class="btn btn-sub" data-gem="close">계속하기</button></div>`);
     try { FX.rain(220); } catch (e) {}
     try { say(`${c.name} 보석 획득! 이번 차시 성취 성공이야!`); mood('cheer', 3200); } catch (e) {}
@@ -3890,7 +3892,7 @@ renderResult = function (k) {
   _renderResult(k);
   const ul = $('.ritems'); if (!ul || k !== 's1') return;
   const has = Gems.earned();
-  ul.insertAdjacentHTML('beforebegin', `<div class="font-black mt-2" style="color:${has ? '#c2410c' : '#64748b'}">${has ? `💎 ${esc(CHARS[GUIDE()].name)} 보석을 획득했어요!` : `💎 보석 조각 ${Gems.frag().filter(Boolean).length}/3 · 도구 6개·기본 문제·보스전을 모두 해내면 보석이 생겨요`}</div>`);
+  ul.insertAdjacentHTML('beforebegin', `<div class="font-black mt-2" style="color:${has ? '#c2410c' : '#64748b'}">${has ? `💎 ${esc(CHARS[GUIDE()].name)} 보석을 획득했어요!` : `💎 보석 조각 ${Gems.frag().filter(Boolean).length}/3 · 도구 4개·기본 문제·보스전을 모두 해내면 보석이 생겨요`}</div>`);
 };
 setInterval(() => { try { Gems.tick(); } catch (e) {} }, 600);
 
@@ -3907,7 +3909,7 @@ const ST_AREA = { dark: '수학 세계 전체', tilt: '수와 연산', mixup: '�
 const ST_VK = ['dark', 'tilt', 'mixup', 'clock', 'half'];
 const ST_SEAL = { tilt: '자릿수 저울의 봉인', mixup: '부등호의 봉인', clock: '수직선의 봉인', half: '높은 자리 사다리의 봉인', dark: '14층 저울 금고' };
 const CHAPTERS = [
-  { n: 1, v: 'tilt',  icon: '⚖️', title: '기울어진 수의 저울', sub: '개념 도구 6개 · 자리 수와 높은 자리 비교',  go: ['s1', 'concept'] },
+  { n: 1, v: 'tilt',  icon: '⚖️', title: '기울어진 수의 저울', sub: '개념 도구 4개 · 자리 수와 높은 자리 비교',  go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '삐딱이의 함정',     sub: '기본 문제 4개 · > = < 바르게 쓰기',        go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '다크몽 금고',       sub: '자물쇠 3겹 · 실생활 크기 비교 문제 3개',   go: ['s1', 'jump'] },
   { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 3종 · 다빈치 코드 금고', go: ['s2', 'drill'] },
@@ -4347,7 +4349,7 @@ init = function () { _st_init(); try { Story.boot(); } catch (e) {} };
 function lairModeHTML() {
   const party = state.s2.gmode === 'party';
   return `<div class="mt-3"><div class="font-black">🎮 누구와 겨룰까요?</div>
-    <div class="seg mt-1"><button class="${party ? '' : 'on'}" data-act="lair-mode" data-v="solo">🙋 혼자 하기</button><button class="${party ? 'on' : ''}" data-act="lair-mode" data-v="party">👥 2~4인 대결 (전자칠판)</button></div>
+    <div class="seg mt-1"><button class="${party ? '' : 'on'}" data-act="lair-mode" data-v="solo">👤 혼자 하기</button><button class="${party ? 'on' : ''}" data-act="lair-mode" data-v="party">👥 함께 하기 (2~4인)</button></div>
     ${party ? partyHTML() + '<p class="center text-xs muted font-bold mt-2">한 화면을 돌려 가며 한 명씩 도전해요(시간은 조금 짧아져요). 점수가 가장 높은 친구가 우승! 수업 활동용이라 결과 점수에는 들어가지 않아요. 상단 🖥 단추로 큰 화면 모드를 켤 수 있어요.</p>' : ''}</div>`;
 }
 function startPartyLair(id) {
@@ -5564,7 +5566,7 @@ const WN = (() => {
     const a = run.ans;
     o.innerHTML = `<div class="wnbox"><div class="wnhead"><span class="wnt">✏️ 다시 풀기 ${run.i + 1} / ${run.list.length}</span><button class="wnx" data-wn="close">✕</button></div>
       <div class="wnprog"><i style="width:${run.i / run.list.length * 100}%"></i></div>
-      <div class="wnrq">${tag(q)}<div class="wnq3">${esc(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
+      <div class="wnrq">${tag(q)}<div class="wnq3">${escB(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
         ${q.choices ? `<div class="wnch">${q.choices.map((c, k) => `<button class="wnc ${a ? (norm(c) === norm(q.ans) ? 'good' : a.v === c ? 'bad' : '') : ''}" data-wn="ans" data-v="${esc(c)}" ${a ? 'disabled' : ''}><b>${'①②③④⑤⑥'[k]}</b> ${esc(c)}</button>`).join('')}</div>`
         : `<div class="wnin"><input id="wnInput" inputmode="numeric" placeholder="답을 써요" ${a ? 'disabled' : ''} value="${a ? esc(a.v) : ''}"><button class="btn btn-primary" data-wn="type" ${a ? 'disabled' : ''}>확인</button></div>`}
         ${a ? `<div class="wnfb ${a.ok ? 'ok' : 'no'}">${a.ok ? '🎉 정답! 오답 탈출!' : `🤔 정답은 <b>${esc(q.ans)}</b>`}${q.ex ? `<div class="wnex">💡 ${esc(q.ex)}</div>` : ''}</div>` : ''}</div>
@@ -6552,7 +6554,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const fb = X.fb;
     return `<div class="card sv-j0card" id="svj0"><div class="qhead"><div class="qno" style="background:#f59e0b">1</div><div class="qtext"><span class="qtag" style="background:#fef3c7;color:#b45309">점프 1 · 오늘의 문제</span> <b>${J0.label}</b><br>${C.problem}</div></div>
       <div class="sv-j1tag">${assessment().complete ? '📖 오늘의 문제 해결! 🔓 점프 문제 2~4가 열렸어요' : '📖 오늘 처음 만난 문제예요 · 해결하면 점프 문제 2~4가 열려요'}</div>
-      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea></div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
+      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea>${done ? '' : `<div class="sv-voice"><button type="button" class="btn btn-sub sv-mic" data-sv="voice-ex">🎤 말로 쓰기</button><div id="sv-voice-ex" class="sv-small sv-vmsg" role="status" aria-live="polite">단추를 누르고 어떻게 해결했는지 말해 보세요. 말한 내용이 글자로 들어가요.</div></div>`}</div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
       ${done ? `<div class="sv-goal-done">🎯 <b>학습 목표 도달!</b> ${esc(assessment().status)} · 🔓 점프 문제 2~4가 열렸어요.${J0.ok ? '<br>' + J0.ok : ''}</div><div class="sv-row"><button class="btn btn-sub" data-sv="j0-redo">🔁 다시 해 보기</button></div>`
         : `<div class="sv-row"><button class="btn btn-green" data-sv="j0-check">🔍 문제 해결!</button><button class="btn btn-sub" data-sv="j0-hint">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
       ${!done && X.hint >= 0 ? `<div class="mt-2">${charSay('hint', '💡 ' + J0.hints[X.hint % J0.hints.length])}</div>` : ''}
@@ -6654,6 +6656,17 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     else if (act === 'vhint') { s.goalAssessment.hintUsed = true; const m = $('#sv-verify-msg'); if (m) m.textContent = '💡 ' + C.verify.hint; persist(); }
     else if (act === 'resume') { const p = pending; pending = null; if (p) { state.s1 = Object.assign(state.s1, p.s1); ensure(); if (p.sid && !state.student.id) try { syncStudent(p.sid, p.sname); } catch (x) {} } renderS1(); toast('📂 하던 곳부터 이어서 해요!'); }
     else if (act === 'fresh') { pending = null; try { localStorage.removeItem(KEY); } catch (x) {} resetS1(); renderS1(); toast('✨ 새로 시작해요!'); }
+    else if (act === 'voice-ex') { /* 점프 1 설명 칸 말로 쓰기 */
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-ex');
+      if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
+      if (b.classList.contains('on') && recog) { try { recog.stop(); } catch (x) {} return; }
+      try { if (recog) recog.abort(); recog = new SR(); recog.lang = 'ko-KR'; recog.interimResults = false; recog.maxAlternatives = 1;
+        b.classList.add('on'); b.textContent = '⏹ 그만 말하기'; recog.onend = () => { b.classList.remove('on'); b.textContent = '🎤 말로 쓰기'; };
+        recog.onresult = ev => { const txt = ev.results[0][0].transcript, a = document.querySelector('textarea.sv-ex'); if (a) { a.value = (a.value ? a.value.trim() + ' ' : '') + txt; const X = state.s1.j0 || (state.s1.j0 = { a: {}, fb: null, hint: -1 }); X.ex = a.value; persist(); } if (st) st.textContent = '✅ 받아 적었어요. 글자를 확인하고 고칠 곳이 있으면 고쳐요. 더 말하려면 다시 눌러요.'; };
+        recog.onerror = ev => { if (st) st.textContent = ev.error === 'not-allowed' ? '마이크 사용이 막혀 있어요. 주소창의 🔒에서 마이크를 허용하거나 직접 써 주세요.' : '잘 듣지 못했어요. 다시 누르거나 직접 써 주세요.'; };
+        recog.start(); if (st) st.textContent = '🎤 듣고 있어요… 어떻게 해결했는지 말해 보세요.';
+      } catch (err) { if (st) st.textContent = '마이크를 쓸 수 없어요. 직접 써 주세요.'; }
+    }
     else if (act === 'voice') {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-msg');
       if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
@@ -6927,6 +6940,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .svbg-vs .fun{font-size:1.4rem;font-weight:900;color:#be123c}
 .svbg-vs .pslot{min-width:120px}
 
+.svbg-plr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-top:6px;padding:6px 8px;border-radius:12px;background:#f8fafc}.svbg-pln{display:inline-flex;align-items:center;gap:6px}
+
 /* 🔧 개념 도구 조작형 교체 키트 */
 .ufstep{display:flex;gap:10px;align-items:flex-start;margin:10px 0 8px;padding:10px 14px;border-radius:14px;background:#f0f9ff;border:2px solid #bae6fd;font-weight:800;line-height:1.55;color:#0c4a6e}
 .ufstep>span{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:#0284c7;color:#fff;display:grid;place-items:center;font-weight:900}
@@ -7016,6 +7031,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     LV_NM,
     k(a, b, c) { return [a, b, c][Math.max(1, Math.min(3, this.lv)) - 1]; },
     setLv(n) { this.lv = Math.max(1, Math.min(3, n)); LS.set('svbg:lv', this.lv); },
+    /* 함께 하기: 사람마다 자기 단계 (기존 게임용) */
+    plv: (() => { const v = LS.get('svbg:plv'); return Array.isArray(v) && v.length === 4 ? v : [2, 2, 2, 2]; })(),
+    setPlv(i, n) { this.plv[i] = Math.max(1, Math.min(3, n)); LS.set('svbg:plv', this.plv); },
+    solo() { return T(() => state.s2.bmode) !== 'multi'; },
+    pl(i) { if (this.solo()) return this.lv; const g = this.g(); return (g && g.plv && g.plv[i]) || this.plv[i] || 2; },
+    /* 함께 하기: 맞히면 ↑ · 틀리면 ↓ (연속 3번 정답 → 단계 UP, 연속 2번 오답 → 단계 DOWN) */
+    res(i, ok) {
+      const g = this.g(), A = this.A; if (!g || g.solo || !A || A.ownLv || !g.players || !g.players[i] || g.players[i].ai) return;
+      if (!g.plv) g.plv = g.players.map((_, k) => this.plv[k] || 2); if (!g.lvrun) g.lvrun = g.players.map(() => 0);
+      let r = g.lvrun[i], lv = g.plv[i], nm = E(g.players[i].name), msg = '';
+      r = ok ? Math.max(0, r) + 1 : Math.min(0, r) - 1;
+      if (r >= 3 && lv < 3) { lv++; r = 0; msg = `🔥 ${nm} 단계 UP → <b>${LV_NM[lv]}</b>`; }
+      else if (r <= -2 && lv > 1) { lv--; r = 0; msg = `🌱 ${nm} 단계 조정 → <b>${LV_NM[lv]}</b>`; }
+      g.lvrun[i] = r; if (lv !== g.plv[i]) { g.plv[i] = lv; T(() => A.onLv && A.onLv(g, i, lv)); setTimeout(() => this.toast(msg), 700); }
+    },
+    plvHTML() {
+      const p = T(() => state.party) || { n: 2, chars: [] }, n = p.n || 2;
+      return `<div class="svbg-lv svbg-plv" data-svbg-plv data-n="${n}"><div class="font-black">🎚️ 사람마다 단계 고르기 <small class="muted">(자기 수준에 맞는 문제를 받아요)</small></div>
+        ${Array.from({ length: n }, (_, i) => `<div class="svbg-plr"><span class="svbg-pln">${AV(p.chars[i], 26)} <b>${i + 1}P ${E(T(() => CHARS[p.chars[i]].name) || '')}</b></span><span class="seg">${[1, 2, 3].map(k => `<button class="${this.plv[i] === k ? 'on' : ''}" data-svbg="plv" data-v="${i}|${k}">${LV_NM[k]}</button>`).join('')}</span></div>`).join('')}
+        <p class="text-xs muted font-bold mt-1">${E(this.A && this.A.lvNote || '단계가 높을수록 더 어려운 문제를 받아요.')}<br>게임 중에는 연속 3번 맞히면 단계가 올라가고, 연속 2번 틀리면 내려가요.</p></div>`;
+    },
     key() { return 'svbg:' + T(() => CONFIG.LESSON_ID) || location.pathname; },
     g() { const A = this.A; return A && T(() => state.s2[A.key]) || null; },
     onBoard() { return T(() => state.s2.step === 'board' && state.tab === 's2') !== false && T(() => state.s2.step === 'board'); },
@@ -7025,15 +7061,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     lvHTML(note) {
       return `<div class="svbg-lv" data-svbg-lv><div class="font-black">🎚️ 난이도 <small class="muted">(혼자 할 때는 맞히는 만큼 단계가 저절로 바뀌어요)</small></div>
         <div class="seg mt-1">${[1, 2, 3].map(n => `<button class="${this.lv === n ? 'on' : ''}" data-svbg="lv" data-v="${n}">${LV_NM[n]}</button>`).join('')}</div>
-        <p class="text-xs muted font-bold mt-1">${note || (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
+        <p class="text-xs muted font-bold mt-1">${note || (this.A && this.A.lvNote ? E(this.A.lvNote) + '<br>' : '') + (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
     },
     criteriaHTML() {
-      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 차례 알림</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
+      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 사람마다 자기 수준</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
     },
     bar(g) {
       const A = this.A, P = g.players || [], t = g.turn ?? g.cur ?? 0, p = P[t] || {};
       const who = A.realtime ? `🔔 모두 함께! 빨리 보고 판단해요` : p.ai ? `${AV(p.char, 26)} <b>${E(p.name)}</b> 생각 중…` : `${AV(p.char, 26)} <b>${E(p.name)}</b> 차례예요!`;
-      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : ''}</div>
+      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : (!A.realtime && !A.ownLv && !p.ai ? `<span class="svbg-lvb">${LV_NM[this.pl(t)]}</span>` : '')}</div>
         <div class="svbg-btns">${A.hint ? '<button data-svbg="hint">💡 수학 힌트</button>' : ''}<button data-svbg="pause">⏸ 잠깐 멈춤</button><button data-svbg="again">🔁 처음부터</button><button data-svbg="quit">🚪 그만하기</button></div></div>`;
     },
     overlay(html, cls) {
@@ -7057,6 +7093,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const t = e.target.closest('[data-svbg]'); if (!t) return; const a = t.dataset.svbg, v = t.dataset.v; e.preventDefault(); e.stopPropagation();
       const g = this.g();
       if (a === 'lv') { this.setLv(+v); T(() => renderBoardPage()); return; }
+      if (a === 'plv') { const [i, k] = v.split('|').map(Number); this.setPlv(i, k); const box = $q('[data-svbg-plv]'); if (box) box.outerHTML = this.plvHTML(); return; }
       if (a === 'ready') { this.closeOv(); this.paused = false; T(() => this.A.onReady && this.A.onReady(g)); return; }
       if (a === 'pause') { this.paused = true; this.overlay(`<div class="svbg-ht">⏸ 잠깐 멈춤</div><p class="svbg-hs">선생님 말씀을 듣거나 쉬었다가<br>준비되면 계속해요.</p><button class="btn btn-primary btn-lg" data-svbg="resume-play">▶ 계속하기</button>`); return; }
       if (a === 'resume-play') { this.closeOv(); this.paused = false; return; }
@@ -7076,7 +7113,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A, g = this.g(); if (!A || !A.save) return;
       if (!g || g.over) { if (g && g.over) this.clearSave(); return; }
       const str = T(() => JSON.stringify(g)); if (!str || (!force && str === this._saveStr)) return; this._saveStr = str;
-      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, t: Date.now() });
+      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, plv: this.plv.slice(), t: Date.now() });
     },
     clearSave() { LS.del(this.key()); this._saveStr = ''; },
     saved() { const s = LS.get(this.key()); if (!s || Date.now() - s.t > 7 * 864e5) return null; return s; },
@@ -7085,7 +7122,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       ['busy', 'peeking', 'rang'].forEach(k => { if (k in g) g[k] = false; }); if ('lock' in g) g.lock = 0; if ('moving' in g) g.moving = -1;
       if (!g.solo && 'cover' in g) g.cover = true;
       T(() => { state.s2.bmode = s.mode; if (s.party) Object.assign(state.party, s.party); });
-      this.setLv(s.lv || this.lv); T(() => touch('s2'));
+      this.setLv(s.lv || this.lv); if (Array.isArray(s.plv)) s.plv.forEach((k, i) => this.setPlv(i, k)); T(() => touch('s2'));
       T(() => this.A.restore && this.A.restore(g));
       state.s2[this.A.key] = g; this._turn = null; this._soloOver = null;
       T(() => renderBoardPage()); this.toast('💾 지난 게임을 이어서 해요!');
@@ -7105,6 +7142,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A; if (!A) return; const body = $q('#s2body'); const g = this.g(), board = T(() => state.s2.step === 'board');
       if (!body || !board) { this._turn = null; return; }
       if (g && !g.over) {
+        if (!g.solo && !A.ownLv && !g.plv && g.players) { g.plv = g.players.map((_, k) => this.plv[k] || 2); g.lvrun = g.players.map(() => 0); }
         const t = g.turn ?? g.cur ?? 0, sig = t + '|' + (g.players || []).length;
         let bar = body.querySelector(':scope > .svbg-bar');
         const html = this.bar(g);
@@ -7130,6 +7168,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           const st = body.querySelector('[data-act="board-start"]');
           if (st && !body.querySelector('[data-svbg-crit]')) { const h = body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', `<div data-svbg-crit>${this.criteriaHTML()}</div>`); }
           if (st && !A.ownLv && !body.querySelector('[data-svbg-lv]') && T(() => state.s2.bmode) === 'ai') { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.lvHTML()); }
+          if (st && T(() => state.s2.bmode) === 'multi') { const ex = body.querySelector('[data-svbg-plv]'), n = T(() => state.party.n) || 2;
+            if (ex && +ex.dataset.n !== n) ex.remove();
+            if (!body.querySelector('[data-svbg-plv]')) { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.plvHTML()); } }
           const s = this.saved();
           if (st && s && !body.querySelector('[data-svbg-res]')) { const h = body.querySelector('[data-svbg-crit]') || body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', this.resumeHTML(s)); }
         }
@@ -7180,7 +7221,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           <div class="font-black mt-3">🙋 누구와 할까요?</div>
           <div class="modecards mt-1">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
           ${st.bmode === 'multi' ? T(() => partyHTML()) || '' : ''}
-          ${SVBG.lvHTML(st.bmode === 'multi' ? '함께 할 때는 모두 이 단계에서 시작하고, 사람마다 맞히는 만큼 단계가 따로 바뀌어요.' : '')}
+          ${st.bmode === 'multi' ? '' : SVBG.lvHTML()}
           ${st.bmode === 'multi' ? '<p class="center text-xs muted font-bold mt-2">함께 하기 결과는 수업 활동용이라 선생님께 제출되지 않아요.</p>' : ''}
           <div class="next-row"><button class="btn btn-primary btn-lg" data-act="board-start">${D.icon} ${D.startTxt}</button></div></div>`;
       } else {
@@ -7194,7 +7235,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const players = mkPlayers(st.bmode).map(p => Object.assign({}, p, { name: p.ai ? p.name : p.name }));
       if (st.bmode === 'ai') players[1].name = players[1].name.replace('(컴퓨터)', '(컴퓨터)');
       const n = players.length, g = { solo: st.bmode === 'ai', mode: D.mode, players, turn: 0, over: false, ranking: null, wrong: [], log: `${E(players[0].name)}부터 시작해요!`,
-        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: Array(n).fill(SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
+        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: players.map((P, i) => st.bmode === 'multi' ? (SVBG.plv[i] || 2) : SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
       if (D.mode === 'land') g.board = D.newBoard(SVBG.lv); else g.track = D.track || this.track();
       st.au = g; SVBG._turn = null; this.page(); T(() => say(D.startSay));
       if (D.mode === 'race') this.ask(g);
@@ -7316,6 +7357,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 /* 1-5 · 다빈치 코드 금고 — 자체 준비 화면 사용 + 범위 추리 힌트 */
 SVBG.use({ key: 'dv', ownCover: true, kick: g => dvAI(),
   hint: g => `타일은 <b>왼쪽부터 작은 수 → 큰 수</b>로 놓여 있어요.<br>숨은 타일(?)의 <b>왼쪽 공개 타일보다 크고, 오른쪽 공개 타일보다 작은</b> 수만 후보예요.<br>📏 범위가 가장 좁은 타일부터 노리면 맞힐 확률이 높아요!` });
+
+/* 👥 사람마다 자기 수준: 맞히는 사람의 도움 (🌱 범위 밖 수가 처음부터 흐려짐 · 🌿 버튼으로 켜기 · 🔥 도움 없이 범위 추리) */
+SVBG.A.lvNote = '단계에 따라 추리 도움이 달라요 · 🌱 범위 밖 수가 처음부터 흐려져요 · 🌿 버튼으로 켜요 · 🔥 도움 없이 추리해요';
+(function () { const _r = renderBoardPage; renderBoardPage = function () { let b = null; try { b = state.s2.dv; } catch (e) {}
+  if (b && !b.over && b.sel != null) { const lv = SVBG.pl(b.turn), sig = b.turn + '|' + JSON.stringify(b.sel); if (b._hs !== sig) { b._hs = sig; b.hint = lv === 1; } if (lv === 3) b.hint = false; }
+  const r = _r.apply(this, arguments);
+  try { if (b && !b.over && SVBG.pl(b.turn) === 3) document.querySelectorAll('[data-act="dv-hint"]').forEach(x => x.remove()); } catch (e) {} return r; }; })();
+/* 게임 중 단계 바뀜: 숨은 수를 맞히면 ↑ · 틀리면 ↓ */
+(function () { const _g = dvApplyGuess; dvApplyGuess = function (v) { let p = null, ok = null; try { const b = state.s2.dv, s = b.sel; p = b.turn; ok = b.hands[s.pi][s.ti].v === v; } catch (e) {}
+  const r = _g.apply(this, arguments); if (ok != null) SVBG.res(p, ok); return r; }; })();
 
 /* ---------- 🐾 캐릭터 고르기: 4학년 1학기에 나온 친구들 중에서 ---------- */
 (function () {
@@ -7559,5 +7610,328 @@ ufReplay({ scale: ['renderScale', ufDel('sc')], ladder: ['renderLadder', ufDel('
 
 </script>
 <!--BG-END-->
+<!--CK-START--><style>/* 4-1-1-1 개념 탐험 조작 도구 */
+.t11hubx{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:640px){.t11hubx{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.t11card .ancap{background:#eff6ff;border:2px solid #bfdbfe;border-radius:14px;padding:10px 14px;font-weight:800;color:#1e3a8a;margin:10px 0}
+.t11card .andone{background:#ecfdf5;border:2px solid #86efac;border-radius:14px;padding:12px 14px;font-weight:800;color:#166534;margin-top:10px;line-height:1.55}
+.t11steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.t11steps span{font-size:.8rem;font-weight:800;border-radius:999px;padding:3px 10px;background:#f1f5f9;color:#64748b}
+.t11steps span.cur{background:#fef3c7;color:#92400e}.t11steps span.ok{background:#dcfce7;color:#166534}
+.t11src{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:12px;padding:10px;border:2px dashed #cbd5e1;border-radius:16px;background:#f8fafc}
+.t11lab{width:100%;text-align:center;font-size:.82rem;font-weight:800;color:#64748b}
+.t11piece{display:inline-flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:2px solid #cbd5e1;border-radius:14px;padding:6px 12px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 3px 0 #94a3b8}
+.t11piece b{font-size:.9rem}.t11piece small{font-size:.72rem;color:#64748b;font-weight:800}
+.t11empty{color:#94a3b8;font-weight:800;font-size:.85rem}
+/* 수 모형 */
+.pv{display:inline-block;flex:none}
+.pv0{width:46px;height:46px;border-radius:6px;background:linear-gradient(135deg,#fde047,#f59e0b);box-shadow:inset 0 0 0 2px #b45309,3px 3px 0 #b45309}
+.pv1{width:30px;height:30px;border-radius:4px;background:repeating-linear-gradient(90deg,#60a5fa 0 5px,#3b82f6 5px 6px),#60a5fa;box-shadow:inset 0 0 0 2px #1d4ed8,3px 3px 0 #1e40af}
+.pv2{width:26px;height:26px;border-radius:3px;background:repeating-linear-gradient(0deg,#f9a8d4 0 2.3px,#ec4899 2.3px 2.6px),repeating-linear-gradient(90deg,transparent 0 2.3px,#ec4899 2.3px 2.6px);box-shadow:inset 0 0 0 1px #be185d}
+.pv3{width:6px;height:26px;border-radius:2px;background:repeating-linear-gradient(0deg,#86efac 0 2.3px,#16a34a 2.3px 2.6px);box-shadow:inset 0 0 0 1px #15803d}
+.pv4{width:7px;height:7px;border-radius:2px;background:#fb923c;box-shadow:inset 0 0 0 1px #c2410c}
+.t11num{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin:10px 0;flex-wrap:wrap}
+.t11num span{display:flex;flex-direction:column;align-items:center;min-width:44px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:4px 6px}
+.t11num span b{font-size:1.8rem;line-height:1.1;color:#0f172a;min-height:2rem}.t11num span small{font-size:.72rem;font-weight:800;color:#64748b}
+.t11num span.over{border-color:#ef4444;background:#fef2f2}.t11num span.over b{color:#dc2626}
+.t11num span.new{border-color:#f59e0b;background:#fffbeb;animation:t11pop .6s}
+.t11num em{font-style:normal;font-weight:900;font-size:1.2rem;color:#1d4ed8;margin-left:6px;align-self:center}
+.t11num.small span b{font-size:1.4rem}
+.t11mat{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;background:#fefce8;border:3px solid #fde68a;border-radius:16px;padding:8px}
+.t11mat.dzover{background:#fef9c3;border-color:#f59e0b}
+.t11col{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border-radius:12px;padding:6px 4px;min-height:150px}
+.t11col.man{background:#fff7ed}.t11ph{font-weight:900;color:#475569}
+.t11pile{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:3px;flex:1;max-width:100%}
+.t11col.bund .t11pile{animation:t11shake .45s 2}.t11col.bund .pv.go{animation:t11zip .9s forwards}
+.t11cnt{font-size:.75rem;font-weight:800;color:#64748b}
+@keyframes t11shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes t11zip{to{transform:translateX(-60px) scale(.3);opacity:0}}
+@keyframes t11pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media(max-width:560px){.t11col{min-height:120px}.pv1{width:22px;height:22px}.pv0{width:34px;height:34px}}
+/* 수직선 */
+.t11nl{position:relative;height:120px;margin:18px 26px 8px}
+.t11nl.dzover .bar{background:#f59e0b}
+.t11nl .bar{position:absolute;left:0;right:0;top:70px;height:6px;border-radius:3px;background:#334155}
+.t11nl .tk{position:absolute;top:62px;width:2px;height:22px;background:#334155;transform:translateX(-1px)}.t11nl .tk.big{width:3px;height:30px;top:58px}
+.t11nl .lb{position:absolute;top:94px;transform:translateX(-50%);font-weight:900;font-size:.92rem;white-space:nowrap}.t11nl .lb.end{color:#b91c1c}
+.t11flag{position:absolute;top:20px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:1.6rem;line-height:1}
+.t11flag small{font-size:.75rem;font-weight:900;background:#fff;border-radius:6px;padding:0 4px;margin-top:2px}
+.t11frog{position:absolute;top:36px;transform:translateX(-50%);font-size:1.7rem;transition:left .35s}
+.t11arc{position:absolute;top:50px;height:18px;border:2px dashed #16a34a;border-bottom:none;border-radius:50% 50% 0 0}
+.t11piece.flag,.t11piece.hop{padding:8px 14px}
+/* 만 상자 */
+.mbox{display:inline-flex;align-items:center;justify-content:center;width:46px;height:40px;border-radius:8px;background:linear-gradient(180deg,#fda4af,#e11d48);color:#fff;font-weight:900;box-shadow:0 3px 0 #9f1239}
+.t11shelf{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:flex-end;min-height:64px;background:linear-gradient(180deg,#fff,#fff1f2);border:3px solid #fecdd3;border-bottom:8px solid #be123c;border-radius:14px;padding:10px}
+.t11shelf.dzover{border-color:#f59e0b}.t11shelf .mbox{cursor:pointer}
+.t11tag{margin:10px auto 0;max-width:420px;text-align:center;font-size:1.3rem;font-weight:900;background:#fff;border:3px dashed #fb7185;border-radius:14px;padding:8px}
+.t11tag.dzover{border-color:#f59e0b;background:#fffbeb}.t11tag .slot{display:inline-block;min-width:110px;color:#be123c}
+.t11piece.word b{font-size:1.15rem}
+/* 저금통 */
+.t11bank{border:3px solid #86efac;border-radius:18px;background:#f0fdf4;padding:10px;text-align:center}
+.t11bank.dzover{border-color:#f59e0b;background:#fefce8}
+.t11bank .pig{display:flex;align-items:center;justify-content:center;gap:10px;font-size:2.2rem}.t11bank .pig b{font-size:1.6rem;color:#166534}.t11bank .pig small{font-size:.85rem;font-weight:800;color:#475569}
+.t11bank .in{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px;min-height:40px}
+.t11bank .in>span{cursor:pointer}.t11bank .sum{margin-top:4px;font-weight:800;color:#334155;font-size:.9rem}
+.bill{display:inline-flex;align-items:center;justify-content:center;width:58px;height:30px;border-radius:5px;background:linear-gradient(180deg,#a7f3d0,#34d399);border:2px solid #059669;font-size:.72rem;font-weight:900;color:#064e3b}
+.coin{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;font-size:.6rem;font-weight:900;border:2px solid}
+.coin.c5{background:#e5e7eb;border-color:#6b7280;color:#374151}.coin.c1{background:#fde68a;border-color:#b45309;color:#78350f;width:30px;height:30px}
+/* CK 엔진 추가 */
+.hub6,.hub.hub4c{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:640px){.hub6,.hub.hub4c{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.ckcard{margin-top:12px}
+.ckno{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:999px;background:#2563eb;color:#fff;font-size:.8rem;padding:0 8px;margin-right:4px}
+.ckmat{display:grid;gap:6px;background:#fefce8;border:3px solid #fde68a;border-radius:16px;padding:8px;margin-top:6px}
+.ckmat.dzover{background:#fef9c3;border-color:#f59e0b}
+.ckcol{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border-radius:12px;padding:6px 3px;min-height:132px;border:2px solid transparent}
+.ckcol.hl{border-color:#f59e0b;background:#fffbeb}.ckcol.dzover{border-color:#22c55e;background:#f0fdf4}
+.ckph{font-weight:900;color:#475569;font-size:.85rem;white-space:nowrap}
+.ckpile{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:3px;flex:1;max-width:100%}
+.ckcol.bund .ckpile{animation:t11shake .45s 2}.ckcol.bund .go{animation:t11zip .85s forwards}
+.ckcnt{font-size:.74rem;font-weight:800;color:#64748b}.ckcnt.over{color:#dc2626}
+.ckmore{font-size:.75rem;color:#64748b}
+.ckmb{cursor:grab;touch-action:none;display:inline-flex}
+.ckt{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:24px;padding:0 4px;border-radius:6px;font-style:normal;font-size:.7rem;font-weight:900;color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.ckt.g1{background:linear-gradient(180deg,#f472b6,#db2777)}.ckt.g2{background:linear-gradient(180deg,#a78bfa,#7c3aed)}.ckt.g3{background:linear-gradient(180deg,#38bdf8,#0369a1)}.ckt.g0{background:#f59e0b}
+.ckzone{border:3px dashed #94a3b8;border-radius:14px;padding:10px;text-align:center;font-weight:800;color:#475569;background:#f8fafc;min-height:56px}
+.ckzone.dzover{border-color:#f59e0b;background:#fffbeb}
+.ckgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.ckgrid2{grid-template-columns:1fr}}
+.ckbig{font-size:1.4rem;font-weight:900;text-align:center;margin:6px 0}
+.ckcells{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin:8px 0}
+.ckcell{position:relative;display:flex;flex-direction:column;align-items:center;min-width:40px}
+.ckcell b{display:flex;align-items:center;justify-content:center;width:40px;height:48px;border:2px solid #cbd5e1;border-radius:10px;background:#fff;font-size:1.5rem;font-weight:900}
+.ckcell small{font-size:.66rem;font-weight:800;color:#64748b;white-space:nowrap}
+.ckcell.on b{border-color:#f59e0b;background:#fffbeb;color:#b45309}
+.ckgap{width:12px;align-self:stretch;border-radius:6px;cursor:pointer}
+.ckgap.dz{background:repeating-linear-gradient(180deg,#e2e8f0 0 6px,transparent 6px 10px)}
+.ckgap.dzover{background:#fde68a}
+.ckgap.cut{background:#dc2626;width:6px;margin:0 3px}
+.ckunit{display:inline-block;font-size:.85rem;font-weight:900;color:#be123c;background:#fff1f2;border-radius:999px;padding:1px 8px;margin-top:4px}
+.ckbal{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+.ckbeam{width:86%;height:10px;background:#78350f;border-radius:5px;transition:transform .6s;position:relative}
+.ckpan{display:flex;justify-content:space-between;width:92%;margin-top:6px}
+.ckpan>div{width:46%;min-height:64px;border:3px solid #fcd34d;border-radius:0 0 40px 40px;background:#fffbeb;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;font-weight:900;transition:transform .6s}
+.ckpan>div.dzover{border-color:#22c55e}
+.ckval{display:inline-block;height:14px;border-radius:7px;background:linear-gradient(90deg,#fb923c,#f59e0b);transition:width .4s;vertical-align:middle}
+.cktable{border-collapse:collapse;margin:6px auto}.cktable td{border:2px solid #cbd5e1;min-width:58px;height:42px;text-align:center;font-weight:900;font-size:1.05rem;background:#fff}
+.cktable td.dz{background:#f8fafc}.cktable td.dzover{background:#fef9c3}.cktable td.lit{background:#ecfeff}
+.ckarrow{display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#0e7490;min-width:44px;height:24px;border:2px dashed #67e8f9;border-radius:8px;background:#fff}
+.ckarrow.dzover{background:#cffafe}.ckarrow.ok{border-style:solid;background:#cffafe}
+#toast,.toast,#sayBub,.saybub,.mascot-bubble{pointer-events:none!important}
+</style>
+<script>
+/* =====================================================================
+   🧪 CK · 개념 탐험 조작 도구 엔진 (4학년 차시 공통)
+   도구 하나 = 기본 개념 하나 · 단계: 조작하며 발견 → 개념 정리 → 다른 수로 스스로 확인
+   틀린 예 고치기 · 보기 고르기 · 정답 입력 없음. 조작 결과가 개념을 보여 줘요.
+   CK.install([{ k, vk, icon, name, short, sub, taunt, msg, summary, stages:[{ t, q, init, view, on:{ 'kind:drop'|'kind:tap'|'act:이름' } }] }])
+   ===================================================================== */
+const CKN = ['일', '십', '백', '천', '만', '십만', '백만', '천만', '억', '십억', '백억', '천억', '조', '십조', '백조', '천조'];
+const CKV = k => Math.pow(10, k);
+const ckRead = n => { if (!n) return '0'; const U = ['', '만', '억', '조'], g = []; let x = n, i = 0; while (x > 0) { const r = x % 10000; if (r) g.unshift(r + U[i]); x = Math.floor(x / 10000); i++; } return g.join(' '); };
+const ckNumOf = (cnt) => Object.keys(cnt).reduce((s, k) => s + cnt[k] * CKV(+k), 0);
+const CK = (() => {
+  const T = {}, ORDER = [];
+  let lastX = 0; document.addEventListener('pointerup', e => { lastX = e.clientX; }, true);
+  const box = () => { const s = state.s1; if (!s.ck) s.ck = {}; return s.ck; };
+  const fresh = () => ({ i: 0, d: null, won: false, fb: null });
+  const S = k => { const c = box(); if (!c[k]) c[k] = fresh(); return c[k]; };
+  const snd = n => { try { Sound[n](); } catch (e) {} };
+  const cur = () => { const k = state.s1 && state.s1.tool; return T[k] ? k : null; };
+  const stg = k => { const t = T[k], s = S(k); return t.stages[Math.min(s.i, t.stages.length - 1)]; };
+  const api = k => ({ k, x: () => lastX,
+    win(msg) { const s = S(k); s.won = true; s.fb = { ok: true, msg }; snd('correct'); },
+    say(ok, msg, hint) { S(k).fb = { ok, msg, hint }; if (!ok && !hint) snd('wrong'); },
+    clear() { S(k).fb = null; },
+    redraw() { render(k); }, later(fn, ms) { setTimeout(() => { if (cur() === k) { fn(); } }, ms); } });
+  function dispatch(key, ...a) { const k = cur(); if (!k) return; const s = S(k); if (s.won) return; const g = stg(k); if (!g.on || !g.on[key]) return;
+    touch('s1'); g.on[key](s.d, ...a, api(k)); render(k); }
+  const kinds = new Set();
+  function dnd(kind) { if (kinds.has(kind)) return; kinds.add(kind); DND.on(kind, { drop(v, z, el, src) { dispatch(kind + ':drop', v, z, el); }, tap(v, el) { dispatch(kind + ':tap', v, el); } }); }
+  const fb = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
+  function render(k) {
+    const el = $('#toolBody'); if (!el) return; const t = T[k], s = S(k), done = !!state.s1.badges[k] && !s.rp, n = t.stages.length;
+    if (s.i < n && !s.d) { const g = t.stages[s.i]; s.d = g.init ? g.init() : {}; }
+    const steps = `<div class="t11steps">${t.stages.map((g, j) => `<span class="${(done && s.i >= n) || j < s.i ? 'ok' : j === s.i ? 'cur' : ''}">${(done && s.i >= n) || j < s.i ? '✅' : j === s.i ? '👉' : '⬜'} ${g.t}</span>`).join('')}</div>`;
+    let body = '';
+    if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
+    else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
+      body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
+        + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : ''); }
+    const V = VILLAINS[t.vk] || {};
+    el.innerHTML = `<div class="card t11card ckcard" style="--tc:${V.color || '#2563eb'}"><div class="stage-head"><span class="ti" style="background:${V.bg || '#eef2ff'}">${t.icon}</span><div><span class="stchap">CHAPTER 1 · ${t.no}</span><h2 class="h2">${t.name}</h2><p class="sub" style="margin:3px 0 0">${t.sub}</p></div></div>
+      ${t.taunt ? vSay(t.vk, t.taunt, 44) : ''}${steps}${body}</div>`;
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-ck]'); if (!b) return; const k = cur(); if (!k) return; const a = b.dataset.ck, s = S(k), t = T[k];
+    if (a === 'next') { s.i++; s.d = null; s.won = false; s.fb = null; if (s.i >= t.stages.length) { s.rp = false; award(k); } render(k); return; }
+    if (a === 're') { box()[k] = Object.assign(fresh(), { rp: true }); render(k); try { toast('🔄 처음부터 다시 조작해 봐요!'); } catch (x) {} return; }
+    dispatch('act:' + a, b.dataset.v, b);
+  });
+  function install(list, opt = {}) {
+    list.forEach((t, j) => { t.no = '도구 ' + (j + 1); T[t.k] = t; ORDER.push(t.k); (t.dnd || []).forEach(dnd); });
+    if (typeof S1_TOOLS !== 'undefined') S1_TOOLS.splice(0, S1_TOOLS.length, ...list.map(t => [t.k, t.vk, t.no, t.name, t.short]));
+    if (typeof BADGES !== 'undefined') BADGES.splice(0, BADGES.length, ...list.map(t => [t.k, `${t.no} · ${t.name}`, t.icon]));
+    const setMap = (M, f) => { if (!M) return; Object.keys(M).forEach(x => delete M[x]); list.forEach(t => { M[t.k] = f(t); }); };
+    try { setMap(TOOL_V, t => t.vk); } catch (e) {} try { setMap(ST_TOOLV, t => t.vk); } catch (e) {} try { setMap(ST_TOOLM, t => t.msg || t.sub.replace(/<[^>]+>/g, '')); } catch (e) {}
+    try { setMap(TOOL_VK, t => t.vk); } catch (e) {} try { list.forEach(t => { TOOL_RENDER[t.k] = () => render(t.k); }); } catch (e) {}
+    const oldRT = renderTool; renderTool = function () { const s = state.s1; if (!T[s.tool]) s.tool = ORDER[0]; render(s.tool); };
+    try { const r0 = resetS1; resetS1 = function () { r0.apply(this, arguments); state.s1.tool = ORDER[0]; state.s1.ck = {}; }; } catch (e) {}
+    try { if (state.s1 && !T[state.s1.tool]) state.s1.tool = ORDER[0]; } catch (e) {}
+  }
+  return { install, dnd, render, S, api, T, lastX: () => lastX };
+})();
+
+/* ---------- 공통 그림 부품 ---------- */
+/* 수 모형: 일·십·백·천은 모형 그림, 만 이상은 이름 블록 */
+const ckBlk = (k, cls) => k <= 3 ? `<i class="pv pv${4 - k} ${cls || ''}"></i>` : `<i class="ckt g${Math.min(3, Math.floor(k / 4))} ${cls || ''}">${CKN[k]}</i>`;
+/* 자릿값 판: cols 높은 자리 → 낮은 자리 */
+function ckMat(d, o = {}) {
+  const cols = o.cols, c = d.cnt;
+  return `<div class="ckmat" data-dz="${o.dz || 'ck-mat'}" data-i="0" style="grid-template-columns:repeat(${cols.length},minmax(0,1fr))">${cols.map(k => { const n = c[k] || 0;
+    return `<div class="ckcol ${d.bund === k ? 'bund' : ''} ${o.hl && o.hl[k] ? 'hl' : ''}" ${o.colDz ? `data-dz="${o.colDz}" data-i="${k}"` : ''}><div class="ckph">${CKN[k]}</div><div class="ckpile">${Array.from({ length: Math.min(n, 12) }, () => o.dragOut ? `<span class="ckmb" data-dg="ck-mb" data-v="${k}">${ckBlk(k, d.bund === k ? 'go' : '')}</span>` : ckBlk(k, d.bund === k ? 'go' : '')).join('')}${n > 12 ? `<b class="ckmore">+${n - 12}</b>` : ''}</div><div class="ckcnt ${n >= 10 ? 'over' : ''}">${n}개</div></div>`; }).join('')}</div>`;
+}
+/* 자릿값 판의 숫자 한 줄 (앞의 0은 비워요) */
+function ckDigits(cnt, cols, o = {}) {
+  const lead = cols.findIndex(k => (cnt[k] || 0) > 0), n = ckNumOf(cnt);
+  return `<div class="t11num ${o.small ? 'small' : ''}">${cols.map((k, j) => { const v = cnt[k] || 0, show = lead < 0 ? (k === 0 ? '0' : '') : j < lead ? '' : String(v);
+    return `<span class="${v >= 10 ? 'over' : ''} ${o.hl && o.hl[k] ? 'new' : ''}"><b>${show}</b><small>${CKN[k]}</small></span>`; }).join('')}${o.noTotal ? '' : `<em>${o.bundling ? '10개가 모였어요! 묶는 중…' : `= ${n}${n >= 10000 ? ` <small>(${ckRead(n)})</small>` : ''}`}</em>`}</div>`;
+}
+const ckSrc = (lab, items) => `<div class="t11src"><span class="t11lab">${lab}</span>${items}</div>`;
+const ckPiece = (kind, v, inner, cls) => `<span class="t11piece ${cls || ''}" data-dg="${kind}" data-v="${v}">${inner}</span>`;
+const ckBtn = (a, t, cls, v) => `<button class="btn ${cls || 'btn-sub'}" data-ck="${a}" ${v != null ? `data-v="${v}"` : ''}>${t}</button>`;
+const ckRow = h => `<div class="row mt-2" style="justify-content:center;gap:8px;flex-wrap:wrap">${h}</div>`;
+/* 10개가 모이면 한 자리 위로 차례로 묶어요 (애니메이션) */
+function ckCarry(d, api, top, done) {
+  const step = () => { const c = d.cnt; let k = -1; for (const x of Object.keys(c).map(Number).sort((a, b) => a - b)) if (c[x] >= 10 && x < top) { k = x; break; }
+    if (k < 0) { d.bund = null; d.busy = false; done && done(); api.redraw(); return; }
+    d.bund = k; d.busy = true; api.redraw(); try { Sound.whoosh(); } catch (e) {}
+    setTimeout(() => { c[k] -= 10; c[k + 1] = (c[k + 1] || 0) + 1; d.bund = null; d.lastUp = k + 1; api.redraw(); setTimeout(step, 600); }, 850); };
+  step();
+}
+/* 수직선 (가로) */
+function ckLine(o) {
+  const pct = v => (v - o.a) / (o.b - o.a) * 100, N = o.n || 10;
+  return `<div class="t11nl ckline" id="${o.id || 'cknl'}" data-dz="${o.dz || 'ck-nl'}" data-i="0"><div class="bar"></div>${Array.from({ length: N + 1 }, (_, j) => `<i class="tk ${o.big && j % o.big === 0 ? 'big' : ''}" style="left:${j / N * 100}%"></i>`).join('')}
+    ${(o.labels || []).map(([v, t, c]) => `<span class="lb ${c || ''}" style="left:${pct(v)}%">${t}</span>`).join('')}
+    ${(o.marks || []).map(m => `<span class="t11flag set ${m.cls || ''}" style="left:${pct(m.v)}%"><b>${m.ic || '🚩'}</b>${m.t ? `<small>${m.t}</small>` : ''}</span>`).join('')}
+    ${(o.arcs || []).map(([v0, v1]) => `<span class="t11arc" style="left:${pct(v0)}%;width:${pct(o.a + (v1 - v0))}%"></span>`).join('')}${o.extra || ''}</div>`;
+}
+const ckLineVal = (id, a, b, N) => { const el = document.getElementById(id); if (!el) return null; const r = el.getBoundingClientRect(), x = CK.lastX(); const j = Math.max(0, Math.min(N, Math.round((x - r.left) / r.width * N))); return a + (b - a) * j / N; };
+/* 우리말로 읽기 (삼천팔백사십육만) */
+const ckKor = n => { if (!n) return '영'; const D = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'], P = ['', '십', '백', '천'], U = ['', '만', '억', '조'];
+  const g4 = x => { let s = ''; for (let p = 3; p >= 0; p--) { const d = Math.floor(x / CKV(p)) % 10; if (d) s += (d === 1 && p > 0 ? '' : D[d]) + P[p]; } return s; };
+  const out = []; let x = n, i = 0; while (x > 0) { const r = x % 10000; if (r) out.unshift((r === 1 && i === 1 ? '' : g4(r)) + U[i]); x = Math.floor(x / 10000); i++; } return out.join(' '); };
+/* 숫자 칸 + 칸막이 자리 (네 자리씩 끊기) */
+function ckCutRow(n, cuts, o = {}) {
+  const s = String(n), L = s.length;
+  let h = '<div class="ckcells">';
+  for (let i = 0; i < L; i++) { const k = L - 1 - i;
+    h += `<div class="ckcell ${o.hl && o.hl[k] ? 'on' : ''}"><b>${s[i]}</b><small>${o.names ? CKN[k] : ''}</small>${cuts.includes(k) && k > 0 ? '' : ''}</div>`;
+    if (k > 0) h += cuts.includes(k) ? `<div class="ckgap cut" title="${['', '만', '억', '조'][k / 4] || ''}"></div>` : `<div class="ckgap dz" data-dz="ck-gap" data-i="${k}"></div>`; }
+  return h + '</div>';
+}
+
+/* =====================================================================
+   단계 틀 (차시 파일에서 설정만 넣어 써요)
+   ===================================================================== */
+const CKS = {
+  /* ① 자릿값 판에 모형 놓기: 놓은 모형이 그대로 수가 돼요 · 목표 수가 되면 끝 */
+  build(o) { return { _ty: 'build', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ cnt: Object.assign({}, o.start || {}), bund: null }),
+    view: d => ckDigits(d.cnt, o.cols, { bundling: d.bund != null }) + ckMat(d, { cols: o.cols, dragOut: true })
+      + (o.order ? `<div class="ckbig" style="font-size:1.05rem">📋 ${o.order}</div>` : '')
+      + ckSrc('✋ 모형을 끌어 판에 놓아요 · 판의 모형을 누르면 하나씩 빠져요', o.src.map(k => ckPiece('ck-blk', k, `${ckBlk(k)}<b>${CKN[k]}</b>`)).join('')),
+    on: { 'ck-blk:drop'(d, v, z, el, api) { if (z !== 'ck-mat' || d.busy) return; d.cnt[v] = (d.cnt[v] || 0) + 1; api.clear(); try { Sound.pop(); } catch (e) {} ckCarry(d, api, o.cols[0], () => this.chk(d, api)); },
+      'ck-blk:tap'(d, v, el, api) { this['ck-blk:drop'](d, v, 'ck-mat', el, api); },
+      'ck-mb:tap'(d, v, el, api) { if (d.busy) return; if (d.cnt[v] > 0) d.cnt[v]--; api.clear(); this.chk(d, api); },
+      chk(d, api) { if (ckNumOf(d.cnt) === o.goal) api.win(o.say(d)); } } }; },
+  /* ② 하나씩 더하며 묶이는 모습 보기 (10개 → 한 자리 위) */
+  carry(o) { return { _ty: 'carry', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ cnt: Object.assign({}, o.start || {}), bund: null, added: 0 }),
+    view: d => ckDigits(d.cnt, o.cols, { bundling: d.bund != null }) + ckMat(d, { cols: o.cols })
+      + (d.done ? '' : ckSrc(`✋ ${CKN[o.add]} 모형을 끌어 판에 놓아요`, ckPiece('ck-blk', o.add, `${ckBlk(o.add)}<b>${CKN[o.add]}</b>`))),
+    on: { 'ck-blk:drop'(d, v, z, el, api) { if (z !== 'ck-mat' || d.busy || d.done) return; d.cnt[v] = (d.cnt[v] || 0) + 1; d.added++; api.clear(); try { Sound.pop(); } catch (e) {}
+        ckCarry(d, api, o.cols[0], () => { if (ckNumOf(d.cnt) === o.goal) { d.done = true; api.win(o.say(d)); } }); },
+      'ck-blk:tap'(d, v, el, api) { this['ck-blk:drop'](d, v, 'ck-mat', el, api); } } }; },
+  /* ③ 네 자리씩 칸막이 놓기 → 단위가 붙고 읽기가 나타나요 */
+  cut(o) { const need = []; for (let k = 4; k < String(o.n).length; k += 4) need.push(k);
+    return { _ty: 'cut', _o: o, t: o.t, kind: o.kind, q: o.q || `<b>${o.n}</b>을 오른쪽 끝에서부터 <b>네 자리씩</b> 세어 칸막이를 끌어 놓아요.`,
+    init: () => ({ cuts: [] }),
+    view: d => ckCutRow(o.n, d.cuts) + `<div class="ckbig">${d.cuts.length ? need.filter(k => d.cuts.includes(k)).map(k => `<span class="ckunit">${['', '만', '억', '조'][k / 4]} 칸막이</span>`).join(' ') : ''}</div>`
+      + (d.cuts.length === need.length ? `<div class="ckbig">${ckRead(o.n)}<br><small style="font-size:1rem;color:#475569">${ckKor(o.n)}</small></div>` : ckSrc('✋ 칸막이를 끌어 숫자 사이에 놓아요', ckPiece('ck-div', 1, '<b>✂️ 칸막이</b>'))),
+    on: { 'ck-div:drop'(d, v, z, el, api) { if (z !== 'ck-gap') return; const k = +el.dataset.i;
+      if (k % 4) { api.say(false, `오른쪽 끝에서부터 숫자를 <b>네 개씩</b> 세어 봐요. 그 사이에 칸막이를 놓아요.`, true); return; }
+      if (!d.cuts.includes(k)) d.cuts.push(k); try { Sound.pop(); } catch (e) {} api.clear();
+      if (need.every(x => d.cuts.includes(x))) api.win(o.say ? o.say() : `네 자리씩 끊으니 단위가 차례로 붙어요: <b>${ckRead(o.n)}</b>. 읽을 때는 「${ckKor(o.n)}」.`); } } }; },
+  /* ④ 뛰어 세기 카운터: 같은 크기 블록을 넣을 때마다 바뀌는 자리에 불이 켜져요 */
+  count(o) { return { _ty: 'count', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ n: o.start, hist: [o.start], hl: {} }),
+    view: d => ckCutRow(d.n, [], { names: true, hl: d.hl }) + `<div class="ckbig" style="font-size:1rem">${d.hist.map(x => ckRead(x)).join(' → ')}</div>`
+      + (d.hist.length - 1 < o.times ? ckSrc(`✋ <b>${o.sign === '-' ? '−' : '+'}${ckRead(o.step)}</b> 블록을 끌어 수 위에 놓아요 (${d.hist.length - 1}/${o.times})`, ckPiece('ck-step', 1, `<b>${o.sign === '-' ? '−' : '+'}${ckRead(o.step)}</b>`)) + `<div class="ckzone" data-dz="ck-cnt" data-i="0">여기에 놓아요</div>` : ''),
+    on: { 'ck-step:drop'(d, v, z, el, api) { if (z !== 'ck-cnt') return; const a = d.n, b = o.sign === '-' ? a - o.step : a + o.step, hl = {};
+      for (let k = 0; k < 16; k++) if (Math.floor(a / CKV(k)) % 10 !== Math.floor(b / CKV(k)) % 10) hl[k] = 1;
+      d.n = b; d.hist.push(b); d.hl = hl; try { Sound.pop(); } catch (e) {}
+      if (d.hist.length - 1 >= o.times) api.win(o.say(d)); } } }; },
+  /* ⑤ 수직선에 깃발 꽂기 (값마다 하나씩) */
+  place(o) { return { _ty: 'place', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ put: {}, i: 0 }),
+    view: d => ckLine({ a: o.a, b: o.b, n: o.n, big: o.big, labels: o.labels, marks: o.vals.filter((v, j) => d.put[j] != null).map((v, j) => ({ v, t: o.names[j], ic: o.icons[j] })) })
+      + (d.i < o.vals.length ? ckSrc(`✋ <b>${o.names[d.i]}</b> 깃발을 끌어 수직선의 알맞은 자리에 꽂아요 · 한 칸은 ${ckRead((o.b - o.a) / o.n)}`, ckPiece('ck-flag', d.i, `<b>${o.icons[d.i]} ${o.names[d.i]}</b>`)) : ''),
+    on: { 'ck-flag:drop'(d, v, z, el, api) { if (z !== 'ck-nl') return; const x = ckLineVal('cknl', o.a, o.b, o.n), want = o.vals[d.i];
+      if (x !== want) { api.say(false, `그 자리는 <b>${ckRead(x)}</b>이에요. 한 칸이 ${ckRead((o.b - o.a) / o.n)}인 것을 생각하며 다시 꽂아요.`, true); return; }
+      d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
+};
+
+/* 4-1-1-5 수의 크기 비교 — 기본 개념 4가지 */
+(function () {
+  const R = ckRead;
+  const table = (nums, L, mark) => { const cols = Array.from({ length: L }, (_, i) => L - 1 - i);
+    return `<table class="cktable"><tr><td style="background:#f1f5f9"></td>${cols.map(k => `<td style="background:#f1f5f9;font-size:.72rem">${CKN[k]}</td>`).join('')}</tr>`
+      + nums.map((n, r) => `<tr><td style="background:#f1f5f9">${'가나'[r]}</td>${cols.map(k => { const s = n == null ? '' : String(n), d = k < s.length ? s[s.length - 1 - k] : ''; return `<td class="${mark && mark[k] ? 'lit' : ''}">${d}</td>`; }).join('')}</tr>`).join('') + '</table>'; };
+  const beam = (a, b) => { const t = a == null || b == null ? 0 : a > b ? -8 : a < b ? 8 : 0;
+    return `<div class="ckbal"><div class="ckbeam" style="transform:rotate(${t}deg)"></div><div class="ckpan"><div style="transform:translateY(${t < 0 ? 14 : t > 0 ? -14 : 0}px)">가</div><div style="transform:translateY(${t > 0 ? 14 : t < 0 ? -14 : 0}px)">나</div></div></div>`; };
+  /* 두 수를 자릿값 표에 끌어 놓으면 끝자리가 맞춰지고 저울이 기울어요 */
+  const align = (t, kind, cards, q, say) => ({ _ty: 'align', _o: { n: cards.length }, t, kind, q,
+    init: () => ({ put: [null, null] }),
+    view: d => { const a = d.put[0] != null ? cards[0].v : null, b = d.put[1] != null ? cards[1].v : null, L = Math.max(String(cards[0].v).length, String(cards[1].v).length);
+      return `<div class="ckgrid2">${[0, 1].map(i => `<div class="ckzone" data-dz="ck-row" data-i="${i}">${'가나'[i]} 칸 ${d.put[i] != null ? `✅ <b>${cards[i].show}</b>` : '<br><small>카드를 여기에</small>'}</div>`).join('')}</div>`
+        + table([a, b], L) + (a != null && b != null ? beam(a, b) + `<div class="ckbig" style="font-size:1rem">가: ${String(a).length}자리 · 나: ${String(b).length}자리</div>` : '')
+        + (d.put.some(x => x == null) ? ckSrc('✋ 수 카드를 끌어 가·나 칸에 놓아요', cards.map((c, i) => d.put[i] == null ? ckPiece('ck-card', i, `<b>${c.show}</b>`) : '').join('')) : ''); },
+    on: { 'ck-card:drop'(d, v, z, el, api) { if (z !== 'ck-row') return; const i = +el.dataset.i; if (i !== +v) { api.say(false, `이 카드는 <b>${'가나'[+v]}</b> 칸에 놓아요.`, true); return; } d.put[i] = 1; try { Sound.pop(); } catch (e) {} api.clear(); if (d.put.every(x => x != null)) api.win(say()); } } });
+  /* 높은 자리부터: 돋보기를 한 칸씩 아래 자리로 끌어 내려요 */
+  const ladder = (t, kind, a, b, say) => { const L = String(a).length, diff = (() => { for (let k = L - 1; k >= 0; k--) if (String(a)[L - 1 - k] !== String(b)[L - 1 - k]) return k; })();
+    return { _ty: 'ladder', _o: { L, diff }, t, kind, q: d => `가장 높은 자리부터 숫자를 비교해요. 🔍 돋보기를 <b>한 칸 아래 자리</b>로 끌어 내리며 처음으로 숫자가 다른 자리를 찾아요.`,
+      init: () => ({ at: L - 1 }),
+      view: d => { const mk = {}; for (let k = L - 1; k >= d.at; k--) mk[k] = 1; const cols = Array.from({ length: L }, (_, i) => L - 1 - i);
+        return table([a, b], L, mk) + `<table class="cktable"><tr><td style="background:#f1f5f9">🔍</td>${cols.map(k => `<td class="dz" data-dz="ck-col" data-i="${k}">${k === d.at ? '🔍' : ''}</td>`).join('')}</tr></table>`
+          + `<div class="ckbig" style="font-size:1.05rem">${CKN[d.at]}의 자리: 가 ${String(a)[L - 1 - d.at]} ${String(a)[L - 1 - d.at] === String(b)[L - 1 - d.at] ? '=' : String(a)[L - 1 - d.at] > String(b)[L - 1 - d.at] ? '>' : '<'} 나 ${String(b)[L - 1 - d.at]}</div>`
+          + beam(d.at <= diff ? a : null, d.at <= diff ? b : null) + (d.at > diff ? ckSrc('✋ 돋보기를 끌어 바로 아래 자리 칸에 놓아요', ckPiece('ck-mag', 1, '<b>🔍 돋보기</b>')) : ''); },
+      on: { 'ck-mag:drop'(d, v, z, el, api) { if (z !== 'ck-col') return; const k = +el.dataset.i; if (k !== d.at - 1) { api.say(false, '돋보기는 <b>바로 아래 자리</b>로 한 칸씩 옮겨요.', true); return; } d.at = k; try { Sound.pop(); } catch (e) {} api.clear(); if (d.at === diff) api.win(say()); } } }; };
+  CK.install([
+    { k: 'len', vk: 'tilt', icon: '⚖️', name: '자릿수 저울', short: '자리 수가 많으면 커요', dnd: ['ck-card'],
+      sub: '두 수를 자릿값 표에 끌어 놓으면 <b>끝자리가 맞춰져요</b>. 자리 수를 보고 저울이 어느 쪽으로 기우는지 살펴보세요.', taunt: '저울을 흔들어 버렸지!', msg: '두 수를 자릿값 표에 놓고 자리 수를 비교해 보자!',
+      summary: '두 수의 <b>자리 수가 다르면</b> 자리 수가 많은 쪽이 더 큰 수예요. 102345(6자리) > 98765(5자리).',
+      stages: [align('5자리와 6자리', null, [{ v: 98765, show: '98765' }, { v: 102345, show: '102345' }], '두 수 카드를 가·나 칸에 끌어 놓아요.', () => '나는 <b>십만의 자리</b>까지 있는 6자리 수, 가는 5자리 수! 자리 수가 많은 <b>나</b>가 더 커요.'),
+        align('확인', 'check', [{ v: 1200000000, show: '12억' }, { v: 999990000, show: '9억 9999만' }], '「12억」과 「9억 9999만」을 놓아 자리 수로 확인해요.', () => '12억은 10자리, 9억 9999만은 9자리예요. 자리 수가 많은 <b>12억</b>이 더 커요.')] },
+    { k: 'ladder', vk: 'half', icon: '🪜', name: '높은 자리부터 비교', short: '처음 다른 자리에서 결정', dnd: ['ck-mag'],
+      sub: '자리 수가 같으면 <b>가장 높은 자리부터</b> 차례로 비교해요. 돋보기를 한 칸씩 내려 보세요.', taunt: '사다리 칸을 미끄럽게 만들었지!', msg: '높은 자리부터 돋보기를 내리며 비교해 보자!',
+      summary: '자리 수가 같으면 <b>가장 높은 자리부터</b> 비교해서 처음으로 숫자가 다른 자리에서 크기가 정해져요.',
+      stages: [ladder('7자리 두 수', null, 4572310, 4569999, () => '백만·십만의 자리는 같고, <b>만의 자리</b>에서 7 > 6! 그래서 4572310이 더 커요. 아랫자리 숫자는 볼 필요가 없어요.'),
+        ladder('확인', 'check', 328400000, 328050000, () => '억·천만·백만의 자리가 같고 <b>십만의 자리</b>에서 4 > 0! 3억 2840만이 더 커요.')] },
+    { k: 'same', vk: 'mixup', icon: '🔁', name: '같은 모양으로 비교', short: '숫자로 나타내 비교', dnd: ['ck-card'],
+      sub: '읽는 말과 숫자가 섞여 있으면 바로 비교하기 어려워요. 둘 다 자릿값 표에 놓아 <b>같은 모양(숫자)</b>으로 바꿔 보세요.', taunt: '글자와 숫자를 뒤섞어 놨지~', msg: '두 수를 같은 모양으로 바꿔 비교해 보자!',
+      summary: '모양이 다른 수는 <b>같은 모양으로 나타낸 뒤</b> 자리 수와 높은 자리부터 비교해요. 3억(9자리) > 29990000(8자리).',
+      stages: [align('3억과 29990000', null, [{ v: 300000000, show: '3억' }, { v: 29990000, show: '29990000' }], '「3억」과 「29990000」을 표에 놓아 같은 모양으로 비교해요.', () => '3억은 300000000(9자리), 29990000은 8자리! <b>3억</b>이 더 커요.'),
+        align('확인', 'check', [{ v: 4030000000000, show: '4조 300억' }, { v: 4003000000000, show: '4003000000000' }], '두 수를 표에 놓아 같은 모양으로 바꿔 확인해요.', () => '둘 다 13자리! 조의 자리 4와 천억의 자리 0이 같고, <b>백억의 자리</b>에서 3 > 0이라 <b>4조 300억</b>이 더 커요.')] },
+    { k: 'line', vk: 'clock', icon: '🔭', name: '수직선에 놓기', short: '오른쪽일수록 큰 수', dnd: ['ck-flag'],
+      sub: '두 수를 수직선 위 알맞은 자리에 꽂아 보세요. 어느 쪽에 있는 수가 더 클까요?', taunt: '수직선 눈금을 지워 버렸지!', msg: '두 수를 수직선에 꽂아 크기를 비교해 보자!',
+      summary: '수직선에서는 <b>오른쪽에 있는 수일수록 커요</b>. 7000만은 3000만보다 오른쪽에 있어요.',
+      stages: [CKS.place({ t: '0~1억', a: 0, b: 100000000, n: 10, labels: [[0, '0'], [50000000, '5000만'], [100000000, '1억']], vals: [30000000, 70000000], names: ['3000만', '7000만'], icons: ['🔵', '🔴'], q: '3000만과 7000만 깃발을 수직선에 꽂아요. 한 칸은 1000만이에요.', say: () => '7000만이 3000만보다 <b>오른쪽</b>에 있어요. 오른쪽에 있는 수가 더 커요.' }),
+        CKS.place({ kind: 'check', t: '확인', a: 4e12, b: 5e12, n: 10, labels: [[4e12, '4조'], [5e12, '5조']], vals: [4.7e12, 4.2e12], names: ['4조 7000억', '4조 2000억'], icons: ['🔵', '🔴'], q: '4조 7000억과 4조 2000억을 꽂아 스스로 확인해요. 한 칸은 1000억이에요.', say: () => '4조 7000억이 더 오른쪽! <b>4조 7000억 > 4조 2000억</b>이에요.' })] }
+  ]);
+})();
+
+</script>
+<!--CK-END-->
 </body>
 </html>

@@ -1121,6 +1121,8 @@ const PLAYER_COLORS = ['#ff8a1f', '#2f8ff5', '#17b877', '#a05cf5'];
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const escB = x => esc(x).replace(/&lt;(\/?)(b|br|small|sub|sup)&gt;/g, '<$1$2>');
 const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -2364,7 +2366,7 @@ function partInner(p) {
       <div class="mt-2 text-xs font-bold">글씨 인식이 어려우면 숫자로 입력: <input id="typed-${p.key}" class="typed" inputmode="numeric" maxlength="20"></div>`;
   }
   const fb = st.fb[p.key];
-  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+  h += `<div id="fb-${p.key}">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
   return h;
 }
 function renderPart(key) {
@@ -2379,7 +2381,7 @@ function finishPart(key, ok, given, extraMsg) {
   recordAnswer('s1', key, p.label, ok, given); touch('s1');
   st.fb[key] = { ok, kind: ok ? 'ok' : 'no', msg: ok ? pick(PRAISE) + ' ' + p.ok : pick(CHEER) + ' ' + (extraMsg ? extraMsg + ' ' : '') + '💡 ' + p.hint };
   if (ok) { Sound.correct(); say(pick(PRAISE)); } else { Sound.wrong(); say('괜찮아, 힌트를 보고 다시 도전해 보자!'); }
-  if (!ok && partMode(p) === 'write') { const f = $('#fb-' + key); if (f) f.innerHTML = charSay('no', esc(st.fb[key].msg)); } else renderPart(key);
+  if (!ok && partMode(p) === 'write') { const f = $('#fb-' + key); if (f) f.innerHTML = charSay('no', escB(st.fb[key].msg)); } else renderPart(key);
   if (ok) FX.burst($('#part-' + key), 30);
   if (key[0] === 'j') bossRefresh();
 }
@@ -2542,7 +2544,7 @@ function j2HTML() {
   const reads = solved ? `<div class="j2read"><b>📖 이 수들을 네 자리씩 끊어 읽어 볼까요?</b>${p.order.map(id => `<div>${p.items[id].ic} ${esc(p.items[id].nm)} → <b>${fmt(p.items[id].km)}</b> = ${splitKo(p.items[id].km)} (${readKo(p.items[id].km)}) km</div>`).join('')}</div>` : '';
   return `<div class="j2grid">${cards}</div>${reads}
     ${solved ? '' : `<div class="row mt-2"><span class="font-black" style="font-size:.9rem">지금 ${jx.length}/${p.items.length}번째</span><button class="btn btn-sub" data-act="j2-reset">🔄 다시 고르기</button><button class="btn btn-sub" data-act="phint" data-k="j2">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
-    <div id="fb-j2">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+    <div id="fb-j2">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
 }
 function j2Pick(id) {
   const p = PARTS.j2, jx = jxs().j2, rec = RV('j2'); if (rec && rec.solved) return;
@@ -2591,7 +2593,7 @@ function j3HTML() {
   const why = solved ? `<div class="j2read"><b>📖 하나씩 확인해 볼까요?</b>${p.chips.map(c => `<div>${c.g ? '✅' : '❌'} ${esc(c.t)} — ${esc(c.why)}</div>`).join('')}</div>` : '';
   return `<div class="j3grid">${chips}</div>${why}
     ${solved ? '' : `<div class="row mt-2"><span class="font-black" style="font-size:.9rem">고른 것 ${sel.length}개</span><button class="btn btn-green" data-act="j3-ok" ${sel.length ? '' : 'disabled'}>✅ 확인하기</button><button class="btn btn-sub" data-act="phint" data-k="j3">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
-    <div id="fb-j3">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), esc(fb.msg)) : ''}</div>`;
+    <div id="fb-j3">${fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), escB(fb.msg)) : ''}</div>`;
 }
 function j3Tog(i) {
   const rec = RV('j3'); if (rec && rec.solved) return;
@@ -2722,14 +2724,14 @@ function renderDrill() {
       <div class="paws" style="margin:0">${d.qs.map((_, i) => `<span class="${i < d.idx ? 'on' : (i === d.idx ? 'cur' : '')}">🐾</span>`).join('')}</div>
       <span class="streak">${d.streak >= 2 ? `🔥 ${d.streak}연속!` : `문제 ${d.idx + 1}/${d.qs.length}`}</span>
     </div>
-    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], esc(q.text))}</div>
+    <div class="mt-3">${qHead(d.idx + 1, ['', '#17b877', '#2f7cf5', '#ff5a76'][d.level], escB(q.text))}</div>
     <div class="choices">${q.choices.map(c => {
       const good = a && c === q.ans, bad = a && !a.ok && c === a.given;
       return `<button class="choice ${good ? 'good' : ''} ${bad ? 'bad' : ''}" data-act="drill-pick" data-v="${esc(c)}" ${a ? 'disabled' : ''}>${esc(c)}</button>`;
     }).join('')}</div>
     ${a ? '' : `<div class="row mt-3"><button class="btn btn-sub" data-act="drill-hint">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
     ${!a && d.hint ? charSay('hint', '💡 ' + esc(drillHint(q.text))) : ''}
-    ${a ? charSay(a.ok ? 'ok' : 'no', esc(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
+    ${a ? charSay(a.ok ? 'ok' : 'no', escB(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
   </div>`;
 }
 function startDrill(level) {
@@ -3323,7 +3325,7 @@ function startAU() {
 function renderBoardPage() {
   const st = state.s2, body = $('#s2body');
   if (!st.au) {
-    const M = [['ai', '🤖', '컴퓨터와 대결', `${CHARS[GUIDE()].name} vs ${CHARS[GUIDE() === 'tiger' ? 'ox' : 'tiger'].name} · 기록 제출`], ['multi', '👥', '2~4인 대결', '친구들과 한 화면에서 차례로! (전자칠판 가능)']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#e0f2fe">💎</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">우주 수호석 억·조 경매전</h2>
       <p class="sub" style="margin:3px 0 0">반쪽이가 흩어 놓은 <b>우주 수호석</b>을 경매로 되찾아요. 각자 <b>예산 100조 원</b>! 주사위로 이동하다 💎 칸에서 경매가 열려요.</p></div></div>
@@ -3769,9 +3771,9 @@ function buildS2Exam(c) {
   const mcs = ex.items.filter(q => q.mode === 'mc'), sas = ex.items.filter(q => q.mode === 'sa'), roman = ['Ⅰ', 'Ⅱ', 'Ⅲ'];
   let no = 0, sec = 0, body = '';
   if (mcs.length) body += `<div class="p-sec2">${roman[sec++]}. 객관식 — 알맞은 답을 고르세요.</div>` + mcs.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
   if (sas.length) body += `<div class="p-sec2">${roman[sec++]}. 단답형 — 답을 쓰세요.</div>` + sas.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div><div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
   if (ex.essays.length) body += `<div class="p-sec2">${roman[sec++]}. 서술형 — 풀이 과정을 자세히 쓰세요.</div>` + ex.essays.map(e => { e.no = ++no;
     return `<div class="p-q"><div class="p-qt"><b>${e.no}.</b> ${esc(e.q)} <span class="pt">[${e.pt}점]</span></div><div class="p-work tall">풀이</div></div>`; }).join('');
   let h = `<div class="sheet">` + pHead('🎮 세트 2 · 단원 평가', '1단원 큰 수 · 4차시 억과 조 알아보기 (네 자리씩 끊어 읽기)', `<td class="sc">점수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 100</td>`)
@@ -4713,7 +4715,7 @@ function st_set_magnet(nx) { state.s1.magnet = nx; }
 function lairModeHTML() {
   const party = state.s2.gmode === 'party';
   return `<div class="mt-3"><div class="font-black">🎮 누구와 겨룰까요?</div>
-    <div class="seg mt-1"><button class="${party ? '' : 'on'}" data-act="lair-mode" data-v="solo">🙋 혼자 하기</button><button class="${party ? 'on' : ''}" data-act="lair-mode" data-v="party">👥 2~4인 대결 (전자칠판)</button></div>
+    <div class="seg mt-1"><button class="${party ? '' : 'on'}" data-act="lair-mode" data-v="solo">👤 혼자 하기</button><button class="${party ? 'on' : ''}" data-act="lair-mode" data-v="party">👥 함께 하기 (2~4인)</button></div>
     ${party ? partyHTML() + '<p class="center text-xs muted font-bold mt-2">한 화면을 돌려 가며 한 명씩 도전해요(시간은 조금 짧아져요). 점수가 가장 높은 친구가 우승! 수업 활동용이라 결과 점수에는 들어가지 않아요. 상단 🖥 단추로 큰 화면 모드를 켤 수 있어요.</p>' : ''}</div>`;
 }
 function startPartyLair(id) {
@@ -6477,14 +6479,14 @@ renderDrill = function () {
       <div class="paws" style="margin:0">${d.qs.map((_, i) => `<span class="${i < d.idx ? 'on' : (i === d.idx ? 'cur' : '')}">🐾</span>`).join('')}</div>
       <span class="streak">${d.streak >= 2 ? `🔥 ${d.streak}연속!` : `문제 ${d.idx + 1}/${d.qs.length}`}</span>
     </div>
-    <div class="mt-3">${qHead(d.idx + 1, col, esc(q.text))}</div>${q.img ? `<div class="drimg">${q.img}</div>` : ''}
+    <div class="mt-3">${qHead(d.idx + 1, col, escB(q.text))}</div>${q.img ? `<div class="drimg">${q.img}</div>` : ''}
     <div class="choices">${q.choices.map(c => {
       const good = a && c === q.ans, bad = a && !a.ok && c === a.given;
       return `<button class="choice ${good ? 'good' : ''} ${bad ? 'bad' : ''}" data-act="drill-pick" data-v="${esc(c)}" ${a ? 'disabled' : ''}>${esc(c)}</button>`;
     }).join('')}</div>
     ${a ? '' : `<div class="row mt-3"><button class="btn btn-sub" data-act="drill-hint">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
     ${!a && d.hint ? charSay('hint', '💡 ' + esc(q.hint || '기준 수를 정하고, → 방향과 ↓ 방향으로 이웃한 두 수를 비교해 어느 자리 숫자가 얼마씩 변하는지 살펴봐요.')) : ''}
-    ${a ? charSay(a.ok ? 'ok' : 'no', esc(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
+    ${a ? charSay(a.ok ? 'ok' : 'no', escB(a.msg)) + `<div class="next-row" style="text-align:right"><button class="btn btn-primary" data-act="drill-next">${d.idx + 1 >= d.qs.length ? '결과 보기 🏁' : '다음 문제 ➜'}</button></div>` : ''}
   </div>`;
 };
 
@@ -6679,7 +6681,7 @@ const scIsReal = (b, t) => b.A.rows.some(row => row.some(v => String(v) === t));
 function renderBoardPage() {
   const st = state.s2, body = $('#s2body');
   if (!st.au) {
-    const M = [['ai', '🤖', '컴퓨터와 대결', `${CHARS[GUIDE()].name} vs ${CHARS[GUIDE() === 'tiger' ? 'ox' : 'tiger'].name} · 기록 제출`], ['multi', '👥', '2인 대결', '친구와 한 화면에서 번갈아! (전자칠판 가능)']];
+    const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로! 사람마다 자기 수준 문제']];
     body.innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#ffe4ea">🧩</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">반쪽이의 번호판 땅따먹기</h2>
       <p class="sub" style="margin:3px 0 0">반쪽이가 숫자 섬의 큰 번호판을 산산조각 냈어요. 숫자 타일을 <b>규칙에 맞는 칸</b>에 놓아 번호판을 되살리고, 점수를 더 많이 얻으면 승리!</p></div></div>
@@ -6781,9 +6783,9 @@ buildS2Exam = function (c) {
   const img = q => q.img ? pFig(q.img) : '';
   let no = 0, sec = 0, body = '';
   if (mcs.length) body += `<div class="p-sec2">${roman[sec++]}. 객관식 — 알맞은 답을 고르세요.</div>` + mcs.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ch">${q.choices.map((ch, i) => `<span>${CIRC[i]} ${esc(ch)}</span>`).join('')}</div></div>`; }).join('');
   if (sas.length) body += `<div class="p-sec2">${roman[sec++]}. 단답형 — 답을 쓰세요.</div>` + sas.map(q => { q.no = ++no;
-    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${esc(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
+    return `<div class="p-q"><div class="p-qt"><b>${q.no}.</b> ${escB(q.text)} <span class="pt">[${q.pt}점]</span></div>${img(q)}<div class="p-ans">답: <span class="blank w6"></span></div></div>`; }).join('');
   if (ex.essays.length) body += `<div class="p-sec2">${roman[sec++]}. 서술형 — 풀이 과정을 자세히 쓰세요.</div>` + ex.essays.map(e => { e.no = ++no;
     return `<div class="p-q"><div class="p-qt"><b>${e.no}.</b> ${esc(e.q)} <span class="pt">[${e.pt}점]</span></div><div class="p-work tall">풀이</div></div>`; }).join('');
   let h = `<div class="sheet">` + pHead('🎮 세트 2 · 단원 평가', '6단원 규칙과 관계 · 1차시 수의 배열에서 규칙을 찾아볼까요', `<td class="sc">점수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 100</td>`)
@@ -7526,7 +7528,7 @@ const WN = (() => {
     const a = run.ans;
     o.innerHTML = `<div class="wnbox"><div class="wnhead"><span class="wnt">✏️ 다시 풀기 ${run.i + 1} / ${run.list.length}</span><button class="wnx" data-wn="close">✕</button></div>
       <div class="wnprog"><i style="width:${run.i / run.list.length * 100}%"></i></div>
-      <div class="wnrq">${tag(q)}<div class="wnq3">${esc(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
+      <div class="wnrq">${tag(q)}<div class="wnq3">${escB(q.text)}</div>${q.img ? `<div class="wnimg">${q.img}</div>` : ''}
         ${q.choices ? `<div class="wnch">${q.choices.map((c, k) => `<button class="wnc ${a ? (norm(c) === norm(q.ans) ? 'good' : a.v === c ? 'bad' : '') : ''}" data-wn="ans" data-v="${esc(c)}" ${a ? 'disabled' : ''}><b>${'①②③④⑤⑥'[k]}</b> ${esc(c)}</button>`).join('')}</div>`
         : `<div class="wnin"><input id="wnInput" inputmode="numeric" placeholder="답을 써요" ${a ? 'disabled' : ''} value="${a ? esc(a.v) : ''}"><button class="btn btn-primary" data-wn="type" ${a ? 'disabled' : ''}>확인</button></div>`}
         ${a ? `<div class="wnfb ${a.ok ? 'ok' : 'no'}">${a.ok ? '🎉 정답! 오답 탈출!' : `🤔 정답은 <b>${esc(q.ans)}</b>`}${q.ex ? `<div class="wnex">💡 ${esc(q.ex)}</div>` : ''}</div>` : ''}</div>
@@ -8366,7 +8368,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const fb = X.fb;
     return `<div class="card sv-j0card" id="svj0"><div class="qhead"><div class="qno" style="background:#f59e0b">1</div><div class="qtext"><span class="qtag" style="background:#fef3c7;color:#b45309">점프 1 · 오늘의 문제</span> <b>${J0.label}</b><br>${C.problem}</div></div>
       <div class="sv-j1tag">${assessment().complete ? '📖 오늘의 문제 해결! 🔓 점프 문제 2~4가 열렸어요' : '📖 오늘 처음 만난 문제예요 · 해결하면 점프 문제 2~4가 열려요'}</div>
-      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea></div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
+      ${J0.board ? `${J0.task ? `<p class="sv-task">🎯 ${J0.task}</p>` : ''}<div id="part-j0">${figHTML('play')}${J0.explain ? `<div class="sv-part"><div class="sv-pq">✏️ ${J0.explain}</div><textarea class="sv-ex" data-svx="1" rows="3" ${done ? 'readonly' : ''} placeholder="예: 나는 ~을 보고 ~라고 생각했어요.">${esc(X.ex || '')}</textarea>${done ? '' : `<div class="sv-voice"><button type="button" class="btn btn-sub sv-mic" data-sv="voice-ex">🎤 말로 쓰기</button><div id="sv-voice-ex" class="sv-small sv-vmsg" role="status" aria-live="polite">단추를 누르고 어떻게 해결했는지 말해 보세요. 말한 내용이 글자로 들어가요.</div></div>`}</div>` : ''}` : `${figHTML()}<div id="part-j0">${J0.parts.map(part).join('')}`}
       ${done ? `<div class="sv-goal-done">🎯 <b>학습 목표 도달!</b> ${esc(assessment().status)} · 🔓 점프 문제 2~4가 열렸어요.${J0.ok ? '<br>' + J0.ok : ''}</div><div class="sv-row"><button class="btn btn-sub" data-sv="j0-redo">🔁 다시 해 보기</button></div>`
         : `<div class="sv-row"><button class="btn btn-green" data-sv="j0-check">🔍 문제 해결!</button><button class="btn btn-sub" data-sv="j0-hint">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`}
       ${!done && X.hint >= 0 ? `<div class="mt-2">${charSay('hint', '💡 ' + J0.hints[X.hint % J0.hints.length])}</div>` : ''}
@@ -8468,6 +8470,17 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     else if (act === 'vhint') { s.goalAssessment.hintUsed = true; const m = $('#sv-verify-msg'); if (m) m.textContent = '💡 ' + C.verify.hint; persist(); }
     else if (act === 'resume') { const p = pending; pending = null; if (p) { state.s1 = Object.assign(state.s1, p.s1); ensure(); if (p.sid && !state.student.id) try { syncStudent(p.sid, p.sname); } catch (x) {} } renderS1(); toast('📂 하던 곳부터 이어서 해요!'); }
     else if (act === 'fresh') { pending = null; try { localStorage.removeItem(KEY); } catch (x) {} resetS1(); renderS1(); toast('✨ 새로 시작해요!'); }
+    else if (act === 'voice-ex') { /* 점프 1 설명 칸 말로 쓰기 */
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-ex');
+      if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
+      if (b.classList.contains('on') && recog) { try { recog.stop(); } catch (x) {} return; }
+      try { if (recog) recog.abort(); recog = new SR(); recog.lang = 'ko-KR'; recog.interimResults = false; recog.maxAlternatives = 1;
+        b.classList.add('on'); b.textContent = '⏹ 그만 말하기'; recog.onend = () => { b.classList.remove('on'); b.textContent = '🎤 말로 쓰기'; };
+        recog.onresult = ev => { const txt = ev.results[0][0].transcript, a = document.querySelector('textarea.sv-ex'); if (a) { a.value = (a.value ? a.value.trim() + ' ' : '') + txt; const X = state.s1.j0 || (state.s1.j0 = { a: {}, fb: null, hint: -1 }); X.ex = a.value; persist(); } if (st) st.textContent = '✅ 받아 적었어요. 글자를 확인하고 고칠 곳이 있으면 고쳐요. 더 말하려면 다시 눌러요.'; };
+        recog.onerror = ev => { if (st) st.textContent = ev.error === 'not-allowed' ? '마이크 사용이 막혀 있어요. 주소창의 🔒에서 마이크를 허용하거나 직접 써 주세요.' : '잘 듣지 못했어요. 다시 누르거나 직접 써 주세요.'; };
+        recog.start(); if (st) st.textContent = '🎤 듣고 있어요… 어떻게 해결했는지 말해 보세요.';
+      } catch (err) { if (st) st.textContent = '마이크를 쓸 수 없어요. 직접 써 주세요.'; }
+    }
     else if (act === 'voice') {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition, st = $('#sv-voice-msg');
       if (!SR) { if (st) st.textContent = '이 브라우저는 말로 쓰기를 지원하지 않아요. 크롬에서 열거나 직접 써 주세요.'; return; }
@@ -8741,6 +8754,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .svbg-vs .fun{font-size:1.4rem;font-weight:900;color:#be123c}
 .svbg-vs .pslot{min-width:120px}
 
+.svbg-plr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-top:6px;padding:6px 8px;border-radius:12px;background:#f8fafc}.svbg-pln{display:inline-flex;align-items:center;gap:6px}
+
 /* 🔧 개념 도구 조작형 교체 키트 */
 .ufstep{display:flex;gap:10px;align-items:flex-start;margin:10px 0 8px;padding:10px 14px;border-radius:14px;background:#f0f9ff;border:2px solid #bae6fd;font-weight:800;line-height:1.55;color:#0c4a6e}
 .ufstep>span{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:#0284c7;color:#fff;display:grid;place-items:center;font-weight:900}
@@ -8830,6 +8845,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     LV_NM,
     k(a, b, c) { return [a, b, c][Math.max(1, Math.min(3, this.lv)) - 1]; },
     setLv(n) { this.lv = Math.max(1, Math.min(3, n)); LS.set('svbg:lv', this.lv); },
+    /* 함께 하기: 사람마다 자기 단계 (기존 게임용) */
+    plv: (() => { const v = LS.get('svbg:plv'); return Array.isArray(v) && v.length === 4 ? v : [2, 2, 2, 2]; })(),
+    setPlv(i, n) { this.plv[i] = Math.max(1, Math.min(3, n)); LS.set('svbg:plv', this.plv); },
+    solo() { return T(() => state.s2.bmode) !== 'multi'; },
+    pl(i) { if (this.solo()) return this.lv; const g = this.g(); return (g && g.plv && g.plv[i]) || this.plv[i] || 2; },
+    /* 함께 하기: 맞히면 ↑ · 틀리면 ↓ (연속 3번 정답 → 단계 UP, 연속 2번 오답 → 단계 DOWN) */
+    res(i, ok) {
+      const g = this.g(), A = this.A; if (!g || g.solo || !A || A.ownLv || !g.players || !g.players[i] || g.players[i].ai) return;
+      if (!g.plv) g.plv = g.players.map((_, k) => this.plv[k] || 2); if (!g.lvrun) g.lvrun = g.players.map(() => 0);
+      let r = g.lvrun[i], lv = g.plv[i], nm = E(g.players[i].name), msg = '';
+      r = ok ? Math.max(0, r) + 1 : Math.min(0, r) - 1;
+      if (r >= 3 && lv < 3) { lv++; r = 0; msg = `🔥 ${nm} 단계 UP → <b>${LV_NM[lv]}</b>`; }
+      else if (r <= -2 && lv > 1) { lv--; r = 0; msg = `🌱 ${nm} 단계 조정 → <b>${LV_NM[lv]}</b>`; }
+      g.lvrun[i] = r; if (lv !== g.plv[i]) { g.plv[i] = lv; T(() => A.onLv && A.onLv(g, i, lv)); setTimeout(() => this.toast(msg), 700); }
+    },
+    plvHTML() {
+      const p = T(() => state.party) || { n: 2, chars: [] }, n = p.n || 2;
+      return `<div class="svbg-lv svbg-plv" data-svbg-plv data-n="${n}"><div class="font-black">🎚️ 사람마다 단계 고르기 <small class="muted">(자기 수준에 맞는 문제를 받아요)</small></div>
+        ${Array.from({ length: n }, (_, i) => `<div class="svbg-plr"><span class="svbg-pln">${AV(p.chars[i], 26)} <b>${i + 1}P ${E(T(() => CHARS[p.chars[i]].name) || '')}</b></span><span class="seg">${[1, 2, 3].map(k => `<button class="${this.plv[i] === k ? 'on' : ''}" data-svbg="plv" data-v="${i}|${k}">${LV_NM[k]}</button>`).join('')}</span></div>`).join('')}
+        <p class="text-xs muted font-bold mt-1">${E(this.A && this.A.lvNote || '단계가 높을수록 더 어려운 문제를 받아요.')}<br>게임 중에는 연속 3번 맞히면 단계가 올라가고, 연속 2번 틀리면 내려가요.</p></div>`;
+    },
     key() { return 'svbg:' + T(() => CONFIG.LESSON_ID) || location.pathname; },
     g() { const A = this.A; return A && T(() => state.s2[A.key]) || null; },
     onBoard() { return T(() => state.s2.step === 'board' && state.tab === 's2') !== false && T(() => state.s2.step === 'board'); },
@@ -8839,15 +8875,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     lvHTML(note) {
       return `<div class="svbg-lv" data-svbg-lv><div class="font-black">🎚️ 난이도 <small class="muted">(혼자 할 때는 맞히는 만큼 단계가 저절로 바뀌어요)</small></div>
         <div class="seg mt-1">${[1, 2, 3].map(n => `<button class="${this.lv === n ? 'on' : ''}" data-svbg="lv" data-v="${n}">${LV_NM[n]}</button>`).join('')}</div>
-        <p class="text-xs muted font-bold mt-1">${note || (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
+        <p class="text-xs muted font-bold mt-1">${note || (this.A && this.A.lvNote ? E(this.A.lvNote) + '<br>' : '') + (this.lv === 1 ? '쉬움: 컴퓨터가 천천히, 실수도 해요. 힌트를 마음껏 써 봐요!' : this.lv === 2 ? '보통: 컴퓨터가 꽤 잘해요. 힌트 없이 도전해 봐요!' : '도전: 컴퓨터가 거의 실수하지 않아요!')}</p></div>`;
     },
     criteriaHTML() {
-      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 차례 알림</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
+      return `<div class="svbg-crit"><span>👤 혼자: 맞춤 난이도 · 자동 레벨업</span><span>👥 함께: 2~4인 · 사람마다 자기 수준</span><span>⏸ 멈춤 · 🔁 처음부터 · 💾 이어 하기</span></div>`;
     },
     bar(g) {
       const A = this.A, P = g.players || [], t = g.turn ?? g.cur ?? 0, p = P[t] || {};
       const who = A.realtime ? `🔔 모두 함께! 빨리 보고 판단해요` : p.ai ? `${AV(p.char, 26)} <b>${E(p.name)}</b> 생각 중…` : `${AV(p.char, 26)} <b>${E(p.name)}</b> 차례예요!`;
-      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : ''}</div>
+      return `<div class="svbg-bar" style="--pc:${p.color || '#6d28d9'}"><div class="svbg-who">${who}${g.solo ? `<span class="svbg-lvb">${LV_NM[this.lv]}</span>` : (!A.realtime && !A.ownLv && !p.ai ? `<span class="svbg-lvb">${LV_NM[this.pl(t)]}</span>` : '')}</div>
         <div class="svbg-btns">${A.hint ? '<button data-svbg="hint">💡 수학 힌트</button>' : ''}<button data-svbg="pause">⏸ 잠깐 멈춤</button><button data-svbg="again">🔁 처음부터</button><button data-svbg="quit">🚪 그만하기</button></div></div>`;
     },
     overlay(html, cls) {
@@ -8871,6 +8907,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const t = e.target.closest('[data-svbg]'); if (!t) return; const a = t.dataset.svbg, v = t.dataset.v; e.preventDefault(); e.stopPropagation();
       const g = this.g();
       if (a === 'lv') { this.setLv(+v); T(() => renderBoardPage()); return; }
+      if (a === 'plv') { const [i, k] = v.split('|').map(Number); this.setPlv(i, k); const box = $q('[data-svbg-plv]'); if (box) box.outerHTML = this.plvHTML(); return; }
       if (a === 'ready') { this.closeOv(); this.paused = false; T(() => this.A.onReady && this.A.onReady(g)); return; }
       if (a === 'pause') { this.paused = true; this.overlay(`<div class="svbg-ht">⏸ 잠깐 멈춤</div><p class="svbg-hs">선생님 말씀을 듣거나 쉬었다가<br>준비되면 계속해요.</p><button class="btn btn-primary btn-lg" data-svbg="resume-play">▶ 계속하기</button>`); return; }
       if (a === 'resume-play') { this.closeOv(); this.paused = false; return; }
@@ -8890,7 +8927,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A, g = this.g(); if (!A || !A.save) return;
       if (!g || g.over) { if (g && g.over) this.clearSave(); return; }
       const str = T(() => JSON.stringify(g)); if (!str || (!force && str === this._saveStr)) return; this._saveStr = str;
-      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, t: Date.now() });
+      LS.set(this.key(), { g: str, mode: T(() => state.s2.bmode), party: T(() => JSON.parse(JSON.stringify(state.party))), lv: this.lv, plv: this.plv.slice(), t: Date.now() });
     },
     clearSave() { LS.del(this.key()); this._saveStr = ''; },
     saved() { const s = LS.get(this.key()); if (!s || Date.now() - s.t > 7 * 864e5) return null; return s; },
@@ -8899,7 +8936,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       ['busy', 'peeking', 'rang'].forEach(k => { if (k in g) g[k] = false; }); if ('lock' in g) g.lock = 0; if ('moving' in g) g.moving = -1;
       if (!g.solo && 'cover' in g) g.cover = true;
       T(() => { state.s2.bmode = s.mode; if (s.party) Object.assign(state.party, s.party); });
-      this.setLv(s.lv || this.lv); T(() => touch('s2'));
+      this.setLv(s.lv || this.lv); if (Array.isArray(s.plv)) s.plv.forEach((k, i) => this.setPlv(i, k)); T(() => touch('s2'));
       T(() => this.A.restore && this.A.restore(g));
       state.s2[this.A.key] = g; this._turn = null; this._soloOver = null;
       T(() => renderBoardPage()); this.toast('💾 지난 게임을 이어서 해요!');
@@ -8919,6 +8956,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const A = this.A; if (!A) return; const body = $q('#s2body'); const g = this.g(), board = T(() => state.s2.step === 'board');
       if (!body || !board) { this._turn = null; return; }
       if (g && !g.over) {
+        if (!g.solo && !A.ownLv && !g.plv && g.players) { g.plv = g.players.map((_, k) => this.plv[k] || 2); g.lvrun = g.players.map(() => 0); }
         const t = g.turn ?? g.cur ?? 0, sig = t + '|' + (g.players || []).length;
         let bar = body.querySelector(':scope > .svbg-bar');
         const html = this.bar(g);
@@ -8944,6 +8982,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           const st = body.querySelector('[data-act="board-start"]');
           if (st && !body.querySelector('[data-svbg-crit]')) { const h = body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', `<div data-svbg-crit>${this.criteriaHTML()}</div>`); }
           if (st && !A.ownLv && !body.querySelector('[data-svbg-lv]') && T(() => state.s2.bmode) === 'ai') { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.lvHTML()); }
+          if (st && T(() => state.s2.bmode) === 'multi') { const ex = body.querySelector('[data-svbg-plv]'), n = T(() => state.party.n) || 2;
+            if (ex && +ex.dataset.n !== n) ex.remove();
+            if (!body.querySelector('[data-svbg-plv]')) { const nr = st.closest('.next-row') || st; nr.insertAdjacentHTML('beforebegin', this.plvHTML()); } }
           const s = this.saved();
           if (st && s && !body.querySelector('[data-svbg-res]')) { const h = body.querySelector('[data-svbg-crit]') || body.querySelector('.stage-head'); if (h) h.insertAdjacentHTML('afterend', this.resumeHTML(s)); }
         }
@@ -8994,7 +9035,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           <div class="font-black mt-3">🙋 누구와 할까요?</div>
           <div class="modecards mt-1">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
           ${st.bmode === 'multi' ? T(() => partyHTML()) || '' : ''}
-          ${SVBG.lvHTML(st.bmode === 'multi' ? '함께 할 때는 모두 이 단계에서 시작하고, 사람마다 맞히는 만큼 단계가 따로 바뀌어요.' : '')}
+          ${st.bmode === 'multi' ? '' : SVBG.lvHTML()}
           ${st.bmode === 'multi' ? '<p class="center text-xs muted font-bold mt-2">함께 하기 결과는 수업 활동용이라 선생님께 제출되지 않아요.</p>' : ''}
           <div class="next-row"><button class="btn btn-primary btn-lg" data-act="board-start">${D.icon} ${D.startTxt}</button></div></div>`;
       } else {
@@ -9008,7 +9049,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const players = mkPlayers(st.bmode).map(p => Object.assign({}, p, { name: p.ai ? p.name : p.name }));
       if (st.bmode === 'ai') players[1].name = players[1].name.replace('(컴퓨터)', '(컴퓨터)');
       const n = players.length, g = { solo: st.bmode === 'ai', mode: D.mode, players, turn: 0, over: false, ranking: null, wrong: [], log: `${E(players[0].name)}부터 시작해요!`,
-        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: Array(n).fill(SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
+        sc: Array(n).fill(0), pos: Array(n).fill(0), lv: players.map((P, i) => st.bmode === 'multi' ? (SVBG.plv[i] || 2) : SVBG.lv), run: Array(n).fill(0), ok: Array(n).fill(0), miss: Array(n).fill(0), ph: 'pick', q: null, cell: -1, usedHint: false, fb: null, seed: Math.random() };
       if (D.mode === 'land') g.board = D.newBoard(SVBG.lv); else g.track = D.track || this.track();
       st.au = g; SVBG._turn = null; this.page(); T(() => say(D.startSay));
       if (D.mode === 'race') this.ask(g);
@@ -9266,8 +9307,7 @@ const ufLen = n => String(n).length;
 function ufSay(s, ok, msg) { s.fb = { ok, msg: ok ? msg : `${pick(CHEER)} ${msg}` }; try { ok ? Sound.correct() : Sound.wrong(); } catch (e) {} if (!ok) try { mood('think', 1500); } catch (e) {} }
 const ufBtn = (uf, v, t, cls, dis) => `<button class="btn ${cls || 'btn-sub'}" data-uf="${uf}" ${v != null ? `data-v="${v}"` : ''} ${dis ? 'disabled' : ''}>${t}</button>`;
 const ufRow = h => `<div class="row mt-2" style="justify-content:center;gap:8px;flex-wrap:wrap">${h}</div>`;
-const ufAgain = (key, on) => on ? `<div class="rpbar">${ufBtn('ufre', key, '🔄 처음부터 다시 해 보기')}<span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>` : '';
-UF.ufre = k => { delete state.s1[k]; touch('s1'); try { renderTool(); } catch (e) {} };
+const ufAgain = (key, on) => on ? `<div class="rpbar">${ufBtn('ufre', key, '🔄 도구 다시 조작해 보기', 'btn-sub rpbtn')}<span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>` : '';
 const ufStep = (n, t) => `<div class="ufstep"><span>${n}</span><div>${t}</div></div>`;
 
 /* ---------- 숫자 카드 자릿값 판 ---------- */
@@ -9365,6 +9405,18 @@ function ufInstallSkip(C) {
   };
 }
 
+/* ---------- 🔄 1단원 도구 다시 조작해 보기 ----------
+   배지를 받은 도구에는 언제나 '도구 다시 조작해 보기' 막대를 붙여요. 누르면 그 도구만 처음 상태로 돌아가고 배지는 그대로예요.
+   M = { 도구키: [그리는 함수 이름, 처음 상태로 되돌리는 함수] } */
+function ufReplay(M) {
+  const bar = k => `<div class="rpbar ufrp"><button class="btn btn-sub rpbtn" data-uf="u1re" data-v="${k}">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 처음부터 마음껏 다시 해 봐요!</span></div>`;
+  Object.keys(M).forEach(k => { const [fn] = M[k], orig = window[fn]; if (typeof orig !== 'function') return;
+    window[fn] = function () { const r = orig.apply(this, arguments); try { const tb = $('#toolBody'); if (tb && state.s1.badges[k] && !tb.querySelector('.rpbar')) { const c = tb.querySelector('.card'); (c || tb).insertAdjacentHTML('beforeend', bar(k)); } } catch (e) {} return r; }; });
+  UF.u1re = k => { const m = M[k]; if (!m) return; try { m[1](state.s1); } catch (e) {} touch('s1'); try { toast('🔄 처음부터 다시 조작해 봐요! 배지는 그대로예요.'); } catch (e) {} try { renderTool(); } catch (e) {} };
+  UF.ufre = k => { const m = Object.values(M).find(() => true); delete state.s1[k]; touch('s1'); try { toast('🔄 처음부터 다시 조작해 봐요! 배지는 그대로예요.'); } catch (e) {} try { renderTool(); } catch (e) {} };
+}
+const ufDel = (...ks) => s => ks.forEach(k => { s[k] = null; delete s[k]; });
+
 /* 6-1 규칙 찾기 · 빈칸 복원기 / 번호표 해독기의 '규칙 찾기'를 고르기 문제 대신 직접 겹쳐 비교하기로 */
 (function () {
   const ofix = window.fixBody, ocode = window.codeBody;
@@ -9417,5 +9469,358 @@ function ufInstallSkip(C) {
 
 </script>
 <!--BG-END-->
+<!--CK-START--><style>/* 4-1-1-1 개념 탐험 조작 도구 */
+.t11hubx{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:640px){.t11hubx{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.t11card .ancap{background:#eff6ff;border:2px solid #bfdbfe;border-radius:14px;padding:10px 14px;font-weight:800;color:#1e3a8a;margin:10px 0}
+.t11card .andone{background:#ecfdf5;border:2px solid #86efac;border-radius:14px;padding:12px 14px;font-weight:800;color:#166534;margin-top:10px;line-height:1.55}
+.t11steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.t11steps span{font-size:.8rem;font-weight:800;border-radius:999px;padding:3px 10px;background:#f1f5f9;color:#64748b}
+.t11steps span.cur{background:#fef3c7;color:#92400e}.t11steps span.ok{background:#dcfce7;color:#166534}
+.t11src{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:12px;padding:10px;border:2px dashed #cbd5e1;border-radius:16px;background:#f8fafc}
+.t11lab{width:100%;text-align:center;font-size:.82rem;font-weight:800;color:#64748b}
+.t11piece{display:inline-flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:2px solid #cbd5e1;border-radius:14px;padding:6px 12px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 3px 0 #94a3b8}
+.t11piece b{font-size:.9rem}.t11piece small{font-size:.72rem;color:#64748b;font-weight:800}
+.t11empty{color:#94a3b8;font-weight:800;font-size:.85rem}
+/* 수 모형 */
+.pv{display:inline-block;flex:none}
+.pv0{width:46px;height:46px;border-radius:6px;background:linear-gradient(135deg,#fde047,#f59e0b);box-shadow:inset 0 0 0 2px #b45309,3px 3px 0 #b45309}
+.pv1{width:30px;height:30px;border-radius:4px;background:repeating-linear-gradient(90deg,#60a5fa 0 5px,#3b82f6 5px 6px),#60a5fa;box-shadow:inset 0 0 0 2px #1d4ed8,3px 3px 0 #1e40af}
+.pv2{width:26px;height:26px;border-radius:3px;background:repeating-linear-gradient(0deg,#f9a8d4 0 2.3px,#ec4899 2.3px 2.6px),repeating-linear-gradient(90deg,transparent 0 2.3px,#ec4899 2.3px 2.6px);box-shadow:inset 0 0 0 1px #be185d}
+.pv3{width:6px;height:26px;border-radius:2px;background:repeating-linear-gradient(0deg,#86efac 0 2.3px,#16a34a 2.3px 2.6px);box-shadow:inset 0 0 0 1px #15803d}
+.pv4{width:7px;height:7px;border-radius:2px;background:#fb923c;box-shadow:inset 0 0 0 1px #c2410c}
+.t11num{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin:10px 0;flex-wrap:wrap}
+.t11num span{display:flex;flex-direction:column;align-items:center;min-width:44px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:4px 6px}
+.t11num span b{font-size:1.8rem;line-height:1.1;color:#0f172a;min-height:2rem}.t11num span small{font-size:.72rem;font-weight:800;color:#64748b}
+.t11num span.over{border-color:#ef4444;background:#fef2f2}.t11num span.over b{color:#dc2626}
+.t11num span.new{border-color:#f59e0b;background:#fffbeb;animation:t11pop .6s}
+.t11num em{font-style:normal;font-weight:900;font-size:1.2rem;color:#1d4ed8;margin-left:6px;align-self:center}
+.t11num.small span b{font-size:1.4rem}
+.t11mat{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;background:#fefce8;border:3px solid #fde68a;border-radius:16px;padding:8px}
+.t11mat.dzover{background:#fef9c3;border-color:#f59e0b}
+.t11col{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border-radius:12px;padding:6px 4px;min-height:150px}
+.t11col.man{background:#fff7ed}.t11ph{font-weight:900;color:#475569}
+.t11pile{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:3px;flex:1;max-width:100%}
+.t11col.bund .t11pile{animation:t11shake .45s 2}.t11col.bund .pv.go{animation:t11zip .9s forwards}
+.t11cnt{font-size:.75rem;font-weight:800;color:#64748b}
+@keyframes t11shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes t11zip{to{transform:translateX(-60px) scale(.3);opacity:0}}
+@keyframes t11pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media(max-width:560px){.t11col{min-height:120px}.pv1{width:22px;height:22px}.pv0{width:34px;height:34px}}
+/* 수직선 */
+.t11nl{position:relative;height:120px;margin:18px 26px 8px}
+.t11nl.dzover .bar{background:#f59e0b}
+.t11nl .bar{position:absolute;left:0;right:0;top:70px;height:6px;border-radius:3px;background:#334155}
+.t11nl .tk{position:absolute;top:62px;width:2px;height:22px;background:#334155;transform:translateX(-1px)}.t11nl .tk.big{width:3px;height:30px;top:58px}
+.t11nl .lb{position:absolute;top:94px;transform:translateX(-50%);font-weight:900;font-size:.92rem;white-space:nowrap}.t11nl .lb.end{color:#b91c1c}
+.t11flag{position:absolute;top:20px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:1.6rem;line-height:1}
+.t11flag small{font-size:.75rem;font-weight:900;background:#fff;border-radius:6px;padding:0 4px;margin-top:2px}
+.t11frog{position:absolute;top:36px;transform:translateX(-50%);font-size:1.7rem;transition:left .35s}
+.t11arc{position:absolute;top:50px;height:18px;border:2px dashed #16a34a;border-bottom:none;border-radius:50% 50% 0 0}
+.t11piece.flag,.t11piece.hop{padding:8px 14px}
+/* 만 상자 */
+.mbox{display:inline-flex;align-items:center;justify-content:center;width:46px;height:40px;border-radius:8px;background:linear-gradient(180deg,#fda4af,#e11d48);color:#fff;font-weight:900;box-shadow:0 3px 0 #9f1239}
+.t11shelf{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:flex-end;min-height:64px;background:linear-gradient(180deg,#fff,#fff1f2);border:3px solid #fecdd3;border-bottom:8px solid #be123c;border-radius:14px;padding:10px}
+.t11shelf.dzover{border-color:#f59e0b}.t11shelf .mbox{cursor:pointer}
+.t11tag{margin:10px auto 0;max-width:420px;text-align:center;font-size:1.3rem;font-weight:900;background:#fff;border:3px dashed #fb7185;border-radius:14px;padding:8px}
+.t11tag.dzover{border-color:#f59e0b;background:#fffbeb}.t11tag .slot{display:inline-block;min-width:110px;color:#be123c}
+.t11piece.word b{font-size:1.15rem}
+/* 저금통 */
+.t11bank{border:3px solid #86efac;border-radius:18px;background:#f0fdf4;padding:10px;text-align:center}
+.t11bank.dzover{border-color:#f59e0b;background:#fefce8}
+.t11bank .pig{display:flex;align-items:center;justify-content:center;gap:10px;font-size:2.2rem}.t11bank .pig b{font-size:1.6rem;color:#166534}.t11bank .pig small{font-size:.85rem;font-weight:800;color:#475569}
+.t11bank .in{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px;min-height:40px}
+.t11bank .in>span{cursor:pointer}.t11bank .sum{margin-top:4px;font-weight:800;color:#334155;font-size:.9rem}
+.bill{display:inline-flex;align-items:center;justify-content:center;width:58px;height:30px;border-radius:5px;background:linear-gradient(180deg,#a7f3d0,#34d399);border:2px solid #059669;font-size:.72rem;font-weight:900;color:#064e3b}
+.coin{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;font-size:.6rem;font-weight:900;border:2px solid}
+.coin.c5{background:#e5e7eb;border-color:#6b7280;color:#374151}.coin.c1{background:#fde68a;border-color:#b45309;color:#78350f;width:30px;height:30px}
+.t11cmp{display:flex;flex-direction:column;gap:6px;align-items:center;margin:8px 0;font-weight:800;color:#334155}
+.t11cmp .rd{background:#fff1f2;color:#be123c;border-radius:999px;padding:1px 10px;margin-left:6px}
+.t11cmp .pvrow{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px}
+.t11mb{cursor:grab;touch-action:none;display:inline-flex}
+.t11ham{margin-top:10px;border:3px dashed #94a3b8;border-radius:14px;padding:10px;text-align:center;font-weight:900;color:#475569;background:#f8fafc}
+.t11ham.dzover{border-color:#f59e0b;background:#fffbeb}
+#toast{pointer-events:none!important}
+/* CK 엔진 추가 */
+.hub6,.hub.hub4c{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:640px){.hub6,.hub.hub4c{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.ckcard{margin-top:12px}
+.ckno{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:999px;background:#2563eb;color:#fff;font-size:.8rem;padding:0 8px;margin-right:4px}
+.ckmat{display:grid;gap:6px;background:#fefce8;border:3px solid #fde68a;border-radius:16px;padding:8px;margin-top:6px}
+.ckmat.dzover{background:#fef9c3;border-color:#f59e0b}
+.ckcol{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border-radius:12px;padding:6px 3px;min-height:132px;border:2px solid transparent}
+.ckcol.hl{border-color:#f59e0b;background:#fffbeb}.ckcol.dzover{border-color:#22c55e;background:#f0fdf4}
+.ckph{font-weight:900;color:#475569;font-size:.85rem;white-space:nowrap}
+.ckpile{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:3px;flex:1;max-width:100%}
+.ckcol.bund .ckpile{animation:t11shake .45s 2}.ckcol.bund .go{animation:t11zip .85s forwards}
+.ckcnt{font-size:.74rem;font-weight:800;color:#64748b}.ckcnt.over{color:#dc2626}
+.ckmore{font-size:.75rem;color:#64748b}
+.ckmb{cursor:grab;touch-action:none;display:inline-flex}
+.ckt{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:24px;padding:0 4px;border-radius:6px;font-style:normal;font-size:.7rem;font-weight:900;color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.ckt.g1{background:linear-gradient(180deg,#f472b6,#db2777)}.ckt.g2{background:linear-gradient(180deg,#a78bfa,#7c3aed)}.ckt.g3{background:linear-gradient(180deg,#38bdf8,#0369a1)}.ckt.g0{background:#f59e0b}
+.ckzone{border:3px dashed #94a3b8;border-radius:14px;padding:10px;text-align:center;font-weight:800;color:#475569;background:#f8fafc;min-height:56px}
+.ckzone.dzover{border-color:#f59e0b;background:#fffbeb}
+.ckgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.ckgrid2{grid-template-columns:1fr}}
+.ckbig{font-size:1.4rem;font-weight:900;text-align:center;margin:6px 0}
+.ckcells{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin:8px 0}
+.ckcell{position:relative;display:flex;flex-direction:column;align-items:center;min-width:40px}
+.ckcell b{display:flex;align-items:center;justify-content:center;width:40px;height:48px;border:2px solid #cbd5e1;border-radius:10px;background:#fff;font-size:1.5rem;font-weight:900}
+.ckcell small{font-size:.66rem;font-weight:800;color:#64748b;white-space:nowrap}
+.ckcell.on b{border-color:#f59e0b;background:#fffbeb;color:#b45309}
+.ckgap{width:12px;align-self:stretch;border-radius:6px;cursor:pointer}
+.ckgap.dz{background:repeating-linear-gradient(180deg,#e2e8f0 0 6px,transparent 6px 10px)}
+.ckgap.dzover{background:#fde68a}
+.ckgap.cut{background:#dc2626;width:6px;margin:0 3px}
+.ckunit{display:inline-block;font-size:.85rem;font-weight:900;color:#be123c;background:#fff1f2;border-radius:999px;padding:1px 8px;margin-top:4px}
+.ckbal{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+.ckbeam{width:86%;height:10px;background:#78350f;border-radius:5px;transition:transform .6s;position:relative}
+.ckpan{display:flex;justify-content:space-between;width:92%;margin-top:6px}
+.ckpan>div{width:46%;min-height:64px;border:3px solid #fcd34d;border-radius:0 0 40px 40px;background:#fffbeb;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;font-weight:900;transition:transform .6s}
+.ckpan>div.dzover{border-color:#22c55e}
+.ckval{display:inline-block;height:14px;border-radius:7px;background:linear-gradient(90deg,#fb923c,#f59e0b);transition:width .4s;vertical-align:middle}
+.cktable{border-collapse:collapse;margin:6px auto}.cktable td{border:2px solid #cbd5e1;min-width:58px;height:42px;text-align:center;font-weight:900;font-size:1.05rem;background:#fff}
+.cktable td.dz{background:#f8fafc}.cktable td.dzover{background:#fef9c3}.cktable td.lit{background:#ecfeff}
+.ckarrow{display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#0e7490;min-width:44px;height:24px;border:2px dashed #67e8f9;border-radius:8px;background:#fff}
+.ckarrow.dzover{background:#cffafe}.ckarrow.ok{border-style:solid;background:#cffafe}
+#toast,.toast,#sayBub,.saybub,.mascot-bubble{pointer-events:none!important}
+.jxrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:10px 0;font-size:1.3rem;font-weight:900}
+.jxlab{color:#334155}
+.jxslot{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:48px;padding:0 8px;border:3px dashed #94a3b8;border-radius:12px;background:#f8fafc}
+.jxslot.full{border-style:solid;border-color:#7c3aed;background:#f5f3ff;cursor:pointer}.jxslot.dzover{border-color:#f59e0b;background:#fffbeb}
+.jxsol{text-align:center;font-weight:800;color:#475569;margin:4px 0}
+.jxbins{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.jxin{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px;min-height:30px}
+.jxchip{background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:2px 8px;font-weight:900}
+.jxdone{margin-top:8px;background:#ecfdf5;border:2px solid #86efac;border-radius:12px;padding:8px 12px;font-weight:800;color:#166534}
+</style>
+<script>
+/* =====================================================================
+   🧪 CK · 개념 탐험 조작 도구 엔진 (4학년 차시 공통)
+   도구 하나 = 기본 개념 하나 · 단계: 조작하며 발견 → 개념 정리 → 다른 수로 스스로 확인
+   틀린 예 고치기 · 보기 고르기 · 정답 입력 없음. 조작 결과가 개념을 보여 줘요.
+   CK.install([{ k, vk, icon, name, short, sub, taunt, msg, summary, stages:[{ t, q, init, view, on:{ 'kind:drop'|'kind:tap'|'act:이름' } }] }])
+   ===================================================================== */
+const CKN = ['일', '십', '백', '천', '만', '십만', '백만', '천만', '억', '십억', '백억', '천억', '조', '십조', '백조', '천조'];
+const CKV = k => Math.pow(10, k);
+const ckRead = n => { if (!n) return '0'; const U = ['', '만', '억', '조'], g = []; let x = n, i = 0; while (x > 0) { const r = x % 10000; if (r) g.unshift(r + U[i]); x = Math.floor(x / 10000); i++; } return g.join(' '); };
+const ckNumOf = (cnt) => Object.keys(cnt).reduce((s, k) => s + cnt[k] * CKV(+k), 0);
+const CK = (() => {
+  const T = {}, ORDER = [];
+  let lastX = 0; document.addEventListener('pointerup', e => { lastX = e.clientX; }, true);
+  const box = () => { const s = state.s1; if (!s.ck) s.ck = {}; return s.ck; };
+  const fresh = () => ({ i: 0, d: null, won: false, fb: null });
+  const S = k => { const c = box(); if (!c[k]) c[k] = fresh(); return c[k]; };
+  const snd = n => { try { Sound[n](); } catch (e) {} };
+  const cur = () => { const k = state.s1 && state.s1.tool; return T[k] ? k : null; };
+  const stg = k => { const t = T[k], s = S(k); return t.stages[Math.min(s.i, t.stages.length - 1)]; };
+  const api = k => ({ k, x: () => lastX,
+    win(msg) { const s = S(k); s.won = true; s.fb = { ok: true, msg }; snd('correct'); },
+    say(ok, msg, hint) { S(k).fb = { ok, msg, hint }; if (!ok && !hint) snd('wrong'); },
+    clear() { S(k).fb = null; },
+    redraw() { render(k); }, later(fn, ms) { setTimeout(() => { if (cur() === k) { fn(); } }, ms); } });
+  function dispatch(key, ...a) { const k = cur(); if (!k) return; const s = S(k); if (s.won) return; const g = stg(k); if (!g.on || !g.on[key]) return;
+    touch('s1'); g.on[key](s.d, ...a, api(k)); render(k); }
+  const kinds = new Set();
+  function dnd(kind) { if (kinds.has(kind)) return; kinds.add(kind); DND.on(kind, { drop(v, z, el, src) { dispatch(kind + ':drop', v, z, el); }, tap(v, el) { dispatch(kind + ':tap', v, el); } }); }
+  const fb = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
+  function render(k) {
+    const el = $('#toolBody'); if (!el) return; const t = T[k], s = S(k), done = !!state.s1.badges[k] && !s.rp, n = t.stages.length;
+    if (s.i < n && !s.d) { const g = t.stages[s.i]; s.d = g.init ? g.init() : {}; }
+    const steps = `<div class="t11steps">${t.stages.map((g, j) => `<span class="${(done && s.i >= n) || j < s.i ? 'ok' : j === s.i ? 'cur' : ''}">${(done && s.i >= n) || j < s.i ? '✅' : j === s.i ? '👉' : '⬜'} ${g.t}</span>`).join('')}</div>`;
+    let body = '';
+    if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
+    else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
+      body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
+        + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : ''); }
+    const V = VILLAINS[t.vk] || {};
+    el.innerHTML = `<div class="card t11card ckcard" style="--tc:${V.color || '#2563eb'}"><div class="stage-head"><span class="ti" style="background:${V.bg || '#eef2ff'}">${t.icon}</span><div><span class="stchap">CHAPTER 1 · ${t.no}</span><h2 class="h2">${t.name}</h2><p class="sub" style="margin:3px 0 0">${t.sub}</p></div></div>
+      ${t.taunt ? vSay(t.vk, t.taunt, 44) : ''}${steps}${body}</div>`;
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-ck]'); if (!b) return; const k = cur(); if (!k) return; const a = b.dataset.ck, s = S(k), t = T[k];
+    if (a === 'next') { s.i++; s.d = null; s.won = false; s.fb = null; if (s.i >= t.stages.length) { s.rp = false; award(k); } render(k); return; }
+    if (a === 're') { box()[k] = Object.assign(fresh(), { rp: true }); render(k); try { toast('🔄 처음부터 다시 조작해 봐요!'); } catch (x) {} return; }
+    dispatch('act:' + a, b.dataset.v, b);
+  });
+  function install(list, opt = {}) {
+    list.forEach((t, j) => { t.no = '도구 ' + (j + 1); T[t.k] = t; ORDER.push(t.k); (t.dnd || []).forEach(dnd); });
+    if (typeof S1_TOOLS !== 'undefined') S1_TOOLS.splice(0, S1_TOOLS.length, ...list.map(t => [t.k, t.vk, t.no, t.name, t.short]));
+    if (typeof BADGES !== 'undefined') BADGES.splice(0, BADGES.length, ...list.map(t => [t.k, `${t.no} · ${t.name}`, t.icon]));
+    const setMap = (M, f) => { if (!M) return; Object.keys(M).forEach(x => delete M[x]); list.forEach(t => { M[t.k] = f(t); }); };
+    try { setMap(TOOL_V, t => t.vk); } catch (e) {} try { setMap(ST_TOOLV, t => t.vk); } catch (e) {} try { setMap(ST_TOOLM, t => t.msg || t.sub.replace(/<[^>]+>/g, '')); } catch (e) {}
+    try { setMap(TOOL_VK, t => t.vk); } catch (e) {} try { list.forEach(t => { TOOL_RENDER[t.k] = () => render(t.k); }); } catch (e) {}
+    const oldRT = renderTool; renderTool = function () { const s = state.s1; if (!T[s.tool]) s.tool = ORDER[0]; render(s.tool); };
+    try { const r0 = resetS1; resetS1 = function () { r0.apply(this, arguments); state.s1.tool = ORDER[0]; state.s1.ck = {}; }; } catch (e) {}
+    try { if (state.s1 && !T[state.s1.tool]) state.s1.tool = ORDER[0]; } catch (e) {}
+  }
+  /* 기존 도구 중 하나만 바꿔 끼워요 (TOOL_RENDER 를 쓰는 차시) */
+  function replace(t) { T[t.k] = t; (t.dnd || []).forEach(dnd);
+    const row = S1_TOOLS.find(r => r[0] === t.k); if (row) { t.vk = t.vk || row[1]; row[1] = t.vk; t.no = row[2]; row[3] = t.name; row[4] = t.short; }
+    try { const b = BADGES.find(r => r[0] === t.k); if (b) { b[1] = `${t.no} · ${t.name}`; b[2] = t.icon; } } catch (e) {}
+    try { TOOL_RENDER[t.k] = () => render(t.k); } catch (e) {} try { TOOL_VK[t.k] = t.vk; } catch (e) {}
+    try { if (t.msg) ST_TOOLM[t.k] = t.msg; } catch (e) {} }
+  return { install, replace, dnd, render, S, api, T, lastX: () => lastX };
+})();
+
+/* ---------- 공통 그림 부품 ---------- */
+/* 수 모형: 일·십·백·천은 모형 그림, 만 이상은 이름 블록 */
+const ckBlk = (k, cls) => k <= 3 ? `<i class="pv pv${4 - k} ${cls || ''}"></i>` : `<i class="ckt g${Math.min(3, Math.floor(k / 4))} ${cls || ''}">${CKN[k]}</i>`;
+/* 자릿값 판: cols 높은 자리 → 낮은 자리 */
+function ckMat(d, o = {}) {
+  const cols = o.cols, c = d.cnt;
+  return `<div class="ckmat" data-dz="${o.dz || 'ck-mat'}" data-i="0" style="grid-template-columns:repeat(${cols.length},minmax(0,1fr))">${cols.map(k => { const n = c[k] || 0;
+    return `<div class="ckcol ${d.bund === k ? 'bund' : ''} ${o.hl && o.hl[k] ? 'hl' : ''}" ${o.colDz ? `data-dz="${o.colDz}" data-i="${k}"` : ''}><div class="ckph">${CKN[k]}</div><div class="ckpile">${Array.from({ length: Math.min(n, 12) }, () => o.dragOut ? `<span class="ckmb" data-dg="ck-mb" data-v="${k}">${ckBlk(k, d.bund === k ? 'go' : '')}</span>` : ckBlk(k, d.bund === k ? 'go' : '')).join('')}${n > 12 ? `<b class="ckmore">+${n - 12}</b>` : ''}</div><div class="ckcnt ${n >= 10 ? 'over' : ''}">${n}개</div></div>`; }).join('')}</div>`;
+}
+/* 자릿값 판의 숫자 한 줄 (앞의 0은 비워요) */
+function ckDigits(cnt, cols, o = {}) {
+  const lead = cols.findIndex(k => (cnt[k] || 0) > 0), n = ckNumOf(cnt);
+  return `<div class="t11num ${o.small ? 'small' : ''}">${cols.map((k, j) => { const v = cnt[k] || 0, show = lead < 0 ? (k === 0 ? '0' : '') : j < lead ? '' : String(v);
+    return `<span class="${v >= 10 ? 'over' : ''} ${o.hl && o.hl[k] ? 'new' : ''}"><b>${show}</b><small>${CKN[k]}</small></span>`; }).join('')}${o.noTotal ? '' : `<em>${o.bundling ? '10개가 모였어요! 묶는 중…' : `= ${n}${n >= 10000 ? ` <small>(${ckRead(n)})</small>` : ''}`}</em>`}</div>`;
+}
+const ckSrc = (lab, items) => `<div class="t11src"><span class="t11lab">${lab}</span>${items}</div>`;
+const ckPiece = (kind, v, inner, cls) => `<span class="t11piece ${cls || ''}" data-dg="${kind}" data-v="${v}">${inner}</span>`;
+const ckBtn = (a, t, cls, v) => `<button class="btn ${cls || 'btn-sub'}" data-ck="${a}" ${v != null ? `data-v="${v}"` : ''}>${t}</button>`;
+const ckRow = h => `<div class="row mt-2" style="justify-content:center;gap:8px;flex-wrap:wrap">${h}</div>`;
+/* 10개가 모이면 한 자리 위로 차례로 묶어요 (애니메이션) */
+function ckCarry(d, api, top, done) {
+  const step = () => { const c = d.cnt; let k = -1; for (const x of Object.keys(c).map(Number).sort((a, b) => a - b)) if (c[x] >= 10 && x < top) { k = x; break; }
+    if (k < 0) { d.bund = null; d.busy = false; done && done(); api.redraw(); return; }
+    d.bund = k; d.busy = true; api.redraw(); try { Sound.whoosh(); } catch (e) {}
+    setTimeout(() => { c[k] -= 10; c[k + 1] = (c[k + 1] || 0) + 1; d.bund = null; d.lastUp = k + 1; api.redraw(); setTimeout(step, 600); }, 850); };
+  step();
+}
+/* 수직선 (가로) */
+function ckLine(o) {
+  const pct = v => (v - o.a) / (o.b - o.a) * 100, N = o.n || 10;
+  return `<div class="t11nl ckline" id="${o.id || 'cknl'}" data-dz="${o.dz || 'ck-nl'}" data-i="0"><div class="bar"></div>${Array.from({ length: N + 1 }, (_, j) => `<i class="tk ${o.big && j % o.big === 0 ? 'big' : ''}" style="left:${j / N * 100}%"></i>`).join('')}
+    ${(o.labels || []).map(([v, t, c]) => `<span class="lb ${c || ''}" style="left:${pct(v)}%">${t}</span>`).join('')}
+    ${(o.marks || []).map(m => `<span class="t11flag set ${m.cls || ''}" style="left:${pct(m.v)}%"><b>${m.ic || '🚩'}</b>${m.t ? `<small>${m.t}</small>` : ''}</span>`).join('')}
+    ${(o.arcs || []).map(([v0, v1]) => `<span class="t11arc" style="left:${pct(v0)}%;width:${pct(o.a + (v1 - v0))}%"></span>`).join('')}${o.extra || ''}</div>`;
+}
+const ckLineVal = (id, a, b, N) => { const el = document.getElementById(id); if (!el) return null; const r = el.getBoundingClientRect(), x = CK.lastX(); const j = Math.max(0, Math.min(N, Math.round((x - r.left) / r.width * N))); return a + (b - a) * j / N; };
+/* 우리말로 읽기 (삼천팔백사십육만) */
+const ckKor = n => { if (!n) return '영'; const D = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'], P = ['', '십', '백', '천'], U = ['', '만', '억', '조'];
+  const g4 = x => { let s = ''; for (let p = 3; p >= 0; p--) { const d = Math.floor(x / CKV(p)) % 10; if (d) s += (d === 1 && p > 0 ? '' : D[d]) + P[p]; } return s; };
+  const out = []; let x = n, i = 0; while (x > 0) { const r = x % 10000; if (r) out.unshift((r === 1 && i === 1 ? '' : g4(r)) + U[i]); x = Math.floor(x / 10000); i++; } return out.join(' '); };
+/* 숫자 칸 + 칸막이 자리 (네 자리씩 끊기) */
+function ckCutRow(n, cuts, o = {}) {
+  const s = String(n), L = s.length;
+  let h = '<div class="ckcells">';
+  for (let i = 0; i < L; i++) { const k = L - 1 - i;
+    h += `<div class="ckcell ${o.hl && o.hl[k] ? 'on' : ''}"><b>${s[i]}</b><small>${o.names ? CKN[k] : ''}</small>${cuts.includes(k) && k > 0 ? '' : ''}</div>`;
+    if (k > 0) h += cuts.includes(k) ? `<div class="ckgap cut" title="${['', '만', '억', '조'][k / 4] || ''}"></div>` : `<div class="ckgap dz" data-dz="ck-gap" data-i="${k}"></div>`; }
+  return h + '</div>';
+}
+
+/* =====================================================================
+   단계 틀 (차시 파일에서 설정만 넣어 써요)
+   ===================================================================== */
+const CKS = {
+  /* ① 자릿값 판에 모형 놓기: 놓은 모형이 그대로 수가 돼요 · 목표 수가 되면 끝 */
+  build(o) { return { _ty: 'build', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ cnt: Object.assign({}, o.start || {}), bund: null }),
+    view: d => ckDigits(d.cnt, o.cols, { bundling: d.bund != null }) + ckMat(d, { cols: o.cols, dragOut: true })
+      + (o.order ? `<div class="ckbig" style="font-size:1.05rem">📋 ${o.order}</div>` : '')
+      + ckSrc('✋ 모형을 끌어 판에 놓아요 · 판의 모형을 누르면 하나씩 빠져요', o.src.map(k => ckPiece('ck-blk', k, `${ckBlk(k)}<b>${CKN[k]}</b>`)).join('')),
+    on: { 'ck-blk:drop'(d, v, z, el, api) { if (z !== 'ck-mat' || d.busy) return; d.cnt[v] = (d.cnt[v] || 0) + 1; api.clear(); try { Sound.pop(); } catch (e) {} ckCarry(d, api, o.cols[0], () => this.chk(d, api)); },
+      'ck-blk:tap'(d, v, el, api) { this['ck-blk:drop'](d, v, 'ck-mat', el, api); },
+      'ck-mb:tap'(d, v, el, api) { if (d.busy) return; if (d.cnt[v] > 0) d.cnt[v]--; api.clear(); this.chk(d, api); },
+      chk(d, api) { if (ckNumOf(d.cnt) === o.goal) api.win(o.say(d)); } } }; },
+  /* ② 하나씩 더하며 묶이는 모습 보기 (10개 → 한 자리 위) */
+  carry(o) { return { _ty: 'carry', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ cnt: Object.assign({}, o.start || {}), bund: null, added: 0 }),
+    view: d => ckDigits(d.cnt, o.cols, { bundling: d.bund != null }) + ckMat(d, { cols: o.cols })
+      + (d.done ? '' : ckSrc(`✋ ${CKN[o.add]} 모형을 끌어 판에 놓아요`, ckPiece('ck-blk', o.add, `${ckBlk(o.add)}<b>${CKN[o.add]}</b>`))),
+    on: { 'ck-blk:drop'(d, v, z, el, api) { if (z !== 'ck-mat' || d.busy || d.done) return; d.cnt[v] = (d.cnt[v] || 0) + 1; d.added++; api.clear(); try { Sound.pop(); } catch (e) {}
+        ckCarry(d, api, o.cols[0], () => { if (ckNumOf(d.cnt) === o.goal) { d.done = true; api.win(o.say(d)); } }); },
+      'ck-blk:tap'(d, v, el, api) { this['ck-blk:drop'](d, v, 'ck-mat', el, api); } } }; },
+  /* ③ 네 자리씩 칸막이 놓기 → 단위가 붙고 읽기가 나타나요 */
+  cut(o) { const need = []; for (let k = 4; k < String(o.n).length; k += 4) need.push(k);
+    return { _ty: 'cut', _o: o, t: o.t, kind: o.kind, q: o.q || `<b>${o.n}</b>을 오른쪽 끝에서부터 <b>네 자리씩</b> 세어 칸막이를 끌어 놓아요.`,
+    init: () => ({ cuts: [] }),
+    view: d => ckCutRow(o.n, d.cuts) + `<div class="ckbig">${d.cuts.length ? need.filter(k => d.cuts.includes(k)).map(k => `<span class="ckunit">${['', '만', '억', '조'][k / 4]} 칸막이</span>`).join(' ') : ''}</div>`
+      + (d.cuts.length === need.length ? `<div class="ckbig">${ckRead(o.n)}<br><small style="font-size:1rem;color:#475569">${ckKor(o.n)}</small></div>` : ckSrc('✋ 칸막이를 끌어 숫자 사이에 놓아요', ckPiece('ck-div', 1, '<b>✂️ 칸막이</b>'))),
+    on: { 'ck-div:drop'(d, v, z, el, api) { if (z !== 'ck-gap') return; const k = +el.dataset.i;
+      if (k % 4) { api.say(false, `오른쪽 끝에서부터 숫자를 <b>네 개씩</b> 세어 봐요. 그 사이에 칸막이를 놓아요.`, true); return; }
+      if (!d.cuts.includes(k)) d.cuts.push(k); try { Sound.pop(); } catch (e) {} api.clear();
+      if (need.every(x => d.cuts.includes(x))) api.win(o.say ? o.say() : `네 자리씩 끊으니 단위가 차례로 붙어요: <b>${ckRead(o.n)}</b>. 읽을 때는 「${ckKor(o.n)}」.`); } } }; },
+  /* ④ 뛰어 세기 카운터: 같은 크기 블록을 넣을 때마다 바뀌는 자리에 불이 켜져요 */
+  count(o) { return { _ty: 'count', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ n: o.start, hist: [o.start], hl: {} }),
+    view: d => ckCutRow(d.n, [], { names: true, hl: d.hl }) + `<div class="ckbig" style="font-size:1rem">${d.hist.map(x => ckRead(x)).join(' → ')}</div>`
+      + (d.hist.length - 1 < o.times ? ckSrc(`✋ <b>${o.sign === '-' ? '−' : '+'}${ckRead(o.step)}</b> 블록을 끌어 수 위에 놓아요 (${d.hist.length - 1}/${o.times})`, ckPiece('ck-step', 1, `<b>${o.sign === '-' ? '−' : '+'}${ckRead(o.step)}</b>`)) + `<div class="ckzone" data-dz="ck-cnt" data-i="0">여기에 놓아요</div>` : ''),
+    on: { 'ck-step:drop'(d, v, z, el, api) { if (z !== 'ck-cnt') return; const a = d.n, b = o.sign === '-' ? a - o.step : a + o.step, hl = {};
+      for (let k = 0; k < 16; k++) if (Math.floor(a / CKV(k)) % 10 !== Math.floor(b / CKV(k)) % 10) hl[k] = 1;
+      d.n = b; d.hist.push(b); d.hl = hl; try { Sound.pop(); } catch (e) {}
+      if (d.hist.length - 1 >= o.times) api.win(o.say(d)); } } }; },
+  /* ⑤ 수직선에 깃발 꽂기 (값마다 하나씩) */
+  place(o) { return { _ty: 'place', _o: o, t: o.t, kind: o.kind, q: o.q,
+    init: () => ({ put: {}, i: 0 }),
+    view: d => ckLine({ a: o.a, b: o.b, n: o.n, big: o.big, labels: o.labels, marks: o.vals.filter((v, j) => d.put[j] != null).map((v, j) => ({ v, t: o.names[j], ic: o.icons[j] })) })
+      + (d.i < o.vals.length ? ckSrc(`✋ <b>${o.names[d.i]}</b> 깃발을 끌어 수직선의 알맞은 자리에 꽂아요 · 한 칸은 ${ckRead((o.b - o.a) / o.n)}`, ckPiece('ck-flag', d.i, `<b>${o.icons[d.i]} ${o.names[d.i]}</b>`)) : ''),
+    on: { 'ck-flag:drop'(d, v, z, el, api) { if (z !== 'ck-nl') return; const x = ckLineVal('cknl', o.a, o.b, o.n), want = o.vals[d.i];
+      if (x !== want) { api.say(false, `그 자리는 <b>${ckRead(x)}</b>이에요. 한 칸이 ${ckRead((o.b - o.a) / o.n)}인 것을 생각하며 다시 꽂아요.`, true); return; }
+      d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
+};
+
+
+
+/* 4-1-6-1 규칙 찾기 — 도구 1 「이웃한 두 수 재기」, 도구 3 「곱하기 탑 쌓기」로 바꿔요 */
+(function () {
+  /* 차 재기 자를 이웃한 두 수 사이에 끌어 놓으면 두 수의 차가 나타나요 */
+  const meas = (t, kind, grid, gaps, q, say) => { const at = g => { const [r, c, dir] = g.split('-').map((x, i) => i < 2 ? +x : x); const a = grid[r][c], b = dir === 'h' ? grid[r][c + 1] : grid[r + 1][c]; return [a, b]; };
+    return { _ty: 'meas', _o: { gaps }, t, kind, q,
+      init: () => ({ got: {} }),
+      view: d => { const cell = (r, c) => `<td style="min-width:70px">${grid[r][c]}</td>`, hg = (r, c) => { const g = `${r}-${c}-h`; return gaps.includes(g) ? `<td style="border:none;padding:0 2px"><span class="ckarrow ${d.got[g] != null ? 'ok' : ''}" data-dz="ck-gp" data-i="${g}">${d.got[g] != null ? (d.got[g] >= 0 ? '→ +' : '→ ') + d.got[g] : '→ ?'}</span></td>` : '<td style="border:none"></td>'; },
+          vg = (r, c) => { const g = `${r}-${c}-v`; return gaps.includes(g) ? `<span class="ckarrow ${d.got[g] != null ? 'ok' : ''}" data-dz="ck-gp" data-i="${g}">${d.got[g] != null ? '↓ +' + d.got[g] : '↓ ?'}</span>` : ''; };
+        let h = '<table class="cktable">'; grid.forEach((row, r) => { h += '<tr>' + row.map((_, c) => cell(r, c) + (c < row.length - 1 ? hg(r, c) : '')).join('') + '</tr>';
+          if (r < grid.length - 1) h += '<tr>' + row.map((_, c) => `<td style="border:none;background:transparent">${vg(r, c)}</td>` + (c < row.length - 1 ? '<td style="border:none"></td>' : '')).join('') + '</tr>'; });
+        return h + '</table>' + ckSrc(`✋ 📏 차 재기 자를 끌어 ? 칸에 놓으면 두 수의 차가 나타나요 (${Object.keys(d.got).length}/${gaps.length})`, ckPiece('ck-ruler', 1, '<b>📏 차 재기 자</b>')); },
+      on: { 'ck-ruler:drop'(d, v, z, el, api) { if (z !== 'ck-gp') return; const g = el.dataset.i, [a, b] = at(g); d.got[g] = b - a; try { Sound.pop(); } catch (e) {} if (gaps.every(x => d.got[x] != null)) api.win(say(d)); } } }; };
+  /* ×블록을 탑 위에 쌓을 때마다 수가 곱해져요. 옆에는 늘어난 양이 보여요 */
+  const tower = (t, kind, start, m, times, say) => ({ _ty: 'tower', _o: { times }, t, kind,
+    q: d => `<b>×${m}</b> 블록을 탑 꼭대기에 끌어 쌓아 보세요. 수가 어떻게 커지나요? (${d.list.length - 1}/${times})`,
+    init: () => ({ list: [start] }),
+    view: d => `<div style="display:flex;flex-direction:column-reverse;align-items:center;gap:4px">${d.list.map((x, i) => `<div style="display:flex;align-items:center;gap:10px"><span class="ckt g${i % 3 + 1}" style="min-width:${60 + i * 16}px;height:34px;font-size:1rem">${x}</span>${i ? `<small style="font-weight:800;color:#0e7490">×${m} (늘어난 양 +${x - d.list[i - 1]})</small>` : '<small>처음</small>'}</div>`).join('')}
+      ${d.list.length - 1 < times ? `<div class="ckzone" data-dz="ck-top" data-i="0" style="min-width:200px">⬆ 탑 꼭대기</div>` : ''}</div>`
+      + (d.list.length - 1 < times ? ckSrc('✋ 블록을 끌어 탑 꼭대기에', ckPiece('ck-mul', m, `<b>✖️ ${m}</b>`)) : '') + `<div class="ckbig" style="font-size:1rem">${d.list.join(' → ')}</div>`,
+    on: { 'ck-mul:drop'(d, v, z, el, api) { if (z !== 'ck-top') return; d.list.push(d.list[d.list.length - 1] * m); try { Sound.pop(); } catch (e) {} if (d.list.length - 1 >= times) api.win(say(d)); } } });
+  const G1 = [[1101, 1201, 1301, 1401], [2101, 2201, 2301, 2401], [3101, 3201, 3301, 3401]];
+  const G2 = [[5010, 5030, 5050, 5070], [6010, 6030, 6050, 6070]];
+  CK.replace({ k: 'lens', icon: '📏', name: '이웃한 두 수 재기', short: '방향마다 변하는 수', dnd: ['ck-ruler'],
+    sub: '수 배열표에서 이웃한 두 수 사이에 <b>차 재기 자</b>를 대어 보세요. 방향마다 수가 얼마씩 변하는지 보여요.', taunt: '번호판에 안개를 뿌려 놨지!', msg: '차 재기 자로 이웃한 두 수를 재어 규칙을 찾아보자!',
+    summary: '수 배열에서는 <b>방향마다</b> 이웃한 두 수의 차가 일정해요. → 방향은 100씩, ↓ 방향은 1000씩 커지는 것처럼요.',
+    stages: [meas('→ 방향 재기', null, G1, ['0-0-h', '0-1-h', '0-2-h'], '첫째 줄에서 <b>→ 방향</b>의 ? 칸 세 곳을 재어 보세요.', () => '→ 방향으로 <b>100씩</b> 커져요! 백의 자리 숫자가 1씩 커지는 규칙이에요.'),
+      meas('↓ 방향 재기', null, G1, ['0-0-v', '1-0-v', '0-2-v'], '이번에는 <b>↓ 방향</b>의 ? 칸을 재어 보세요.', () => '↓ 방향으로 <b>1000씩</b> 커져요! 천의 자리 숫자가 1씩 커지는 규칙이에요.'),
+      meas('확인', 'check', G2, ['0-0-h', '0-1-h', '0-0-v', '0-3-v'], '새 배열표의 두 방향을 재어 스스로 확인해요.', () => '→ 방향은 <b>20씩</b>, ↓ 방향은 <b>1000씩</b> 커져요. 방향마다 규칙이 따로 있어요.')] });
+  CK.replace({ k: 'mul', icon: '🗼', name: '곱하기 탑 쌓기', short: '몇씩 곱하는 규칙', dnd: ['ck-mul'],
+    sub: '×블록을 쌓을 때마다 수가 몇 배가 돼요. 늘어나는 양도 함께 살펴보세요.', taunt: '탑을 흔들어 무너뜨릴 거야!', msg: '곱하기 블록을 쌓아 곱하는 규칙을 알아보자!',
+    summary: '곱하는 규칙에서는 이웃한 두 수의 <b>차는 점점 커지지만</b>, 앞의 수에 <b>같은 수를 곱하는 것</b>은 일정해요. 2 → 6 → 18 → 54 (×3씩).',
+    stages: [tower('2에서 ×3', null, 2, 3, 4, () => '2 → 6 → 18 → 54 → 162! 늘어난 양은 4, 12, 36, 108로 점점 커지지만, 언제나 <b>×3</b>씩이에요.'),
+      tower('확인', 'check', 5, 2, 4, () => '5 → 10 → 20 → 40 → 80! 늘어난 양은 5, 10, 20, 40으로 커지고, 규칙은 <b>×2</b>씩이에요.')] });
+})();
+(function () {
+  /* 규칙 화살표를 빈칸에 끌어 놓으면, 왼쪽(위쪽) 수에서 규칙대로 이어져 수가 생겨요 */
+  const follow = (t, kind, grid, blanks, arrows, q, say) => ({ _ty: 'follow', _o: { blanks, arrows }, t, kind, q,
+    init: () => ({ got: {} }),
+    view: d => `<table class="cktable">${grid.map((row, r) => `<tr>${row.map((v, c) => { const key = r + '-' + c, bl = blanks.includes(key);
+        return bl ? `<td class="dz ${d.got[key] != null ? 'lit' : ''}" data-dz="ck-cell" data-i="${key}">${d.got[key] != null ? d.got[key] : '?'}</td>` : `<td>${v}</td>`; }).join('')}</tr>`).join('')}</table>`
+      + ckSrc(`✋ 규칙 화살표를 끌어 ? 칸에 놓아요. 화살표가 출발하는 수에서 규칙대로 이어져요 (${Object.keys(d.got).length}/${blanks.length})`, arrows.map(([dir, st]) => ckPiece('ck-arw', `${dir}|${st}`, `<b>${dir === 'h' ? '→' : '↓'} +${st}</b>`)).join('')),
+    on: { 'ck-arw:drop'(d, v, z, el, api) { if (z !== 'ck-cell') return; const [dir, st] = v.split('|'), [r, c] = el.dataset.i.split('-').map(Number), key = el.dataset.i;
+      const pr = dir === 'h' ? r : r - 1, pc = dir === 'h' ? c - 1 : c; if (pr < 0 || pc < 0) { api.say(false, `이 칸은 ${dir === 'h' ? '왼쪽' : '위쪽'}에 수가 없어요. 다른 화살표를 써 봐요.`, true); return; }
+      const pk = pr + '-' + pc, base = blanks.includes(pk) ? d.got[pk] : grid[pr][pc]; if (base == null) { api.say(false, `${dir === 'h' ? '왼쪽' : '위쪽'} 칸이 아직 비어 있어요. 그 칸부터 채워요.`, true); return; }
+      d.got[key] = base + (+st); api.clear(); try { Sound.pop(); } catch (e) {} if (blanks.every(b => d.got[b] != null)) api.win(say()); } } });
+  const G = [[3150, 3250, 3350, 3450], [4150, 4250, 4350, 4450], [5150, 5250, 5350, 5450]];
+  const H = [[120, 140, 160, 180], [220, 240, 260, 280], [320, 340, 360, 380]];
+  CK.replace({ k: 'fix', icon: '🧭', name: '규칙 따라 이어 가기', short: '두 방향 규칙으로 잇기', dnd: ['ck-arw'],
+    sub: '찾은 규칙을 화살표로 들고 다니면 수가 저절로 이어져요. 화살표를 빈칸에 끌어 놓아 보세요.', taunt: '번호판 일부를 지워 버렸지!', msg: '규칙 화살표로 수 배열을 이어 가 보자!',
+    summary: '규칙을 알면 이웃한 수에서 <b>규칙대로 이어 가며</b> 빈칸의 수를 알 수 있어요. 가로로도, 세로로도 이어 갈 수 있어요.',
+    stages: [follow('→ 방향으로 잇기', null, G, ['0-2', '0-3', '1-3'], [['h', 100]], '→ 방향 규칙은 <b>100씩</b> 커져요. 화살표를 빈칸에 놓아 수를 이어 가요.', () => '왼쪽 수에서 100씩 이어 가니 3350, 3450, 4450! 규칙대로 이어지면 수가 정해져요.'),
+      follow('↓ 방향으로 잇기', null, G, ['1-1', '2-1', '2-2'], [['v', 1000]], '↓ 방향 규칙은 <b>1000씩</b> 커져요. 위쪽 수에서 이어 가요.', () => '위쪽 수에서 1000씩 이어 가니 4250, 5250, 5350! 세로 방향 규칙도 똑같이 쓸 수 있어요.'),
+      follow('확인', 'check', H, ['0-3', '1-0', '2-2', '2-3'], [['h', 20], ['v', 100]], '두 화살표(→ +20, ↓ +100)를 모두 써서 빈칸을 이어 가며 스스로 확인해요.', () => '→ 20씩, ↓ 100씩 이어 가니 빈칸이 모두 채워졌어요! 어느 방향으로 이어 가도 같은 수가 나와요.')] });
+})();
+
+</script>
+<!--CK-END-->
 </body>
 </html>
