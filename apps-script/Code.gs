@@ -10,15 +10,20 @@
  *   결과      : 제출 1건 = 1줄 (점수·소요 시간·오답)
  *   문항      : 문항 1개 = 1줄 (처음에 맞혔는지 · 처음 고른 오답 · 정답) → 관리자 탭 문항 분석
  *   보석현황  : 차시 보석 획득 기록
+ *   최고기록  : 혼자 하는 게임의 학생별 최고 점수 (v3)
+ *
+ * v3 추가: 🌐 링크로 함께 하는 보드게임(방 코드) · 🏆 학급 명예의 전당
+ *   - 보드게임 방 정보는 시트가 아니라 임시 저장소(캐시)에 6시간만 있다가 사라져요.
  */
 var ADMIN_PASSWORD = '여기에-비밀번호';   // ← 꼭 바꿔 주세요!
-var VERSION = 2;
+var VERSION = 3;
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
     var d = JSON.parse(e.postData.contents);
+    if (d && d.action) return json_(action_(d));
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var now = new Date();
     var cls = String(d.classCode || '');
@@ -55,6 +60,8 @@ function doPost(e) {
 function doGet(e) {
   var p = e.parameter || {}, out;
   if (p.action === 'ping') out = { ok: true, v: VERSION, title: SpreadsheetApp.getActiveSpreadsheet().getName() };
+  else if (p.action === 'scoreTop') out = top_(p);
+  else if (p.action && /^room/.test(p.action)) out = action_(p);
   else if (p.action === 'stats') {
     if (!check_(p.key)) out = { ok: false, error: '비밀번호가 맞지 않아요.' };
     else {
@@ -98,3 +105,56 @@ function rows_(ss, name, cls, unit, max) {
 }
 function num_(x) { return x == null || x === '' ? '' : Number(x); }
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+
+/* =====================================================================
+   🌐 v3 · 링크로 함께 하는 보드게임 (방 코드) + 🏆 최고 기록
+   ===================================================================== */
+var ROOM_TTL = 21600; // 6시간
+function room_(code) { var v = CacheService.getScriptCache().get('room:' + code); return v ? JSON.parse(v) : null; }
+function roomSave_(code, r) { r.ts = Date.now(); CacheService.getScriptCache().put('room:' + code, JSON.stringify(r), ROOM_TTL); }
+function clean_(x, n) { return String(x == null ? '' : x).replace(/[<>]/g, '').slice(0, n || 20); }
+function action_(d) {
+  var a = String(d.action), code = clean_(d.code, 6), r;
+  if (a === 'roomCreate') {
+    for (var i = 0; i < 30; i++) { code = String(Math.floor(1000 + Math.random() * 9000)); if (!room_(code)) break; }
+    r = { code: code, cls: clean_(d.cls, 20), lesson: clean_(d.lesson, 20), game: clean_(d.game, 20), ver: 0, started: false,
+      players: [{ name: clean_(d.name, 12) || '1P', char: clean_(d.char, 20), sid: clean_(d.sid, 12) }], g: null, party: null };
+    roomSave_(code, r); return { ok: true, code: code, seat: 0, room: r };
+  }
+  r = room_(code); if (!r) return { ok: false, error: '방을 찾을 수 없어요. 방 코드를 다시 확인해 주세요.' };
+  if (a === 'roomJoin') {
+    var nm = clean_(d.name, 12), sid = clean_(d.sid, 12);
+    for (var k = 0; k < r.players.length; k++) if (sid && r.players[k].sid === sid) return { ok: true, code: code, seat: k, room: r };
+    if (r.started) return { ok: false, error: '이미 시작한 방이에요.' };
+    if (r.players.length >= 4) return { ok: false, error: '방이 가득 찼어요. (최대 4명)' };
+    r.players.push({ name: nm || (r.players.length + 1) + 'P', char: clean_(d.char, 20), sid: sid }); r.ver++; roomSave_(code, r);
+    return { ok: true, code: code, seat: r.players.length - 1, room: r };
+  }
+  if (a === 'roomGet') { if (+d.ver === r.ver) return { ok: true, same: true, ver: r.ver }; return { ok: true, room: r }; }
+  if (a === 'roomPush') {
+    if (d.base != null && +d.base < r.ver && !d.force) return { ok: false, stale: true, room: r };
+    if (d.g !== undefined) r.g = d.g; if (d.party !== undefined) r.party = d.party; if (d.started) r.started = true;
+    if (d.players) r.players = d.players;
+    r.ver++; roomSave_(code, r); return { ok: true, ver: r.ver };
+  }
+  if (a === 'scoreSave') {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = sheet_(ss, '최고기록', ['학급', '학번', '이름', '차시코드', '게임', '최고점수', '기록시각']);
+    var v = sh.getDataRange().getValues(), cls = clean_(d.cls, 20), sid2 = clean_(d.sid, 12), les = clean_(d.lesson, 20), gm = clean_(d.game, 30), sc = Number(d.score) || 0;
+    for (var i2 = 1; i2 < v.length; i2++) {
+      if (String(v[i2][0]) === cls && String(v[i2][1]).replace("'", '') === sid2 && String(v[i2][3]) === les && String(v[i2][4]) === gm) {
+        if (sc > Number(v[i2][5])) { sh.getRange(i2 + 1, 3, 1, 5).setValues([[clean_(d.name, 12), les, gm, sc, new Date()]]); return { ok: true, best: sc, up: true }; }
+        return { ok: true, best: Number(v[i2][5]), up: false };
+      }
+    }
+    sh.appendRow([cls, "'" + sid2, clean_(d.name, 12), les, gm, sc, new Date()]); return { ok: true, best: sc, up: true };
+  }
+  return { ok: false, error: '알 수 없는 요청이에요.' };
+}
+/** 학급 명예의 전당 (같은 반 · 같은 차시 · 같은 게임 상위 10명) — 학번은 돌려주지 않아요 */
+function top_(d) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet(), sh = ss.getSheetByName('최고기록'); if (!sh || sh.getLastRow() < 2) return { ok: true, top: [] };
+  var v = sh.getDataRange().getValues(), cls = clean_(d.cls, 20), les = clean_(d.lesson, 20), gm = clean_(d.game, 30), out = [];
+  for (var i = 1; i < v.length; i++) if (String(v[i][0]) === cls && String(v[i][3]) === les && String(v[i][4]) === gm) out.push({ name: String(v[i][2]), score: Number(v[i][5]) });
+  out.sort(function (x, y) { return y.score - x.score; }); return { ok: true, top: out.slice(0, 10) };
+}
