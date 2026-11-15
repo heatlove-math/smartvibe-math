@@ -7426,7 +7426,7 @@ const CLS = (() => {
     };
   }
   /* ---------- 👩‍🏫 내 반 설정 (교사용) ---------- */
-  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
+  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
   const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
   function linkFor(file, url, cls) { const q = new URLSearchParams(); if (url) q.set('webhook', url); if (cls) q.set('class', cls); return base() + encodeURI(file) + '?' + q.toString(); }
   function ov() { let o = document.getElementById('clsOv'); if (!o) { o = document.createElement('div'); o.id = 'clsOv'; o.className = 'wnov hidden'; document.body.appendChild(o); o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }); } return o; }
@@ -7996,6 +7996,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const s = state.s1; if (!s) return;
     if (s.goalDraft == null) s.goalDraft = '';
     if (s.goalConfirmed == null) s.goalConfirmed = false;
+    if (C.noGoal) s.goalConfirmed = true; /* 단원 마무리: 목표 쓰기 없이 바로 시작 */
     if (!s.goalAssessment) s.goalAssessment = { passed: false, tries: 0, hintUsed: false, vals: {} };
     if (!s.goalAssessment.vals) s.goalAssessment.vals = {};
   }
@@ -8057,8 +8058,8 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
       ${Hh.object ? `<div class="svh-obj">${Hh.object}</div>` : ''}
       ${Hh.villain ? `<div class="svh-vname"><i>VS</i><b>${Hh.villain}</b>${Hh.villainSub ? `<small>${Hh.villainSub}</small>` : ''}</div>` : ''}
       <div class="svh-talk"><div class="svh-ava">${av(Hh.speaker || GUIDE())}</div><div class="svh-tbody">${Hh.speakerName ? `<div class="svh-tname">${esc(Hh.speakerName)}</div>` : ''}<p>${Hh.speech}</p></div></div>
-      <div class="svh-goal ${s.goalConfirmed ? 'open' : ''}"><div class="svh-gh">🎯 이번 시간의 ${C.review ? '복습 목표' : '학습 목표'}</div>${s.goalConfirmed ? `<p>✅ ${esc(C.target)}</p>` : `<p class="svh-gq">🔒 아래에서 ${C.review ? '<b>배운 내용을 떠올려</b> 쓰거나 말하면' : '<b>내 생각</b>을 먼저 쓰거나 말하면'} 열려요!</p>`}</div>
-      <button class="svh-next" data-sv="${s.goalConfirmed ? 'start' : 'towrite'}">${s.goalConfirmed ? '개념 탐험 시작' : '다음으로'} <b>»</b></button>
+      ${C.noGoal ? '' : `<div class="svh-goal ${s.goalConfirmed ? 'open' : ''}"><div class="svh-gh">🎯 이번 시간의 ${C.review ? '복습 목표' : '학습 목표'}</div>${s.goalConfirmed ? `<p>✅ ${esc(C.target)}</p>` : `<p class="svh-gq">🔒 아래에서 ${C.review ? '<b>배운 내용을 떠올려</b> 쓰거나 말하면' : '<b>내 생각</b>을 먼저 쓰거나 말하면'} 열려요!</p>`}</div>`}
+      <button class="svh-next" data-sv="${s.goalConfirmed ? 'start' : 'towrite'}">${C.noGoal ? '복습 시작' : s.goalConfirmed ? '개념 탐험 시작' : '다음으로'} <b>»</b></button>
     </div></div></div>`;
   }
   function missionHTML() {
@@ -8076,10 +8077,14 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const s = state.s1, R = C.review, rv = s.rv || {};
     return `<div class="sv-review"><div class="sv-rv-h">📚 ${esc(R.title || '이번 단원에서 배운 것 돌아보기')}</div><div class="sv-small">차시마다 배운 내용을 읽고, 지금 내 마음과 맞는 단추를 눌러요.</div>
       <div class="sv-rv-list">${R.items.map((it, i) => `<div class="sv-rv-it ${rv[i] ? 'r' + rv[i] : ''}"><span class="sv-rv-no">${esc(it.no)}</span><div class="sv-rv-tx"><b>${esc(it.t)}</b><span>${it.d}</span></div>
-        <div class="sv-rv-btn"><button class="${rv[i] === 1 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="1" ${s.goalConfirmed ? 'disabled' : ''}>😊 자신 있어요</button><button class="${rv[i] === 2 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="2" ${s.goalConfirmed ? 'disabled' : ''}>🤔 다시 볼래요</button></div></div>`).join('')}</div></div>`;
+        <div class="sv-rv-btn"><button class="${rv[i] === 1 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="1" ${s.goalConfirmed && !C.noGoal ? 'disabled' : ''}>😊 자신 있어요</button><button class="${rv[i] === 2 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="2" ${s.goalConfirmed && !C.noGoal ? 'disabled' : ''}>🤔 다시 볼래요</button></div></div>`).join('')}</div></div>`;
   }
   function panelHTML() {
     const s = state.s1;
+    if (C.review && C.noGoal) return `<div class="sv-panel">${reviewHTML()}
+        ${(() => { const w = C.review.items.filter((it, i) => (s.rv || {})[i] === 2); return `<div class="sv-rv-again ${w.length ? '' : 'ok'}"><b>🧭 오늘의 복습 순서</b><br>CH.1 개념 카드로 떠올리기 → CH.2 기본 문제 → CH.3 점프 문제 → 세트 2 단원 평가와 왕중왕전` + (w.length ? `<br>🤔 다시 볼 내용: ${w.map(it => `<b>${esc(it.no)} ${esc(it.t)}</b>`).join(' · ')}` : '') + '</div>'; })()}
+        <div class="sv-center sv-row mt-2"><button class="btn btn-primary btn-lg pulse" data-sv="start">🧭 복습 시작하기 ➜</button></div>
+        <p class="sv-small sv-center">위 문제는 <b>점프 문제 1</b>에서 직접 해결해요. 해결하면 다음 점프 문제가 열려요!</p></div>`;
     if (C.review) return `<div class="sv-panel">${reviewHTML()}
         <div class="sv-ask">💭 <strong>${C.ask}</strong><div class="sv-small">배운 낱말을 넣어 글로 쓰거나 🎤 말로 해 보세요.</div></div>
         <label for="sv-goal-draft" class="sv-lab">✏️ 이 문제를 풀 때 쓸 수 있는 배운 내용</label>
@@ -10043,7 +10048,7 @@ body.svsl-on.svsl-port .sv-mission{justify-content:flex-start}
 body.svsl-on .sv-mission{min-height:0;overflow:hidden}
 body.svsl-on.svsl-port #scratchFab{padding:6px 10px!important;font-size:12px!important}
 
-body.svsl-on .sv-panel.svsl-done{display:grid!important}
+body.svsl-on .sv-panel.svsl-done{display:grid!important}body.svsl-on .sv-panel.svsl-done.svsl-off{display:none!important}
 body.svsl-on .sv-panel .svsl-pl,body.svsl-on .sv-panel .svsl-pr{display:flex;flex-direction:column;gap:12px;align-self:center}
 body.svsl-on .sv-panel .svsl-pl>*,body.svsl-on .sv-panel .svsl-pr>*{margin:0!important}
 body.svsl-on.svsl-land .sv-panel.svsl-done>.svsl-pl{grid-column:1!important}body.svsl-on.svsl-land .sv-panel.svsl-done>.svsl-pr{grid-column:2!important}
@@ -10394,7 +10399,7 @@ function renderNav(k) { const nav = $('#svslNav'), N = nextInfo(), nb = nav.quer
   const sk = nav.querySelector('[data-svn=skip]'); if (sk) { const show = SET() === 's1' && k === 'concept' && N.t !== '기본 문제 ▶', lk = stationLocked('basic'); sk.style.display = show ? '' : 'none'; sk.disabled = lk; sk.textContent = lk ? '🔒 기본 문제' : '✏️ 기본 문제로 ▶'; sk.title = lk ? '개념 탐험 도구를 1개 끝내면 기본 문제로 갈 수 있어요' : '개념 탐험을 1개 이상 끝냈어요. 기본 문제로 갈 수 있어요'; }
   const L = steps(), cs = L[stepIdx(k)] || ['', '', ''];
   let lab = `${cs[2]} ${cs[1]}`, dots = '';
-  if (SET() === 's1' && k === 'mission') { lab += ' · ' + MNAME[mi]; dots = MSC.map((_, j) => `<i class="${j === mi ? 'on' : j < mi ? 'ok' : ''}"></i>`).join(''); }
+  if (SET() === 's1' && k === 'mission') { lab += ' · ' + (mi === 2 && window.SV_LF && SV_LF.noGoal ? '배운 내용 돌아보기' : MNAME[mi]); dots = MSC.map((_, j) => `<i class="${j === mi ? 'on' : j < mi ? 'ok' : ''}"></i>`).join(''); }
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.ch.length) { lab += ` · ${Q.ch.length}문제 중 ${Q.cur + 1}번`; } }
   if (SET() === 's1' && k === 'concept') { const T = toolInfo(), b = T.hub[T.cur]; if (b) lab += ` · 도구 ${T.cur + 1} ${tname(b)}`; if (T.mis.length) { lab += ` · ${T.mis.length}단계 중 ${T.si + 1}단계`; dots = T.mis.map((_, j) => `<i class="${j === T.si && !T.finished ? 'on' : T.done[j] || T.finished ? 'ok' : ''}"></i>`).join(''); } }
   nav.querySelector('.lb b').textContent = lab; nav.querySelector('.lb small').textContent = N.ok ? '' : (N.why || ''); nav.querySelector('.dots').innerHTML = dots; }
