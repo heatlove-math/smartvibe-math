@@ -5486,7 +5486,10 @@ const WN = (() => {
   const hsh = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   /* 문제 속 그림·표는 그림으로, 글은 그림을 뺀 문장만 */
   const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
-  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll('.afw,.dtwrap,svg,table').forEach(e => e.remove());
+  /* 위아래로 쓴 분수(그림 글자)는 글로 옮길 때 '분자/분모'로 바꿔 두면 화면에서 다시 위아래 분수로 보여요 */
+  const frText = c => { c.querySelectorAll('.mixf').forEach(m => { const t = [...m.querySelectorAll('span')].map(x => x.textContent.trim()).filter(Boolean); if (t.length === 3) m.replaceWith(`${t[0]} ${t[1]}/${t[2]}`); });
+    [...c.querySelectorAll('span,div')].reverse().forEach(f => { if (!c.contains(f) || !/(^|\s)(frc|fr|frac|frx|fr-v|svfr)(\s|$)/.test(f.className || '')) return; const k = [...f.children].filter(x => x.tagName !== 'I' && x.tagName !== 'HR'); if (k.length === 2) f.replaceWith(`${k[0].textContent.trim()}/${k[1].textContent.trim()}`); }); };
+  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll('.afw,.dtwrap,svg,table').forEach(e => e.remove()); frText(c);
     /* 색칠한 숫자(큰 수 문제)는 [ ]로 표시해서 오답노트에서도 알아볼 수 있게 */
     let hl = false; c.querySelectorAll('.bignum').forEach(n => { n.querySelectorAll('.hl').forEach(h => { h.replaceWith('[' + h.textContent + ']'); hl = true; }); n.replaceWith(n.textContent); });
     let t = strip(c.innerHTML); if (hl) t = t.replace(/색칠한 숫자/g, '[ ] 안의 숫자'); return t; };
@@ -5544,13 +5547,13 @@ const WN = (() => {
     if (view === 'run' && run) return paintRun();
     const n = L.length, picked = L.filter(e => sel.has(e.id)), rp = picked.filter(e => e.retry && !e.cleared);
     o.innerHTML = `<div class="wnbox"><div class="wnhead"><span class="wnt">📒 나의 오답노트</span><span class="wnsub">${esc(document.title.replace(/^SmartVibe \| 십이지 수학탐험대 - /, '').split('·')[0])}</span><button class="wnx" data-wn="close" aria-label="닫기">✕</button></div>
-      ${n ? `<div class="wntools"><label class="wnall"><input type="checkbox" data-wn="all" ${picked.length === n ? 'checked' : ''}> 모두 고르기</label><span class="wncnt">고른 문제 <b>${picked.length}</b> / ${n}</span>${items.some(e => e.cleared) ? '<button class="btn btn-sub sm" data-wn="purge">🧹 맞힌 문제 정리</button>' : ''}</div>
+      ${n ? `<div class="wntools"><label class="wnall"><input type="checkbox" data-wn="all" ${picked.length === n ? 'checked' : ''}> 모두 고르기</label><span class="wncnt">모은 문제 ${n}개 중 <b>${picked.length}개</b> 고름</span>${items.some(e => e.cleared) ? '<button class="btn btn-sub sm" data-wn="purge">🧹 맞힌 문제 정리</button>' : ''}</div>
       <div class="wnlist2">${L.map((e, i) => `<label class="wnitem ${e.cleared ? 'cleared' : ''}"><input type="checkbox" data-wn="pick" data-id="${e.id}" ${sel.has(e.id) ? 'checked' : ''}>
         <div class="wnbody"><div class="wnrow">${tag(e)}${e.cnt > 1 ? `<span class="wnrep">${e.cnt}번 틀림</span>` : ''}${e.cleared ? '<span class="wnok">✅ 다시 풀어 맞혔어요</span>' : ''}${!e.retry ? '<span class="wnpo">🖨 인쇄해서 풀기</span>' : ''}</div>
         <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
-      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 고른 문제 다시 풀기 (${rp.length})</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
+      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      <p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -5558,7 +5561,7 @@ const WN = (() => {
     if (done) {
       const ok = run.res.filter(Boolean).length;
       o.innerHTML = `<div class="wnbox"><div class="wnhead"><span class="wnt">✏️ 다시 풀기 결과</span><button class="wnx" data-wn="close">✕</button></div>
-        <div class="wnend"><div class="wnscore">${ok} / ${run.list.length}</div><div>${ok === run.list.length ? '🎉 모두 맞혔어요! 오답 탈출 성공!' : '틀린 문제는 오답노트에 그대로 남아 있어요. 한 번 더 도전해 봐요!'}</div></div>
+        <div class="wnend"><div class="wnscore">${run.list.length}문제 중 ${ok}개 맞힘</div><div>${ok === run.list.length ? '🎉 모두 맞혔어요! 오답 탈출 성공!' : '틀린 문제는 오답노트에 그대로 남아 있어요. 한 번 더 도전해 봐요!'}</div></div>
         <div class="wnbtns"><button class="btn btn-sub btn-lg" data-wn="back">📒 오답노트로</button></div></div>`;
       if (ok === run.list.length) try { FX.rain(120); Sound.win(); } catch (e) {}
       return;
@@ -6578,8 +6581,13 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     J0.parts.forEach((p, i) => { const v = X.a[i]; const ok = partOK(p, v); marks[i] = ok; if (!ok) all = false; given.push(`${i + 1}) ${Array.isArray(v) ? v.join('→') : (v == null || v === '' ? '(빈칸)' : v)}`); });
     if (J0.parts.some((p, i) => X.a[i] == null || X.a[i] === '' || (p.type === 'order' && X.a[i].length < p.items.length))) { X.fb = { ok: false, msg: J0.board ? '아직 비어 있는 칸이 있어요. 🔒 칸을 모두 채워요!' : '아직 답하지 않은 문제가 있어요. ①부터 차례로 모두 답해요!' }; renderS1Jump(); return; }
     if (J0.explain && String(X.ex || '').trim().length < 5) { X.fb = { ok: false, msg: '✏️ 어떻게 해결했는지 생각을 한두 문장으로 써 주세요.' }; renderS1Jump(); return; }
+    /* 분수 칸 묶음: 크기가 같은 분수도 정답 (예: 3/8과 6/16) */
+    (J0.frac || []).forEach(([a, b]) => { const n = +norm(X.a[a]), d = +norm(X.a[b]), an = +[].concat(J0.parts[a].ans)[0], ad = +[].concat(J0.parts[b].ans)[0];
+      if (n > 0 && d > 0 && n * ad === an * d) { marks[a] = marks[b] = true; } else if (marks[a] && marks[b] === false || marks[a] === false && marks[b]) { marks[a] = marks[b] = false; } });
+    all = J0.parts.every((p, i) => marks[i]);
     X.mark = marks; const wrongN = J0.parts.map((p, i) => marks[i] ? null : '①②③④⑤'[i]).filter(Boolean);
-    recordAnswer('s1', 'j0', '점프 1 · 오늘의 문제 · ' + J0.label, all, given.join(' / '));
+    const givenTxt = J0.frac ? J0.frac.map(([a, b], k) => `${'①②③④⑤'[k]} ${norm(X.a[a]) || '□'}/${norm(X.a[b]) || '□'}`).join('  ') : given.join(' / ');
+    recordAnswer('s1', 'j0', '점프 1 · 오늘의 문제 · ' + J0.label, all, givenTxt);
     if (all) { X.fb = null; X.redo = false; try { good(); FX.rain(150); } catch (e) {} toast('🎉 오늘의 문제 해결! 점프 문제 2~4가 열렸어요.'); }
     else { X.fb = { ok: false, msg: J0.board ? `빨간 칸을 다시 생각해 봐요. ${J0.wrongTip || ''}` : `${wrongN.join('·')}번을 다시 생각해 봐요. ${J0.wrongTip || ''}` }; try { bad(); } catch (e) {} }
     persist(); renderS1Jump(); markMap();
@@ -6635,7 +6643,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
   document.addEventListener('input', e => {
     if (e.target.id === 'sv-goal-draft') { state.s1.goalDraft = e.target.value.slice(0, 300); persist(); }
     else if (e.target.dataset && e.target.dataset.svx) { J0S().ex = e.target.value.slice(0, 500); persist(); }
-    else if (e.target.dataset && e.target.dataset.svp != null) { const X = J0S(); X.a[e.target.dataset.svp] = e.target.value; X.mark = null; persist(); }
+    else if (e.target.dataset && e.target.dataset.svp != null) { const X = J0S(); X.a[e.target.dataset.svp] = e.target.value; X.mark = null; document.querySelectorAll('#svj0 .sv-slot.no,#svj0 .sv-slot.ok').forEach(x => x.classList.remove('no', 'ok')); if (X.fb && !X.fb.ok) X.fb = null; persist(); }
     else if (e.target.id && e.target.id.startsWith('sv-v-')) { ensure(); state.s1.goalAssessment.vals[e.target.id.slice(5)] = e.target.value; persist(); }
   });
   document.addEventListener('click', e => {
@@ -6694,7 +6702,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const bg = document.createElement('div'); bg.id = 'skBg'; wrap.insertBefore(bg, cv);
     const bar = box.querySelector('.sbar'), close = bar && bar.querySelector('[data-act="scratch-toggle"]');
     const ui = document.createElement('span'); ui.style.display = 'contents';
-    ui.innerHTML = `<button class="sbtn" id="skFig" type="button">🖼 문제 그림</button><button class="sbtn" id="skExpr" type="button">🧮 계산식</button><label class="skop">👁 투명도 <input id="skOp" type="range" min="10" max="100" value="45"></label>`;
+    ui.innerHTML = `<button class="sbtn" id="skFig" type="button">🖼 문제 그림</button><button class="sbtn" id="skExpr" type="button">🧮 계산식</button><label class="skop">👁 투명도 <input id="skOp" type="range" min="10" max="100" value="70"></label>`;
     if (bar) bar.insertBefore(ui, close || null);
     let mode = null, src = { fig: null, expr: null };
     const vis = el => { if (!el) return false; const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 && r.top < innerHeight; };
@@ -6717,17 +6725,25 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
       c.querySelectorAll('canvas').forEach(k => { const src = el.querySelector('canvas'); const im = document.createElement('img'); try { im.src = src.toDataURL(); } catch (e) {} k.replaceWith(im); });
       return el.tagName.toLowerCase() === 'svg' ? c.outerHTML : `<div class="skclone">${c.outerHTML}</div>`;
     }
+    /* 문제 그림 = 문제 글 + 풀이에 쓸 그림(조작판·그래프·표). 머리글·악당 대사·단추·카드 묶음은 빼요 */
+    const DROP = '.vrow,.cfb,.stage-head,.anmis,button,.btn,.row,.fdtools,.fttiles,.fdsplit-b,.fdlog,.rpbar,.qnav,.hintbox,[data-dg="fd-lens"],.center.muted';
+    function clean(el) { const c = el.cloneNode(true); c.querySelectorAll(DROP).forEach(x => x.remove()); return c; }
     function pickFig(card) {
-      const sv = [...card.querySelectorAll('svg')].find(x => big(x, 120, 70)); if (sv) return snap(sv);
-      const cvs = [...card.querySelectorAll('canvas')].find(x => big(x)); if (cvs) return snap(cvs);
-      const im = [...card.querySelectorAll('img')].find(x => big(x, 120, 80) && !x.closest('.vrow,.stage-head,.mhead,.svh-ava')); if (im) return `<img src="${im.src}" alt="">`;
-      const sel = '.sv-fig,.afw,.vmx,table.vm,[class*="stage"],[class*="tray"],[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg';
-      const f = [...card.querySelectorAll(sel)].find(x => big(x, 120, 40) && !x.closest('#skBg')); if (f) return snap(f);
-      const q = card.querySelector('.qtext') || card.querySelector('.vgq,.ztq,.rcq') || card.querySelector('.h2'); if (q && q.textContent.trim()) return `<div class="skq">${q.innerHTML}</div>`;
-      return null;
+      const qEl = card.querySelector('.labq > div') || card.querySelector('.qtext') || card.querySelector('.vgq,.ztq,.rcq,.labq');
+      const qh = qEl && qEl.textContent.trim() ? `<div class="skq">${clean(qEl).innerHTML}</div>` : '';
+      const FIG = '.fdsplit-a,.fdgrid,.sv-fig,.afw,.vmx,table.vm,[class*="tray"]:not(.fdtray),[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg,[class*="stage"]:not(.stage-head):not(.stage-head *)';
+      let fig = '';
+      const sv = [...card.querySelectorAll('svg')].find(x => big(x, 120, 70) && !x.closest('.vrow,.stage-head,button'));
+      const cvs = [...card.querySelectorAll('canvas')].find(x => big(x));
+      const f = [...card.querySelectorAll(FIG)].find(x => big(x, 120, 40) && !x.closest('#skBg,.vrow,.stage-head'));
+      if (f) { const c = clean(f); c.querySelectorAll('input,textarea').forEach(i => { const sp = document.createElement('span'); sp.className = 'skinp'; sp.textContent = i.value || '□'; i.replaceWith(sp); }); fig = c.outerHTML; }
+      else if (sv) fig = sv.outerHTML; else if (cvs) { try { fig = `<img src="${cvs.toDataURL()}" alt="">`; } catch (e) {} }
+      else { const im = [...card.querySelectorAll('img')].find(x => big(x, 120, 80) && !x.closest('.vrow,.stage-head,.mhead,.svh-ava,.fdwho')); if (im) fig = `<img src="${im.src}" alt="">`; }
+      if (!qh && !fig) { const h = card.querySelector('.h2'); return h && h.textContent.trim() ? `<div class="skq">${h.innerHTML}</div>` : null; }
+      return `<div class="skclone skpack">${qh}${fig ? `<div class="skfig">${fig}</div>` : ''}</div>`;
     }
     function paint() {
-      const op = document.getElementById('skOp'); bg.style.opacity = (op ? op.value : 45) / 100;
+      const op = document.getElementById('skOp'); bg.style.opacity = (op ? op.value : 70) / 100;
       bg.innerHTML = mode === 'fig' && src.fig ? src.fig : mode === 'expr' && src.expr ? `<div class="skexpr">${src.expr}</div>` : '';
       bg.querySelectorAll('[data-gh],[data-an],[data-act],[data-sv]').forEach(n => { n.removeAttribute('data-gh'); n.removeAttribute('data-an'); n.removeAttribute('data-act'); n.removeAttribute('data-sv'); });
       const cl = bg.querySelector('.skclone,.skq'); if (cl) { cl.style.transform = ''; const W = bg.clientWidth - 16, H = bg.clientHeight - 16, w = cl.scrollWidth, h = cl.scrollHeight; const k = Math.min(1.4, W / Math.max(1, w), H / Math.max(1, h)); cl.style.transform = `scale(${k})`; }
@@ -6736,7 +6752,10 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
       bf.disabled = !src.fig; be.disabled = !src.expr; bf.classList.toggle('on', mode === 'fig'); be.classList.toggle('on', mode === 'expr');
       be.style.display = src.expr ? '' : 'none';
     }
-    const _tg = Sketch.toggle; Sketch.toggle = function () { const wasOpen = !box.classList.contains('hidden'); if (!wasOpen) { src = find(); mode = src.fig && (src.auto === 'fig' || !src.expr) ? 'fig' : null; } _tg.apply(this, arguments); paint(); };
+    /* 문제가 바뀌면 앞 문제에 그린 자국은 지워요 (같은 문제면 그대로 둬요) */
+    let skKey = null;
+    const qKey = f => { if (!f) return ''; const m = f.match(/<div class="skq">([\s\S]*?)<\/div>/); return (m ? m[1] : f).replace(/<[^>]+>|\s+/g, '').slice(0, 600); };
+    const _tg = Sketch.toggle; Sketch.toggle = function () { const wasOpen = !box.classList.contains('hidden'); let fresh = false; if (!wasOpen) { src = find(); mode = src.fig && (src.auto === 'fig' || !src.expr) ? 'fig' : null; const k = qKey(src.fig) + '|' + (state.tab || '') + '|' + ((state[state.tab] || {}).step || ''); fresh = skKey !== null && k !== skKey; skKey = k; } _tg.apply(this, arguments); if (fresh) { try { const x = cv.getContext('2d'); x.clearRect(0, 0, cv.width, cv.height); } catch (e) {} } paint(); };
     document.getElementById('skFig').addEventListener('click', () => { mode = mode === 'fig' ? null : 'fig'; paint(); });
     document.getElementById('skExpr').addEventListener('click', () => { mode = mode === 'expr' ? null : 'expr'; if (mode === 'expr') { try { J0S().hintUsed = true; persist(); } catch (e) {} toast('🧮 계산식 틀을 깔았어요. 빈칸을 연습장에 직접 써 봐요!'); } paint(); });
     document.getElementById('skOp').addEventListener('input', paint);
@@ -7933,5 +7952,631 @@ const CKS = {
 
 </script>
 <!--CK-END-->
+<!--FR-START--><style>.frc{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:900}.frc>span{display:block;padding:0 .18em;min-width:.7em;text-align:center}.frc>span+span{border-top:.11em solid currentColor}.mixf{display:inline-flex;align-items:center;gap:.06em;vertical-align:middle}.mixf>b{font-size:1.18em}</style><script>
+/* =====================================================================
+   ½ 분수는 언제나 분수 모양으로 — 화면의 "3/4", "1 2/3"을 세로 분수로 바꿔요 (차시 전체)
+   · 글 쓰는 칸(입력·글상자)과 진행 개수 표시(0/3, 문제 1/8 같은 것)는 그대로 둬요
+   ===================================================================== */
+(function () {
+  if (window.__FRALL) return; window.__FRALL = 1;
+  const SKIP = 'script,style,textarea,input,select,option,svg,canvas,.frc,.mixf,[contenteditable],title,'
+    + '#svNav,.qnlab,#gemPill,.gov,#timer,.timer,.jxsol,.svbg-bar,.svbg-lvb,.bq-score,.bq-pl,.labno,.qnav,.station,.sth-top,.sth-boss,.sth-right,.sv-pass,.ck-prog,.svbadge,#badgeWrap,.hub .ts,.mis,.ftsteps,.t11steps,.pq-count,.pm-chk,.p-keytbl th,.toastx';
+  const E = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const fr = (n, d) => `<span class="frc"><span>${n}</span><span>${d}</span></span>`;
+  const mix = (w, n, d) => `<span class="mixf"><b>${w}</b>${fr(n, d)}</span>`;
+  const RX = /(^|[^\d.,/])(\d+) (\d+)\/(\d+)(?![\d/])|(^|[^\d.,/:])(\d+)\/(\d+)(?![\d/])/g;
+  const isCount = (txt, idx, len) => { const before = txt.slice(Math.max(0, idx - 8), idx), after = txt.slice(idx + len, idx + len + 6);
+    return /(문제|번|조각|도구|봉인|함정|방어막|배지|단계|찾은 것|HP|점수|바퀴|판|라운드)\s*\(?[^)]{0,6}\)?\s*$/.test(before) && !/^\s*(L|m|kg|cm|개의|만큼)/.test(after) || /^\s*(번|문제|단계|점)/.test(after); };
+  function conv(t) {
+    const v = t.nodeValue; if (!/\d\/\d/.test(v)) return; let out = '', last = 0, hit = false; RX.lastIndex = 0; let m;
+    while ((m = RX.exec(v))) {
+      const pre = m[1] != null ? m[1] : m[5] || '', s0 = m.index + pre.length, raw = m[0].slice(pre.length);
+      if (isCount(v, s0, raw.length)) continue;
+      out += E(v.slice(last, s0)) + (m[2] != null ? mix(m[2], m[3], m[4]) : fr(m[6], m[7])); last = s0 + raw.length; hit = true; }
+    if (!hit) return; out += E(v.slice(last)); const sp = document.createElement('span'); sp.innerHTML = out; t.replaceWith(...sp.childNodes); }
+  let run = function (root) {
+    const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => !/\d\/\d/.test(n.nodeValue) || !n.parentElement || n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    const list = []; let n; while ((n = w.nextNode())) list.push(n); list.forEach(conv); };
+  /* 셈(몇 개 중 몇 개)은 빗금 대신 말로: 조각 0/3 → 조각 3개 중 0개, HP 70 / 100 → HP 70 (최대 100). 게임 점수판은 그대로 둬요 */
+  const CRX = /((?:HP|문제|조각|도구|봉인 풀기|봉인|함정|방어막|배지|보스전|관문|라운드|찾은 것|미션|단계)(?:\s*\([^)]{0,6}\))?\s*)(\d+)\s*\/\s*(\d+)(?![\d/])/g;
+  const CSKIP = 'script,style,textarea,input,select,option,svg,canvas,.frc,.mixf,.gamecard,.mhud,.svbg-bar,.svbg-lvb,.bq-score,.bq-pl,.lair,[contenteditable]';
+  function cnt(root) { const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => !/\d\s*\/\s*\d/.test(n.nodeValue) || !n.parentElement || n.parentElement.closest(CSKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    const L = []; let n; while ((n = w.nextNode())) L.push(n);
+    L.forEach(t => { CRX.lastIndex = 0; const v = t.nodeValue, r = v.replace(CRX, (m, pre, a, b) => /HP/.test(pre) ? `${pre}${a} (최대 ${b})` : `${pre}${b}개 중 ${a}개`); const r2 = r.replace(/(\d+)\s*\/\s*(\d+)\s*점/g, (m, a, b) => `${a}점 (만점 ${b}점)`); if (r2 !== v) t.nodeValue = r2; }); }
+  const _run = run; run = function (root) { _run(root); try { cnt(root); } catch (e) {} };
+  window.frAll = run;
+  let q = false; const go = () => { if (q) return; q = true; requestAnimationFrame(() => { q = false; try { run(); } catch (e) {} }); };
+  new MutationObserver(go).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+  const FRCSS = '.frc{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:900}.frc>span{display:block;padding:0 .18em;min-width:.7em;text-align:center}.frc>span+span{border-top:.11em solid currentColor}.mixf{display:inline-flex;align-items:center;gap:.06em;vertical-align:middle}.mixf>b{font-size:1.18em}';
+  if (typeof printDocHTML === 'function') { const _p = printDocHTML; printDocHTML = function () { return _p.apply(this, arguments).replace('</style>', FRCSS + '</style>'); }; }
+  /* 인쇄용 학습지(따로 열리는 창)에도 */
+  if (typeof buildS1Sheet === 'function') { const _b = buildS1Sheet; buildS1Sheet = function () { const h = _b.apply(this, arguments); try { const d = document.createElement('div'); d.innerHTML = h; run(d); return d.innerHTML; } catch (e) { return h; } }; }
+  if (typeof buildS2Sheet === 'function') { const _b2 = buildS2Sheet; buildS2Sheet = function () { const h = _b2.apply(this, arguments); try { const d = document.createElement('div'); d.innerHTML = h; run(d); return d.innerHTML; } catch (e) { return h; } }; }
+})();
+
+</script><!--FR-END-->
+<!--PJ-START--><script>
+/* =====================================================================
+   🖨️ 학습지 인쇄 보강 — 점프 문제를 수업과 같은 4개(점프 1 오늘의 문제 + 보스전 도전 3개)로 맞추고,
+   학습지 구성 메뉴의 문제 수를 실제 인쇄되는 수로 보여 줘요. (모든 차시 공통 · 여러 번 넣어도 안전)
+   ===================================================================== */
+(function () {
+  if (typeof buildS1Sheet !== 'function' || window.__PJ) return; window.__PJ = 1;
+  const LID = (() => { try { return CONFIG.LESSON_ID; } catch (e) { return ''; } })();
+  const EXTRA = {
+    '4-1-2-3': [['📏 일직선', '예각 2개와 둔각 1개를 모두 더하면 180°(일직선)가 되도록 세 각을 정해 보세요. 서로 다른 방법으로 2가지 쓰세요.', '예) 40° + 40° + 100° = 180°, 30° + 50° + 100° = 180° (두 각은 90°보다 작고, 한 각은 90°보다 커야 해요)']],
+    '4-1-2-4': [['🧭 일직선', '일직선 위에 두 각 가와 나가 있어요. 가 + 나 = 180°이고, 가는 나보다 40° 더 커요. 가와 나는 각각 몇 도인가요?', '가 = 110°, 나 = 70° (110° + 70° = 180°, 110° − 70° = 40°)']],
+    '4-1-2-5': [['🔺 설계', '둔각이 1개이고 나머지 두 각은 서로 다른 예각인 삼각형의 세 각을 2가지 쓰세요.', '예) 100°, 50°, 30° / 120°, 40°, 20° (세 각의 합은 180°)']],
+    '4-1-2-6': [['⬠ 오각형', '오각형의 한 꼭짓점에서 대각선을 그으면 삼각형 몇 개로 나뉘나요? 이를 이용해 오각형의 다섯 각의 크기의 합을 구하세요.', '삼각형 3개 → 180° × 3 = 540°']],
+    '4-1-5-1': [['📊 그래프', '좋아하는 운동을 조사했더니 축구 4명, 야구 10명, 수영 6명, 줄넘기 8명이었어요. 세로 눈금 한 칸을 2명으로 하여 막대그래프를 그리면 야구 막대는 몇 칸인가요? 수영과 줄넘기 막대는 몇 칸 차이가 나나요?', '야구 5칸, 수영 3칸과 줄넘기 4칸 → 1칸 차이']],
+    '4-1-6-1': [['🎫 좌석', '수의 배열에서 → 방향으로 5씩 커지고 ↓ 방향으로 100씩 커져요. 첫째 줄 첫째 수가 205일 때 셋째 줄 넷째 수는 얼마인가요?', '205 → (→ 3칸) 220 → (↓ 2칸) 420']],
+    '6-1-1-1': [['🔮 에너지 분배', '크리스털 막대 7개를 대원 3명이 똑같이 나누어 가지려고 해요. 그림을 그려 나누고, 한 사람 몫을 가분수와 대분수로 나타내세요.', '7 ÷ 3 = 7/3 = 2 1/3 (막대 2개씩 통째로, 남은 1개를 3등분해 1/3씩)']],
+    '6-1-1-2': [['🧪 음료 분배', '음료 3/5 L를 병 2개에, 음료 2/3 L를 병 4개에 각각 똑같이 나누어 담았어요. 한 병의 양을 각각 구하고, 어느 쪽 병에 음료가 더 많이 담겼는지 쓰세요.', '3/5 ÷ 2 = 6/10 ÷ 2 = 3/10 (L), 2/3 ÷ 4 = 8/12 ÷ 4 = 2/12 = 1/6 (L) → 3/5 L를 나눈 병이 더 많아요']]
+  };
+  /* 수업과 같은 수로 맞추려고 종이 학습지에서 빼는 점프 문제(꼬리표) */
+  const DROP = { '4-1-1-1': ['💰 예산', '✈️ 여행', '🌱 환경'], '4-1-1-2': ['🔧 복구', '⛽ 연료'] };
+  const strip = s => String(s || '').replace(/<(?!\/?b>)[^>]+>/g, '');
+  const _b = buildS1Sheet;
+  buildS1Sheet = function (c) {
+    const h = _b.apply(this, arguments); if (!c || !c.jump) return h;
+    try {
+      const box = document.createElement('div'); box.innerHTML = h; const sh = box.querySelector('.sheet'); if (!sh) return h;
+      const sec = [...sh.querySelectorAll('.p-sec')].find(x => /③/.test(x.textContent)); if (!sec) return h;
+      const mk = (tag, text) => { const d = document.createElement('div'); d.className = 'p-q pj-add'; d.innerHTML = `<div class="p-qt"><b>0.</b> <span class="p-tag">${tag}</span>${text}</div><div class="p-work tall">풀이</div>`; return d; };
+      const add = [];   // [노드, 정답]
+      const L = window.SV_LF, J = L && L.j0;
+      if (J && L.problem && !sh.querySelector('.pj-j0')) { const d = mk('📖 오늘의 문제', strip(L.problem)); d.classList.add('pj-j0'); sec.after(d); add.push([d, strip(J.ok || '')]); }
+      const qs0 = [...sh.querySelectorAll('.p-q')], lastQ = qs0[qs0.length - 1];
+      let at = lastQ || sec; (EXTRA[LID] || []).forEach(([tag, q, a]) => { const d = mk(tag, q); at.after(d); at = d; add.push([d, a]); });
+      const gone = new Set();
+      (DROP[LID] || []).forEach(tag => sh.querySelectorAll('.p-q').forEach(q => { const t = q.querySelector('.p-tag'); if (t && t.textContent.trim() === tag) { const b = q.querySelector('.p-qt > b'); if (b) gone.add(parseInt(b.textContent, 10)); q.remove(); } }));
+      if (LID === '4-1-1-2' && gone.size) sh.querySelectorAll('.p-qt').forEach(q => { q.innerHTML = q.innerHTML.replace('복구한 발사 예산', '발사 예산'); });
+      if (!add.length && !gone.size) return h;
+      /* 번호 다시 매기기 + 정답표 맞추기 */
+      const map = {}, newKeys = []; let n = 0;
+      sh.querySelectorAll('.p-q').forEach(q => { const b = q.querySelector('.p-qt > b'); if (!b) return; n++; const old = parseInt(b.textContent, 10); const a = add.find(x => x[0] === q);
+        if (a) newKeys.push([n, a[1]]); else if (old) map[old] = n; b.textContent = n + '.'; });
+      const tbl = box.querySelector('.p-keytbl');
+      if (tbl) { const rows = [...tbl.querySelectorAll('tr')].slice(1).filter(tr => !gone.has(parseInt(tr.querySelectorAll('td')[0].textContent, 10))).map(tr => { const td = tr.querySelectorAll('td'); return [map[parseInt(td[0].textContent, 10)] || parseInt(td[0].textContent, 10), td[1].innerHTML]; });
+        newKeys.forEach(([k, a]) => rows.push([k, a.replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch])).replace(/&lt;(\/?)b&gt;/g, '<$1b>')]));
+        rows.sort((x, y) => x[0] - y[0]); tbl.innerHTML = `<tr><th style="width:44px">번호</th><th>정답 및 해설</th></tr>` + rows.map(([k, a]) => `<tr><td>${k}</td><td>${a}</td></tr>`).join(''); }
+      return box.innerHTML;
+    } catch (e) { return h; }
+  };
+  /* 학습지 구성 메뉴: 실제로 인쇄되는 문제 수로 */
+  if (typeof renderPrintOpts === 'function') { const _r = renderPrintOpts; renderPrintOpts = function () { const r = _r.apply(this, arguments);
+    try { const d = document.createElement('div'); d.innerHTML = buildS1Sheet({ concept: false, basic: true, jump: true, key: false }); const sh = d.querySelector('.sheet'); let cur = '', cnt = {};
+      [...sh.children].forEach(e => { if (e.classList.contains('p-sec')) cur = /②/.test(e.textContent) ? 'b' : /③/.test(e.textContent) ? 'j' : ''; else if (e.classList.contains('p-q') && cur) cnt[cur] = (cnt[cur] || 0) + 1; });
+      const o = document.querySelector('#pmOpts'); if (o) o.querySelectorAll('label').forEach(l => { l.childNodes.forEach(t => { if (t.nodeType !== 3) return;
+        if (cnt.b) t.nodeValue = t.nodeValue.replace(/(② 기본 문제 )\d+개/, `$1${cnt.b}개`);
+        if (cnt.j) t.nodeValue = t.nodeValue.replace(/(③ 점프 문제 )\d+개/, `$1${cnt.j}개`); }); });
+    } catch (e) {} return r; }; }
+})();
+/* 🖨 서술·계산 문제는 '식' 칸과 '답' 칸을 한 묶음으로 (모든 차시 공통) */
+(function () {
+  if (window.__PJ2) return; window.__PJ2 = 1;
+  const CALC = /[÷×+−]|\d\s*-\s*\d|계산|구하|몇|얼마|모두|남은|차를|합을|나누|곱하|더하|빼|한 (병|도막|사람|명|개)/, NOT = /읽어 보세요|읽으세요|수로 써|숫자로 써|자리 숫자|기호를 쓰|이름을 쓰|고르세요|골라/;
+  const CSS = '.p-set{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin:8px 0 2px 14px;align-items:stretch;break-inside:avoid}.p-sik{border:1.5px solid #94a3b8;border-radius:8px;min-height:54px;padding:4px 10px;font-weight:800;color:#334155}.p-dap{border:1.5px solid #94a3b8;border-radius:8px;padding:4px 12px;font-weight:800;display:flex;align-items:flex-end;gap:6px;min-width:150px;color:#334155}.p-dap .blank{min-width:90px}';
+  function fix(h) {
+    try { const box = document.createElement('div'); box.innerHTML = h; let hit = false;
+      box.querySelectorAll('.p-q').forEach(q => { if (q.querySelector('.p-work,.p-set')) return; const qt = (q.querySelector('.p-qt') || q).textContent || '';
+        const a = [...q.querySelectorAll('.p-ans2,.p-ans')].find(x => /^\s*답\s*[:：]/.test(x.textContent)); if (!a || !CALC.test(qt) || NOT.test(qt)) return;
+        const inner = a.innerHTML.replace(/^\s*답\s*[:：]\s*/, ''); const s = document.createElement('div'); s.className = 'p-set';
+        s.innerHTML = `<div class="p-sik">식</div><div class="p-dap">답 ${inner}</div>`; a.replaceWith(s); hit = true; });
+      if (!hit) return h; if (!box.querySelector('style[data-pset]')) box.insertAdjacentHTML('afterbegin', `<style data-pset>${CSS}</style>`); return box.innerHTML; } catch (e) { return h; } }
+  if (typeof buildS1Sheet === 'function') { const _b1 = buildS1Sheet; buildS1Sheet = function () { return fix(_b1.apply(this, arguments)); }; }
+  if (typeof buildS2Sheet === 'function') { const _b2 = buildS2Sheet; buildS2Sheet = function () { return fix(_b2.apply(this, arguments)); }; }
+  /* 차시마다 따로 둔 그림 모양(막대·모눈 등)도 인쇄 창에 함께 넣어요: 학습지에 쓰인 class의 규칙만 골라요 */
+  function usedCSS(html) { const cls = new Set((html.match(/class="([^"]+)"/g) || []).flatMap(m => m.slice(7, -1).split(/\s+/)).filter(Boolean)); const app = document.getElementById('appStyle'); let out = '';
+    [...document.styleSheets].forEach(sh => { if (app && sh.ownerNode === app) return; let rules; try { rules = sh.cssRules; } catch (e) { return; }
+      [...(rules || [])].forEach(r => { if (!r.selectorText || /(^|[\s,])(body|html)\b|svsl|svsc/.test(r.selectorText)) return; const m = r.selectorText.match(/\.[\w-]+/g); if (m && m.some(c => cls.has(c.slice(1)))) out += r.cssText + '\n'; }); });
+    return out; }
+  if (typeof printDocHTML === 'function') { const _p = printDocHTML; printDocHTML = function () { const prev = (document.getElementById('pmPreview') || {}).innerHTML || ''; return _p.apply(this, arguments).replace('</style>', CSS + usedCSS(prev) + '</style>'); }; }
+})();
+
+</script><!--PJ-END-->
+<!--SW-START--><script>
+/* 🔀 세트 1 ↔ 세트 2 오갈 때: 떠난 쪽의 게임 시간·문제 시간·배경 음악·읽어 주기를 멈추고, 돌아오면 이어서 해요 (모든 차시 공통) */
+(function () {
+  if (window.__SWFIX || typeof showTab !== 'function') return; window.__SWFIX = 1;
+  const st = () => (typeof state !== 'undefined' ? state : {});
+  let qzHold = null;
+  function holdQuiz() { try { if (typeof QZ === 'undefined' || !QZ.qt || !QZ.q || typeof QZG === 'undefined' || typeof VG === 'undefined') return; const g = QZG[VG.id]; if (!g || !g.qtime) return;
+    clearInterval(QZ.qt); QZ.qt = null; qzHold = { id: VG.id, used: Date.now() - QZ.t0 }; } catch (e) {} }
+  function resumeQuiz() { try { if (!qzHold || typeof onGame !== 'function' || !onGame(qzHold.id)) return; const g = QZG[qzHold.id], T = g.qtime(qzLv()); QZ.t0 = Date.now() - qzHold.used; qzHold = null; clearInterval(QZ.qt);
+    QZ.qt = setInterval(() => { const b = document.getElementById('qzBar'); const left = Math.max(0, 1 - (Date.now() - QZ.t0) / (T * 1000)); if (b) b.style.width = (left * 100) + '%'; if (left <= 0) { clearInterval(QZ.qt); qzAns(-1); } }, 100); } catch (e) {} }
+  function mood() { try { const S = st(), k = S.tab, step = (S[k] || {}).step; Sound.setMood((step === 'jump' || step === 'game' || step === 'board') ? 'battle' : 'calm'); } catch (e) {} }
+  const _sh = showTab;
+  showTab = function (k) {
+    const from = st().tab;
+    if (from && from !== k) { if (from === 's2') holdQuiz(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
+    const r = _sh.apply(this, arguments);
+    mood(); if (k === 's2') setTimeout(resumeQuiz, 50);
+    return r;
+  };
+  /* 세트 2 안에서 단계(문제은행·미니게임·보드 게임)를 옮길 때도 문제 시간은 멈췄다가 이어서 */
+  if (typeof goStep === 'function') { const _g = goStep; goStep = function (k, step) { const S = st(); if (S.tab === 's2' && S.s2 && S.s2.step === 'game' && step !== 'game') holdQuiz(); const r = _g.apply(this, arguments); if (k === 's2' && step === 'game') setTimeout(resumeQuiz, 50); return r; }; }
+})();
+
+</script><!--SW-END-->
+<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
+#skBg{align-items:flex-start!important}
+#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
+#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
+#skBg .skpack .skfig{display:flex;justify-content:center}
+#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
+
+/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
+.sv-paper{min-width:min(100%,660px)}
+/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
+.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+.ritems li{margin:0!important;min-width:0}
+@media(max-width:700px){.ritems{grid-template-columns:1fr}}
+</style><!--SK-END-->
+<!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
+#svslTop,#svslTabs,#svslNav,#svslFab{display:none}
+body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
+html:has(body.svsl-on){overflow:hidden}
+body.svsl-on #svslTop,body.svsl-on #svslNav{display:flex}
+body.svsl-on.svsl-tabs #svslTabs{display:flex}
+body:not(.svsl-on) #svslFab{display:block}
+/* 원래 화면에서 넘겨 보기 틀이 대신하는 부분만 감춰요 */
+body.svsl-on header,body.svsl-on .idbar,body.svsl-on #tabs,body.svsl-on #storyHud,body.svsl-on #sec-s1>.map,body.svsl-on footer,body.svsl-on .clouds,
+body.svsl-on #badgeWrap,body.svsl-on #s1body>.hub,body.svsl-on #s1body>.next-row,body.svsl-on .print-chip,body.svsl-on #gemPill,
+body.svsl-on .svh-next,body.svsl-on [data-sv=start],body.svsl-on [data-an=fd-next],body.svsl-on .svsl-off{display:none!important}
+body.svsl-on .wrap{position:fixed;top:var(--svT);bottom:var(--svB);left:0;right:0;max-width:none;margin:0;padding:clamp(8px,1.4vh,16px) clamp(10px,2.2vw,30px);overflow:hidden;display:flex;flex-direction:column;z-index:2}
+body.svsl-on main,body.svsl-on #sec-s1,body.svsl-on #s1body{flex:1;min-height:0;display:flex;flex-direction:column;margin:0;padding:0}
+body.svsl-on #sec-s1>:not(#s1body){display:none!important}
+body.svsl-on #s1body>*{flex:none}
+body.svsl-on #scratchFab{bottom:calc(var(--svB) + 10px)!important}
+body.svsl-on #toast{bottom:auto!important;top:calc(var(--svT) + 8px)!important}
+body.svsl-on.svsl-free .wrap{overflow-y:auto}
+/* 장면 넘김 효과 */
+body.svsl-on .svsl-in-r{animation:svslR .35s ease-out}body.svsl-on .svsl-in-l{animation:svslL .35s ease-out}
+@keyframes svslR{from{opacity:0;transform:translateX(50px)}}@keyframes svslL{from{opacity:0;transform:translateX(-50px)}}
+
+/* ---------- 위 막대 · 단계 진행 줄 ---------- */
+#svslTop{position:fixed;top:0;left:0;right:0;z-index:70;align-items:center;gap:8px;flex-wrap:wrap;row-gap:4px;padding:6px 12px;background:#1e1b4b;color:#fff;font-family:inherit}
+#svslTop .ti{font-weight:900;font-size:clamp(13px,1.1vw,17px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 160px;min-width:0}
+#svslTop .ti small{opacity:.7;margin-right:6px;font-weight:800}
+#svslTop .md{border:0;border-radius:999px;padding:6px 12px;font-weight:900;font-size:13px;background:#fff;color:#6d28d9;cursor:pointer;white-space:nowrap;order:3}
+#svslTop .stp{display:flex;align-items:center;justify-content:center;flex:1 1 600px;min-width:0;order:2}
+#svslTop .ln{flex:1 1 18px;max-width:70px;height:6px;border-radius:3px;background:#ffffff30;position:relative;overflow:hidden}
+#svslTop .ln i{position:absolute;inset:0;width:0;background:#fbbf24;transition:width .6s}#svslTop .ln.fill i{width:100%}
+#svslTop .st{display:flex;align-items:center;gap:6px;border:0;background:none;color:#ffffffb0;font-weight:900;font-size:clamp(12px,1vw,15px);padding:2px 4px;cursor:pointer;white-space:nowrap;font-family:inherit}
+#svslTop .st:disabled{cursor:default;opacity:.45}
+#svslTop .ci{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#ffffff25;border:2px solid #ffffff60;font-size:13px;flex:none;transition:all .3s}
+#svslTop .st.ok .ci{background:#fbbf24;border-color:#fbbf24;color:#422006}
+#svslTop .st.on{color:#fff}
+#svslTop .st.on .ci{width:34px;height:34px;font-size:16px;background:var(--svc);border-color:#fff;color:#fff;box-shadow:0 0 0 4px #ffffff40,0 0 16px var(--svc);animation:svslP 1.8s infinite}
+#svslTop .st.on .nm{background:var(--svc);color:#fff;border-radius:999px;padding:3px 10px}
+@keyframes svslP{50%{box-shadow:0 0 0 7px #ffffff20,0 0 22px var(--svc)}}
+body{--svc:#f59e0b;--svc2:#fff7ed}
+body.svsl-on[data-svst=mission]{--svc:#f59e0b;--svc2:#fff7ed}
+body.svsl-on[data-svst=concept]{--svc:#0891b2;--svc2:#ecfeff}
+body.svsl-on[data-svst=basic]{--svc:#16a34a;--svc2:#f0fdf4}
+body.svsl-on[data-svst=jump]{--svc:#e11d48;--svc2:#fff1f2}
+body.svsl-on[data-svst=result]{--svc:#7c3aed;--svc2:#f5f3ff}
+body.svsl-on{background:linear-gradient(180deg,var(--svc2),#fff) fixed!important}
+/* 도구 탭 */
+#svslTabs{position:fixed;left:0;right:0;z-index:69;gap:6px;padding:6px 12px;background:var(--svc2);border-bottom:3px solid var(--svc);overflow-x:auto;scrollbar-width:none}
+#svslTabs button{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:clamp(12px,1vw,15px);padding:5px 10px;border-radius:12px;background:#fff;color:#475569;border:2px solid #e2e8f0;cursor:pointer;font-family:inherit;white-space:nowrap}
+#svslTabs button img{width:24px;height:24px;border-radius:50%}
+#svslTabs button.on{border-color:var(--svc);color:#fff;background:var(--svc)}
+#svslTabs button.ok:not(.on){color:#15803d;border-color:#86efac}
+/* 아래 막대 */
+#svslNav{position:fixed;bottom:0;left:0;right:0;z-index:70;align-items:center;justify-content:center;gap:14px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:#fff;border-top:3px solid var(--svc);font-family:inherit}
+#svslNav .nv{flex:none;border:0;border-radius:999px;padding:10px 22px;font-weight:900;font-size:clamp(15px,1.2vw,19px);background:var(--svc);color:#fff;box-shadow:0 3px 0 #0003;cursor:pointer;min-width:100px;font-family:inherit}
+#svslNav .nv:disabled{opacity:.35;cursor:default}
+#svslNav .nv.go{animation:svslGo 1.2s infinite}
+@keyframes svslGo{50%{transform:translateX(4px);box-shadow:0 3px 0 #0003,0 0 0 6px #fbbf2460}}
+#svslNav .lb{display:flex;flex-direction:column;align-items:center;min-width:0;overflow:hidden}
+#svslNav .lb b{font-size:clamp(13px,1.05vw,17px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:#1e1b4b}
+#svslNav .lb small{font-size:12px;color:#b45309;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#svslNav .dots{display:flex;gap:5px;margin-top:4px}#svslNav .dots i{width:9px;height:9px;border-radius:50%;background:#e2e8f0}#svslNav .dots i.on{background:var(--svc);width:22px;border-radius:5px}#svslNav .dots i.ok{background:#a78bfa}
+#svslFab{position:fixed;right:14px;bottom:70px;z-index:80;border:0;border-radius:999px;padding:10px 16px;font-weight:900;font-size:15px;background:linear-gradient(180deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 4px 12px #4c1d9580;cursor:pointer;font-family:inherit}
+/* 단계 바뀜 알림 */
+#svslBan{position:fixed;inset:0;z-index:75;display:flex;align-items:center;justify-content:center;background:#1e1b4bcc;pointer-events:none;animation:svslB 2s forwards}
+#svslBan>div{background:#fff;border-radius:28px;padding:22px 42px;text-align:center;border:6px solid var(--svc);box-shadow:0 20px 60px #0006;animation:svslPop .5s cubic-bezier(.3,1.6,.6,1);max-width:90vw}
+#svslBan .k{display:inline-block;background:var(--svc);color:#fff;border-radius:999px;padding:3px 16px;font-weight:900}
+#svslBan h3{margin:8px 0 4px;font-size:clamp(26px,3vw,40px);color:#1e1b4b}#svslBan p{margin:0;font-weight:800;color:#475569}
+#svslBan .fl{display:flex;gap:6px;justify-content:center;margin-top:10px}#svslBan .fl i{width:12px;height:12px;border-radius:50%;background:#e2e8f0}#svslBan .fl i.ok{background:#fbbf24}#svslBan .fl i.on{background:var(--svc);width:30px;border-radius:6px}
+@keyframes svslB{0%{opacity:0}10%{opacity:1}80%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes svslPop{from{transform:scale(.5)}to{transform:scale(1)}}
+
+/* ---------- 오늘의 문제 장면 ---------- */
+body.svsl-on .sv-mission{width:100%;max-width:none!important;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin:0}
+body.svsl-on .sv-mission>*{margin:0!important}
+/* 장면 1: 문제 상황 — 그림 왼쪽, 이야기 오른쪽 */
+body.svsl-on .svh{flex:1;min-height:0;display:flex}
+body.svsl-on .svh-stage{flex:1;min-height:0;display:grid!important;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);border-radius:24px}
+body.svsl-on .svh-pic{aspect-ratio:auto!important;height:100%;min-height:0}
+body.svsl-on .svh-hud{padding:clamp(10px,2vh,24px) clamp(12px,1.6vw,22px)!important;align-content:center;gap:clamp(8px,1.6vh,16px)!important;overflow:hidden;font-size:clamp(15px,1.25vw,21px)}
+body.svsl-on .svh-hud .svh-title{font-size:clamp(1.3rem,2.4vw,2.4rem)!important}
+body.svsl-on .svh-talk p,body.svsl-on .svh-goal p{font-size:clamp(.95rem,1.3vw,1.3rem)!important}
+body.svsl-on .svh-obj{font-size:clamp(1rem,1.3vw,1.35rem)}
+/* 장면 2: 상황 살펴보기 — 분배표 두 칸을 나란히 */
+body.svsl-on .sv-heroboard{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;font-size:clamp(15px,1.3vw,21px)}
+body.svsl-on .sv-heroboard .sv-fig{flex:none}
+body.svsl-on .sv-heroboard .sv-paper{width:auto!important;max-width:100%;font-size:1.1em}
+body.svsl-on.svsl-land .sv-heroboard .sv-paper>div:nth-child(2){display:grid!important;grid-template-columns:1fr 1fr;gap:18px}
+body.svsl-on .sv-heroboard .sv-hb-h{font-size:1.1em}
+/* 장면 3: 학습 목표 쓰기 */
+body.svsl-on .sv-panel{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;gap:clamp(8px,1.4vh,14px);font-size:clamp(16px,1.35vw,22px);padding:clamp(12px,2vh,24px) clamp(14px,2.4vw,34px)!important}
+body.svsl-on .sv-panel>*{margin:0!important}
+body.svsl-on .sv-panel textarea{font-size:1em;min-height:4.5em}
+body.svsl-on .sv-panel .sv-small{font-size:.82em}
+body.svsl-on.svsl-land .sv-panel.svsl-done{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-flow:row dense;column-gap:clamp(14px,2.4vw,34px);align-content:center}
+body.svsl-on.svsl-land .sv-panel.svsl-done>.sv-target,body.svsl-on.svsl-land .sv-panel.svsl-done>.sv-row,body.svsl-on.svsl-land .sv-panel.svsl-done>p.sv-small,body.svsl-on.svsl-land .sv-panel.svsl-done>.sv-rv-again{grid-column:2}
+body.svsl-on.svsl-land .sv-panel.svsl-done>:not(.sv-target):not(.sv-row):not(p.sv-small):not(.sv-rv-again){grid-column:1}
+body.svsl-on .sv-panel .sv-target{font-size:1.08em}
+
+/* ---------- 개념 탐험: 도구 카드 한 장 = 한 장면 ---------- */
+/* 세로 화면(핸드폰·세로 패드) */
+body.svsl-on.svsl-port .svh-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+body.svsl-on.svsl-port .svh-pic{aspect-ratio:16/9!important;height:auto}
+body.svsl-on.svsl-port .svh-hud{align-content:start;font-size:15px}
+body.svsl-on.svsl-port .svh-hud .svh-title{font-size:1.25rem!important}
+body.svsl-on.svsl-port .sv-panel{font-size:16px}
+/* 화면이 작을 때 한 단계 작게 (자르지 않고 배치를 맞춰요) */
+@media(max-width:520px){#svslTop .ti small{display:none}#svslTop .st .nm{display:none}#svslTop .st.on .nm{display:inline}#svslTop .ln{max-width:22px}#svslNav .nv{min-width:72px;padding:9px 13px}#svslBan>div{padding:16px 22px}}
+
+body.svsl-on.svsl-land .svh-hud{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"title title" "vs vs" "talk talk" "obj goal"!important}
+body.svsl-on .svh-hud .svh-talk{grid-template-columns:auto minmax(0,1fr)}
+
+body.svsl-on .sv-heroboard .sv-paper{width:min(100%,940px)!important}
+body.svsl-on .sv-mission>.sv-panel{flex:0 1 auto}
+body.svsl-on .sv-mission>.sv-heroboard{flex:0 1 auto}
+
+/* 칸 맞추기용 배치 */
+body.svsl-on .sv-heroboard{align-self:stretch;min-height:0;overflow:hidden}
+body.svsl-on .sv-mission>.sv-heroboard{flex:1 1 auto}
+body.svsl-on .sv-heroboard .sv-fig,body.svsl-on .sv-heroboard .sv-paper{max-width:none!important}
+body.svsl-on .sv-heroboard .sv-paper{width:auto!important}
+body.svsl-on.svsl-land .sv-heroboard .sv-paper{width:820px!important}
+
+body.svsl-on #s1body>.sv-mission{flex:1 1 auto}
+body.svsl-on .sv-panel{align-items:start}
+
+/* 세로 화면 다듬기 */
+body.svsl-on.svsl-port #svslTop .md{order:1;padding:5px 9px;font-size:12px}
+body.svsl-on.svsl-port #svslTop .ti{order:0}
+body.svsl-on.svsl-port #svslTop .stp{order:2;flex-basis:100%}
+body.svsl-on.svsl-port .svh{flex:none;display:block}
+body.svsl-on.svsl-port .svh-stage{display:block!important}
+body.svsl-on.svsl-port .sv-mission{justify-content:flex-start}
+
+body.svsl-on .sv-mission{min-height:0;overflow:hidden}
+body.svsl-on.svsl-port #scratchFab{padding:6px 10px!important;font-size:12px!important}
+
+body.svsl-on .sv-panel.svsl-done{display:grid!important}
+body.svsl-on .sv-panel .svsl-pl,body.svsl-on .sv-panel .svsl-pr{display:flex;flex-direction:column;gap:12px;align-self:center}
+body.svsl-on .sv-panel .svsl-pl>*,body.svsl-on .sv-panel .svsl-pr>*{margin:0!important}
+body.svsl-on.svsl-land .sv-panel.svsl-done>.svsl-pl{grid-column:1!important}body.svsl-on.svsl-land .sv-panel.svsl-done>.svsl-pr{grid-column:2!important}
+
+/* ---------- 개념 탐험: 도구 카드 한 장 = 한 장면 ----------
+   왼쪽(넓게): 도구 이름·문제 글·조작판   오른쪽(좁게): 악당·주인공 대사, 숫자 카드, 확인 단추 */
+body.svsl-on #toolBody{flex:1;min-height:0;display:flex;flex-direction:column;margin:0}
+body.svsl-on .svsl-tc{flex:1;min-height:0;margin:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) clamp(250px,23vw,340px);grid-template-rows:auto auto minmax(0,1fr);
+  grid-template-areas:"head mis" "q side" "man side";column-gap:clamp(12px,1.6vw,24px);row-gap:clamp(6px,1vh,10px);align-items:start;font-size:clamp(15px,1.1vw,19px);padding:clamp(10px,1.5vh,16px) clamp(12px,1.5vw,20px)}
+body.svsl-on .svsl-tc>*{margin:0!important;min-width:0}
+body.svsl-on .svsl-tc>.stage-head{grid-area:head}
+body.svsl-on .svsl-tc>.stage-head .h2{font-size:clamp(1.2rem,1.6vw,1.6rem)}
+body.svsl-on .svsl-tc>.stage-head p.sub{font-size:.85em}
+body.svsl-on .svsl-tc>.anmis{grid-area:mis;justify-content:flex-end;align-self:center;align-items:center}
+body.svsl-on .svsl-tc>.anmis span{font-size:.75rem;padding:3px 9px}
+body.svsl-on .svsl-tc>.labq{grid-area:q;font-size:1.15em;align-self:center}
+body.svsl-on .svsl-tc>.fdsplit{grid-area:man;align-self:stretch;justify-self:stretch;min-height:0;overflow:hidden;display:flex!important;align-items:center;justify-content:center}
+body.svsl-on .svsl-tc .fdsplit-a{flex:none;width:max-content!important;max-width:none!important}
+body.svsl-on .svsl-tc>.fdsplit>.fdsplit-b{display:none}
+body.svsl-on .svsl-tc>.svsl-main{grid-area:man;align-self:stretch;justify-self:stretch;min-height:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+body.svsl-on .svsl-tc .svsl-main>div{display:flex;flex-direction:column;align-items:center;gap:12px;width:max-content;max-width:900px}
+body.svsl-on .svsl-tc>.svsl-side{grid-area:side;align-self:stretch;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;gap:8px;background:#fff;border-left:2px dashed #e2e8f0;padding-left:clamp(8px,1vw,14px)}
+body.svsl-on .svsl-tc>.svsl-side>*{margin:0!important}
+/* 대사는 작고 단정하게 */
+body.svsl-on .svsl-tc .svsl-side .vrow{font-size:.82em;justify-content:flex-start}
+body.svsl-on .svsl-tc .svsl-side .vrow img{width:34px!important;height:34px!important}
+body.svsl-on .svsl-tc .svsl-side .cfb{font-size:.82em}
+body.svsl-on .svsl-tc .svsl-side .cfb img{max-width:40px;max-height:40px}
+body.svsl-on .svsl-tc .svsl-side .fdlog{font-size:.9em}
+body.svsl-on .svsl-tc .svsl-side .ftwon{font-size:1em}
+body.svsl-on .svsl-tc .svsl-side .fttiles{justify-content:center}
+body.svsl-on .svsl-tc .svsl-side>.row{justify-content:center}
+/* 식으로 정리하기: 앞 식과 기호 칸을 나란히 */
+body.svsl-on .svsl-tc.svsl-rule .svsl-main>div{display:grid;grid-template-columns:auto auto;grid-template-areas:"ex f" "t t" "n n";align-items:center;gap:12px 22px}
+body.svsl-on .svsl-tc.svsl-rule .fdrule-ex{grid-area:ex}body.svsl-on .svsl-tc.svsl-rule .fdrule-f{grid-area:f}
+body.svsl-on .svsl-tc.svsl-rule .svsl-main .fttiles{grid-area:t;justify-content:center}body.svsl-on .svsl-tc.svsl-rule .svsl-main>div>.center{grid-area:n}
+/* 도구 봉인 완료: 정리 내용을 가운데 크게, 다시 조작 단추는 작게 아래 */
+body.svsl-on .svsl-tc.svsl-fin .svsl-main>div{max-width:min(900px,100%);width:auto}
+body.svsl-on .svsl-tc.svsl-fin .andone{font-size:1.45em;line-height:1.7;text-align:center;padding:22px 28px;border-radius:22px}
+body.svsl-on .svsl-tc.svsl-fin .rpbar{font-size:.85em;opacity:.9;display:flex;gap:10px;align-items:center;justify-content:center}
+body.svsl-on .svsl-tc.svsl-fin .rpbar .btn{font-size:.95em;padding:6px 14px}
+body.svsl-on .svsl-tc.svsl-fin .svsl-side{justify-content:center}
+/* 세로 화면 */
+body.svsl-on.svsl-port .svsl-tc{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"head" "q" "man" "side";font-size:15px;padding:8px 10px;row-gap:6px}
+body.svsl-on.svsl-port .svsl-tc>.anmis,body.svsl-on.svsl-port .svsl-tc .svsl-side .vrow,body.svsl-on.svsl-port .svsl-tc>.stage-head p.sub,body.svsl-on.svsl-port .svsl-tc>.stage-head .ti,body.svsl-on.svsl-port .svsl-tc>.stage-head .stchap{display:none}
+body.svsl-on.svsl-port .svsl-tc>.stage-head .h2{font-size:1.05rem}
+body.svsl-on.svsl-port .svsl-tc>.labq{font-size:.95rem;padding:6px 10px}
+body.svsl-on.svsl-port .svsl-tc>.svsl-side{border-left:0;padding-left:0;max-height:48%;flex-direction:column}
+body.svsl-on.svsl-port .svsl-tc .fdbots{flex-wrap:wrap;max-width:680px}
+body.svsl-on.svsl-port .svsl-tc .svsl-main>div{width:340px}
+body.svsl-on.svsl-port .svsl-tc.svsl-rule .svsl-main>div{display:flex}
+/* 문제 상황 그림은 자르지 않아요 */
+body.svsl-on .svh-pic .svh-bg{object-fit:contain!important;background:#24185a}
+/* 단계 이름 옆 아이콘 */
+#svslTop .st .nm em{font-style:normal}
+#svslTop .sets{display:flex;gap:2px;background:#ffffff1f;border-radius:999px;padding:2px;order:1;flex:none}
+#svslTop .sets button{border:0;background:none;color:#ffffffb0;font-weight:900;font-size:12px;padding:4px 10px;border-radius:999px;cursor:pointer;white-space:nowrap;font-family:inherit}
+#svslTop .sets button.on{background:#fff;color:#1e1b4b}
+#svslTop .ti{order:0}#svslTop .stp{order:2}#svslTop .md{order:3}
+/* 주인공(안내자) 표정·대사: 아래 막대 왼쪽 */
+#svslNav .say-row{position:absolute;left:10px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:8px;margin:0!important;max-width:calc(50% - 240px);min-width:0}
+#svslNav .say-row #sayAva{flex:none}
+#svslNav .say-row .bubble{margin:0!important;font-size:13px!important;line-height:1.4!important;padding:6px 12px!important;max-height:none!important;min-height:0!important;box-sizing:border-box;overflow:hidden;display:flex!important;align-items:center;align-self:center}
+body.svsl-on #scratchFab{left:auto!important;right:14px!important}
+
+@media(max-width:700px){#svslNav .say-row{position:static;transform:none}#svslNav .say-row #sayAva .jm,#svslNav .say-row #sayAva img{width:40px!important;height:40px!important}#svslNav{gap:8px}}
+/* 세트 2: 위 진행 줄이 세트 2 단계를 보여 주므로 원래 지도는 감춰요 */
+body.svsl-on #sec-s2>.map{display:none!important}
+body.svsl-on[data-svset=s2] #sec-s1{display:none!important}
+body.svsl-on.svsl-port #svslTop .sets{order:1}
+@media(max-width:520px){#svslTop .sets button{padding:3px 7px;font-size:11px}}
+
+/* 도구 카드 머리: 한 줄로 작게 (단계 표시는 오른쪽 끝) */
+body.svsl-on .svsl-tc>.stage-head{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+body.svsl-on .svsl-tc>.stage-head>div{min-width:0;flex:1}
+body.svsl-on .svsl-tc>.stage-head p.sub,body.svsl-on .svsl-tc>.stage-head .stchap{display:none}
+body.svsl-on .svsl-tc>.stage-head .ti{width:36px!important;height:36px!important}
+body.svsl-on .svsl-tc>.stage-head .h2{font-size:clamp(1.05rem,1.3vw,1.35rem)!important;margin:0}
+body.svsl-on .svsl-tc .stage-head>.anmis{margin:0!important;flex:none;flex-wrap:nowrap;justify-content:flex-end}
+body.svsl-on.svsl-land .svsl-tc{grid-template-areas:"head head" "q side" "man side"}
+body.svsl-on.svsl-port .svsl-tc .stage-head>.anmis{display:none}
+/* 기본 문제: 안내는 한 줄로 작게, 풀 문제를 크게 */
+body.svsl-on[data-svst=basic] #s1body{justify-content:flex-start;gap:8px}
+body.svsl-on[data-svst=basic] #s1body>.sv-pass,body.svsl-on[data-svst=basic] #s1body>.qnav-wrap,body.svsl-on[data-svst=basic] #s1body>.qnbot{display:none!important}
+body.svsl-on[data-svst=basic] #s1body>.card.hx{margin:0!important;padding:6px 14px!important;display:flex;align-items:center;gap:10px}
+body.svsl-on[data-svst=basic] #s1body>.card.hx .stage-head{margin:0;flex:1;min-width:0}
+body.svsl-on[data-svst=basic] #s1body>.card.hx .stage-head .ti{width:32px!important;height:32px!important}
+body.svsl-on[data-svst=basic] #s1body>.card.hx .stage-head p.sub,body.svsl-on[data-svst=basic] #s1body>.card.hx .stchap{display:none}
+body.svsl-on[data-svst=basic] #s1body>.card.hx .h2{font-size:1rem!important;margin:0}
+body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow{margin:0!important;flex:none;font-size:.82rem}
+body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow img{width:30px!important;height:30px!important}
+body.svsl-on[data-svst=basic] #s1body>.qcard{flex:1 1 auto;margin:0!important;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.5vh,28px);padding:clamp(14px,2.5vh,30px) clamp(16px,3vw,48px)!important}
+body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on[data-svst=basic] .qcard .qtext .frc{font-size:1em}
+body.svsl-on[data-svst=basic] .qcard .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
+body.svsl-on[data-svst=basic] .qcard .choices{gap:clamp(10px,1.4vw,20px)!important}
+body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,13vh,130px)}
+body.svsl-on[data-svst=basic] .qcard .row{justify-content:center}
+body.svsl-on[data-svst=basic] .qcard .afw,body.svsl-on[data-svst=basic] .qcard .sv-fig{zoom:1.3}
+#svslTabs button.sq{flex:0 1 auto;min-width:64px}
+body.svsl-on[data-svst=basic] #svslTabs{justify-content:center}
+
+body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1fr) minmax(0,1fr)}
+body.svsl-on.svsl-port .svsl-tc>.svsl-side{max-height:none}
+body.svsl-on.svsl-port #svslNav .say-row{display:none}
+@media(max-width:700px){#svslTop .sets button span{display:none}#svslTop .ti{font-size:13px}}
+body.svsl-on.svsl-port[data-svst=basic] #s1body>.card.hx{display:none!important}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.25rem!important}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.35rem!important;min-height:64px}
+body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
+@media(max-width:520px){#svslTop .md{padding:5px 8px;font-size:11px}#svslTop .sets button{padding:3px 6px}}
+
+/* 아래 막대 주인공: 막대 안에 쏙 들어가게, 말풍선 글자는 가운데 */
+#svslNav .say-row{height:calc(100% - 8px);max-height:58px}
+#svslNav .say-row #sayAva{width:48px!important;height:48px!important;display:flex;align-items:center;justify-content:center;overflow:visible}
+#svslNav .say-row #sayAva .jm,#svslNav .say-row #sayAva img{width:46px!important;height:46px!important}
+#svslNav .say-row #sayAva::before,#svslNav .say-row #sayAva::after{transform:scale(.72)}
+@media(max-width:1600px){#svslTop .sets button span{display:none}}
+#svslTop .sets button{min-width:58px}
+
+#svslNav .nv.sk{background:#16a34a;min-width:0;padding:10px 16px;font-size:clamp(13px,1vw,16px)}
+body.svsl-on.svsl-port #svslNav .nv.sk{padding:8px 10px;font-size:12px}
+
+/* 노트북 화면: 아래 막대 단추를 조금 줄여 말풍선 자리를 넓혀요 */
+@media(max-width:1500px){
+#svslNav{gap:10px}
+#svslNav .nv{padding:9px 16px;min-width:84px;font-size:16px}
+#svslNav .nv.sk{padding:9px 12px;font-size:14px}
+#svslNav .lb{max-width:340px}
+#svslNav .lb b{font-size:14px}
+}
+
+#svslNav .say-row .bubble{width:auto!important;flex:0 1 auto}
+
+body.svsl-on .svh-goal.svsl-go{cursor:pointer;transition:transform .15s}body.svsl-on .svh-goal.svsl-go:hover{transform:translateY(-2px)}
+body.svsl-on .svh-goal.svsl-go .svh-gq::after{content:' ▶';color:#f97316}
+/* 문제 상황 오른쪽: 제목 → 악당 → 대사 → 오늘의 문제 → 학습 목표, 위에서 아래로 차례로 */
+body.svsl-on.svsl-land .svh-hud{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"title" "vs" "talk" "obj" "goal"!important;align-content:center}
+body.svsl-on .svh-hud .svh-obj,body.svsl-on .svh-hud .svh-goal{justify-self:stretch;text-align:center}
+body.svsl-on .svh-hud .svh-goal{margin-top:6px!important}
+body.svsl-on .svh-hud .svh-obj .svh-seals{justify-content:center}
+/* 저울 장면: 넓은 화면에서는 저울(왼쪽)과 한 병의 양·조각 상자(오른쪽)를 나란히 놓아 저울을 크게 */
+body.svsl-on.svsl-land .svsl-tc .fdsplit-a:has(.fdscale2){display:flex!important;flex-direction:row;align-items:center;gap:24px}
+body.svsl-on.svsl-land .svsl-tc .fdsplit-a:has(.fdscale2) .fdscw{margin:0;gap:12px}
+
+/* 4학년 1단원처럼 도구 카드가 #s1body 바로 아래 있을 때 */
+body.svsl-on #hubWrap{display:none!important}
+body.svsl-on[data-svst=concept] #s1body>.svsl-tc{flex:1 1 auto;min-height:0}
+body.svsl-on[data-svst=concept] #s1body>.next-row,body.svsl-on[data-svst=concept] #s1body>.card:not(.svsl-tc){display:none!important}
+body.svsl-on .svsl-hidnext{display:none!important}
+
+/* 오른쪽 칸에 대사만 있으면 좁게 */
+body.svsl-on.svsl-land .svsl-tc.svsl-talk{grid-template-columns:minmax(0,1fr) clamp(200px,17vw,260px)}
+</style>
+<script>
+/* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
+(function () {
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const LS = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const B = document.body;
+const STEPS = [['mission', '오늘의 문제', '🎁', '문제 상황을 보고 학습 목표를 세워요'], ['concept', '개념 탐험', '🔭', '도구로 직접 조작하며 원리를 찾아요'], ['basic', '기본 문제', '✏️', '찾은 원리로 문제를 풀어요'], ['jump', '점프 문제', '🚀', '악당의 방어막을 깨요'], ['result', '결과', '🏆', '오늘 배운 것을 확인해요']];
+const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '상황 살펴보기', '내 학습 목표 쓰기'];
+let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
+const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
+const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
+const IC2 = { drill: '📚', game: '🎮', board: '🎲', result: '🏆' };
+const steps = () => SET() === 's1' ? STEPS : $$('#sec-s2 .map .station').map(b => [b.dataset.v, (b.querySelector('.lb') || b).textContent.trim(), IC2[b.dataset.v] || '⭐', (b.querySelector('.stsb') || {}).textContent || '']);
+const step = () => SET() === 's1' ? (S1().step || 'mission') : ((state.s2 || {}).step || 'drill');
+const stepIdx = k => steps().findIndex(s => s[0] === k);
+const stationLocked = k => { const b = $(`#sec-${SET()} .map .station[data-v="${k}"]`); return b ? b.classList.contains('sv-lock') : false; };
+const go = k => { try { goStep(SET(), k); } catch (e) {} };
+
+/* ---------- 틀 만들기 ---------- */
+function frame() {
+  const L = window.SV_LF || {};
+  const top = document.createElement('div'); top.id = 'svslTop';
+  top.innerHTML = `<div class="ti"><small>${(L.id || '').replace(/^(\d)-(\d)-(\d)-(\d)$/, '$1학년 $3단원 $4차시')}</small>${(L.title || document.title || '').replace(/^\S+\s/, '')}</div><div class="sets"><button type="button" data-v="s1" title="세트 1 · 개념 형성편">세트 1 <span>개념 형성</span></button><button type="button" data-v="s2" title="세트 2 · 적용 & 발전편">세트 2 <span>적용·발전</span></button></div><nav class="stp"></nav><button class="md" type="button">📜 스크롤 보기</button>`;
+  const tabs = document.createElement('div'); tabs.id = 'svslTabs';
+  const nav = document.createElement('div'); nav.id = 'svslNav';
+  nav.innerHTML = `<button class="nv" data-svn="prev" type="button">◀ 이전</button><div class="lb"><b></b><small></small><div class="dots"></div></div><button class="nv" data-svn="next" type="button">다음 ▶</button><button class="nv sk" data-svn="skip" type="button">✏️ 기본 문제로 ▶</button>`;
+  const fab = document.createElement('button'); fab.id = 'svslFab'; fab.type = 'button'; fab.textContent = '🎞️ 넘겨 보기';
+  B.append(top, tabs, nav, fab);
+  top.querySelector('.md').onclick = () => setMode(false); fab.onclick = () => setMode(true);
+  top.querySelector('.sets').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.dataset.v === SET()) return; const t = $(`#tabs .settab[data-v="${b.dataset.v}"]`); if (t) t.click(); });
+  top.querySelector('.stp').addEventListener('click', e => { const b = e.target.closest('.st'); if (!b || b.disabled) return; dir = 0; go(b.dataset.v); });
+  tabs.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.q != null) { const c = qInfo().ch[+b.dataset.q]; if (c) { dir = 0; c.click(); } return; } const h = $(`#s1body .hub [data-act=tool][data-v="${b.dataset.v}"]`); if (h) { dir = 0; h.click(); } });
+  nav.addEventListener('click', e => { const b = e.target.closest('[data-svn]'); if (!b || b.disabled) return; b.dataset.svn === 'skip' ? (dir = 1, go('basic')) : b.dataset.svn === 'next' ? next() : prev(); });
+}
+function sizes() { const t = $('#svslTop'), tb = $('#svslTabs'), n = $('#svslNav'); const th = t.offsetHeight, tbh = B.classList.contains('svsl-tabs') ? tb.offsetHeight : 0;
+  tb.style.top = th + 'px'; B.style.setProperty('--svT', th + tbh + 'px'); B.style.setProperty('--svB', n.offsetHeight + 'px');
+  const land = innerWidth >= 760 && innerWidth > innerHeight * 1.05; B.classList.toggle('svsl-land', land); B.classList.toggle('svsl-port', !land);
+  const r = n.querySelector('.say-row'); if (r) { const fb = n.querySelector('[data-svn=prev]'), w = Math.max(0, (fb ? fb.getBoundingClientRect().left : n.clientWidth / 3) - 24); r.style.maxWidth = w + 'px'; const bb0 = r.querySelector('.bubble'); if (bb0) bb0.style.setProperty('max-width', Math.max(0, w - 62) + 'px', 'important'); const bb = r.querySelector('.bubble'); if (bb) { bb.style.display = w < 170 ? 'none' : ''; fitBub(bb); } } }
+function fitBub(bb) { if (!bb || bb.style.display === 'none') return; for (const f of [14, 13, 12, 11.5]) { bb.style.setProperty('font-size', f + 'px', 'important'); if (bb.scrollHeight <= f * 1.4 * 2 + 14) return; } }
+
+/* ---------- 지금 장면 정하기 ---------- */
+/* 차시마다 도구 카드 모양이 달라요: #toolBody 안 카드, 또는 도구 고르기 판 뒤의 카드(4학년 1단원) */
+const TCARD = () => $('#toolBody > .antool') || $('#toolBody > .card') || [...$$('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head') && !c.classList.contains('qcard') && !c.classList.contains('qnav-wrap'));
+const MIS_SEL = ':scope > .anmis > span, :scope .anmis > span, .t11steps > span, .ftsteps > span';
+const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
+function toolInfo() { const hub = $$('#s1body .hub [data-act=tool]'); const cur = hub.findIndex(b => b.classList.contains('on'));
+  const tc = TCARD(), mis = tc ? [...tc.querySelectorAll(MIS_SEL)] : []; const done = mis.map(s => s.classList.contains('ok') || s.classList.contains('done') || /^\s*✅/.test(s.textContent));
+  let si = done.findIndex(d => !d); if (si < 0) si = mis.length - 1;
+  const badges = S1().badges || {}; return { hub, cur, mis, done, si, badges, finished: !!(tc && tc.querySelector('.andone')) }; }
+function apply() {
+  if (!on || busy) return; busy = true;
+  try {
+    const k = step(), st = SET(); B.dataset.svst = st === 's1' ? k : 's2-' + k; B.dataset.svset = st;
+    if (st + k !== lastStep) { if (lastStep !== null) banner(k); if (k === 'mission') mi = Math.min(mi, 2); lastStep = st + k; }
+    B.classList.toggle('svsl-tabs', st === 's1' && (k === 'concept' || k === 'basic')); B.classList.toggle('svsl-free', st === 's2' || !['mission', 'concept', 'basic'].includes(k));
+    $$('.svsl-off').forEach(e => e.classList.remove('svsl-off'));
+    if (k === 'mission') { const box = $('#s1body .sv-mission'); if (box) { MSC.forEach((s, i) => { const el = box.querySelector(':scope > ' + s); if (el && i !== mi) el.classList.add('svsl-off'); });
+        const p = box.querySelector(':scope > .sv-panel'); if (p) { const dn = !!S1().goalConfirmed; p.classList.toggle('svsl-done', dn);
+          if (dn && !p.querySelector(':scope > .svsl-pl')) { const L = document.createElement('div'), R = document.createElement('div'); L.className = 'svsl-pl'; R.className = 'svsl-pr';
+            [...p.children].forEach(c => (c.matches('.sv-target,.sv-row,p.sv-small,.sv-rv-again') ? R : L).appendChild(c)); p.append(L, R); } } } }
+    if (st === 's1' && k === 'mission') slideWords();
+    if (st === 's1' && k === 'concept') arrangeTool();
+    renderTop(k); renderTabs(k); renderNav(k); sizes(); fit();
+    const key = k + '|' + (k === 'basic' ? qInfo().cur : k === 'mission' ? mi : k === 'concept' ? (() => { const T = toolInfo(); return T.cur + ':' + T.si; })() : '');
+    if (key !== lastKey) { const el = curEl(); if (el && dir) { el.classList.remove('svsl-in-r', 'svsl-in-l'); void el.offsetWidth; el.classList.add(dir > 0 ? 'svsl-in-r' : 'svsl-in-l'); } lastKey = key; dir = 0; try { const sk = $('#scratch'); if (sk && !sk.classList.contains('hidden') && typeof Sketch !== 'undefined') { Sketch.toggle(); Sketch.toggle(); } } catch (e) {} }
+  } finally { if (mo) mo.takeRecords(); busy = false; }
+}
+const curEl = () => SET() === 's2' ? null : step() === 'basic' ? $('#s1body > .qcard') : step() === 'mission' ? $('#s1body .sv-mission > ' + MSC[mi]) : step() === 'concept' ? TCARD() : null;
+/* 도구 카드: 왼쪽 = 문제 글·조작판(크게), 오른쪽 좁은 칸 = 악당·주인공 대사, 숫자 카드, 확인 단추 */
+function arrangeTool() {
+  const card = TCARD(); if (!card) return; card.classList.add('svsl-tc');
+  const nb = INNEXT(); $$('.svsl-hidnext').forEach(b => b.classList.remove('svsl-hidnext')); if (nb) nb.classList.add('svsl-hidnext');
+  let side = card.querySelector(':scope > .svsl-side'); if (!side) { side = document.createElement('div'); side.className = 'svsl-side'; }
+  const sh = card.querySelector(':scope > .stage-head'), am = card.querySelector(':scope > .anmis'); if (sh && am) sh.appendChild(am);
+  const kids = [...card.children], hasSplit = kids.some(c => c.classList.contains('fdsplit'));
+  const talk = [], fb = [], work = [], main = [];
+  kids.forEach(c => { const has = x => c.classList.contains(x);
+    if (['stage-head', 'anmis', 'labq', 'fdsplit', 'svsl-side', 'svsl-main'].some(has)) return;
+    if (has('vrow')) talk.push(c); else if (has('cfb')) fb.push(c);
+    else if (has('andone') || has('rpbar')) main.push(c);
+    else if (!hasSplit && !has('row') && !has('ftwon')) main.push(c); else work.push(c); });
+  const log = card.querySelector('.fdsplit-b'); const won = !!card.querySelector('.ftwon');
+  [...talk, ...fb].forEach(c => side.appendChild(c)); if (log && won) side.appendChild(log); work.forEach(c => side.appendChild(c));
+  if (main.length) { let mb = card.querySelector(':scope > .svsl-main'); if (!mb) { mb = document.createElement('div'); mb.className = 'svsl-main'; mb.appendChild(document.createElement('div')); card.appendChild(mb); } main.forEach(c => mb.firstElementChild.appendChild(c)); }
+  if (side.children.length) card.appendChild(side); else side.remove();
+  card.classList.toggle('svsl-rule', !!card.querySelector('.fdrule-f'));
+  card.classList.toggle('svsl-fin', !!card.querySelector('.andone'));
+  card.classList.toggle('svsl-cards', !!side.querySelector('.ftcards,.ftwon,.fdlog'));
+  card.classList.toggle('svsl-talk', ![...side.children].some(c => !c.matches('.vrow,.cfb')));
+}
+/* ---------- 위 막대·탭·아래 막대 ---------- */
+const tname = b => { const tn = b.querySelector('.tn'); let t = tn ? tn.textContent : ([...b.querySelectorAll('span,b,div')].find(e => !e.children.length && !e.closest('svg,.ti,.tvf,.vav,.ts') && e.textContent.trim()) || b).textContent; return t.trim().replace(/^도구\s*\d+\s*·\s*/, ''); };
+function renderTop(k) { const i = stepIdx(k), L = steps();
+  const sw = $('#svslTop .sets'); if (sw) sw.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === SET()));
+  $('#svslTop .stp').innerHTML = L.map((s, j) => { const ok = j < i; return `${j ? `<span class="ln ${j <= i ? 'fill' : ''}"><i></i></span>` : ''}<button class="st ${j === i ? 'on' : ok ? 'ok' : ''}" data-v="${s[0]}" type="button" ${j !== i && stationLocked(s[0]) ? 'disabled' : ''}><span class="ci">${ok ? '✓' : j + 1}</span><span class="nm"><em>${s[2]}</em> ${s[1]}</span></button>`; }).join(''); }
+function qInfo() { const ch = $$('#s1body .qnav .qnchip'); return { ch, cur: ch.findIndex(b => b.classList.contains('on')) }; }
+function renderTabs(k) { const tb = $('#svslTabs');
+  if (SET() === 's1' && k === 'basic') { const Q = qInfo(); tb.innerHTML = Q.ch.map((b, j) => { const ok = /ok|done|solved|right/.test(b.className) || !!b.querySelector('svg,img') || /✅|✔/.test(b.textContent); return `<button type="button" class="sq ${j === Q.cur ? 'on' : ''} ${ok ? 'ok' : ''}" data-q="${j}">${ok ? '✅ ' : ''}${j + 1}번</button>`; }).join(''); return; }
+  if (k !== 'concept') { tb.innerHTML = ''; return; } const T = toolInfo();
+  tb.innerHTML = T.hub.map(b => { const v = b.dataset.v, nm = tname(b), img = b.querySelector('img'); return `<button type="button" data-v="${v}" class="${b.classList.contains('on') ? 'on' : ''} ${T.badges[v] ? 'ok' : ''}">${T.badges[v] ? '✅' : img ? `<img src="${img.src}" alt="">` : ''}${nm}</button>`; }).join(''); }
+function nextInfo() { const k = step();
+  if (SET() === 's1' && k === 'mission') { if (mi < 2) return { ok: true, t: '다음 ▶' }; return { ok: !!S1().goalConfirmed, t: '개념 탐험 ▶', why: '내 생각을 저장하면 다음으로 갈 수 있어요' }; }
+  if (SET() === 's1' && k === 'concept') { const T = toolInfo(), fn = INNEXT();
+    if (fn) return { ok: true, t: T.si >= T.mis.length - 1 ? '도구 봉인 ▶' : '다음 단계 ▶' };
+    if (T.finished || T.badges[(T.hub[T.cur] || {}).dataset && T.hub[T.cur].dataset.v]) { const nx = T.hub.findIndex((b, j) => j > T.cur && !T.badges[b.dataset.v]); if (nx >= 0) return { ok: true, t: `도구 ${nx + 1} ▶` }; return { ok: !stationLocked('basic'), t: '기본 문제 ▶' }; }
+    return { ok: false, t: '다음 ▶', why: '이 단계를 해결하면 다음으로 갈 수 있어요' }; }
+  if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.cur >= 0 && Q.cur < Q.ch.length - 1) return { ok: true, t: '다음 문제 ▶' }; return { ok: !stationLocked('jump'), t: '점프 문제 ▶', why: ($('#s1body .sv-pass') || {}).textContent || '' }; }
+  const L = steps(), i = stepIdx(k), nk = L[i + 1]; return nk ? { ok: !stationLocked(nk[0]), t: nk[1] + ' ▶' } : (SET() === 's1' ? { ok: true, t: '세트 2 ▶' } : { ok: false, t: '끝' }); }
+function renderNav(k) { const nav = $('#svslNav'), N = nextInfo(), nb = nav.querySelector('[data-svn=next]'), pb = nav.querySelector('[data-svn=prev]');
+  nb.disabled = !N.ok; nb.textContent = N.t; nb.classList.toggle('go', N.ok && (k !== 'mission' || mi === 2 || false) && !!(k === 'concept' || S1().goalConfirmed && mi === 2));
+  pb.disabled = SET() === 's1' && k === 'mission' && mi === 0;
+  const sk = nav.querySelector('[data-svn=skip]'); if (sk) { const show = SET() === 's1' && k === 'concept' && !stationLocked('basic') && N.t !== '기본 문제 ▶'; sk.style.display = show ? '' : 'none'; }
+  const L = steps(), cs = L[stepIdx(k)] || ['', '', ''];
+  let lab = `${cs[2]} ${cs[1]}`, dots = '';
+  if (SET() === 's1' && k === 'mission') { lab += ' · ' + MNAME[mi]; dots = MSC.map((_, j) => `<i class="${j === mi ? 'on' : j < mi ? 'ok' : ''}"></i>`).join(''); }
+  if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.ch.length) { lab += ` · ${Q.ch.length}문제 중 ${Q.cur + 1}번`; } }
+  if (SET() === 's1' && k === 'concept') { const T = toolInfo(), b = T.hub[T.cur]; if (b) lab += ` · 도구 ${T.cur + 1} ${tname(b)}`; if (T.mis.length) { lab += ` · ${T.mis.length}단계 중 ${T.si + 1}단계`; dots = T.mis.map((_, j) => `<i class="${j === T.si && !T.finished ? 'on' : T.done[j] || T.finished ? 'ok' : ''}"></i>`).join(''); } }
+  nav.querySelector('.lb b').textContent = lab; nav.querySelector('.lb small').textContent = N.ok ? '' : (N.why || ''); nav.querySelector('.dots').innerHTML = dots; }
+function next() { const k = step(), N = nextInfo(); if (!N.ok) return; dir = 1;
+  if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.cur >= 0 && Q.cur < Q.ch.length - 1) { Q.ch[Q.cur + 1].click(); return; } go('jump'); return; }
+  if (SET() === 's2' || ['basic', 'jump', 'result'].includes(k)) { const L = steps(), nk = L[stepIdx(k) + 1]; if (nk) go(nk[0]); else if (SET() === 's1') { const t = $('#tabs .settab[data-v=s2]'); if (t) t.click(); } return; }
+  if (k === 'mission') { if (mi < 2) { mi++; apply(); return; } const s = $('#s1body [data-sv=start]'); if (s) s.click(); else go('concept'); return; }
+  if (k === 'concept') { const fn = INNEXT(); if (fn) { fn.click(); return; }
+    const T = toolInfo(), nx = T.hub.findIndex((b, j) => j > T.cur && !T.badges[b.dataset.v]); if (nx >= 0) { T.hub[nx].click(); return; } go('basic'); return; }
+  }
+function prev() { const k = step(); dir = -1;
+  if (SET() === 's2') { const pk = steps()[stepIdx(k) - 1]; if (pk) go(pk[0]); else { const t = $('#tabs .settab[data-v=s1]'); if (t) t.click(); } return; }
+  if (k === 'mission') { if (mi > 0) { mi--; apply(); } return; }
+  if (k === 'basic') { const Q = qInfo(); if (Q.cur > 0) { Q.ch[Q.cur - 1].click(); return; } }
+  if (k === 'concept') { const T = toolInfo(); if (T.cur > 0) { T.hub[T.cur - 1].click(); return; } mi = 2; go('mission'); return; }
+  const pk = STEPS[stepIdx(k) - 1]; if (pk) { if (pk[0] === 'mission') mi = 2; go(pk[0]); } }
+function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const old = $('#svslBan'); old && old.remove();
+  const b = document.createElement('div'); b.id = 'svslBan';
+  b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
+  B.appendChild(b); setTimeout(() => b.remove(), 2100); }
+/* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
+function zfit(box, inner, max) { if (!box || !inner) return; inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
+  if (!w || !h || !cw || !ch) return; let z = Math.max(.3, Math.min(max || 1.5, cw / w, ch / h)); inner.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 8 && z > .3 && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z *= .95; inner.style.zoom = z.toFixed(3); } }
+function fit() { const k = step(); if (B.classList.contains('svsl-free')) return;
+  $$('.svsl-tc .svsl-side .vrow, .svsl-tc .svsl-side .cfb').forEach(e => e.style.zoom = '');
+  if (k === 'concept') { const card = TCARD(); if (!card) return;
+    const man = card.querySelector(':scope > .fdsplit'), main = card.querySelectorAll(':scope > .svsl-main'), side = card.querySelector(':scope > .svsl-side');
+    if (man) zfit(man, man.querySelector('.fdsplit-a'), 1.7);
+    main.forEach(m => zfit(m, m.firstElementChild || m, 1.5));
+    if (side) { side.style.zoom = 1; const h = side.scrollHeight, ch = side.clientHeight; if (h > ch + 2) { let z = Math.max(.35, ch / h); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > .35 && side.scrollHeight > side.clientHeight + 1; i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
+  if (k === 'basic') { const q = $('#s1body > .qcard'); if (q) { q.style.zoom = 1; const body = $('#s1body'); let z = 1; for (let i = 0; i < 10 && body.scrollHeight > body.clientHeight + 1 && z > .4; i++) { z *= .93; q.style.zoom = z.toFixed(3); } } }
+  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.5, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .5 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
+    const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
+/* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
+const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
+function slideWords(back) { const root = $('#s1body .svh-goal') || $('#s1body'); if (!root) return; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n; const L = []; while ((n = w.nextNode())) L.push(n);
+  L.forEach(t => { if (back) { if (t.__svOrig != null) { t.nodeValue = t.__svOrig; t.__svOrig = null; } return; } let v = t.nodeValue, r = v; WORDS.forEach(([a, b]) => { r = r.replace(a, b); }); if (r !== v) { t.__svOrig = v; t.nodeValue = r; } });
+  $$('#s1body .svh-goal').forEach(g => { g.classList.toggle('svsl-go', !back && !S1().goalConfirmed); g.title = !back && !S1().goalConfirmed ? '눌러서 내 생각 쓰러 가기' : ''; }); }
+document.addEventListener('click', e => { if (!on) return; const g = e.target.closest('#s1body .svh-goal.svsl-go'); if (g) { mi = 2; dir = 1; apply(); } });
+/* ---------- 원래 버튼과 이어 주기 ---------- */
+document.addEventListener('click', e => { if (!on) return; const t = e.target.closest('[data-sv=towrite]'); if (t) { e.stopPropagation(); e.preventDefault(); mi = 2; dir = 1; apply(); } }, true);
+let mo = null, q = false;
+function watch() { const body = $('main') || $('.wrap'); if (!body) return; mo = new MutationObserver(() => { if (busy || q) return; q = true; requestAnimationFrame(() => { q = false; apply(); }); }); mo.observe(body, { childList: true, subtree: true }); }
+let sayHome = null;
+function sayRow(v) { const r = $('.say-row'); if (!r) return; if (v) { if (!sayHome) sayHome = [r.parentNode, r.nextSibling]; $('#svslNav').prepend(r); } else if (sayHome) { sayHome[0].insertBefore(r, sayHome[1]); } }
+let bubMo = null;
+function setMode(v) { on = v; sayRow(v); if (v && !bubMo) { const bb = $('#jaramSay'); if (bb) { bubMo = new MutationObserver(() => on && fitBub(bb)); bubMo.observe(bb, { childList: true, characterData: true, subtree: true }); } } B.classList.toggle('svsl-on', v); LS.set('sv:view2', v ? 'slide' : 'scroll'); if (v) { lastStep = SET() + step(); apply(); } else { slideWords(true); $$('.svsl-off').forEach(e => e.classList.remove('svsl-off')); $$('#s1body [style*=zoom]').forEach(e => e.style.zoom = ''); } }
+if (typeof window.toast === 'function') { const t0 = window.toast; window.toast = function (m) { return t0.call(this, String(m).replace(/\((\d+)\/(\d+)\)/g, '($2개 중 $1개)')); }; }
+function init() { if (!$('#s1body')) return; frame(); watch(); addEventListener('resize', () => on && apply());
+  addEventListener('keydown', e => { if (!on || /TEXTAREA|INPUT/.test((e.target || {}).tagName)) return; if (e.key === 'ArrowRight') { const n = $('#svslNav [data-svn=next]'); if (!n.disabled) next(); } if (e.key === 'ArrowLeft') prev(); });
+  setMode(LS.get('sv:view2') !== 'scroll'); }
+window.SVSL = { apply, next, prev, get mi() { return mi; }, setMode };
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(init, 0)); else setTimeout(init, 0);
+})();
+
+</script><!--SL3-END-->
 </body>
 </html>
