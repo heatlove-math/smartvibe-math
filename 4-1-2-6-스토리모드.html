@@ -8017,7 +8017,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
   }
   function missionHTML() {
     ensure(); const s = state.s1;
-    if (C.hero) return `<div class="sv-mission sv-hero">${resumeHTML()}${heroHTML()}${J0 ? `<div class="sv-heroboard"><div class="sv-hb-h">📋 상황 살펴보기</div>${figHTML('view')}</div>` : ''}${panelHTML()}</div>`;
+    if (C.hero) return `<div class="sv-mission sv-hero">${resumeHTML()}${heroHTML()}<div class="sv-heroboard"><div class="sv-hb-h">📋 상황 살펴보기</div>${C.problem ? `<div class="sv-hb-story">${C.problem}</div>` : ''}${J0 && J0.task ? `<p class="sv-hb-task">🎯 ${J0.task}</p>` : ''}${J0 ? figHTML('view') : ''}</div>${panelHTML()}</div>`;
     return `<div class="sv-mission">
       ${resumeHTML()}
       <div class="sv-kicker"><span>📖 오늘의 수학 사건</span><span class="sv-kstep">${s.goalConfirmed ? '✅ 학습 목표 확인 완료' : '① 문제 살펴보기 → ② 목표 쓰기·말하기 → ③ 목표 확인'}</span></div>
@@ -8326,9 +8326,10 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
       const qh = qEl && qEl.textContent.trim() ? `<div class="skq">${clean(qEl).innerHTML}</div>` : '';
       const FIG = '.fdsplit-a,.fdgrid,.sv-fig,.afw,.vmx,table.vm,[class*="tray"]:not(.fdtray),[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg,[class*="stage"]:not(.stage-head):not(.stage-head *)';
       let fig = '';
-      const sv = [...card.querySelectorAll('svg')].find(x => big(x, 120, 70) && !x.closest('.vrow,.stage-head,button'));
+      const sv = [...card.querySelectorAll('svg')].find(x => big(x, 120, 70) && !x.closest('.vrow,.stage-head,button') && !(qEl && qEl.contains(x)));
       const cvs = [...card.querySelectorAll('canvas')].find(x => big(x));
-      const f = [...card.querySelectorAll(FIG)].find(x => big(x, 120, 40) && !x.closest('#skBg,.vrow,.stage-head'));
+      const inQ = x => qh && qEl && qEl.contains(x); /* 문제 글 속 그림은 한 번만 */
+      const f = [...card.querySelectorAll(FIG)].find(x => big(x, 120, 40) && !x.closest('#skBg,.vrow,.stage-head') && !inQ(x));
       if (f) { const c = clean(f); c.querySelectorAll('input,textarea').forEach(i => { const sp = document.createElement('span'); sp.className = 'skinp'; sp.textContent = i.value || '□'; i.replaceWith(sp); }); fig = c.outerHTML; }
       else if (sv) fig = sv.outerHTML; else if (cvs) { try { fig = `<img src="${cvs.toDataURL()}" alt="">`; } catch (e) {} }
       else { const im = [...card.querySelectorAll('img')].find(x => big(x, 120, 80) && !x.closest('.vrow,.stage-head,.mhead,.svh-ava,.fdwho')); if (im) fig = `<img src="${im.src}" alt="">`; }
@@ -9417,88 +9418,6 @@ const JX = (() => {
 
 </script>
 <!--CK-END-->
-<!--FR-START--><style>.frc{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:900}.frc>span{display:block;padding:0 .18em;min-width:.7em;text-align:center}.frc>span+span{border-top:.11em solid currentColor}.mixf{display:inline-flex;align-items:center;gap:.06em;vertical-align:middle}.mixf>b{font-size:1.18em}</style><script>
-/* =====================================================================
-   ½ 분수는 언제나 분수 모양으로 — 화면의 "3/4", "1 2/3"을 세로 분수로 바꿔요 (차시 전체)
-   · 글 쓰는 칸(입력·글상자)과 진행 개수 표시(0/3, 문제 1/8 같은 것)는 그대로 둬요
-   ===================================================================== */
-(function () {
-  if (window.__FRALL) return; window.__FRALL = 1;
-  const SKIP = 'script,style,textarea,input,select,option,svg,canvas,.frc,.mixf,[contenteditable],title,'
-    + '#svNav,.qnlab,#gemPill,.gov,#timer,.timer,.jxsol,.svbg-bar,.svbg-lvb,.bq-score,.bq-pl,.labno,.qnav,.station,.sth-top,.sth-boss,.sth-right,.sv-pass,.ck-prog,.svbadge,#badgeWrap,.hub .ts,.mis,.ftsteps,.t11steps,.pq-count,.pm-chk,.p-keytbl th,.toastx';
-  const E = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-  const fr = (n, d) => `<span class="frc"><span>${n}</span><span>${d}</span></span>`;
-  const mix = (w, n, d) => `<span class="mixf"><b>${w}</b>${fr(n, d)}</span>`;
-  const RX = /(^|[^\d.,/])(\d+) (\d+)\/(\d+)(?![\d/])|(^|[^\d.,/:])(\d+)\/(\d+)(?![\d/])/g;
-  const isCount = (txt, idx, len) => { const before = txt.slice(Math.max(0, idx - 8), idx), after = txt.slice(idx + len, idx + len + 6);
-    return /(문제|번|조각|도구|봉인|함정|방어막|배지|단계|찾은 것|HP|점수|바퀴|판|라운드)\s*\(?[^)]{0,6}\)?\s*$/.test(before) && !/^\s*(L|m|kg|cm|개의|만큼)/.test(after) || /^\s*(번|문제|단계|점)/.test(after); };
-  function conv(t) {
-    const v = t.nodeValue; if (!/\d\/\d/.test(v)) return; let out = '', last = 0, hit = false; RX.lastIndex = 0; let m;
-    while ((m = RX.exec(v))) {
-      const pre = m[1] != null ? m[1] : m[5] || '', s0 = m.index + pre.length, raw = m[0].slice(pre.length);
-      if (isCount(v, s0, raw.length)) continue;
-      out += E(v.slice(last, s0)) + (m[2] != null ? mix(m[2], m[3], m[4]) : fr(m[6], m[7])); last = s0 + raw.length; hit = true; }
-    if (!hit) return; out += E(v.slice(last)); const sp = document.createElement('span'); sp.innerHTML = out; t.replaceWith(...sp.childNodes); }
-  let run = function (root) {
-    const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => !/\d\/\d/.test(n.nodeValue) || !n.parentElement || n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
-    const list = []; let n; while ((n = w.nextNode())) list.push(n); list.forEach(conv); };
-  /* 셈(몇 개 중 몇 개)은 빗금 대신 말로: 조각 0/3 → 조각 3개 중 0개, HP 70 / 100 → HP 70 (최대 100). 게임 점수판은 그대로 둬요 */
-  const CRX = /((?:HP|문제|조각|도구|봉인 풀기|봉인|함정|방어막|배지|보스전|관문|라운드|찾은 것|미션|단계)(?:\s*\([^)]{0,6}\))?\s*)(\d+)\s*\/\s*(\d+)(?![\d/])/g;
-  const CSKIP = 'script,style,textarea,input,select,option,svg,canvas,.frc,.mixf,.gamecard,.mhud,.svbg-bar,.svbg-lvb,.bq-score,.bq-pl,.lair,[contenteditable]';
-  function cnt(root) { const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => !/\d\s*\/\s*\d/.test(n.nodeValue) || !n.parentElement || n.parentElement.closest(CSKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
-    const L = []; let n; while ((n = w.nextNode())) L.push(n);
-    L.forEach(t => { CRX.lastIndex = 0; const v = t.nodeValue, r = v.replace(CRX, (m, pre, a, b) => /HP/.test(pre) ? `${pre}${a} (최대 ${b})` : `${pre}${b}개 중 ${a}개`); const r2 = r.replace(/(\d+)\s*\/\s*(\d+)\s*점/g, (m, a, b) => `${a}점 (만점 ${b}점)`); if (r2 !== v) t.nodeValue = r2; }); }
-  const _run = run; run = function (root) { _run(root); try { cnt(root); } catch (e) {} };
-  window.frAll = run;
-  let q = false; const go = () => { if (q) return; q = true; requestAnimationFrame(() => { q = false; try { run(); } catch (e) {} }); };
-  new MutationObserver(go).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
-  const FRCSS = '.frc{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:900}.frc>span{display:block;padding:0 .18em;min-width:.7em;text-align:center}.frc>span+span{border-top:.11em solid currentColor}.mixf{display:inline-flex;align-items:center;gap:.06em;vertical-align:middle}.mixf>b{font-size:1.18em}';
-  if (typeof printDocHTML === 'function') { const _p = printDocHTML; printDocHTML = function () { return _p.apply(this, arguments).replace('</style>', FRCSS + '</style>'); }; }
-  /* 인쇄용 학습지(따로 열리는 창)에도 */
-  if (typeof buildS1Sheet === 'function') { const _b = buildS1Sheet; buildS1Sheet = function () { const h = _b.apply(this, arguments); try { const d = document.createElement('div'); d.innerHTML = h; run(d); return d.innerHTML; } catch (e) { return h; } }; }
-  if (typeof buildS2Sheet === 'function') { const _b2 = buildS2Sheet; buildS2Sheet = function () { const h = _b2.apply(this, arguments); try { const d = document.createElement('div'); d.innerHTML = h; run(d); return d.innerHTML; } catch (e) { return h; } }; }
-})();
-
-</script><!--FR-END-->
-<!--SW-START--><script>
-/* 🔀 세트 1 ↔ 세트 2 오갈 때: 떠난 쪽의 게임 시간·문제 시간·배경 음악·읽어 주기를 멈추고, 돌아오면 이어서 해요 (모든 차시 공통) */
-(function () {
-  if (window.__SWFIX || typeof showTab !== 'function') return; window.__SWFIX = 1;
-  const st = () => (typeof state !== 'undefined' ? state : {});
-  let qzHold = null;
-  function holdQuiz() { try { if (typeof QZ === 'undefined' || !QZ.qt || !QZ.q || typeof QZG === 'undefined' || typeof VG === 'undefined') return; const g = QZG[VG.id]; if (!g || !g.qtime) return;
-    clearInterval(QZ.qt); QZ.qt = null; qzHold = { id: VG.id, used: Date.now() - QZ.t0 }; } catch (e) {} }
-  function resumeQuiz() { try { if (!qzHold || typeof onGame !== 'function' || !onGame(qzHold.id)) return; const g = QZG[qzHold.id], T = g.qtime(qzLv()); QZ.t0 = Date.now() - qzHold.used; qzHold = null; clearInterval(QZ.qt);
-    QZ.qt = setInterval(() => { const b = document.getElementById('qzBar'); const left = Math.max(0, 1 - (Date.now() - QZ.t0) / (T * 1000)); if (b) b.style.width = (left * 100) + '%'; if (left <= 0) { clearInterval(QZ.qt); qzAns(-1); } }, 100); } catch (e) {} }
-  function mood() { try { const S = st(), k = S.tab, step = (S[k] || {}).step; Sound.setMood((step === 'jump' || step === 'game' || step === 'board') ? 'battle' : 'calm'); } catch (e) {} }
-  const _sh = showTab;
-  showTab = function (k) {
-    const from = st().tab;
-    if (from && from !== k) { if (from === 's2') holdQuiz(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
-    const r = _sh.apply(this, arguments);
-    mood(); if (k === 's2') setTimeout(resumeQuiz, 50);
-    return r;
-  };
-  /* 세트 2 안에서 단계(문제은행·미니게임·보드 게임)를 옮길 때도 문제 시간은 멈췄다가 이어서 */
-  if (typeof goStep === 'function') { const _g = goStep; goStep = function (k, step) { const S = st(); if (S.tab === 's2' && S.s2 && S.s2.step === 'game' && step !== 'game') holdQuiz(); const r = _g.apply(this, arguments); if (k === 's2' && step === 'game') setTimeout(resumeQuiz, 50); return r; }; }
-})();
-
-</script><!--SW-END-->
-<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
-#skBg{align-items:flex-start!important}
-#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
-#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
-#skBg .skpack .skfig{display:flex;justify-content:center}
-#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
-
-/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
-.sv-paper{min-width:min(100%,660px)}
-/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
-.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
-.ritems li{margin:0!important;min-width:0}
-@media(max-width:700px){.ritems{grid-template-columns:1fr}}
-</style><!--SK-END-->
 <!--JO-START--><script>
 /* 수 뒤의 조사 「은(는)·이(가)·을(를)·과(와)·으로(로)」를 읽는 소리에 맞게 하나로 고쳐요 */
 (function () {
@@ -9769,6 +9688,54 @@ body.svnet-wait #s2body>*:not(.svbg-bar){pointer-events:none}body.svnet-wait #s2
 })();
 
 </script><!--NET-END-->
+<!--MOB-START--><style>@media (max-width:900px){html body button#scratchFab#scratchFab{font-size:0!important;line-height:0!important;letter-spacing:0!important;color:transparent!important;width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border-radius:50%!important;right:8px!important;display:flex!important;align-items:center;justify-content:center;opacity:.92;overflow:hidden;white-space:nowrap}
+html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;line-height:1;color:#fff}}
+</style><!--MOB-END-->
+<!--HB-START--><style>.sv-heroboard .sv-hb-story{max-width:1100px;margin:6px auto 8px;font-size:1.12rem;line-height:1.6;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:12px 18px;text-align:left;color:#1e1b4b}.sv-heroboard .sv-hb-task{margin:4px auto 10px;font-weight:900;color:#6d28d9;text-align:center}</style><!--HB-END-->
+<!--FR-START--><style>.frc{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:900}.frc>span{display:block;padding:0 .18em;min-width:.7em;text-align:center}.frc>span+span{border-top:.11em solid currentColor}.mixf{display:inline-flex;align-items:center;gap:.06em;vertical-align:middle}.mixf>b{font-size:1.18em}</style><script>
+/* =====================================================================
+   ½ 분수는 언제나 분수 모양으로 — 화면의 "3/4", "1 2/3"을 세로 분수로 바꿔요 (차시 전체)
+   · 글 쓰는 칸(입력·글상자)과 진행 개수 표시(0/3, 문제 1/8 같은 것)는 그대로 둬요
+   ===================================================================== */
+(function () {
+  if (window.__FRALL) return; window.__FRALL = 1;
+  const SKIP = 'script,style,textarea,input,select,option,svg,canvas,.frc,.mixf,[contenteditable],title,'
+    + '#svNav,.qnlab,#gemPill,.gov,#timer,.timer,.jxsol,.svbg-bar,.svbg-lvb,.bq-score,.bq-pl,.labno,.qnav,.station,.sth-top,.sth-boss,.sth-right,.sv-pass,.ck-prog,.svbadge,#badgeWrap,.hub .ts,.mis,.ftsteps,.t11steps,.pq-count,.pm-chk,.p-keytbl th,.toastx';
+  const E = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const fr = (n, d) => `<span class="frc"><span>${n}</span><span>${d}</span></span>`;
+  const mix = (w, n, d) => `<span class="mixf"><b>${w}</b>${fr(n, d)}</span>`;
+  const RX = /(^|[^\d.,/])(\d+) (\d+)\/(\d+)(?![\d/])|(^|[^\d.,/:])(\d+)\/(\d+)(?![\d/])/g;
+  const isCount = (txt, idx, len) => { const before = txt.slice(Math.max(0, idx - 8), idx), after = txt.slice(idx + len, idx + len + 6);
+    return /(문제|번|조각|도구|봉인|함정|방어막|배지|단계|찾은 것|HP|점수|바퀴|판|라운드)\s*\(?[^)]{0,6}\)?\s*$/.test(before) && !/^\s*(L|m|kg|cm|개의|만큼)/.test(after) || /^\s*(번|문제|단계|점)/.test(after); };
+  function conv(t) {
+    const v = t.nodeValue; if (!/\d\/\d/.test(v)) return; let out = '', last = 0, hit = false; RX.lastIndex = 0; let m;
+    while ((m = RX.exec(v))) {
+      const pre = m[1] != null ? m[1] : m[5] || '', s0 = m.index + pre.length, raw = m[0].slice(pre.length);
+      if (isCount(v, s0, raw.length)) continue;
+      out += E(v.slice(last, s0)) + (m[2] != null ? mix(m[2], m[3], m[4]) : fr(m[6], m[7])); last = s0 + raw.length; hit = true; }
+    if (!hit) return; out += E(v.slice(last)); const sp = document.createElement('span'); sp.innerHTML = out; t.replaceWith(...sp.childNodes); }
+  let run = function (root) {
+    const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => !/\d\/\d/.test(n.nodeValue) || !n.parentElement || n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    const list = []; let n; while ((n = w.nextNode())) list.push(n); list.forEach(conv); };
+  /* 셈(몇 개 중 몇 개)은 빗금 대신 말로: 조각 0/3 → 조각 3개 중 0개, HP 70 / 100 → HP 70 (최대 100). 게임 점수판은 그대로 둬요 */
+  const CRX = /((?:HP|문제|조각|도구|봉인 풀기|봉인|함정|방어막|배지|보스전|관문|라운드|찾은 것|미션|단계)(?:\s*\([^)]{0,6}\))?\s*)(\d+)\s*\/\s*(\d+)(?![\d/])/g;
+  const CSKIP = 'script,style,textarea,input,select,option,svg,canvas,.frc,.mixf,.gamecard,.mhud,.svbg-bar,.svbg-lvb,.bq-score,.bq-pl,.lair,[contenteditable]';
+  function cnt(root) { const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => !/\d\s*\/\s*\d/.test(n.nodeValue) || !n.parentElement || n.parentElement.closest(CSKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    const L = []; let n; while ((n = w.nextNode())) L.push(n);
+    L.forEach(t => { CRX.lastIndex = 0; const v = t.nodeValue, r = v.replace(CRX, (m, pre, a, b) => /HP/.test(pre) ? `${pre}${a} (최대 ${b})` : `${pre}${b}개 중 ${a}개`); const r2 = r.replace(/(\d+)\s*\/\s*(\d+)\s*점/g, (m, a, b) => `${a}점 (만점 ${b}점)`); if (r2 !== v) t.nodeValue = r2; }); }
+  const _run = run; run = function (root) { _run(root); try { cnt(root); } catch (e) {} };
+  window.frAll = run;
+  let q = false; const go = () => { if (q) return; q = true; requestAnimationFrame(() => { q = false; try { run(); } catch (e) {} }); };
+  new MutationObserver(go).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+  const FRCSS = '.frc{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:900}.frc>span{display:block;padding:0 .18em;min-width:.7em;text-align:center}.frc>span+span{border-top:.11em solid currentColor}.mixf{display:inline-flex;align-items:center;gap:.06em;vertical-align:middle}.mixf>b{font-size:1.18em}';
+  if (typeof printDocHTML === 'function') { const _p = printDocHTML; printDocHTML = function () { return _p.apply(this, arguments).replace('</style>', FRCSS + '</style>'); }; }
+  /* 인쇄용 학습지(따로 열리는 창)에도 */
+  if (typeof buildS1Sheet === 'function') { const _b = buildS1Sheet; buildS1Sheet = function () { const h = _b.apply(this, arguments); try { const d = document.createElement('div'); d.innerHTML = h; run(d); return d.innerHTML; } catch (e) { return h; } }; }
+  if (typeof buildS2Sheet === 'function') { const _b2 = buildS2Sheet; buildS2Sheet = function () { const h = _b2.apply(this, arguments); try { const d = document.createElement('div'); d.innerHTML = h; run(d); return d.innerHTML; } catch (e) { return h; } }; }
+})();
+
+</script><!--FR-END-->
 <!--PJ-START--><script>
 /* =====================================================================
    🖨️ 학습지 인쇄 보강 — 점프 문제를 수업과 같은 4개(점프 1 오늘의 문제 + 보스전 도전 3개)로 맞추고,
@@ -9928,6 +9895,30 @@ body.svnet-wait #s2body>*:not(.svbg-bar){pointer-events:none}body.svnet-wait #s2
 })();
 
 </script><!--PJ-END-->
+<!--SW-START--><script>
+/* 🔀 세트 1 ↔ 세트 2 오갈 때: 떠난 쪽의 게임 시간·문제 시간·배경 음악·읽어 주기를 멈추고, 돌아오면 이어서 해요 (모든 차시 공통) */
+(function () {
+  if (window.__SWFIX || typeof showTab !== 'function') return; window.__SWFIX = 1;
+  const st = () => (typeof state !== 'undefined' ? state : {});
+  let qzHold = null;
+  function holdQuiz() { try { if (typeof QZ === 'undefined' || !QZ.qt || !QZ.q || typeof QZG === 'undefined' || typeof VG === 'undefined') return; const g = QZG[VG.id]; if (!g || !g.qtime) return;
+    clearInterval(QZ.qt); QZ.qt = null; qzHold = { id: VG.id, used: Date.now() - QZ.t0 }; } catch (e) {} }
+  function resumeQuiz() { try { if (!qzHold || typeof onGame !== 'function' || !onGame(qzHold.id)) return; const g = QZG[qzHold.id], T = g.qtime(qzLv()); QZ.t0 = Date.now() - qzHold.used; qzHold = null; clearInterval(QZ.qt);
+    QZ.qt = setInterval(() => { const b = document.getElementById('qzBar'); const left = Math.max(0, 1 - (Date.now() - QZ.t0) / (T * 1000)); if (b) b.style.width = (left * 100) + '%'; if (left <= 0) { clearInterval(QZ.qt); qzAns(-1); } }, 100); } catch (e) {} }
+  function mood() { try { const S = st(), k = S.tab, step = (S[k] || {}).step; Sound.setMood((step === 'jump' || step === 'game' || step === 'board') ? 'battle' : 'calm'); } catch (e) {} }
+  const _sh = showTab;
+  showTab = function (k) {
+    const from = st().tab;
+    if (from && from !== k) { if (from === 's2') holdQuiz(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
+    const r = _sh.apply(this, arguments);
+    mood(); if (k === 's2') setTimeout(resumeQuiz, 50);
+    return r;
+  };
+  /* 세트 2 안에서 단계(문제은행·미니게임·보드 게임)를 옮길 때도 문제 시간은 멈췄다가 이어서 */
+  if (typeof goStep === 'function') { const _g = goStep; goStep = function (k, step) { const S = st(); if (S.tab === 's2' && S.s2 && S.s2.step === 'game' && step !== 'game') holdQuiz(); const r = _g.apply(this, arguments); if (k === 's2' && step === 'game') setTimeout(resumeQuiz, 50); return r; }; }
+})();
+
+</script><!--SW-END-->
 <!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
 #svslTop,#svslTabs,#svslNav,#svslFab{display:none}
 body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
@@ -10302,6 +10293,14 @@ body.svsl-on .qcard canvas.pad{max-width:min(100%,620px)!important;margin-left:a
 body.svsl-on .svsl-tc>.svsl-main.svsl-scrolly,body.svsl-on .svsl-tc>.svsl-side.svsl-scrolly,body.svsl-on .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;justify-content:flex-start!important}
 body.svsl-on #s1body.svsl-qscroll,body.svsl-on #sec-s2 .skb.svsl-qscroll{overflow-y:auto!important}
 body.svsl-on[data-svst=jump] #s1body>.qcard>.qhead .qtext{font-size:clamp(1.1rem,1.5vw,1.55rem)!important;line-height:1.5}
+
+/* 긴 카드 줄: 가로로 넘치지 않게 */
+body.svsl-on .svsl-tc .svsl-main>div:has(>.t11src){width:100%!important;max-width:min(980px,100%)!important}
+body.svsl-on .svsl-tc .svsl-main .t11src{max-width:100%;box-sizing:border-box}
+
+/* 상황 살펴보기: 문제 이야기 · 할 일 */
+body.svsl-on .sv-heroboard .sv-hb-story{flex:none;max-width:min(1100px,96%);font-size:1.15em;line-height:1.55;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:10px 18px;text-align:left}
+body.svsl-on .sv-heroboard .sv-hb-task{flex:none;margin:0;font-weight:900;color:#6d28d9;font-size:1.05em}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -10481,7 +10480,7 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
   if (k === 'basic') fitQ($('#s1body > .qcard'), $('#s1body'));
   if (k === 'jump') fitJ();
   if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.7, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .7 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
-    const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
+    const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const st = hb.querySelector('.sv-hb-story'), tk = hb.querySelector('.sv-hb-task'), ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - (st ? st.offsetHeight + 10 : 0) - (tk ? tk.offsetHeight + 10 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return;
   const land = B.classList.contains('svsl-land');
@@ -10500,7 +10499,7 @@ const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
   let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
@@ -10517,7 +10516,7 @@ function fitQ(q, box) { if (!q || !box) return; qShape(q);
   q.classList.add('svsl-meas'); q.style.zoom = 1;
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 8, 0);
   const avH = box.clientHeight - others - 4, avW = box.clientWidth - 4, R = answered ? 0 : (q.classList.contains('svsl-qfig') ? 110 : 125);
-  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
   box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
@@ -10549,8 +10548,27 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
-<!--MOB-START--><style>@media (max-width:900px){html body button#scratchFab#scratchFab{font-size:0!important;line-height:0!important;letter-spacing:0!important;color:transparent!important;width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border-radius:50%!important;right:8px!important;display:flex!important;align-items:center;justify-content:center;opacity:.92;overflow:hidden;white-space:nowrap}
-html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;line-height:1;color:#fff}}
-</style><!--MOB-END-->
+<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
+#skBg{align-items:flex-start!important}
+#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
+#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
+#skBg .skpack .skfig{display:flex;justify-content:center}
+#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
+
+/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
+.sv-paper{min-width:min(100%,660px)}
+/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
+.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+.ritems li{margin:0!important;min-width:0}
+@media(max-width:700px){.ritems{grid-template-columns:1fr}}
+
+/* 상황 살펴보기: 문제 이야기 · 할 일 */
+.sv-heroboard .sv-hb-story{max-width:1100px;margin:6px auto 8px;font-size:1.12rem;line-height:1.6;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:12px 18px;text-align:left;color:#1e1b4b}
+.sv-heroboard .sv-hb-task{margin:4px auto 10px;font-weight:900;color:#6d28d9;text-align:center}
+/* 연습장: 화면 위 머리줄·아래 단추줄보다 위에 떠서 항상 닫기·위치 단추가 보이게, 화면 높이를 넘지 않게 */
+#scratch.scratch{z-index:9500!important;max-height:100vh;max-height:100dvh;overflow-y:auto;box-sizing:border-box}
+#scratch .sbar{position:sticky;top:0;z-index:2;background:#fffdf4;flex-wrap:wrap}
+#scratch #skcv{height:min(32vh,280px,calc(100dvh - 130px))}
+</style><!--SK-END-->
 </body>
 </html>
