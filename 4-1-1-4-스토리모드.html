@@ -7663,6 +7663,13 @@ ufReplay({ elev: ['renderElev', ufDel('el')], detect: ['renderDetect', ufDel('uf
 .bill{display:inline-flex;align-items:center;justify-content:center;width:58px;height:30px;border-radius:5px;background:linear-gradient(180deg,#a7f3d0,#34d399);border:2px solid #059669;font-size:.72rem;font-weight:900;color:#064e3b}
 .coin{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;font-size:.6rem;font-weight:900;border:2px solid}
 .coin.c5{background:#e5e7eb;border-color:#6b7280;color:#374151}.coin.c1{background:#fde68a;border-color:#b45309;color:#78350f;width:30px;height:30px}
+.t11cmp{display:flex;flex-direction:column;gap:6px;align-items:center;margin:8px 0;font-weight:800;color:#334155}
+.t11cmp .rd{background:#fff1f2;color:#be123c;border-radius:999px;padding:1px 10px;margin-left:6px}
+.t11cmp .pvrow{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px}
+.t11mb{cursor:grab;touch-action:none;display:inline-flex}
+.t11ham{margin-top:10px;border:3px dashed #94a3b8;border-radius:14px;padding:10px;text-align:center;font-weight:900;color:#475569;background:#f8fafc}
+.t11ham.dzover{border-color:#f59e0b;background:#fffbeb}
+#toast{pointer-events:none!important}
 /* CK 엔진 추가 */
 .hub6,.hub.hub4c{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 @media(max-width:640px){.hub6,.hub.hub4c{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
@@ -7694,7 +7701,7 @@ ufReplay({ elev: ['renderElev', ufDel('el')], detect: ['renderDetect', ufDel('uf
 .ckgap.dzover{background:#fde68a}
 .ckgap.cut{background:#dc2626;width:6px;margin:0 3px}
 .ckunit{display:inline-block;font-size:.85rem;font-weight:900;color:#be123c;background:#fff1f2;border-radius:999px;padding:1px 8px;margin-top:4px}
-.ckbal{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+.ckbal{display:flex;flex-direction:column;align-items:center;margin:6px 0;width:100%}.ckbal svg{width:min(100%,460px)}
 .ckbeam{width:86%;height:10px;background:#78350f;border-radius:5px;transition:transform .6s;position:relative}
 .ckpan{display:flex;justify-content:space-between;width:92%;margin-top:6px}
 .ckpan>div{width:46%;min-height:64px;border:3px solid #fcd34d;border-radius:0 0 40px 40px;background:#fffbeb;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;font-weight:900;transition:transform .6s}
@@ -7705,6 +7712,43 @@ ufReplay({ elev: ['renderElev', ufDel('el')], detect: ['renderDetect', ufDel('uf
 .ckarrow{display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#0e7490;min-width:44px;height:24px;border:2px dashed #67e8f9;border-radius:8px;background:#fff}
 .ckarrow.dzover{background:#cffafe}.ckarrow.ok{border-style:solid;background:#cffafe}
 #toast,.toast,#sayBub,.saybub,.mascot-bubble{pointer-events:none!important}
+.jxrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:10px 0;font-size:1.3rem;font-weight:900}
+.jxlab{color:#334155}
+.jxslot{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:48px;padding:0 8px;border:3px dashed #94a3b8;border-radius:12px;background:#f8fafc}
+.jxslot.full{border-style:solid;border-color:#7c3aed;background:#f5f3ff;cursor:pointer}.jxslot.dzover{border-color:#f59e0b;background:#fffbeb}
+.jxsol{text-align:center;font-weight:800;color:#475569;margin:4px 0}
+.jxbins{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.jxin{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px;min-height:30px}
+.jxchip{background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:2px 8px;font-weight:900}
+.jxdone{margin-top:8px;background:#ecfdf5;border:2px solid #86efac;border-radius:12px;padding:8px 12px;font-weight:800;color:#166534}
+.jxslot.jxsel{outline:4px solid #f59e0b!important;outline-offset:2px;background:#fffbeb!important}
+.t11piece.jxpick{outline:4px solid #f59e0b;outline-offset:2px;transform:translateY(-3px)}
+.jxbins [data-dz="jx-b"]{cursor:pointer}
+
+/* GK 입체 탐구 */
+.gkth{display:inline-flex;align-items:center;justify-content:center;line-height:0}
+.gkin{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:6px;min-height:60px}
+.gkback{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:3px;cursor:pointer}
+.gkchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.btn.gkchip{min-height:44px;padding:8px 14px;font-size:1rem;white-space:normal;line-height:1.3}
+.gkcrit{background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:12px;margin-top:10px;text-align:center}
+.gkinp{display:block;width:100%;max-width:520px;margin:8px auto;font-size:1.1rem;padding:10px 14px;border:2px solid #cbd5e1;border-radius:12px;font-weight:700}
+.gkgrp>div{padding:6px}.gkgrp svg{width:min(100%,170px)!important;height:auto!important}
+.gkmk{font-weight:900;font-size:.9rem;border-radius:999px;padding:2px 10px}.gkmk.y{background:#dbeafe;color:#1d4ed8}.gkmk.n{background:#f1f5f9;color:#64748b}
+.gkname{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;font-size:1.15rem;margin:10px 0}
+.gkname span{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:6px 12px}
+.gkdef{font-size:1.25rem;font-weight:800;text-align:center;line-height:1.9;background:#fefce8;border:2px solid #fde68a;border-radius:16px;padding:10px 14px}
+.gkbl{display:inline-block;min-width:80px;border-bottom:3px solid #f59e0b;color:#b45309;font-weight:900;margin:0 4px}
+.gktab{margin:8px auto;font-size:1rem}.gktab td,.gktab th{padding:5px 8px;text-align:center}.gktab tr.cur{background:#fef9c3}
+.gkok{display:block;color:#16a34a;font-weight:900;font-size:.8rem}.gkno{display:block;color:#dc2626;font-weight:900;font-size:.8rem}
+.gkobs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}@media(max-width:760px){.gkobs{grid-template-columns:1fr}}
+.gkobsL{text-align:center}.gkobsL svg{width:min(100%,300px)!important;height:auto!important}
+.gkrules{display:grid;gap:6px;justify-content:center;margin-top:6px}.gkrules>div{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
+.gkpv{display:inline-block;min-width:44px;font-size:1.6rem;text-align:center}
+.foldbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}@media(max-width:760px){.foldbox{grid-template-columns:1fr}}
+.foldbox svg{width:min(100%,360px)!important;height:auto!important}
+.gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
+.ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
 </style>
 <script>
 /* =====================================================================
@@ -7744,7 +7788,7 @@ const CK = (() => {
     if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
     else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
       body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
-        + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : ''); }
+        + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 다시 조작해 보기</button><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : (s.i > 0 || done ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 이 활동 처음부터</button></div>` : '')); }
     const V = VILLAINS[t.vk] || {};
     el.innerHTML = `<div class="card t11card ckcard" style="--tc:${V.color || '#2563eb'}"><div class="stage-head"><span class="ti" style="background:${V.bg || '#eef2ff'}">${t.icon}</span><div><span class="stchap">CHAPTER 1 · ${t.no}</span><h2 class="h2">${t.name}</h2><p class="sub" style="margin:3px 0 0">${t.sub}</p></div></div>
       ${t.taunt ? vSay(t.vk, t.taunt, 44) : ''}${steps}${body}</div>`;
@@ -7752,6 +7796,7 @@ const CK = (() => {
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-ck]'); if (!b) return; const k = cur(); if (!k) return; const a = b.dataset.ck, s = S(k), t = T[k];
     if (a === 'next') { s.i++; s.d = null; s.won = false; s.fb = null; if (s.i >= t.stages.length) { s.rp = false; award(k); } render(k); return; }
+    if (a === 'rs') { s.d = null; s.won = false; s.fb = null; render(k); try { toast('🔄 이 활동을 처음부터 다시 조작해 봐요!'); } catch (x) {} return; }
     if (a === 're') { box()[k] = Object.assign(fresh(), { rp: true }); render(k); try { toast('🔄 처음부터 다시 조작해 봐요!'); } catch (x) {} return; }
     dispatch('act:' + a, b.dataset.v, b);
   });
@@ -7766,7 +7811,13 @@ const CK = (() => {
     try { const r0 = resetS1; resetS1 = function () { r0.apply(this, arguments); state.s1.tool = ORDER[0]; state.s1.ck = {}; }; } catch (e) {}
     try { if (state.s1 && !T[state.s1.tool]) state.s1.tool = ORDER[0]; } catch (e) {}
   }
-  return { install, dnd, render, S, api, T, lastX: () => lastX };
+  /* 기존 도구 중 하나만 바꿔 끼워요 (TOOL_RENDER 를 쓰는 차시) */
+  function replace(t) { T[t.k] = t; (t.dnd || []).forEach(dnd);
+    const row = S1_TOOLS.find(r => r[0] === t.k); if (row) { t.vk = t.vk || row[1]; row[1] = t.vk; t.no = row[2]; row[3] = t.name; row[4] = t.short; }
+    try { const b = BADGES.find(r => r[0] === t.k); if (b) { b[1] = `${t.no} · ${t.name}`; b[2] = t.icon; } } catch (e) {}
+    try { TOOL_RENDER[t.k] = () => render(t.k); } catch (e) {} try { TOOL_VK[t.k] = t.vk; } catch (e) {}
+    try { if (t.msg) ST_TOOLM[t.k] = t.msg; } catch (e) {} }
+  return { install, replace, dnd, render, S, api, T, lastX: () => lastX };
 })();
 
 /* ---------- 공통 그림 부품 ---------- */
@@ -7870,6 +7921,9 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+
+
+
 /* 4-1-1-4 뛰어 세기와 규칙 — 기본 개념 4가지 */
 (function () {
   const R = ckRead;
@@ -7916,12 +7970,12 @@ const CKS = {
       stages: [fit('120만부터', null, 1000000, 2000000, 10, [1200000, 1300000, 1400000, 1500000], [10000, 100000, 1000000], s => `깃발마다 딱 맞은 점프는 <b>${R(s)}씩</b>! 십만의 자리 숫자가 1씩 커져요.`),
         fit('3억 5000만부터', null, 300000000, 400000000, 10, [350000000, 370000000, 390000000], [10000000, 20000000, 100000000], s => `<b>${R(s)}씩</b>! 천만의 자리 숫자가 2씩 커져요.`),
         fit('확인', 'check', 7e12, 9e12, 4, [7e12, 7.5e12, 8e12, 8.5e12], [1e11, 5e11, 1e12], s => `<b>${R(s)}씩</b> 뛰어 셌어요! 7조 → 7조 5000억 → 8조 → 8조 5000억.`)] },
-    { k: 'down', vk: 'half', icon: '🪜', name: '거꾸로 뛰어 세기', short: '1씩 작아지는 자리', dnd: ['ck-mb'],
-      sub: '블록을 하나씩 빼며 거꾸로 뛰어 세어요. 그 자리 블록이 없으면 <b>윗자리 블록을 깨서</b> 10개로 바꿔요.', taunt: '계단을 거꾸로 내려가면 길을 잃을걸?', msg: '블록을 빼며 거꾸로 뛰어 세어 보자!',
+    { k: 'down', vk: 'half', icon: '🪜', name: '거꾸로 뛰어 세기', short: '거꾸로 뛰어 세기', dnd: ['ck-mb'],
+      sub: '블록을 하나씩 빼며 거꾸로 뛰어 세어요. 그 자리 블록이 없으면 어떻게 해야 할까요?', taunt: '계단을 거꾸로 내려가면 길을 잃을걸?', msg: '블록을 빼며 거꾸로 뛰어 세어 보자!',
       summary: '거꾸로 뛰어 세면 그 자리 숫자가 1씩 작아져요. 0에서 더 작아질 때는 윗자리 1을 아랫자리 10으로 바꿔요. 1억 → 9000만.',
       stages: [down('1000만씩', null, [8, 7], { 8: 1, 7: 2 }, 7, 3, () => '1억 2000만 → 1억 1000만 → 1억 → <b>9000만</b>! 천만 블록이 없을 때 억 블록을 깨서 천만 10개로 바꿨어요.'),
         down('확인', 'check', [12, 11], { 12: 1, 11: 1 }, 11, 2, () => '1조 1000억 → 1조 → <b>9000억</b>! 조 블록 하나가 천억 블록 10개와 같아요.')] },
-    { k: 'x10', vk: 'mixup', icon: '🚀', name: '10배씩 뛰어 세기', short: '한 자리씩 왼쪽으로', dnd: ['ck-x10'],
+    { k: 'x10', vk: 'mixup', icon: '🚀', name: '10배씩 뛰어 세기', short: '10배씩 하면?', dnd: ['ck-x10'],
       sub: '×10 카드를 놓을 때마다 숫자들이 어떻게 움직이는지 자리 이름을 보며 살펴봐요.', taunt: '10배 로켓 연료를 빼 버렸지!', msg: '×10 카드로 10배씩 뛰어 세어 보자!',
       summary: '10배씩 뛰어 세면 각 숫자가 <b>한 자리씩 왼쪽</b>으로 옮겨 가고, 일의 자리에 0이 하나 생겨요. 35000 → 350000.',
       stages: [x10('35000부터', null, 35000, 3, () => '35000 → 350000 → 3500000 → 35000000! 3과 5가 한 자리씩 왼쪽으로 옮겨 가요. 3만 5000 → 3500만.'),
@@ -8038,7 +8092,7 @@ const CKS = {
 .fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
 .fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
 .fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
-.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
 .fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
 .fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
 .fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
@@ -8671,11 +8725,11 @@ body.svsl-on[data-svst=basic] #s1body>.card.hx .h2{font-size:1rem!important;marg
 body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow{margin:0!important;flex:none;font-size:.82rem}
 body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow img{width:30px!important;height:30px!important}
 body.svsl-on[data-svst=basic] #s1body>.qcard{flex:1 1 auto;margin:0!important;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.5vh,28px);padding:clamp(14px,2.5vh,30px) clamp(16px,3vw,48px)!important}
-body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.35rem,2.3vw,2.3rem)!important;line-height:1.5}
 body.svsl-on[data-svst=basic] .qcard .qtext .frc{font-size:1em}
 body.svsl-on[data-svst=basic] .qcard .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
 body.svsl-on[data-svst=basic] .qcard .choices{gap:clamp(10px,1.4vw,20px)!important}
-body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,13vh,130px)}
+body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.15rem,1.85vw,1.9rem)!important;min-height:clamp(58px,10vh,104px)}
 body.svsl-on[data-svst=basic] .qcard .row{justify-content:center}
 body.svsl-on[data-svst=basic] .qcard .afw,body.svsl-on[data-svst=basic] .qcard .sv-fig{zoom:1.3}
 #svslTabs button.sq{flex:0 1 auto;min-width:64px}
@@ -8684,10 +8738,10 @@ body.svsl-on[data-svst=basic] #svslTabs{justify-content:center}
 body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1fr) minmax(0,1fr)}
 body.svsl-on.svsl-port .svsl-tc>.svsl-side{max-height:none}
 body.svsl-on.svsl-port #svslNav .say-row{display:none}
-@media(max-width:700px){#svslTop .sets button span{display:none}#svslTop .ti{font-size:13px}}
+@media(max-width:700px){#svslTop .ti{font-size:13px}#svslTop .sets button{font-size:10.5px;padding:3px 6px}}
 body.svsl-on.svsl-port[data-svst=basic] #s1body>.card.hx{display:none!important}
-body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.25rem!important}
-body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.35rem!important;min-height:64px}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.3rem!important}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.15rem!important;min-height:56px}
 body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
 @media(max-width:520px){#svslTop .md{padding:5px 8px;font-size:11px}#svslTop .sets button{padding:3px 6px}}
 
@@ -8696,7 +8750,7 @@ body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
 #svslNav .say-row #sayAva{width:48px!important;height:48px!important;display:flex;align-items:center;justify-content:center;overflow:visible}
 #svslNav .say-row #sayAva .jm,#svslNav .say-row #sayAva img{width:46px!important;height:46px!important}
 #svslNav .say-row #sayAva::before,#svslNav .say-row #sayAva::after{transform:scale(.72)}
-@media(max-width:1600px){#svslTop .sets button span{display:none}}
+
 #svslTop .sets button{min-width:58px}
 
 #svslNav .nv.sk{background:#16a34a;min-width:0;padding:10px 16px;font-size:clamp(13px,1vw,16px)}
@@ -8776,9 +8830,9 @@ body.svsl-on.svsl-s2q #sec-s2{flex:1;min-height:0;display:flex;flex-direction:co
 body.svsl-on.svsl-s2q #sec-s2>.skb{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden;margin:0!important}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.2vh,26px);margin:0!important;padding:clamp(14px,2.4vh,30px) clamp(16px,3vw,48px)!important}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx.svsl-meas{flex:none!important;height:auto!important}
-body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qtext{font-size:clamp(1.35rem,2.3vw,2.3rem)!important;line-height:1.5}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
-body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,12vh,120px)}
+body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .choice{font-size:clamp(1.15rem,1.85vw,1.9rem)!important;min-height:clamp(58px,10vh,104px)}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .row{justify-content:center}
 body.svsl-on.svsl-s2q .wrap{overflow:hidden!important}
 
@@ -8798,6 +8852,24 @@ body.svsl-on.svsl-port .svsl-tc.ucwrap{grid-template-rows:minmax(0,1fr) auto!imp
 body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1.5fr) minmax(0,1fr)!important}
 body.svsl-on.svsl-port .svsl-tc>.svsl-side.svsl-scrolly{overflow-y:auto!important}
 body.svsl-on.svsl-port .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;align-items:flex-start!important}
+
+/* 점프 문제 넘겨 보기: 보스 머리글은 숨기고(진행은 육각 칩으로), 문제는 [그림 | 답하기] */
+body.svsl-on[data-svst=jump] #s1body>#bossWrap{display:none!important}
+body.svsl-on[data-svst=jump] #s1body>.qnav-wrap{padding:4px 12px!important;margin-bottom:6px!important;zoom:.8}
+body.svsl-on[data-svst=jump] #s1body>.qnbot{zoom:.8;margin-top:4px!important}
+body.svsl-on[data-svst=jump] #s1body .sv-j1tag{display:none!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid{display:grid!important;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:clamp(16px,2.5vw,36px);row-gap:10px;align-items:start}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>*{grid-column:1/-1;margin-top:0!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{grid-column:1;grid-row:span 12;align-self:center}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jR{grid-column:2}
+
+/* 손글씨 칸: 넘겨 보기에서 너무 커지지 않게 (비율 유지) */
+body.svsl-on .qcard canvas.pad{max-width:min(100%,620px)!important;margin-left:auto!important;margin-right:auto!important}
+
+/* 맞추고도 넘치면 그 칸만 스크롤 (글자를 너무 줄이지 않기 위해) */
+body.svsl-on .svsl-tc>.svsl-main.svsl-scrolly,body.svsl-on .svsl-tc>.svsl-side.svsl-scrolly,body.svsl-on .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;justify-content:flex-start!important}
+body.svsl-on #s1body.svsl-qscroll,body.svsl-on #sec-s2 .skb.svsl-qscroll{overflow-y:auto!important}
+body.svsl-on[data-svst=jump] #s1body>.qcard>.qhead .qtext{font-size:clamp(1.1rem,1.5vw,1.55rem)!important;line-height:1.5}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -8810,6 +8882,8 @@ const STEPS = [['mission', '오늘의 문제', '🎁', '문제 상황을 보고 
 const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '상황 살펴보기', '내 학습 목표 쓰기'];
 let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
 const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
+/* 글자 크기 범위: 화면에 맞추되 너무 작거나 크게 바뀌지 않게 (넘치면 그 칸만 스크롤) */
+const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.15;
 const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
 const IC2 = { drill: '📚', game: '🎮', board: '🎲', result: '🏆' };
 const steps = () => SET() === 's1' ? STEPS : $$('#sec-s2 .map .station').map(b => [b.dataset.v, (b.querySelector('.lb') || b).textContent.trim(), IC2[b.dataset.v] || '⭐', (b.querySelector('.stsb') || {}).textContent || '']);
@@ -8858,7 +8932,7 @@ function apply() {
     const k = step(), st = SET(); B.dataset.svst = st === 's1' ? k : 's2-' + k; B.dataset.svset = st;
     if (st + k !== lastStep) { if (lastStep !== null) banner(k); if (k === 'mission') mi = Math.min(mi, 2); lastStep = st + k; }
     B.classList.toggle('svsl-tabs', st === 's1' && (k === 'concept' || k === 'basic')); const s2q = st === 's2' && !!$('#sec-s2 .skb > .card.qx .qhead'); B.classList.toggle('svsl-s2q', s2q);
-    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic'].includes(k)));
+    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic', 'jump'].includes(k) || (k === 'jump' && innerWidth < innerHeight)));
     $$('.svsl-off').forEach(e => e.classList.remove('svsl-off'));
     if (k === 'mission') { const box = $('#s1body .sv-mission'); if (box) { MSC.forEach((s, i) => { const el = box.querySelector(':scope > ' + s); if (el && i !== mi) el.classList.add('svsl-off'); });
         const p = box.querySelector(':scope > .sv-panel'); if (p) { const dn = !!S1().goalConfirmed; p.classList.toggle('svsl-done', dn);
@@ -8951,35 +9025,55 @@ function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const
   b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
   B.appendChild(b); setTimeout(() => b.remove(), 2100); }
 /* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
-function zfit(box, inner, max, min) { if (!box || !inner) return; const lo = min || .3; inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
+function zfit(box, inner, max, min) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, ZMIN); inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
   if (!w || !h || !cw || !ch) return; let z = Math.max(lo, Math.min(max || 1.5, cw / w, ch / h)); inner.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); } }
+  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
+/* 세로 화면: 스크롤 없이 칸 폭에 맞춰 다시 배치한 뒤, 칸 높이에 들어가도록 크기를 맞춰요 (끌 것과 놓을 곳이 한 화면에) */
+function pfit(box, inner, max, min) { if (!box || !inner) return; min = Math.max(min || .42, PMIN); max = Math.min(max, ZMAX); const W = () => Math.max(120, box.clientWidth - 6); let z = max; box.classList.remove('svsl-scrolly');
+  for (let i = 0; i < 18; i++) { inner.style.zoom = z.toFixed(3); inner.style.setProperty('width', (W() / z).toFixed(1) + 'px', 'important'); inner.style.setProperty('max-width', 'none', 'important');
+    if (box.scrollHeight <= box.clientHeight + 1 && box.scrollWidth <= box.clientWidth + 1) break; if (z <= min) break; z = Math.max(min, z * .92); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
 function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const sk = $('#sec-s2 .skb'); fitQ(sk && sk.querySelector(':scope > .card.qx'), sk); return; } if (B.classList.contains('svsl-free')) return;
   $$('.svsl-tc .svsl-side .vrow, .svsl-tc .svsl-side .cfb').forEach(e => e.style.zoom = '');
   if (k === 'concept') { const card = TCARD(); if (!card) return;
     const man = card.querySelector(':scope > .fdsplit'), main = card.querySelectorAll(':scope > .svsl-main'), side = card.querySelector(':scope > .svsl-side');
-    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.toggle('svsl-scrolly', pt); zfit(man, fa, 1.7, pt && fa ? Math.min(.8, (man.clientWidth - 4) / Math.max(1, fa.scrollWidth)) : .3); }
+    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.remove('svsl-scrolly'); if (pt) pfit(man, fa, 1.6, .42); else { if (fa) { fa.style.removeProperty('width'); fa.style.removeProperty('max-width'); } zfit(man, fa, 1.7, .3); } }
     const q4 = card.classList.contains('svsl-q4');
-    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.toggle('svsl-scrolly', port); zfit(m, m.firstElementChild || m, q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5, port ? Math.min(.8, (m.clientWidth - 4) / Math.max(1, (m.firstElementChild || m).scrollWidth)) : .3); });
+    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.remove('svsl-scrolly'); const mx = q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5; if (port) pfit(m, m.firstElementChild || m, mx, .42); else { const fc = m.firstElementChild; if (fc) { fc.style.removeProperty('width'); fc.style.removeProperty('max-width'); } zfit(m, m.firstElementChild || m, mx, .3); } });
     const qb = card.querySelector(':scope > .svsl-q'); if (qb) { qb.style.zoom = 1; if (qb.scrollWidth > qb.clientWidth + 2) qb.style.zoom = Math.max(.6, qb.clientWidth / qb.scrollWidth).toFixed(3); }
     if (side && B.classList.contains('svsl-port')) { side.style.zoom = 1; side.classList.add('svsl-scrolly'); }
     else if (side) { side.style.zoom = 1; const h = side.scrollHeight, ch = side.clientHeight, w = side.scrollWidth, cw = side.clientWidth;
       if (card.classList.contains('svsl-ctl') && h < ch * .8 && w <= cw + 2) { let z = Math.min(1.6, ch * .9 / h, cw / w); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > 1 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .96; side.style.zoom = z.toFixed(3); } }
-      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(.35, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > .35 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
+      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(ZMIN, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > ZMIN && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
   if (k === 'basic') fitQ($('#s1body > .qcard'), $('#s1body'));
-  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.5, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .5 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
+  if (k === 'jump') fitJ();
+  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.7, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .7 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
     const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
+/* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
+function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return;
+  const land = B.classList.contains('svsl-land');
+  $$('.svsl-jgrid', q).forEach(e => e.classList.remove('svsl-jgrid')); $$('.svsl-jfig,.svsl-jR', q).forEach(e => e.classList.remove('svsl-jfig', 'svsl-jR'));
+  q.style.zoom = 1;
+  if (land) { const F = [...q.querySelectorAll('.geofig, .sv-fig, .netfig, .afw, .ucfig')].filter(e => e.offsetHeight > 110 && !e.closest('.choices'))[0];
+    if (F && F.parentElement && q.contains(F.parentElement)) { const P = F.parentElement, kids = [...P.children], i = kids.indexOf(F), after = kids.slice(i + 1).filter(c => c.offsetHeight > 0);
+      if (after.length) { P.classList.add('svsl-jgrid'); F.classList.add('svsl-jfig'); after.forEach(c => c.classList.add('svsl-jR')); } } }
+  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 10, 0);
+  const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
-  let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input,textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
+  let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
-  else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input,textarea,.modes')); }
+  else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
   [...q.children].forEach(c => c.classList.toggle('svsl-qans', c === ans));
   const ch = q.querySelector('.choices'), opts = ch ? [...ch.children].filter(e => e.offsetParent !== null || e.matches('button')) : [];
   const longest = Math.max(0, ...opts.map(o => (o.textContent || '').trim().length)), pic = ch && !!ch.querySelector('svg,img');
@@ -8994,10 +9088,11 @@ function fitQ(q, box) { if (!q || !box) return; qShape(q);
   const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
-  let z = Math.max(.45, Math.min(1.45, avH / h, avW / w));
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
   if (QZ[key] && answered) z = Math.min(QZ[key], z * 1.0) < QZ[key] * .9 ? Math.min(QZ[key], z) : QZ[key]; else if (!answered) QZ[key] = z;
   q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > .45; i++) { z *= .96; q.style.zoom = z.toFixed(3); } }
+  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
@@ -9082,5 +9177,46 @@ html.svarena body{padding-top:62px!important}
 })();
 
 </script><!--ARENA-END-->
+<!--MOB-START--><style>@media (max-width:900px){html body button#scratchFab#scratchFab{font-size:0!important;line-height:0!important;letter-spacing:0!important;color:transparent!important;width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border-radius:50%!important;right:8px!important;display:flex!important;align-items:center;justify-content:center;opacity:.92;overflow:hidden;white-space:nowrap}
+html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;line-height:1;color:#fff}}
+</style><!--MOB-END-->
+<!--RP1-START--><script>
+/* =====================================================================
+   🔄 다시 해 보기 (4학년 1단원·단원 마무리 틀용)
+   · 기본·점프 문제: 푼 문제 아래에 '다시 해 보기' → 새 문제로 연습. 성취도는 처음 기록 그대로.
+     (연습 기록은 따로 두고, 화면을 그릴 때만 잠시 바꿔 끼워요)
+   · 개념 도구(4-1-1-1): 배지를 받은 도구에 '도구 다시 조작해 보기'
+   ===================================================================== */
+(function () {
+  if (typeof partInner !== 'function' || typeof replayItem === 'function') return;
+  const PR = {};
+  const swap = (key, fn) => { const st = state.s1; if (!key || !PR[key]) return fn(); const real = st.rec[key]; st.rec[key] = PR[key]; try { return fn(); } finally { PR[key] = st.rec[key]; if (real === undefined) delete st.rec[key]; else st.rec[key] = real; } };
+  const BTN = k => `<div class="rpbar"><button class="btn btn-sub rpbtn" data-rp1="${k}">🔄 다시 해 보기</button><span>다시 해도 성취도는 <b>처음 도전 기록</b>으로 남아요.</span></div>`;
+  const _pi = partInner;
+  partInner = function (p) { return swap(p && p.key, () => { const h = _pi.apply(this, arguments), r = state.s1.rec[p.key]; return h + (r && r.solved ? BTN(p.key) : ''); }); };
+  ['finishPart', 'answerChoice', 'gradeWrite', 'showHint'].forEach(n => { try { const o = eval(n); if (typeof o !== 'function') return;
+    const w = function (key) { return swap(key, () => o.apply(this, arguments)); }; eval(n + ' = w'); } catch (e) {} });
+  document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('[data-rp1]'); if (!t) return; e.stopPropagation(); e.preventDefault();
+    const key = t.dataset.rp1, st = state.s1, old = st.rec[key] || {};
+    PR[key] = { label: old.label || key, first: null, tries: 0, wrong: [], solved: false };
+    if (st.fb) delete st.fb[key]; if (st.mode) delete st.mode[key];
+    try { if (typeof genParts === 'function') { const NP = genParts(); if (NP && NP[key]) { NP[key].key = NP[key].key || key; PARTS[key] = NP[key]; } } } catch (x) {}
+    try { touch('s1'); } catch (x) {} try { Sound.click(); } catch (x) {}
+    try { renderPart(key); } catch (x) {} try { toast('🔄 새 문제로 다시 도전! 성취도는 처음 기록 그대로예요.'); } catch (x) {}
+    try { if (typeof fit === 'function') {} } catch (x) {} }, true);
+
+  /* 개념 도구 다시 조작 (state.s1.concept.v2 를 쓰는 차시) */
+  if (typeof renderS1Concept === 'function') {
+    const _rc = renderS1Concept;
+    renderS1Concept = function () { const r = _rc.apply(this, arguments); try { const c = state.s1.concept, k = c && c.tool, v = c && c.v2 && c.v2[k];
+        if (k && v && state.s1.badges[k] && !document.querySelector('#s1body [data-rpt1]')) {
+          const card = [...document.querySelectorAll('#s1body > .card')].find(x => x.querySelector('.stage-head')) || document.querySelector('#s1body > .card');
+          if (card) card.insertAdjacentHTML('beforeend', `<div class="rpbar"><button class="btn btn-sub rpbtn" data-rpt1="${k}">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`); } } catch (e) {} return r; };
+    document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('[data-rpt1]'); if (!t) return; e.stopPropagation(); e.preventDefault();
+      const c = state.s1.concept; if (c && c.v2) delete c.v2[t.dataset.rpt1]; try { touch('s1'); Sound.click(); } catch (x) {} renderS1Concept(); try { toast('🔄 처음부터 다시 조작해 봐요!'); } catch (x) {} }, true);
+  }
+})();
+
+</script><!--RP1-END-->
 </body>
 </html>

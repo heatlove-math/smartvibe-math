@@ -9180,7 +9180,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
 .fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
 .fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
-.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
 .fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
 .fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
 .fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
@@ -9813,11 +9813,11 @@ body.svsl-on[data-svst=basic] #s1body>.card.hx .h2{font-size:1rem!important;marg
 body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow{margin:0!important;flex:none;font-size:.82rem}
 body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow img{width:30px!important;height:30px!important}
 body.svsl-on[data-svst=basic] #s1body>.qcard{flex:1 1 auto;margin:0!important;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.5vh,28px);padding:clamp(14px,2.5vh,30px) clamp(16px,3vw,48px)!important}
-body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.35rem,2.3vw,2.3rem)!important;line-height:1.5}
 body.svsl-on[data-svst=basic] .qcard .qtext .frc{font-size:1em}
 body.svsl-on[data-svst=basic] .qcard .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
 body.svsl-on[data-svst=basic] .qcard .choices{gap:clamp(10px,1.4vw,20px)!important}
-body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,13vh,130px)}
+body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.15rem,1.85vw,1.9rem)!important;min-height:clamp(58px,10vh,104px)}
 body.svsl-on[data-svst=basic] .qcard .row{justify-content:center}
 body.svsl-on[data-svst=basic] .qcard .afw,body.svsl-on[data-svst=basic] .qcard .sv-fig{zoom:1.3}
 #svslTabs button.sq{flex:0 1 auto;min-width:64px}
@@ -9826,10 +9826,10 @@ body.svsl-on[data-svst=basic] #svslTabs{justify-content:center}
 body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1fr) minmax(0,1fr)}
 body.svsl-on.svsl-port .svsl-tc>.svsl-side{max-height:none}
 body.svsl-on.svsl-port #svslNav .say-row{display:none}
-@media(max-width:700px){#svslTop .sets button span{display:none}#svslTop .ti{font-size:13px}}
+@media(max-width:700px){#svslTop .ti{font-size:13px}#svslTop .sets button{font-size:10.5px;padding:3px 6px}}
 body.svsl-on.svsl-port[data-svst=basic] #s1body>.card.hx{display:none!important}
-body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.25rem!important}
-body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.35rem!important;min-height:64px}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.3rem!important}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.15rem!important;min-height:56px}
 body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
 @media(max-width:520px){#svslTop .md{padding:5px 8px;font-size:11px}#svslTop .sets button{padding:3px 6px}}
 
@@ -9838,7 +9838,7 @@ body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
 #svslNav .say-row #sayAva{width:48px!important;height:48px!important;display:flex;align-items:center;justify-content:center;overflow:visible}
 #svslNav .say-row #sayAva .jm,#svslNav .say-row #sayAva img{width:46px!important;height:46px!important}
 #svslNav .say-row #sayAva::before,#svslNav .say-row #sayAva::after{transform:scale(.72)}
-@media(max-width:1600px){#svslTop .sets button span{display:none}}
+
 #svslTop .sets button{min-width:58px}
 
 #svslNav .nv.sk{background:#16a34a;min-width:0;padding:10px 16px;font-size:clamp(13px,1vw,16px)}
@@ -9918,9 +9918,9 @@ body.svsl-on.svsl-s2q #sec-s2{flex:1;min-height:0;display:flex;flex-direction:co
 body.svsl-on.svsl-s2q #sec-s2>.skb{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden;margin:0!important}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.2vh,26px);margin:0!important;padding:clamp(14px,2.4vh,30px) clamp(16px,3vw,48px)!important}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx.svsl-meas{flex:none!important;height:auto!important}
-body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qtext{font-size:clamp(1.35rem,2.3vw,2.3rem)!important;line-height:1.5}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
-body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,12vh,120px)}
+body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .choice{font-size:clamp(1.15rem,1.85vw,1.9rem)!important;min-height:clamp(58px,10vh,104px)}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .row{justify-content:center}
 body.svsl-on.svsl-s2q .wrap{overflow:hidden!important}
 
@@ -9940,6 +9940,24 @@ body.svsl-on.svsl-port .svsl-tc.ucwrap{grid-template-rows:minmax(0,1fr) auto!imp
 body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1.5fr) minmax(0,1fr)!important}
 body.svsl-on.svsl-port .svsl-tc>.svsl-side.svsl-scrolly{overflow-y:auto!important}
 body.svsl-on.svsl-port .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;align-items:flex-start!important}
+
+/* 점프 문제 넘겨 보기: 보스 머리글은 숨기고(진행은 육각 칩으로), 문제는 [그림 | 답하기] */
+body.svsl-on[data-svst=jump] #s1body>#bossWrap{display:none!important}
+body.svsl-on[data-svst=jump] #s1body>.qnav-wrap{padding:4px 12px!important;margin-bottom:6px!important;zoom:.8}
+body.svsl-on[data-svst=jump] #s1body>.qnbot{zoom:.8;margin-top:4px!important}
+body.svsl-on[data-svst=jump] #s1body .sv-j1tag{display:none!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid{display:grid!important;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:clamp(16px,2.5vw,36px);row-gap:10px;align-items:start}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>*{grid-column:1/-1;margin-top:0!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{grid-column:1;grid-row:span 12;align-self:center}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jR{grid-column:2}
+
+/* 손글씨 칸: 넘겨 보기에서 너무 커지지 않게 (비율 유지) */
+body.svsl-on .qcard canvas.pad{max-width:min(100%,620px)!important;margin-left:auto!important;margin-right:auto!important}
+
+/* 맞추고도 넘치면 그 칸만 스크롤 (글자를 너무 줄이지 않기 위해) */
+body.svsl-on .svsl-tc>.svsl-main.svsl-scrolly,body.svsl-on .svsl-tc>.svsl-side.svsl-scrolly,body.svsl-on .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;justify-content:flex-start!important}
+body.svsl-on #s1body.svsl-qscroll,body.svsl-on #sec-s2 .skb.svsl-qscroll{overflow-y:auto!important}
+body.svsl-on[data-svst=jump] #s1body>.qcard>.qhead .qtext{font-size:clamp(1.1rem,1.5vw,1.55rem)!important;line-height:1.5}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -9952,6 +9970,8 @@ const STEPS = [['mission', '오늘의 문제', '🎁', '문제 상황을 보고 
 const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '상황 살펴보기', '내 학습 목표 쓰기'];
 let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
 const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
+/* 글자 크기 범위: 화면에 맞추되 너무 작거나 크게 바뀌지 않게 (넘치면 그 칸만 스크롤) */
+const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.15;
 const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
 const IC2 = { drill: '📚', game: '🎮', board: '🎲', result: '🏆' };
 const steps = () => SET() === 's1' ? STEPS : $$('#sec-s2 .map .station').map(b => [b.dataset.v, (b.querySelector('.lb') || b).textContent.trim(), IC2[b.dataset.v] || '⭐', (b.querySelector('.stsb') || {}).textContent || '']);
@@ -10000,7 +10020,7 @@ function apply() {
     const k = step(), st = SET(); B.dataset.svst = st === 's1' ? k : 's2-' + k; B.dataset.svset = st;
     if (st + k !== lastStep) { if (lastStep !== null) banner(k); if (k === 'mission') mi = Math.min(mi, 2); lastStep = st + k; }
     B.classList.toggle('svsl-tabs', st === 's1' && (k === 'concept' || k === 'basic')); const s2q = st === 's2' && !!$('#sec-s2 .skb > .card.qx .qhead'); B.classList.toggle('svsl-s2q', s2q);
-    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic'].includes(k)));
+    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic', 'jump'].includes(k) || (k === 'jump' && innerWidth < innerHeight)));
     $$('.svsl-off').forEach(e => e.classList.remove('svsl-off'));
     if (k === 'mission') { const box = $('#s1body .sv-mission'); if (box) { MSC.forEach((s, i) => { const el = box.querySelector(':scope > ' + s); if (el && i !== mi) el.classList.add('svsl-off'); });
         const p = box.querySelector(':scope > .sv-panel'); if (p) { const dn = !!S1().goalConfirmed; p.classList.toggle('svsl-done', dn);
@@ -10093,35 +10113,55 @@ function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const
   b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
   B.appendChild(b); setTimeout(() => b.remove(), 2100); }
 /* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
-function zfit(box, inner, max, min) { if (!box || !inner) return; const lo = min || .3; inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
+function zfit(box, inner, max, min) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, ZMIN); inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
   if (!w || !h || !cw || !ch) return; let z = Math.max(lo, Math.min(max || 1.5, cw / w, ch / h)); inner.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); } }
+  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
+/* 세로 화면: 스크롤 없이 칸 폭에 맞춰 다시 배치한 뒤, 칸 높이에 들어가도록 크기를 맞춰요 (끌 것과 놓을 곳이 한 화면에) */
+function pfit(box, inner, max, min) { if (!box || !inner) return; min = Math.max(min || .42, PMIN); max = Math.min(max, ZMAX); const W = () => Math.max(120, box.clientWidth - 6); let z = max; box.classList.remove('svsl-scrolly');
+  for (let i = 0; i < 18; i++) { inner.style.zoom = z.toFixed(3); inner.style.setProperty('width', (W() / z).toFixed(1) + 'px', 'important'); inner.style.setProperty('max-width', 'none', 'important');
+    if (box.scrollHeight <= box.clientHeight + 1 && box.scrollWidth <= box.clientWidth + 1) break; if (z <= min) break; z = Math.max(min, z * .92); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
 function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const sk = $('#sec-s2 .skb'); fitQ(sk && sk.querySelector(':scope > .card.qx'), sk); return; } if (B.classList.contains('svsl-free')) return;
   $$('.svsl-tc .svsl-side .vrow, .svsl-tc .svsl-side .cfb').forEach(e => e.style.zoom = '');
   if (k === 'concept') { const card = TCARD(); if (!card) return;
     const man = card.querySelector(':scope > .fdsplit'), main = card.querySelectorAll(':scope > .svsl-main'), side = card.querySelector(':scope > .svsl-side');
-    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.toggle('svsl-scrolly', pt); zfit(man, fa, 1.7, pt && fa ? Math.min(.8, (man.clientWidth - 4) / Math.max(1, fa.scrollWidth)) : .3); }
+    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.remove('svsl-scrolly'); if (pt) pfit(man, fa, 1.6, .42); else { if (fa) { fa.style.removeProperty('width'); fa.style.removeProperty('max-width'); } zfit(man, fa, 1.7, .3); } }
     const q4 = card.classList.contains('svsl-q4');
-    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.toggle('svsl-scrolly', port); zfit(m, m.firstElementChild || m, q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5, port ? Math.min(.8, (m.clientWidth - 4) / Math.max(1, (m.firstElementChild || m).scrollWidth)) : .3); });
+    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.remove('svsl-scrolly'); const mx = q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5; if (port) pfit(m, m.firstElementChild || m, mx, .42); else { const fc = m.firstElementChild; if (fc) { fc.style.removeProperty('width'); fc.style.removeProperty('max-width'); } zfit(m, m.firstElementChild || m, mx, .3); } });
     const qb = card.querySelector(':scope > .svsl-q'); if (qb) { qb.style.zoom = 1; if (qb.scrollWidth > qb.clientWidth + 2) qb.style.zoom = Math.max(.6, qb.clientWidth / qb.scrollWidth).toFixed(3); }
     if (side && B.classList.contains('svsl-port')) { side.style.zoom = 1; side.classList.add('svsl-scrolly'); }
     else if (side) { side.style.zoom = 1; const h = side.scrollHeight, ch = side.clientHeight, w = side.scrollWidth, cw = side.clientWidth;
       if (card.classList.contains('svsl-ctl') && h < ch * .8 && w <= cw + 2) { let z = Math.min(1.6, ch * .9 / h, cw / w); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > 1 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .96; side.style.zoom = z.toFixed(3); } }
-      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(.35, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > .35 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
+      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(ZMIN, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > ZMIN && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
   if (k === 'basic') fitQ($('#s1body > .qcard'), $('#s1body'));
-  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.5, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .5 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
+  if (k === 'jump') fitJ();
+  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.7, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .7 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
     const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
+/* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
+function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return;
+  const land = B.classList.contains('svsl-land');
+  $$('.svsl-jgrid', q).forEach(e => e.classList.remove('svsl-jgrid')); $$('.svsl-jfig,.svsl-jR', q).forEach(e => e.classList.remove('svsl-jfig', 'svsl-jR'));
+  q.style.zoom = 1;
+  if (land) { const F = [...q.querySelectorAll('.geofig, .sv-fig, .netfig, .afw, .ucfig')].filter(e => e.offsetHeight > 110 && !e.closest('.choices'))[0];
+    if (F && F.parentElement && q.contains(F.parentElement)) { const P = F.parentElement, kids = [...P.children], i = kids.indexOf(F), after = kids.slice(i + 1).filter(c => c.offsetHeight > 0);
+      if (after.length) { P.classList.add('svsl-jgrid'); F.classList.add('svsl-jfig'); after.forEach(c => c.classList.add('svsl-jR')); } } }
+  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 10, 0);
+  const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
-  let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input,textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
+  let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
-  else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input,textarea,.modes')); }
+  else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
   [...q.children].forEach(c => c.classList.toggle('svsl-qans', c === ans));
   const ch = q.querySelector('.choices'), opts = ch ? [...ch.children].filter(e => e.offsetParent !== null || e.matches('button')) : [];
   const longest = Math.max(0, ...opts.map(o => (o.textContent || '').trim().length)), pic = ch && !!ch.querySelector('svg,img');
@@ -10136,10 +10176,11 @@ function fitQ(q, box) { if (!q || !box) return; qShape(q);
   const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
-  let z = Math.max(.45, Math.min(1.45, avH / h, avW / w));
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
   if (QZ[key] && answered) z = Math.min(QZ[key], z * 1.0) < QZ[key] * .9 ? Math.min(QZ[key], z) : QZ[key]; else if (!answered) QZ[key] = z;
   q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > .45; i++) { z *= .96; q.style.zoom = z.toFixed(3); } }
+  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
@@ -10164,5 +10205,8 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
+<!--MOB-START--><style>@media (max-width:900px){html body button#scratchFab#scratchFab{font-size:0!important;line-height:0!important;letter-spacing:0!important;color:transparent!important;width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border-radius:50%!important;right:8px!important;display:flex!important;align-items:center;justify-content:center;opacity:.92;overflow:hidden;white-space:nowrap}
+html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;line-height:1;color:#fff}}
+</style><!--MOB-END-->
 </body>
 </html>
