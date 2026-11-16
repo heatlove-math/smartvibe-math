@@ -6610,6 +6610,7 @@ Object.assign(AN, {
 });
 AN_QUIET.add('ft-ok');
 
+const FDB0 = ['🧴', '번 병', '한 병의 양'];
 /* =====================================================================
    🧪 분수 나누기 실험실 — (분수)÷(자연수)를 직접 나누어 담으며 몫을 분수로
    · pour  : 음료 조각(1/□)을 병에 끌어 똑같이 나누어 담아요 · 🔍 돋보기(×2·×3·×4)를 끌어 놓으면 조각이 더 잘게 나뉘어요
@@ -6660,7 +6661,7 @@ function fdBottles(ns, C, who, showSum) {
   return `<div class="fdbots">${C.bot.map((list, i) => { const w = (who || [])[i % Math.max(1, (who || []).length)], s = fdSum(C.type === 'grid' ? [] : list);
     const inner = C.type === 'grid' ? '' : list.map(p => fdPc(ns, p, C.ph === 'share')).join('');
     const box = C.type === 'grid' ? fdBotGrid(C, list) : fdRuler(`<div class="fdin">${inner || '<span class="fdempty">여기에 끌어 담아요</span>'}</div>`);
-    return `<div class="fdbot" data-dz="fd-bot" data-i="${ns}|${i}"><div class="fdwho">🧴 <b>${i + 1}번 병</b>${w ? avatar(w, 30, 'happy') : ''}</div>${box}${showSum && C.type !== 'grid' ? `<div class="fdsum">${frHTML(s[0], s[1])} L</div>` : ''}</div>`; }).join('')}</div>`;
+    return `<div class="fdbot" data-dz="fd-bot" data-i="${ns}|${i}"><div class="fdwho">${(window.FD_BOT || FDB0)[0]} <b>${i + 1}${(window.FD_BOT || FDB0)[1]}</b>${w ? avatar(w, 30, 'happy') : ''}</div>${box}${showSum && C.type !== 'grid' ? `<div class="fdsum">${frHTML(s[0], s[1])} L</div>` : ''}</div>`; }).join('')}</div>`;
 }
 /* 병 안의 모눈: 1 L 전체(분모 × 줄 수 칸) 중 받은 줄의 칸만 색칠 — 넓이로 비교해요 */
 function fdBotGrid(C, rows) { const [n, d] = C.amt, R = Math.max(1, C.rows); let g = '';
@@ -6671,9 +6672,9 @@ function fdStrip(ns, C, r, drag) { const den = C.amt[1] * C.rows;
 function fdPourHTML(ns, C, S, who, showSum) {
   /* 처음 음료(나눌 양)를 위 가운데에 두고, 그 막대에서 바로 아래 병으로 끌어 나누어요 */
   const [n, d] = C.amt, ghost = C.tray.length ? '' : `<span class="fdghost" style="width:${FD_W * n / d - 4}px">처음 ${frHTML(n, d)} L</span>`;
-  let h = `<div class="fdsrc"><div class="fdtray" data-dz="fd-tray" data-i="${ns}|0"><div class="fdcap">🧪 ${S.what || '나눌 양'} <b>${frHTML(n, d)}</b> L <small>${C.tray.length ? '조각을 끌어 아래 병에 담아요' : '모두 담았어요'}</small></div>${fdRuler(`<div class="fdin">${C.tray.map(p => fdPc(ns, p, C.ph === 'share')).join('') || ghost}</div>`)}${C.lens > 1 ? `<div class="fdlensnote">🔍 돋보기 ×${C.lens}: ${frHTML(n, d)} = ${frHTML(n * C.lens, d * C.lens)} (양은 그대로, 조각만 더 잘게)</div>` : ''}</div>`;
+  let h = `<div class="fdsrc"><div class="fdtray" data-dz="fd-tray" data-i="${ns}|0"><div class="fdcap">🧪 ${S.what || '나눌 양'} <b>${frHTML(n, d)}</b> L <small>${C.tray.length ? '조각을 끌어 아래 병에 담아요' : '모두 담았어요'}</small></div>${(() => { const T = C.tray, per = T.length ? T[0].den : d; if (T.length <= per) return fdRuler(`<div class="fdin">${T.map(p => fdPc(ns, p, C.ph === 'share')).join('') || ghost}</div>`); const rows = []; for (let i = 0; i < T.length; i += per) rows.push(T.slice(i, i + per)); return rows.map((r, k) => fdRuler(`<div class="fdin">${r.map(p => fdPc(ns, p, C.ph === 'share')).join('')}</div>`, { one: (k + 1) + ' L' })).join(''); })()}${C.lens > 1 ? `<div class="fdlensnote">🔍 돋보기 ×${C.lens}: ${frHTML(n, d)} = ${frHTML(n * C.lens, d * C.lens)} (양은 그대로, 조각만 더 잘게)</div>` : ''}</div>`;
   if (S.lens && C.ph === 'share') h += `<div class="fdtools"><div class="fdcap">🔍 돋보기 <small>조각 위에 끌어 놓아요</small></div>${S.lens.map(k => `<span class="fdlens" data-dg="fd-lens" data-v="${ns}|${k}">🔍 ×${k}</span>`).join('')}</div>`;
-  return h + `</div><div class="fdarrow">⬇ 병 ${C.b}개에 똑같이 나누어 담기</div>` + fdBottles(ns, C, who, showSum);
+  return h + `</div><div class="fdarrow">⬇ ${((window.FD_BOT || FDB0)[1]).replace('번 ', '')} ${C.b}개에 똑같이 나누어 담기</div>` + fdBottles(ns, C, who, showSum);
 }
 function fdGridHTML(ns, C, S, who) {
   /* 1 L 상자 하나로: 칼을 상자 위에 끌어 놓아 가로로 자르고 → 잘린 줄을 그 상자에서 바로 아래 병으로 끌어 담아요 */
@@ -6725,7 +6726,7 @@ function fdScaleHTML(ns, C, S) {
   const msg = !C.box.length ? '⬅️ 처음 양 쪽으로 기울었어요. 한 병의 양을 만들어 오른쪽 접시에 올려 봐요' : diff === 0 || Math.abs(diff) < 1e-9 ? '⚖️ 딱 맞아요! 한 병의 양 × ' + C.b + ' = 처음 양' : diff > 0 ? '⬇️ 오른쪽이 내려갔어요 — 한 병이 너무 많아요' : '⬆️ 오른쪽이 올라갔어요 — 한 병이 너무 적어요';
   let h = `<div class="fdscale2 ${Math.abs(diff) < 1e-9 && C.box.length ? 'ok-bal' : ''}">` + fdBalHTML(ns, { left, right, lcap: `처음 양 ${frHTML(n, d)} L`, rcap: `한 병의 양 × ${C.b}병${C.box.length ? ` = ${frHTML(all[0], all[1])} L` : ''}`, ang, prev, drop: C.ph === 'build', bump })
     + `<div class="fdtilt ${Math.abs(diff) < 1e-9 && C.box.length ? 'ok' : diff > 0 ? 'hi' : 'lo'}">${msg}</div></div>`;
-  h += `<div class="fdrow1 fdscw"><div class="fdbox" data-dz="fd-box" data-i="${ns}|0"><div class="fdcap">🧴 한 병의 양 <small>조각을 끌어 넣고, 넣은 조각을 누르면 빠져요</small></div>${fdRuler(`<div class="fdin">${C.box.map((den, i) => `<span class="fdpc" data-fdrm="${ns}|${i}" style="width:${FD_W / den - 2}px" role="button">${den <= 12 ? frHTML(1, den, 'tiny') : ''}</span>`).join('') || '<span class="fdempty">비었어요</span>'}</div>`)}${C.box.length ? `<div class="fdsum">한 병: ${frHTML(one[0], one[1])} L</div>` : ''}</div>`
+  h += `<div class="fdrow1 fdscw"><div class="fdbox" data-dz="fd-box" data-i="${ns}|0"><div class="fdcap">${(window.FD_BOT || FDB0)[0]} ${(window.FD_BOT || FDB0)[2]} <small>조각을 끌어 넣고, 넣은 조각을 누르면 빠져요</small></div>${fdRuler(`<div class="fdin">${C.box.map((den, i) => `<span class="fdpc" data-fdrm="${ns}|${i}" style="width:${FD_W / den - 2}px" role="button">${den <= 12 ? frHTML(1, den, 'tiny') : ''}</span>`).join('') || '<span class="fdempty">비었어요</span>'}</div>`)}${C.box.length ? `<div class="fdsum">한 병: ${frHTML(one[0], one[1])} L</div>` : ''}</div>`
     + `<div class="fdtools"><div class="fdcap">🧩 조각 상자 <small>몇 번이든 꺼낼 수 있어요</small></div>${S.pal.map(den => `<span class="fdpc src" data-dg="fd-unit" data-v="${ns}|${den}" style="width:${Math.max(26, FD_W / den - 2)}px">${frHTML(1, den, 'tiny')}</span>`).join('')}</div></div>`;
   return h;
 }
@@ -6784,7 +6785,7 @@ const fdSym = s => String(s).replace(/×/g, ' × ').replace(/÷/g, ' ÷ ');
 function fdRuleHTML(ns, C, S, won) {
   const sl = k => `<span class="ftslot wide ${C.slots[k] != null ? 'full' : ''}" data-dz="fd-slot" data-i="${ns}|${k}" ${C.slots[k] != null && !won ? `data-fdclr="${ns}|${k}" role="button"` : ''}>${C.slots[k] != null ? fdSym(C.slots[k]) : ''}</span>`;
   let h = `<div class="fdrule-ex"><div class="fdlog-h">🔎 앞에서 직접 나누어 본 식</div>${S.rows.map(r => `<div class="fdlog-l">${r}</div>`).join('')}</div>`;
-  h += `<div class="fdrule-f"><div class="fdlog-h">📜 기호로 정리하기 <small>▲ 분자 · ■ 분모 · ● 나누는 수</small></div><div class="ftcardrow" style="font-size:1.4rem;font-weight:900">${S.lhs} = <span class="ftfrac">${sl('n')}<i></i>${sl('d')}</span>${S.rhs || ''}</div></div>`;
+  h += `<div class="fdrule-f"><div class="fdlog-h">📜 기호로 정리하기 <small>▲ 분자 · ■ 분모 · ● 나누는 수</small></div><div class="ftcardrow" style="font-size:1.4rem;font-weight:900">${S.lhs} = ${S.mid || ''}<span class="ftfrac">${sl('n')}<i></i>${sl('d')}</span>${S.rhs || ''}</div></div>`;
   if (!won) h += `<div class="fttiles">${S.tiles.map(v => `<span class="fttile wide" data-dg="fd-sym" data-v="${ns}|${v}">${fdSym(v)}</span>`).join('')}</div><div class="center muted font-bold" style="font-size:.8rem;margin-top:4px">카드를 끌어 빈칸에 넣어요 · 칸을 누르면 비워져요</div>`;
   return h;
 }
@@ -6866,7 +6867,7 @@ function mkStory6(o) {
 function g56StoryPatch() { const VN = G56.C.vname || '디바이드';
   const _sv = Story.stepV; Story.stepV = function () { const r = _sv.apply(this, arguments);
     if (r && /문제은행/.test(r.m)) r.m = `${VILLAINS.clock.spell}이 걸린 문제은행! 관문을 하나 통과하면 마법이 풀려요.`;
-    if (r && /디바이드의 마법진/.test(r.m)) r.m = `${VN}의 마법진! 미니게임 3종(${LAIR.map(x => x.name).join('·')})을 모두 클리어하자.`;
+    if (r && /디바이드의 마법진/.test(r.m)) r.m = `${VN}의 마법진! 미니게임 ${LAIR.length}종(${LAIR.map(x => x.name).join('·')})을 모두 클리어하자.`;
     if (r && /교란 마법 넷/.test(r.m)) r.m = `교란 마법 넷을 모두 풀면 ${VN}의 봉인이 풀려요!`;
     return r; };
   const _ep = Story.epilogue; Story.epilogue = function (k) { _ep.apply(this, arguments);
@@ -6909,7 +6910,7 @@ function frPretty(root) {
 S1_TOOLS.length = 0; BADGES.length = 0;
 const crew = n => { const g = GUIDE(), o = [g === 'arin' ? 'siwoo' : 'arin', 'rat', 'dragon', 'horse', 'dog', 'tiger', 'ox', 'rabbit']; return o.slice(0, n); };
 const pourQ = (n, d, b, lens) => C => C.ph === 'share' ? `에너지 음료 <b>${n}/${d} L</b>를 병 <b>${b}개</b>에 똑같이 나누어 담아요. 음료 조각을 병으로 끌어 담아요.${lens ? ' 조각이 모자라면 <b>🔍 돋보기</b>를 써 봐요.' : ''}` : '똑같이 나누어 담았어요! 한 병에 담긴 양은 몇 L일까요?';
-fdTool({ key: 'give', vk: 'clock', no: '도구 1', name: '칸 나누어 주기', short: '분자를 똑같이 나누기', icon: '✂️',
+fdTool({ key: 'give', vk: 'clock', no: '도구 1', name: '칸 나누어 주기', short: '똑같이 나누어 주기', icon: '✂️',
   sub: `${VN}의 쪼개기 마법으로 에너지 음료가 한 병에 몰려 있어요. 음료 조각을 <b>병마다 똑같이</b> 나누어 담아요.`, taunt: '음료를 한 병에 다 몰아넣었지!',
   summary: `분자가 나누는 수로 나누어떨어지면 <b>분자만 나누어요</b>. 조각 하나의 크기(분모)는 그대로예요. <b>${frHTML(4, 5)} ÷ 2 = ${frHTML('4÷2', 5)} = ${frHTML(2, 5)}</b>`,
   stages: [{ t: '4/5 ÷ 2 나누어 담기', type: 'pour', amt: [4, 5], b: 2, who: crew(2), what: '에너지 음료', q: pourQ(4, 5, 2), ok: '4/5 ÷ 2 = 2/5! 1/5 조각 4개를 2병에 나누니 한 병에 2개씩이에요.', won: C => `${frHTML(4, 5)} ÷ 2 = ${frHTML(2, 5, 'big')} L` },
@@ -6919,7 +6920,7 @@ fdTool({ key: 'give', vk: 'clock', no: '도구 1', name: '칸 나누어 주기',
       lhs: `${frHTML('▲', '■')} ÷ ●`, ans: ['▲÷●', '■'], tiles: ['▲÷●', '▲×●', '■', '■÷●', '■×●'],
       why: '두 식에서 분자는 어떻게 바뀌었고, 분모는 어떻게 되었는지 보세요.', ok: '분자가 ●로 나누어떨어지면 분자만 ●로 나누고, 분모(조각 하나의 크기)는 그대로예요!',
       won: `${frHTML('▲', '■')} ÷ ● = ${frHTML('▲ ÷ ●', '■')} <small>(▲가 ●로 나누어떨어질 때)</small>` }] });
-fdTool({ key: 'lens', vk: 'half', no: '도구 2', name: '크기가 같은 분수 돋보기', short: '더 잘게 나누어 담기', icon: '🔍',
+fdTool({ key: 'lens', vk: 'half', no: '도구 2', name: '크기가 같은 분수 돋보기', short: '더 잘게 나누어 보기', icon: '🔍',
   sub: `${VN}가 조각 수를 병 수와 안 맞게 숨겨 놓았어요. 조각이 모자라면 <b>돋보기</b>로 조각을 더 잘게 나누어 똑같이 담아요.`, taunt: '조각이 모자라서 못 나누지? 크크!',
   summary: '분자가 나누어떨어지지 않으면 <b>크기가 같은 분수</b>로 바꾸어요. <b>3/4 = 6/8</b> → 6/8 ÷ 2 = <b>3/8</b>. 양은 그대로, 조각만 더 잘게!',
   stages: [{ t: '3/4 ÷ 2 나누어 담기', type: 'pour', amt: [3, 4], b: 2, lens: [2, 3, 4], who: crew(2), what: '에너지 음료', q: pourQ(3, 4, 2, true), ok: '3/4 = 6/8로 바꾸니 2병에 3조각씩! 3/4 ÷ 2 = 3/8이에요.', won: C => `${frHTML(3, 4)} ÷ 2 = ${frHTML(3, 8, 'big')} L` },
@@ -6943,7 +6944,7 @@ fdTool({ key: 'grid', vk: 'mixup', no: '도구 3', name: '쪼개서 나누기', 
       lhs: `${frHTML('▲', '■')} ÷ ●`, ans: ['▲', '■×●'], tiles: ['▲', '■', '■×●', '▲×●', '▲÷●'],
       why: '1 L가 몇 칸이 되었는지(분모)와 한 병이 몇 칸인지(분자)를 보세요.', ok: '1을 (■ × ●)칸으로 나눈 것 중 ▲칸! 분자가 나누어떨어지지 않아도 언제나 쓸 수 있어요.',
       won: `${frHTML('▲', '■')} ÷ ● = ${frHTML('▲', '■ × ●')}` }] });
-fdTool({ key: 'scale', vk: 'tilt', no: '도구 4', name: '몫 검증 저울', short: '몫 × 병 수 = 처음 양', icon: '⚖️',
+fdTool({ key: 'scale', vk: 'tilt', no: '도구 4', name: '몫 검증 저울', short: '저울로 확인하기', icon: '⚖️',
   sub: `${VN}가 병마다 담긴 양을 뒤죽박죽 바꿔 놓았어요. <b>한 병의 양</b>을 조각으로 만들어 올리면, 저울이 병 수만큼 모은 양과 처음 양을 견주어 줘요.`, taunt: '저울을 기울여 놨지~',
   summary: '한 병의 양(몫)을 병 수만큼 모으면 처음 양과 같아요. <b>3/8 × 2 = 6/8 = 3/4</b> — 그래서 나누는 양은 그대로 두고, 나누는 수만큼 조각을 내요.',
   stages: [{ t: '4/9 ÷ 2 저울 맞추기', type: 'scale', amt: [4, 9], b: 2, pal: [3, 9, 18], q: '음료 <b>4/9 L</b>를 병 <b>2개</b>에 똑같이 나누면 한 병은 얼마일까요? 조각을 넣어 한 병의 양을 만들고, 저울이 평평해지는지 봐요.',
@@ -7863,7 +7864,7 @@ const CLS = (() => {
     };
   }
   /* ---------- 👩‍🏫 내 반 설정 (교사용) ---------- */
-  const FILES = [['1단원 1차시 · (자연수)÷(자연수)의 몫을 분수로', '6-1-1-1-스토리모드.html'], ['1단원 2차시 · (분수)÷(자연수)', '6-1-1-2-스토리모드.html']];
+  const FILES = [['1단원 1차시 · (자연수)÷(자연수)의 몫을 분수로', '6-1-1-1-스토리모드.html'], ['1단원 2차시 · (분수)÷(자연수)', '6-1-1-2-스토리모드.html'], ['1단원 3차시 · 곱셈으로 나타내기', '6-1-1-3-스토리모드.html'], ['1단원 4차시 · (대분수)÷(자연수)', '6-1-1-4-스토리모드.html'], ['1단원 마무리 · 디바이드 최종 결전', '6-1-1-U-단원마무리.html']];
   const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
   function linkFor(file, url, cls) { const q = new URLSearchParams(); if (url) q.set('webhook', url); if (cls) q.set('class', cls); return base() + encodeURI(file) + '?' + q.toString(); }
   function ov() { let o = document.getElementById('clsOv'); if (!o) { o = document.createElement('div'); o.id = 'clsOv'; o.className = 'wnov hidden'; document.body.appendChild(o); o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }); } return o; }
@@ -8415,6 +8416,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const s = state.s1; if (!s) return;
     if (s.goalDraft == null) s.goalDraft = '';
     if (s.goalConfirmed == null) s.goalConfirmed = false;
+    if (C.noGoal) s.goalConfirmed = true; /* 단원 마무리: 목표 쓰기 없이 바로 시작 */
     if (!s.goalAssessment) s.goalAssessment = { passed: false, tries: 0, hintUsed: false, vals: {} };
     if (!s.goalAssessment.vals) s.goalAssessment.vals = {};
   }
@@ -8476,8 +8478,8 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
       ${Hh.object ? `<div class="svh-obj">${Hh.object}</div>` : ''}
       ${Hh.villain ? `<div class="svh-vname"><i>VS</i><b>${Hh.villain}</b>${Hh.villainSub ? `<small>${Hh.villainSub}</small>` : ''}</div>` : ''}
       <div class="svh-talk"><div class="svh-ava">${av(Hh.speaker || GUIDE())}</div><div class="svh-tbody">${Hh.speakerName ? `<div class="svh-tname">${esc(Hh.speakerName)}</div>` : ''}<p>${Hh.speech}</p></div></div>
-      <div class="svh-goal ${s.goalConfirmed ? 'open' : ''}"><div class="svh-gh">🎯 이번 시간의 ${C.review ? '복습 목표' : '학습 목표'}</div>${s.goalConfirmed ? `<p>✅ ${esc(C.target)}</p>` : `<p class="svh-gq">🔒 아래에서 ${C.review ? '<b>배운 내용을 떠올려</b> 쓰거나 말하면' : '<b>내 생각</b>을 먼저 쓰거나 말하면'} 열려요!</p>`}</div>
-      <button class="svh-next" data-sv="${s.goalConfirmed ? 'start' : 'towrite'}">${s.goalConfirmed ? '개념 탐험 시작' : '다음으로'} <b>»</b></button>
+      ${C.noGoal ? '' : `<div class="svh-goal ${s.goalConfirmed ? 'open' : ''}"><div class="svh-gh">🎯 이번 시간의 ${C.review ? '복습 목표' : '학습 목표'}</div>${s.goalConfirmed ? `<p>✅ ${esc(C.target)}</p>` : `<p class="svh-gq">🔒 아래에서 ${C.review ? '<b>배운 내용을 떠올려</b> 쓰거나 말하면' : '<b>내 생각</b>을 먼저 쓰거나 말하면'} 열려요!</p>`}</div>`}
+      <button class="svh-next" data-sv="${s.goalConfirmed ? 'start' : 'towrite'}">${C.noGoal ? '복습 시작' : s.goalConfirmed ? '개념 탐험 시작' : '다음으로'} <b>»</b></button>
     </div></div></div>`;
   }
   function missionHTML() {
@@ -8495,10 +8497,14 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const s = state.s1, R = C.review, rv = s.rv || {};
     return `<div class="sv-review"><div class="sv-rv-h">📚 ${esc(R.title || '이번 단원에서 배운 것 돌아보기')}</div><div class="sv-small">차시마다 배운 내용을 읽고, 지금 내 마음과 맞는 단추를 눌러요.</div>
       <div class="sv-rv-list">${R.items.map((it, i) => `<div class="sv-rv-it ${rv[i] ? 'r' + rv[i] : ''}"><span class="sv-rv-no">${esc(it.no)}</span><div class="sv-rv-tx"><b>${esc(it.t)}</b><span>${it.d}</span></div>
-        <div class="sv-rv-btn"><button class="${rv[i] === 1 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="1" ${s.goalConfirmed ? 'disabled' : ''}>😊 자신 있어요</button><button class="${rv[i] === 2 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="2" ${s.goalConfirmed ? 'disabled' : ''}>🤔 다시 볼래요</button></div></div>`).join('')}</div></div>`;
+        <div class="sv-rv-btn"><button class="${rv[i] === 1 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="1" ${s.goalConfirmed && !C.noGoal ? 'disabled' : ''}>😊 자신 있어요</button><button class="${rv[i] === 2 ? 'on' : ''}" data-sv="rv" data-i="${i}" data-v="2" ${s.goalConfirmed && !C.noGoal ? 'disabled' : ''}>🤔 다시 볼래요</button></div></div>`).join('')}</div></div>`;
   }
   function panelHTML() {
     const s = state.s1;
+    if (C.review && C.noGoal) return `<div class="sv-panel">${reviewHTML()}
+        ${(() => { const w = C.review.items.filter((it, i) => (s.rv || {})[i] === 2); return `<div class="sv-rv-again ${w.length ? '' : 'ok'}"><b>🧭 오늘의 복습 순서</b><br>CH.1 개념 카드로 떠올리기 → CH.2 기본 문제 → CH.3 점프 문제 → 세트 2 단원 평가와 왕중왕전` + (w.length ? `<br>🤔 다시 볼 내용: ${w.map(it => `<b>${esc(it.no)} ${esc(it.t)}</b>`).join(' · ')}` : '') + '</div>'; })()}
+        <div class="sv-center sv-row mt-2"><button class="btn btn-primary btn-lg pulse" data-sv="start">🧭 복습 시작하기 ➜</button></div>
+        <p class="sv-small sv-center">위 문제는 <b>점프 문제 1</b>에서 직접 해결해요. 해결하면 다음 점프 문제가 열려요!</p></div>`;
     if (C.review) return `<div class="sv-panel">${reviewHTML()}
         <div class="sv-ask">💭 <strong>${C.ask}</strong><div class="sv-small">배운 낱말을 넣어 글로 쓰거나 🎤 말로 해 보세요.</div></div>
         <label for="sv-goal-draft" class="sv-lab">✏️ 이 문제를 풀 때 쓸 수 있는 배운 내용</label>
@@ -9558,7 +9564,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .ckgap.dzover{background:#fde68a}
 .ckgap.cut{background:#dc2626;width:6px;margin:0 3px}
 .ckunit{display:inline-block;font-size:.85rem;font-weight:900;color:#be123c;background:#fff1f2;border-radius:999px;padding:1px 8px;margin-top:4px}
-.ckbal{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+.ckbal{display:flex;flex-direction:column;align-items:center;margin:6px 0;width:100%}.ckbal svg{width:min(100%,460px)}
 .ckbeam{width:86%;height:10px;background:#78350f;border-radius:5px;transition:transform .6s;position:relative}
 .ckpan{display:flex;justify-content:space-between;width:92%;margin-top:6px}
 .ckpan>div{width:46%;min-height:64px;border:3px solid #fcd34d;border-radius:0 0 40px 40px;background:#fffbeb;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;font-weight:900;transition:transform .6s}
@@ -9578,6 +9584,34 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .jxin{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px;min-height:30px}
 .jxchip{background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:2px 8px;font-weight:900}
 .jxdone{margin-top:8px;background:#ecfdf5;border:2px solid #86efac;border-radius:12px;padding:8px 12px;font-weight:800;color:#166534}
+.jxslot.jxsel{outline:4px solid #f59e0b!important;outline-offset:2px;background:#fffbeb!important}
+.t11piece.jxpick{outline:4px solid #f59e0b;outline-offset:2px;transform:translateY(-3px)}
+.jxbins [data-dz="jx-b"]{cursor:pointer}
+
+/* GK 입체 탐구 */
+.gkth{display:inline-flex;align-items:center;justify-content:center;line-height:0}
+.gkin{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:6px;min-height:60px}
+.gkback{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:3px;cursor:pointer}
+.gkchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.btn.gkchip{min-height:44px;padding:8px 14px;font-size:1rem;white-space:normal;line-height:1.3}
+.gkcrit{background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:12px;margin-top:10px;text-align:center}
+.gkinp{display:block;width:100%;max-width:520px;margin:8px auto;font-size:1.1rem;padding:10px 14px;border:2px solid #cbd5e1;border-radius:12px;font-weight:700}
+.gkgrp>div{padding:6px}.gkgrp svg{width:min(100%,170px)!important;height:auto!important}
+.gkmk{font-weight:900;font-size:.9rem;border-radius:999px;padding:2px 10px}.gkmk.y{background:#dbeafe;color:#1d4ed8}.gkmk.n{background:#f1f5f9;color:#64748b}
+.gkname{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;font-size:1.15rem;margin:10px 0}
+.gkname span{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:6px 12px}
+.gkdef{font-size:1.25rem;font-weight:800;text-align:center;line-height:1.9;background:#fefce8;border:2px solid #fde68a;border-radius:16px;padding:10px 14px}
+.gkbl{display:inline-block;min-width:80px;border-bottom:3px solid #f59e0b;color:#b45309;font-weight:900;margin:0 4px}
+.gktab{margin:8px auto;font-size:1rem}.gktab td,.gktab th{padding:5px 8px;text-align:center}.gktab tr.cur{background:#fef9c3}
+.gkok{display:block;color:#16a34a;font-weight:900;font-size:.8rem}.gkno{display:block;color:#dc2626;font-weight:900;font-size:.8rem}
+.gkobs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}@media(max-width:760px){.gkobs{grid-template-columns:1fr}}
+.gkobsL{text-align:center}.gkobsL svg{width:min(100%,300px)!important;height:auto!important}
+.gkrules{display:grid;gap:6px;justify-content:center;margin-top:6px}.gkrules>div{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
+.gkpv{display:inline-block;min-width:44px;font-size:1.6rem;text-align:center}
+.foldbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}@media(max-width:760px){.foldbox{grid-template-columns:1fr}}
+.foldbox svg{width:min(100%,360px)!important;height:auto!important}
+.gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
+.ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
 </style>
 <script>
 /* =====================================================================
@@ -9617,7 +9651,7 @@ const CK = (() => {
     if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
     else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
       body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
-        + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : ''); }
+        + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 다시 조작해 보기</button><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : (s.i > 0 || done ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 이 활동 처음부터</button></div>` : '')); }
     const V = VILLAINS[t.vk] || {};
     el.innerHTML = `<div class="card t11card ckcard" style="--tc:${V.color || '#2563eb'}"><div class="stage-head"><span class="ti" style="background:${V.bg || '#eef2ff'}">${t.icon}</span><div><span class="stchap">CHAPTER 1 · ${t.no}</span><h2 class="h2">${t.name}</h2><p class="sub" style="margin:3px 0 0">${t.sub}</p></div></div>
       ${t.taunt ? vSay(t.vk, t.taunt, 44) : ''}${steps}${body}</div>`;
@@ -9625,6 +9659,7 @@ const CK = (() => {
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-ck]'); if (!b) return; const k = cur(); if (!k) return; const a = b.dataset.ck, s = S(k), t = T[k];
     if (a === 'next') { s.i++; s.d = null; s.won = false; s.fb = null; if (s.i >= t.stages.length) { s.rp = false; award(k); } render(k); return; }
+    if (a === 'rs') { s.d = null; s.won = false; s.fb = null; render(k); try { toast('🔄 이 활동을 처음부터 다시 조작해 봐요!'); } catch (x) {} return; }
     if (a === 're') { box()[k] = Object.assign(fresh(), { rp: true }); render(k); try { toast('🔄 처음부터 다시 조작해 봐요!'); } catch (x) {} return; }
     dispatch('act:' + a, b.dataset.v, b);
   });
@@ -9760,18 +9795,19 @@ const JX = (() => {
   const solved = k => { try { return jOK(k); } catch (e) { return false; } };
   const rec = (k, ok, det) => { try { recordAnswer('s1', k, (D[k].label || k), ok, det); } catch (e) {} try { bossRefresh(); } catch (e) {} };
   const say = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
-  const card = (k, v, t) => `<span class="t11piece" data-dg="jx-c" data-v="${k}|${v}"><b>${t != null ? t : v}</b></span>`;
+  const card = (k, v, t) => `<span class="t11piece ${S(k).pick === String(v) ? 'jxpick' : ''}" data-dg="jx-c" data-v="${k}|${v}"><b>${t != null ? t : v}</b></span>`;
+  const jxSel = k => { const s = S(k), n = (D[k].slots || []).length; if (s.sel != null && s.slots[s.sel] == null) return s.sel; for (let i = 0; i < n; i++) if (s.slots[i] == null) return i; return -1; };
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
     if (C.type === 'slots') {
-      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot ${s.slots[i] != null ? 'full' : ''}" data-dz="jx-s" data-i="${k}|${i}" ${s.slots[i] != null && !done ? `data-jxclr="${k}|${i}" title="눌러서 비우기"` : ''}>${s.slots[i] != null ? (C.show ? C.show(s.slots[i]) : s.slots[i]) : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(s.slots)}</span>` : ''}</div>`;
+      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot ${s.slots[i] != null ? 'full' : ''} ${!done && s.slots[i] == null && jxSel(k) === i ? 'jxsel' : ''}" data-dz="jx-s" data-i="${k}|${i}" data-jxsel="${k}|${i}" ${s.slots[i] != null && !done ? `data-jxclr="${k}|${i}" title="눌러서 비우기"` : ''}>${s.slots[i] != null ? (C.show ? C.show(s.slots[i]) : s.slots[i]) : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
-      if (!done) h += `<div class="t11src"><span class="t11lab">✋ 카드를 끌어 빈칸에 놓아요 · 칸을 누르면 비워져요</span>${C.cards.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`
+      if (!done) h += `<div class="t11src"><span class="t11lab">✋ 카드를 끌거나 눌러서 빈칸에 놓아요 · 숫자 키로도 쓸 수 있어요 · 채운 칸을 누르면 비워져요</span>${C.cards.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`
         + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 이렇게 만들었어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
     } else if (C.type === 'sort') {
       h += `<div class="jxbins">${C.bins.map((b, i) => `<div class="ckzone" data-dz="jx-b" data-i="${k}|${i}"><b>${b}</b><div class="jxin">${C.items.filter(it => s.bins[it] === i).map(it => `<span class="jxchip">${C.show ? C.show(it) : it}</span>`).join('')}</div></div>`).join('')}</div>`;
       const left = C.items.filter(it => s.bins[it] == null);
-      if (!done && left.length) h += `<div class="t11src"><span class="t11lab">✋ 하나씩 끌어 알맞은 바구니에 넣어요</span>${left.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`;
+      if (!done && left.length) h += `<div class="t11src"><span class="t11lab">✋ 하나씩 끌어 넣거나, 카드를 누른 뒤 바구니를 눌러 넣어요</span>${left.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`;
       if (!done) h += `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 넣었어요</button><button class="btn btn-sub" data-jx="reset" data-v="${k}">↺ 다시 넣기</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button></div>`;
     }
     if (C.fig) h = C.fig(s) + h;
@@ -9795,7 +9831,16 @@ const JX = (() => {
     }
   }
   DND.on('jx-c', { drop(v, z, el) { const [k, x] = v.split('|'), C = D[k]; if (!C || solved(k)) return; const s = S(k), val = isNaN(+x) ? x : +x, [zk, zi] = (el.dataset.i || '').split('|'); if (zk !== k) return;
-    if (z === 'jx-s') s.slots[+zi] = val; else if (z === 'jx-b') s.bins[val] = +zi; else return; s.fb = null; try { Sound.pop(); } catch (e) {} paint(k); } });
+    if (z === 'jx-s') s.slots[+zi] = val; else if (z === 'jx-b') s.bins[val] = +zi; else return; s.fb = null; try { Sound.pop(); } catch (e) {} paint(k); },
+    tap(v) { const [k, x] = v.split('|'), C = D[k]; if (!C || solved(k)) return; const s = S(k), val = isNaN(+x) ? x : +x;
+      if (C.type === 'slots') { const i = jxSel(k); if (i < 0) { try { toast('빈칸이 없어요. 채운 칸을 누르면 비워져요.'); } catch (e) {} return; } s.slots[i] = val; s.sel = null; }
+      else { s.pick = s.pick === String(x) ? null : String(x); }
+      s.fb = null; try { Sound.pop(); } catch (e) {} paint(k); } });
+  document.addEventListener('click', e => { const z = e.target.closest('[data-jxsel]'); if (z && !z.dataset.jxclr) { const [k, i] = z.dataset.jxsel.split('|'); if (D[k] && !solved(k)) { S(k).sel = +i; paint(k); } return; }
+    const b = e.target.closest('.jxbins [data-dz="jx-b"]'); if (b) { const [k, i] = (b.dataset.i || '').split('|'), s = D[k] && S(k); if (s && s.pick != null && !solved(k)) { const val = isNaN(+s.pick) ? s.pick : +s.pick; s.bins[val] = +i; s.pick = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); } } });
+  document.addEventListener('keydown', e => { if (!/^[0-9]$/.test(e.key) || e.target.closest && e.target.closest('input,textarea')) return;
+    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
+      const c = C.cards.find(v => String(v) === e.key); if (c == null) continue; s.slots[i] = isNaN(+c) ? c : +c; s.sel = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); e.preventDefault(); return; } });
   document.addEventListener('click', e => { const c = e.target.closest('[data-jxclr]'); if (c) { const [k, i] = c.dataset.jxclr.split('|'); delete S(k).slots[+i]; paint(k); return; }
     const b = e.target.closest('[data-jx]'); if (!b) return; const k = b.dataset.v, a = b.dataset.jx, s = S(k); touch('s1');
     if (a === 'ok') check(k); else if (a === 'reset') { s.bins = {}; s.fb = null; } else if (a === 'hint') { s.n++; s.fb = { ok: false, hint: true, msg: '💡 ' + D[k].hints[(s.n - 1) % D[k].hints.length] }; try { mood('think', 2000); } catch (x) {} }
@@ -9810,6 +9855,7 @@ const JX = (() => {
     try { const ji = +String(k).slice(1) - 1; if (J_NAMES[ji]) J_NAMES[ji] = J_NAMES[ji].replace(/·.*$/, '· ' + C.label); } catch (e) {} }
   return { set, paint };
 })();
+
 
 /* 6-1-1-2 보스전 도전 2·3: 조작형 사고력 문제 */
 (function () {
@@ -9876,44 +9922,6 @@ img[src*="/g56/villains/"]{object-fit:contain!important;background:transparent!i
 })();
 
 </script><!--FR-END-->
-<!--SW-START--><script>
-/* 🔀 세트 1 ↔ 세트 2 오갈 때: 떠난 쪽의 게임 시간·문제 시간·배경 음악·읽어 주기를 멈추고, 돌아오면 이어서 해요 (모든 차시 공통) */
-(function () {
-  if (window.__SWFIX || typeof showTab !== 'function') return; window.__SWFIX = 1;
-  const st = () => (typeof state !== 'undefined' ? state : {});
-  let qzHold = null;
-  function holdQuiz() { try { if (typeof QZ === 'undefined' || !QZ.qt || !QZ.q || typeof QZG === 'undefined' || typeof VG === 'undefined') return; const g = QZG[VG.id]; if (!g || !g.qtime) return;
-    clearInterval(QZ.qt); QZ.qt = null; qzHold = { id: VG.id, used: Date.now() - QZ.t0 }; } catch (e) {} }
-  function resumeQuiz() { try { if (!qzHold || typeof onGame !== 'function' || !onGame(qzHold.id)) return; const g = QZG[qzHold.id], T = g.qtime(qzLv()); QZ.t0 = Date.now() - qzHold.used; qzHold = null; clearInterval(QZ.qt);
-    QZ.qt = setInterval(() => { const b = document.getElementById('qzBar'); const left = Math.max(0, 1 - (Date.now() - QZ.t0) / (T * 1000)); if (b) b.style.width = (left * 100) + '%'; if (left <= 0) { clearInterval(QZ.qt); qzAns(-1); } }, 100); } catch (e) {} }
-  function mood() { try { const S = st(), k = S.tab, step = (S[k] || {}).step; Sound.setMood((step === 'jump' || step === 'game' || step === 'board') ? 'battle' : 'calm'); } catch (e) {} }
-  const _sh = showTab;
-  showTab = function (k) {
-    const from = st().tab;
-    if (from && from !== k) { if (from === 's2') holdQuiz(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
-    const r = _sh.apply(this, arguments);
-    mood(); if (k === 's2') setTimeout(resumeQuiz, 50);
-    return r;
-  };
-  /* 세트 2 안에서 단계(문제은행·미니게임·보드 게임)를 옮길 때도 문제 시간은 멈췄다가 이어서 */
-  if (typeof goStep === 'function') { const _g = goStep; goStep = function (k, step) { const S = st(); if (S.tab === 's2' && S.s2 && S.s2.step === 'game' && step !== 'game') holdQuiz(); const r = _g.apply(this, arguments); if (k === 's2' && step === 'game') setTimeout(resumeQuiz, 50); return r; }; }
-})();
-
-</script><!--SW-END-->
-<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
-#skBg{align-items:flex-start!important}
-#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
-#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
-#skBg .skpack .skfig{display:flex;justify-content:center}
-#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
-
-/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
-.sv-paper{min-width:min(100%,660px)}
-/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
-.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
-.ritems li{margin:0!important;min-width:0}
-@media(max-width:700px){.ritems{grid-template-columns:1fr}}
-</style><!--SK-END-->
 <!--NET-START--><style>.svnet-card{border:2.5px dashed #a78bfa;border-radius:16px;padding:10px 14px;margin:10px 0;background:#faf5ff}
 .svnet-link{display:flex;gap:6px;margin:8px 0}.svnet-link input{flex:1;min-width:0;border:2px solid #c4b5fd;border-radius:10px;padding:6px 8px;font-size:.8rem}
 .svnet-pl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 12px}.svnet-pl>div{border:2px solid #e9d5ff;border-radius:12px;padding:6px 10px;font-weight:800;background:#fff}.svnet-pl>div.me{border-color:#7c3aed;background:#f5f3ff}
@@ -10191,6 +10199,30 @@ body.svnet-wait #s2body>*:not(.svbg-bar){pointer-events:none}body.svnet-wait #s2
 })();
 
 </script><!--PJ-END-->
+<!--SW-START--><script>
+/* 🔀 세트 1 ↔ 세트 2 오갈 때: 떠난 쪽의 게임 시간·문제 시간·배경 음악·읽어 주기를 멈추고, 돌아오면 이어서 해요 (모든 차시 공통) */
+(function () {
+  if (window.__SWFIX || typeof showTab !== 'function') return; window.__SWFIX = 1;
+  const st = () => (typeof state !== 'undefined' ? state : {});
+  let qzHold = null;
+  function holdQuiz() { try { if (typeof QZ === 'undefined' || !QZ.qt || !QZ.q || typeof QZG === 'undefined' || typeof VG === 'undefined') return; const g = QZG[VG.id]; if (!g || !g.qtime) return;
+    clearInterval(QZ.qt); QZ.qt = null; qzHold = { id: VG.id, used: Date.now() - QZ.t0 }; } catch (e) {} }
+  function resumeQuiz() { try { if (!qzHold || typeof onGame !== 'function' || !onGame(qzHold.id)) return; const g = QZG[qzHold.id], T = g.qtime(qzLv()); QZ.t0 = Date.now() - qzHold.used; qzHold = null; clearInterval(QZ.qt);
+    QZ.qt = setInterval(() => { const b = document.getElementById('qzBar'); const left = Math.max(0, 1 - (Date.now() - QZ.t0) / (T * 1000)); if (b) b.style.width = (left * 100) + '%'; if (left <= 0) { clearInterval(QZ.qt); qzAns(-1); } }, 100); } catch (e) {} }
+  function mood() { try { const S = st(), k = S.tab, step = (S[k] || {}).step; Sound.setMood((step === 'jump' || step === 'game' || step === 'board') ? 'battle' : 'calm'); } catch (e) {} }
+  const _sh = showTab;
+  showTab = function (k) {
+    const from = st().tab;
+    if (from && from !== k) { if (from === 's2') holdQuiz(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
+    const r = _sh.apply(this, arguments);
+    mood(); if (k === 's2') setTimeout(resumeQuiz, 50);
+    return r;
+  };
+  /* 세트 2 안에서 단계(문제은행·미니게임·보드 게임)를 옮길 때도 문제 시간은 멈췄다가 이어서 */
+  if (typeof goStep === 'function') { const _g = goStep; goStep = function (k, step) { const S = st(); if (S.tab === 's2' && S.s2 && S.s2.step === 'game' && step !== 'game') holdQuiz(); const r = _g.apply(this, arguments); if (k === 's2' && step === 'game') setTimeout(resumeQuiz, 50); return r; }; }
+})();
+
+</script><!--SW-END-->
 <!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
 #svslTop,#svslTabs,#svslNav,#svslFab{display:none}
 body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
@@ -10327,7 +10359,7 @@ body.svsl-on.svsl-port .sv-mission{justify-content:flex-start}
 body.svsl-on .sv-mission{min-height:0;overflow:hidden}
 body.svsl-on.svsl-port #scratchFab{padding:6px 10px!important;font-size:12px!important}
 
-body.svsl-on .sv-panel.svsl-done{display:grid!important}
+body.svsl-on .sv-panel.svsl-done{display:grid!important}body.svsl-on .sv-panel.svsl-done.svsl-off{display:none!important}
 body.svsl-on .sv-panel .svsl-pl,body.svsl-on .sv-panel .svsl-pr{display:flex;flex-direction:column;gap:12px;align-self:center}
 body.svsl-on .sv-panel .svsl-pl>*,body.svsl-on .sv-panel .svsl-pr>*{margin:0!important}
 body.svsl-on.svsl-land .sv-panel.svsl-done>.svsl-pl{grid-column:1!important}body.svsl-on.svsl-land .sv-panel.svsl-done>.svsl-pr{grid-column:2!important}
@@ -10420,11 +10452,11 @@ body.svsl-on[data-svst=basic] #s1body>.card.hx .h2{font-size:1rem!important;marg
 body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow{margin:0!important;flex:none;font-size:.82rem}
 body.svsl-on[data-svst=basic] #s1body>.card.hx .vrow img{width:30px!important;height:30px!important}
 body.svsl-on[data-svst=basic] #s1body>.qcard{flex:1 1 auto;margin:0!important;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.5vh,28px);padding:clamp(14px,2.5vh,30px) clamp(16px,3vw,48px)!important}
-body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on[data-svst=basic] .qcard .qtext{font-size:clamp(1.35rem,2.3vw,2.3rem)!important;line-height:1.5}
 body.svsl-on[data-svst=basic] .qcard .qtext .frc{font-size:1em}
 body.svsl-on[data-svst=basic] .qcard .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
 body.svsl-on[data-svst=basic] .qcard .choices{gap:clamp(10px,1.4vw,20px)!important}
-body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,13vh,130px)}
+body.svsl-on[data-svst=basic] .qcard .choice{font-size:clamp(1.15rem,1.85vw,1.9rem)!important;min-height:clamp(58px,10vh,104px)}
 body.svsl-on[data-svst=basic] .qcard .row{justify-content:center}
 body.svsl-on[data-svst=basic] .qcard .afw,body.svsl-on[data-svst=basic] .qcard .sv-fig{zoom:1.3}
 #svslTabs button.sq{flex:0 1 auto;min-width:64px}
@@ -10433,10 +10465,10 @@ body.svsl-on[data-svst=basic] #svslTabs{justify-content:center}
 body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1fr) minmax(0,1fr)}
 body.svsl-on.svsl-port .svsl-tc>.svsl-side{max-height:none}
 body.svsl-on.svsl-port #svslNav .say-row{display:none}
-@media(max-width:700px){#svslTop .sets button span{display:none}#svslTop .ti{font-size:13px}}
+@media(max-width:700px){#svslTop .ti{font-size:13px}#svslTop .sets button{font-size:10.5px;padding:3px 6px}}
 body.svsl-on.svsl-port[data-svst=basic] #s1body>.card.hx{display:none!important}
-body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.25rem!important}
-body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.35rem!important;min-height:64px}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .qtext{font-size:1.3rem!important}
+body.svsl-on.svsl-port[data-svst=basic] .qcard .choice{font-size:1.15rem!important;min-height:56px}
 body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
 @media(max-width:520px){#svslTop .md{padding:5px 8px;font-size:11px}#svslTop .sets button{padding:3px 6px}}
 
@@ -10445,7 +10477,7 @@ body.svsl-on.svsl-port #svslTop .ti{flex:1 1 0;min-width:0}
 #svslNav .say-row #sayAva{width:48px!important;height:48px!important;display:flex;align-items:center;justify-content:center;overflow:visible}
 #svslNav .say-row #sayAva .jm,#svslNav .say-row #sayAva img{width:46px!important;height:46px!important}
 #svslNav .say-row #sayAva::before,#svslNav .say-row #sayAva::after{transform:scale(.72)}
-@media(max-width:1600px){#svslTop .sets button span{display:none}}
+
 #svslTop .sets button{min-width:58px}
 
 #svslNav .nv.sk{background:#16a34a;min-width:0;padding:10px 16px;font-size:clamp(13px,1vw,16px)}
@@ -10525,9 +10557,9 @@ body.svsl-on.svsl-s2q #sec-s2{flex:1;min-height:0;display:flex;flex-direction:co
 body.svsl-on.svsl-s2q #sec-s2>.skb{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden;margin:0!important}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.2vh,26px);margin:0!important;padding:clamp(14px,2.4vh,30px) clamp(16px,3vw,48px)!important}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx.svsl-meas{flex:none!important;height:auto!important}
-body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qtext{font-size:clamp(1.25rem,2.1vw,2.1rem)!important;line-height:1.55}
+body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qtext{font-size:clamp(1.35rem,2.3vw,2.3rem)!important;line-height:1.5}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .qno{width:clamp(44px,4vw,64px)!important;height:clamp(44px,4vw,64px)!important;font-size:1.4rem!important}
-body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .choice{font-size:clamp(1.3rem,2.2vw,2.3rem)!important;min-height:clamp(70px,12vh,120px)}
+body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .choice{font-size:clamp(1.15rem,1.85vw,1.9rem)!important;min-height:clamp(58px,10vh,104px)}
 body.svsl-on.svsl-s2q #sec-s2 .skb>.card.qx .row{justify-content:center}
 body.svsl-on.svsl-s2q .wrap{overflow:hidden!important}
 
@@ -10547,6 +10579,24 @@ body.svsl-on.svsl-port .svsl-tc.ucwrap{grid-template-rows:minmax(0,1fr) auto!imp
 body.svsl-on.svsl-port .svsl-tc.svsl-cards{grid-template-rows:auto auto minmax(0,1.5fr) minmax(0,1fr)!important}
 body.svsl-on.svsl-port .svsl-tc>.svsl-side.svsl-scrolly{overflow-y:auto!important}
 body.svsl-on.svsl-port .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;align-items:flex-start!important}
+
+/* 점프 문제 넘겨 보기: 보스 머리글은 숨기고(진행은 육각 칩으로), 문제는 [그림 | 답하기] */
+body.svsl-on[data-svst=jump] #s1body>#bossWrap{display:none!important}
+body.svsl-on[data-svst=jump] #s1body>.qnav-wrap{padding:4px 12px!important;margin-bottom:6px!important;zoom:.8}
+body.svsl-on[data-svst=jump] #s1body>.qnbot{zoom:.8;margin-top:4px!important}
+body.svsl-on[data-svst=jump] #s1body .sv-j1tag{display:none!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid{display:grid!important;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:clamp(16px,2.5vw,36px);row-gap:10px;align-items:start}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>*{grid-column:1/-1;margin-top:0!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{grid-column:1;grid-row:span 12;align-self:center}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jR{grid-column:2}
+
+/* 손글씨 칸: 넘겨 보기에서 너무 커지지 않게 (비율 유지) */
+body.svsl-on .qcard canvas.pad{max-width:min(100%,620px)!important;margin-left:auto!important;margin-right:auto!important}
+
+/* 맞추고도 넘치면 그 칸만 스크롤 (글자를 너무 줄이지 않기 위해) */
+body.svsl-on .svsl-tc>.svsl-main.svsl-scrolly,body.svsl-on .svsl-tc>.svsl-side.svsl-scrolly,body.svsl-on .svsl-tc>.fdsplit.svsl-scrolly{overflow-y:auto!important;justify-content:flex-start!important}
+body.svsl-on #s1body.svsl-qscroll,body.svsl-on #sec-s2 .skb.svsl-qscroll{overflow-y:auto!important}
+body.svsl-on[data-svst=jump] #s1body>.qcard>.qhead .qtext{font-size:clamp(1.1rem,1.5vw,1.55rem)!important;line-height:1.5}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -10559,6 +10609,8 @@ const STEPS = [['mission', '오늘의 문제', '🎁', '문제 상황을 보고 
 const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '상황 살펴보기', '내 학습 목표 쓰기'];
 let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
 const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
+/* 글자 크기 범위: 화면에 맞추되 너무 작거나 크게 바뀌지 않게 (넘치면 그 칸만 스크롤) */
+const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.15;
 const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
 const IC2 = { drill: '📚', game: '🎮', board: '🎲', result: '🏆' };
 const steps = () => SET() === 's1' ? STEPS : $$('#sec-s2 .map .station').map(b => [b.dataset.v, (b.querySelector('.lb') || b).textContent.trim(), IC2[b.dataset.v] || '⭐', (b.querySelector('.stsb') || {}).textContent || '']);
@@ -10607,7 +10659,7 @@ function apply() {
     const k = step(), st = SET(); B.dataset.svst = st === 's1' ? k : 's2-' + k; B.dataset.svset = st;
     if (st + k !== lastStep) { if (lastStep !== null) banner(k); if (k === 'mission') mi = Math.min(mi, 2); lastStep = st + k; }
     B.classList.toggle('svsl-tabs', st === 's1' && (k === 'concept' || k === 'basic')); const s2q = st === 's2' && !!$('#sec-s2 .skb > .card.qx .qhead'); B.classList.toggle('svsl-s2q', s2q);
-    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic'].includes(k)));
+    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic', 'jump'].includes(k) || (k === 'jump' && innerWidth < innerHeight)));
     $$('.svsl-off').forEach(e => e.classList.remove('svsl-off'));
     if (k === 'mission') { const box = $('#s1body .sv-mission'); if (box) { MSC.forEach((s, i) => { const el = box.querySelector(':scope > ' + s); if (el && i !== mi) el.classList.add('svsl-off'); });
         const p = box.querySelector(':scope > .sv-panel'); if (p) { const dn = !!S1().goalConfirmed; p.classList.toggle('svsl-done', dn);
@@ -10678,7 +10730,7 @@ function renderNav(k) { const nav = $('#svslNav'), N = nextInfo(), nb = nav.quer
   const sk = nav.querySelector('[data-svn=skip]'); if (sk) { const show = SET() === 's1' && k === 'concept' && N.t !== '기본 문제 ▶', lk = stationLocked('basic'); sk.style.display = show ? '' : 'none'; sk.disabled = lk; sk.textContent = lk ? '🔒 기본 문제' : '✏️ 기본 문제로 ▶'; sk.title = lk ? '개념 탐험 도구를 1개 끝내면 기본 문제로 갈 수 있어요' : '개념 탐험을 1개 이상 끝냈어요. 기본 문제로 갈 수 있어요'; }
   const L = steps(), cs = L[stepIdx(k)] || ['', '', ''];
   let lab = `${cs[2]} ${cs[1]}`, dots = '';
-  if (SET() === 's1' && k === 'mission') { lab += ' · ' + MNAME[mi]; dots = MSC.map((_, j) => `<i class="${j === mi ? 'on' : j < mi ? 'ok' : ''}"></i>`).join(''); }
+  if (SET() === 's1' && k === 'mission') { lab += ' · ' + (mi === 2 && window.SV_LF && SV_LF.noGoal ? '배운 내용 돌아보기' : MNAME[mi]); dots = MSC.map((_, j) => `<i class="${j === mi ? 'on' : j < mi ? 'ok' : ''}"></i>`).join(''); }
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.ch.length) { lab += ` · ${Q.ch.length}문제 중 ${Q.cur + 1}번`; } }
   if (SET() === 's1' && k === 'concept') { const T = toolInfo(), b = T.hub[T.cur]; if (b) lab += ` · 도구 ${T.cur + 1} ${tname(b)}`; if (T.mis.length) { lab += ` · ${T.mis.length}단계 중 ${T.si + 1}단계`; dots = T.mis.map((_, j) => `<i class="${j === T.si && !T.finished ? 'on' : T.done[j] || T.finished ? 'ok' : ''}"></i>`).join(''); } }
   nav.querySelector('.lb b').textContent = lab; nav.querySelector('.lb small').textContent = N.ok ? '' : (N.why || ''); nav.querySelector('.dots').innerHTML = dots; }
@@ -10700,35 +10752,55 @@ function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const
   b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
   B.appendChild(b); setTimeout(() => b.remove(), 2100); }
 /* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
-function zfit(box, inner, max, min) { if (!box || !inner) return; const lo = min || .3; inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
+function zfit(box, inner, max, min) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, ZMIN); inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
   if (!w || !h || !cw || !ch) return; let z = Math.max(lo, Math.min(max || 1.5, cw / w, ch / h)); inner.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); } }
+  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
+/* 세로 화면: 스크롤 없이 칸 폭에 맞춰 다시 배치한 뒤, 칸 높이에 들어가도록 크기를 맞춰요 (끌 것과 놓을 곳이 한 화면에) */
+function pfit(box, inner, max, min) { if (!box || !inner) return; min = Math.max(min || .42, PMIN); max = Math.min(max, ZMAX); const W = () => Math.max(120, box.clientWidth - 6); let z = max; box.classList.remove('svsl-scrolly');
+  for (let i = 0; i < 18; i++) { inner.style.zoom = z.toFixed(3); inner.style.setProperty('width', (W() / z).toFixed(1) + 'px', 'important'); inner.style.setProperty('max-width', 'none', 'important');
+    if (box.scrollHeight <= box.clientHeight + 1 && box.scrollWidth <= box.clientWidth + 1) break; if (z <= min) break; z = Math.max(min, z * .92); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
 function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const sk = $('#sec-s2 .skb'); fitQ(sk && sk.querySelector(':scope > .card.qx'), sk); return; } if (B.classList.contains('svsl-free')) return;
   $$('.svsl-tc .svsl-side .vrow, .svsl-tc .svsl-side .cfb').forEach(e => e.style.zoom = '');
   if (k === 'concept') { const card = TCARD(); if (!card) return;
     const man = card.querySelector(':scope > .fdsplit'), main = card.querySelectorAll(':scope > .svsl-main'), side = card.querySelector(':scope > .svsl-side');
-    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.toggle('svsl-scrolly', pt); zfit(man, fa, 1.7, pt && fa ? Math.min(.8, (man.clientWidth - 4) / Math.max(1, fa.scrollWidth)) : .3); }
+    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.remove('svsl-scrolly'); if (pt) pfit(man, fa, 1.6, .42); else { if (fa) { fa.style.removeProperty('width'); fa.style.removeProperty('max-width'); } zfit(man, fa, 1.7, .3); } }
     const q4 = card.classList.contains('svsl-q4');
-    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.toggle('svsl-scrolly', port); zfit(m, m.firstElementChild || m, q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5, port ? Math.min(.8, (m.clientWidth - 4) / Math.max(1, (m.firstElementChild || m).scrollWidth)) : .3); });
+    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.remove('svsl-scrolly'); const mx = q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5; if (port) pfit(m, m.firstElementChild || m, mx, .42); else { const fc = m.firstElementChild; if (fc) { fc.style.removeProperty('width'); fc.style.removeProperty('max-width'); } zfit(m, m.firstElementChild || m, mx, .3); } });
     const qb = card.querySelector(':scope > .svsl-q'); if (qb) { qb.style.zoom = 1; if (qb.scrollWidth > qb.clientWidth + 2) qb.style.zoom = Math.max(.6, qb.clientWidth / qb.scrollWidth).toFixed(3); }
     if (side && B.classList.contains('svsl-port')) { side.style.zoom = 1; side.classList.add('svsl-scrolly'); }
     else if (side) { side.style.zoom = 1; const h = side.scrollHeight, ch = side.clientHeight, w = side.scrollWidth, cw = side.clientWidth;
       if (card.classList.contains('svsl-ctl') && h < ch * .8 && w <= cw + 2) { let z = Math.min(1.6, ch * .9 / h, cw / w); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > 1 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .96; side.style.zoom = z.toFixed(3); } }
-      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(.35, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > .35 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
+      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(ZMIN, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > ZMIN && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
   if (k === 'basic') fitQ($('#s1body > .qcard'), $('#s1body'));
-  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.5, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .5 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
+  if (k === 'jump') fitJ();
+  if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.7, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .7 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
     const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
+/* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
+function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return;
+  const land = B.classList.contains('svsl-land');
+  $$('.svsl-jgrid', q).forEach(e => e.classList.remove('svsl-jgrid')); $$('.svsl-jfig,.svsl-jR', q).forEach(e => e.classList.remove('svsl-jfig', 'svsl-jR'));
+  q.style.zoom = 1;
+  if (land) { const F = [...q.querySelectorAll('.geofig, .sv-fig, .netfig, .afw, .ucfig')].filter(e => e.offsetHeight > 110 && !e.closest('.choices'))[0];
+    if (F && F.parentElement && q.contains(F.parentElement)) { const P = F.parentElement, kids = [...P.children], i = kids.indexOf(F), after = kids.slice(i + 1).filter(c => c.offsetHeight > 0);
+      if (after.length) { P.classList.add('svsl-jgrid'); F.classList.add('svsl-jfig'); after.forEach(c => c.classList.add('svsl-jR')); } } }
+  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 10, 0);
+  const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
-  let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input,textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
+  let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
-  else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input,textarea,.modes')); }
+  else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
   [...q.children].forEach(c => c.classList.toggle('svsl-qans', c === ans));
   const ch = q.querySelector('.choices'), opts = ch ? [...ch.children].filter(e => e.offsetParent !== null || e.matches('button')) : [];
   const longest = Math.max(0, ...opts.map(o => (o.textContent || '').trim().length)), pic = ch && !!ch.querySelector('svg,img');
@@ -10743,10 +10815,11 @@ function fitQ(q, box) { if (!q || !box) return; qShape(q);
   const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
-  let z = Math.max(.45, Math.min(1.45, avH / h, avW / w));
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
   if (QZ[key] && answered) z = Math.min(QZ[key], z * 1.0) < QZ[key] * .9 ? Math.min(QZ[key], z) : QZ[key]; else if (!answered) QZ[key] = z;
   q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > .45; i++) { z *= .96; q.style.zoom = z.toFixed(3); } }
+  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
@@ -10771,5 +10844,82 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
+<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
+#skBg{align-items:flex-start!important}
+#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
+#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
+#skBg .skpack .skfig{display:flex;justify-content:center}
+#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
+
+/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
+.sv-paper{min-width:min(100%,660px)}
+/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
+.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+.ritems li{margin:0!important;min-width:0}
+@media(max-width:700px){.ritems{grid-template-columns:1fr}}
+</style><!--SK-END-->
+<!--ARENA-START--><style>/* 🏆 왕중왕전 모드: 게임 화면만 */
+html.svarena header,html.svarena .idbar,html.svarena #tabs,html.svarena #storyHud,html.svarena .sthud,html.svarena .stov,html.svarena #sec-s1,html.svarena #svslFab,html.svarena #svslTop,html.svarena #svslNav,html.svarena #svslTabs,html.svarena .stepmap,html.svarena #sec-s2>.map,html.svarena .svhof{display:none!important}
+html.svarena body{padding-top:62px!important}
+#svarBar{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 14px;background:linear-gradient(90deg,#312e81,#7c3aed);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+#svarBar .svar-t{font-weight:900;color:#fde047}#svarBar .svar-g{font-weight:900;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#svarBar .svar-b{font-weight:800}#svarBar .svar-b b{color:#fde047;font-size:1.15rem}
+#svarBar .btn{padding:6px 12px}
+</style><script>
+/* 🏆 (수학탐험대) 왕중왕전 — 단원 마무리에서 이 차시의 게임 하나만 바로 열기
+   주소 뒤에 ?arena=<게임 id | board>&u=<단원 마무리 코드> 를 붙이면:
+   · 이야기·넘겨 보기 없이 세트 2의 그 게임으로 바로 가요.
+   · 혼자 하기 점수를 이 기기(같은 사이트)와 학급 서버 명예의 전당(단원 마무리 · 게임별)에 기록해요. */
+(function () {
+  const q = new URLSearchParams(location.search), AR = q.get('arena'); if (!AR || window.__SVAR) return; window.__SVAR = 1;
+  const U = q.get('u') || '', T = f => { try { return f(); } catch (e) { return undefined; } };
+  const LS = { get: k => T(() => localStorage.getItem(k)), set: (k, v) => T(() => localStorage.setItem(k, v)) };
+  const LID = () => T(() => CONFIG.LESSON_ID) || '', KEY = () => 'svarena:' + LID() + ':' + AR;
+  const SID = () => String(LS.get('sv_id') || '').replace(/^"|"$/g, ''), NAME = () => String(LS.get('sv_name') || '').replace(/^"|"$/g, '');
+  const HOOK = () => T(() => state.webhook) || '', CLS = () => String(T(() => store.get('sv_class')) || LS.get('sv_class') || '').replace(/^"|"$/g, '');
+  const E = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  document.documentElement.classList.add('svarena');
+  const prevView = LS.get('sv:view2');
+  function bar() {
+    let b = document.getElementById('svarBar'); if (!b) { b = document.createElement('div'); b.id = 'svarBar'; document.body.appendChild(b); }
+    const best = +(LS.get(KEY()) || 0);
+    b.innerHTML = `<span class="svar-t">🏆 수학탐험대 왕중왕전</span><span class="svar-g">${E(q.get('n') || T(() => document.title.split(' - ')[1].split(' · ')[0]) || LID())}</span><span class="svar-b">내 최고 <b>${best}</b>점</span><button class="btn btn-sub" data-svar="close">✖ 닫기</button>`;
+  }
+  async function save(score) {
+    score = Math.max(0, Math.min(100, Math.round(+score || 0)));
+    const prev = +(LS.get(KEY()) || 0); if (score > prev) LS.set(KEY(), String(score));
+    T(() => parent !== window && parent.postMessage({ svarena: 1, lid: LID(), game: AR, score }, '*'));
+    bar();
+    const url = HOOK(), sid = SID(), cls = CLS();
+    if (U && score > 0 && /^https:\/\/script\.google(usercontent)?\.com\//.test(url) && sid && cls)
+      T(() => fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'scoreSave', cls, sid, name: NAME(), lesson: U, game: LID() + ':' + AR, score }) }).catch(() => {}));
+  }
+  /* 기록 지켜보기: 미니게임은 판 수(plays)가 늘 때, 보드게임은 혼자 하기 결과(bgRecord · 옛 보드는 b.score)가 나올 때 */
+  let plays = null, seenB = null;
+  setInterval(() => T(() => {
+    const g = state.s2 && state.s2.game;
+    if (AR !== 'board' && g) { if (plays == null) plays = g.plays || 0; if ((g.plays || 0) > plays) { plays = g.plays; if (g.last) save(g.last.score); } }
+    const b = state.s2 && state.s2.board; if (AR === 'board' && b && b.over && b.solo && seenB !== b && typeof b.score === 'number') { seenB = b; save(b.score); }
+  }), 800);
+  T(() => { const o = window.bgRecord; if (typeof o === 'function') window.bgRecord = function (sc, w) { const r = o.apply(this, arguments); if (AR === 'board') save(sc); return r; }; });
+  document.addEventListener('click', e => { const t = e.target.closest('[data-svar]'); if (!t) return; e.preventDefault();
+    if (t.dataset.svar === 'close') { T(() => vgStop()); if (parent !== window) parent.postMessage({ svarena: 1, close: 1 }, '*'); else if (U) location.href = location.pathname.replace(/[^/]*$/, '') + encodeURIComponent(U) + '-단원마무리.html#arena'; else history.back(); } }, true);
+  function go() {
+    T(() => window.SVSL && SVSL.setMode(false)); if (prevView != null) LS.set('sv:view2', prevView);
+    T(() => document.querySelectorAll('.stov').forEach(x => x.classList.add('hidden')));
+    T(() => showTab('s2'));
+    if (AR === 'board') T(() => goStep('s2', 'board'));
+    else {
+      T(() => goStep('s2', 'game'));
+      setTimeout(() => T(() => { const b = document.querySelector(`[data-act="lair-pick"][data-v="${AR}"]`); if (b) b.click(); }), 300);
+    }
+    bar(); scrollTo(0, 0);
+  }
+  if (document.readyState === 'complete') setTimeout(go, 900); else addEventListener('load', () => setTimeout(go, 900));
+})();
+
+</script><!--ARENA-END-->
+<!--MOB-START--><style>@media (max-width:900px){html body button#scratchFab#scratchFab{font-size:0!important;line-height:0!important;letter-spacing:0!important;color:transparent!important;width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border-radius:50%!important;right:8px!important;display:flex!important;align-items:center;justify-content:center;opacity:.92;overflow:hidden;white-space:nowrap}
+html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;line-height:1;color:#fff}}
+</style><!--MOB-END-->
 </body>
 </html>
