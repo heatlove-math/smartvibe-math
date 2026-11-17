@@ -5835,12 +5835,21 @@ const toolBody = (vk, no, title, sub, mis, tool, taunt) => toolCard(vk, no, titl
    · DND.fire({ 'data-act': 'uadd', 'data-k': 2, 'data-v': 1 }) : 기존 버튼 동작을 그대로 불러요
    ===================================================================== */
 const DND = (() => {
-  const H = {}; let S = null;
+  const H = {}; let S = null, raf = 0;
   const zoneAt = (x, y) => { const z = document.elementFromPoint(x, y); return z && z.closest('[data-dz]'); };
+  const hover = (x, y) => { const z = zoneAt(x, y); if (S.over !== z) { if (S.over) S.over.classList.remove('dzover'); if (z) z.classList.add('dzover'); S.over = z; } };
+  /* 끄는 동안 위·아래 가장자리로 가면 화면(또는 안쪽 스크롤 칸)이 따라 움직여요 — 놓을 곳이 화면 밖에 있어도 끌어다 놓을 수 있게 */
+  const ROOT = () => document.scrollingElement || document.documentElement;
+  const scrollers = el => { const A = []; for (let p = el; p && p !== document.body && p !== document.documentElement; p = p.parentElement) { if (p.scrollHeight > p.clientHeight + 4 && /(auto|scroll)/.test(getComputedStyle(p).overflowY)) A.push(p); } A.push(ROOT()); return A; };
+  function auto() { raf = 0; if (!S || !S.mv) return; const x = S.cx, y = S.cy, under = document.elementFromPoint(x, y), root = ROOT(); let moved = false;
+    for (const sc of scrollers(under || S.el)) { const r = sc === root ? { top: 0, bottom: innerHeight } : sc.getBoundingClientRect(), E = Math.max(28, Math.min(72, (r.bottom - r.top) / 4));
+      let d = 0; if (y > r.bottom - E) d = Math.min(26, Math.ceil((y - (r.bottom - E)) / E * 18) + 3); else if (y < r.top + E) d = -Math.min(26, Math.ceil((r.top + E - y) / E * 18) + 3);
+      if (!d) continue; const t0 = sc.scrollTop; sc.scrollTop = t0 + d; if (Math.abs(sc.scrollTop - t0) >= 1) { moved = true; break; } }
+    if (moved) hover(x, y); raf = requestAnimationFrame(auto); }
   document.addEventListener('pointerdown', e => {
     const el = e.target.closest && e.target.closest('[data-dg]'); if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
     if (!H[el.dataset.dg]) return;
-    e.preventDefault(); S = { el, k: el.dataset.dg, v: el.dataset.v, x: e.clientX, y: e.clientY, mv: false, g: null, over: null, pid: e.pointerId };
+    e.preventDefault(); S = { el, k: el.dataset.dg, v: el.dataset.v, x: e.clientX, y: e.clientY, cx: e.clientX, cy: e.clientY, mv: false, g: null, over: null, pid: e.pointerId };
   });
   document.addEventListener('pointermove', e => {
     if (!S || e.pointerId !== S.pid) return;
@@ -5849,15 +5858,15 @@ const DND = (() => {
       g.removeAttribute('id'); g.classList.add('dgghost'); g.style.width = r.width + 'px'; g.style.height = r.height + 'px';
       S.ox = e.clientX - r.left; S.oy = e.clientY - r.top; document.body.appendChild(g); S.g = g; S.el.classList.add('dgsrc-on');
       document.body.classList.add('dg-active'); try { Sound.pop(); } catch (x) {}
+      if (!raf) raf = requestAnimationFrame(auto);
     }
     if (!S.mv) return;
-    e.preventDefault(); S.g.style.left = (e.clientX - S.ox) + 'px'; S.g.style.top = (e.clientY - S.oy) + 'px';
-    const z = zoneAt(e.clientX, e.clientY);
-    if (S.over !== z) { if (S.over) S.over.classList.remove('dzover'); if (z) z.classList.add('dzover'); S.over = z; }
+    e.preventDefault(); S.cx = e.clientX; S.cy = e.clientY; S.g.style.left = (e.clientX - S.ox) + 'px'; S.g.style.top = (e.clientY - S.oy) + 'px';
+    hover(e.clientX, e.clientY);
   }, { passive: false });
   function end(e, cancel) {
     if (!S || e.pointerId !== S.pid) return;
-    const s = S; S = null; document.body.classList.remove('dg-active');
+    const s = S; S = null; document.body.classList.remove('dg-active'); if (raf) { cancelAnimationFrame(raf); raf = 0; }
     if (s.g) s.g.remove(); if (s.over) s.over.classList.remove('dzover'); s.el.classList.remove('dgsrc-on');
     if (cancel) return; const h = H[s.k];
     if (s.mv) { const z = zoneAt(e.clientX, e.clientY); if (z && h.drop) h.drop(s.v, z.dataset.dz, z, s.el); else if (h.miss) h.miss(s.v, s.el); }
@@ -10148,6 +10157,28 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 })();
 
 </script><!--SW-END-->
+<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
+#skBg{align-items:flex-start!important}
+#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
+#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
+#skBg .skpack .skfig{display:flex;justify-content:center}
+#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
+
+/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
+.sv-paper{min-width:min(100%,660px)}
+/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
+.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+.ritems li{margin:0!important;min-width:0}
+@media(max-width:700px){.ritems{grid-template-columns:1fr}}
+
+/* 상황 살펴보기: 문제 이야기 · 할 일 */
+.sv-heroboard .sv-hb-story{max-width:1100px;margin:6px auto 8px;font-size:1.12rem;line-height:1.6;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:12px 18px;text-align:left;color:#1e1b4b}
+.sv-heroboard .sv-hb-task{margin:4px auto 10px;font-weight:900;color:#6d28d9;text-align:center}
+/* 연습장: 화면 위 머리줄·아래 단추줄보다 위에 떠서 항상 닫기·위치 단추가 보이게, 화면 높이를 넘지 않게 */
+#scratch.scratch{z-index:9500!important;max-height:100vh;max-height:100dvh;overflow-y:auto;box-sizing:border-box}
+#scratch .sbar{position:sticky;top:0;z-index:2;background:#fffdf4;flex-wrap:wrap}
+#scratch #skcv{height:min(32vh,280px,calc(100dvh - 130px))}
+</style><!--SK-END-->
 <!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
 #svslTop,#svslTabs,#svslNav,#svslFab{display:none}
 body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
@@ -10530,6 +10561,103 @@ body.svsl-on .svsl-tc .svsl-main .t11src{max-width:100%;box-sizing:border-box}
 /* 상황 살펴보기: 문제 이야기 · 할 일 */
 body.svsl-on .sv-heroboard .sv-hb-story{flex:none;max-width:min(1100px,96%);font-size:1.15em;line-height:1.55;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:10px 18px;text-align:left}
 body.svsl-on .sv-heroboard .sv-hb-task{flex:none;margin:0;font-weight:900;color:#6d28d9;font-size:1.05em}
+
+/* v46: 상황 살펴보기 이름표가 위에서 잘리지 않게 (넘겨 보기에서는 상자 안쪽에 둠) · 그림은 남는 공간만큼 */
+body.svsl-on .sv-heroboard .sv-hb-h{margin:0 0 2px;flex:none}
+body.svsl-on .sv-heroboard{justify-content:flex-start;padding-top:10px}
+body.svsl-on .sv-heroboard .sv-fig{margin:auto}
+
+/* v46: 그림 문제는 [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸을 가득 써요 */
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:stretch}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.svsl-qF,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.svsl-qF{grid-column:1;grid-row:1/span 9;align-self:stretch;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;background:#fffdf5;border:2px solid #f1e3bd;border-radius:18px;padding:10px 12px;box-shadow:0 3px 0 #f1e3bd}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.qhead,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.qhead{grid-column:2;grid-row:1}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.svsl-qans,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.svsl-qans{grid-column:2;grid-row:2;align-self:start}
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2 .choices,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2 .choices{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;display:grid!important}
+.svsl-qF .rffig{margin:0}.svsl-qF .grpie,.svsl-qF .grstrip,.svsl-qF .rftab,.svsl-qF .pdwrap{margin:0 auto}
+
+/* v46b: 왼쪽 그림 칸 — 그림은 제 크기를 지킨 채 통째로 키우고, 오른쪽 칸은 가운데에 크게 */
+.svsl-qF>.rffig,.svsl-qF>.dxfig{width:max-content;max-width:none;flex:none;margin:0;overflow:visible}.svsl-qF .pdrow{flex-wrap:nowrap}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL{grid-template-rows:auto auto;align-content:center}
+body.svsl-on.svsl-land .qcard.svsl-qfL .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL .choice{min-height:var(--chmin,84px)!important}body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2:not(.svsl-qlong) .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2:not(.svsl-qlong) .choice{font-size:1.12em}
+
+/* v46c: 그림 문제의 보기 4개는 늘 2×2 (긴 보기는 줄바꿈) — 오른쪽 칸이 화면 높이를 넘지 않게 */
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2 .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2 .choice{white-space:normal;word-break:keep-all;line-height:1.3;padding-top:8px;padding-bottom:8px}
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qlong .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qlong .choice{font-size:.98em}
+
+/* v46d: 가로로 긴 그림(표 + 그래프 등)은 왼쪽 칸을 더 넓게 */
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL.svsl-qwide,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL.svsl-qwide{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+
+/* v46e: 개념 탐험 — 할 일(물음)은 왼쪽부터 크게, 단계 표시는 오른쪽 끝에 작게 */
+body.svsl-on .svsl-tc>.svsl-q{justify-content:flex-start;flex-wrap:nowrap}
+body.svsl-on .svsl-tc>.svsl-q .ancap,body.svsl-on .svsl-tc>.svsl-q .labq{text-align:left;flex:1 1 auto;max-width:none}
+body.svsl-on .svsl-tc>.svsl-q .t11steps{order:2;margin-left:auto!important;flex:none}
+
+/* v46f: 띠그래프처럼 div로 그린 그림도 왼쪽 칸에서 크게 · 두 띠는 위아래로 */
+.svsl-qF .rxtwin{flex-direction:column;flex-wrap:nowrap;gap:18px}.svsl-qF .grt{white-space:nowrap;font-size:1.02rem}.svsl-qF .grstrip{font-size:1rem}
+
+/* v46g: 예전 종이 모양 오늘의 문제 보드(1·2단원 등)는 점프 1에서 왼쪽 칸 너비를 다 써요 (그림이 한 줄로 놓여 스크롤이 생기지 않게) */
+body.svsl-on.svsl-land[data-svst=jump] #part-j0 .sv-fig{width:100%}
+body.svsl-on.svsl-land[data-svst=jump] #part-j0 .sv-fig>.sv-paper{width:100%;max-width:none;box-sizing:border-box}
+body.svsl-on.svsl-land[data-svst=jump] #part-j0.svsl-jgrid:has(.sv-paper){grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+
+/* v46h: 쪽(장면) 나눔 — 한 화면에 안 들어가면 스크롤 대신 한 쪽씩 */
+.svsl-pgoff,body.svsl-on .svsl-pgoff,body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid.svsl-pgoff{display:none!important}
+.svsl-pager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding:8px 4px 2px;border-top:2px dashed #ddd6fe}
+.svsl-pager button{font:inherit;font-weight:900;font-size:.98rem;padding:9px 14px;border-radius:14px;border:2.5px solid #7c3aed;background:#fff;color:#5b21b6;cursor:pointer;white-space:nowrap}
+.svsl-pager button[data-svpg="1"]{background:linear-gradient(180deg,#8b5cf6,#6d28d9);color:#fff;border-color:#4c1d95}
+.svsl-pager button:disabled{opacity:.35;cursor:default}
+.svsl-pgd{display:flex;align-items:center;gap:5px;font-weight:900;color:#5b21b6;font-size:.9rem}.svsl-pgd i{width:9px;height:9px;border-radius:50%;background:#ddd6fe;display:inline-block}.svsl-pgd i.on{background:#7c3aed;width:20px;border-radius:6px}.svsl-pgd b{margin-left:4px}
+
+/* 슬라이드 모드: 오른쪽 아래 도우미(#buddy)는 아래 줄 말풍선과 같은 말이라 숨김(내비 위로 삐져나옴) */
+body.svsl-on #buddy{display:none!important}
+
+/* 점프 화면: 오른쪽 아래 연습장 단추와 "나중에 풀고 다음으로" 단추가 겹치지 않게 */
+body.svsl-on[data-svst=jump] .qnbot{padding-right:165px!important;box-sizing:border-box}
+
+/* 아래 줄 말풍선이 들어갈 자리가 좁으면(단추가 많을 때) 말풍선은 숨기고 얼굴만 */
+#svslNav .say-row.svsl-nobub .bubble{display:none!important}
+/* ---- 결과 · 보드게임 준비 화면: 스크롤 없이 두 칸 + 쪽 나누기 ---- */
+body.svsl-on.svsl-res .wrap,body.svsl-on.svsl-fit1 .wrap{overflow:hidden!important}
+body.svsl-on .card.svsl-2c:not(.svsl-off){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:8px 28px;align-items:center}
+body.svsl-on .card.svsl-2c>.svsl-rl,body.svsl-on .card.svsl-2c>.svsl-rr{min-width:0}
+body.svsl-on .card.svsl-res2>.svsl-rr{text-align:left;display:flex;flex-direction:column;gap:8px}
+body.svsl-on .card.svsl-res2>.svsl-rr>*{margin-top:0!important;margin-bottom:0!important}
+body.svsl-on .card.svsl-res2>.svsl-rr ul.ritems{grid-template-columns:1fr!important;display:grid;gap:6px}
+body.svsl-on .card.svsl-set2:not(.svsl-off){grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center}
+body.svsl-on .card.svsl-res2>.svsl-rl>.sv-goal-result,body.svsl-on .card.svsl-res2>.svsl-rl>.stepi{text-align:left}
+body:not(.svsl-on) .svsl-rl,body:not(.svsl-on) .svsl-rr{display:contents}
+body.svsl-on.svsl-res #s2body.svsl-rp2{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:12px;align-items:stretch}
+body.svsl-on.svsl-res #s2body.svsl-rp2>.card{margin:0}
+@media (min-width:1180px){body.svsl-on .fu-fin{zoom:1.22}}
+
+/* 미니게임을 하는 동안에는 최고 기록 판을 접어 두어요 (게임 고르는 화면에서 보여요) */
+body.svsl-on #s2body > .card.gamecard ~ .svhof{display:none!important}
+
+/* 끌어 놓기 조작판이 한 화면에 안 들어갈 때: 끌 것이 놓인 선반(맨 아래 줄)을 오른쪽 옆으로 */
+body.svsl-on.svsl-land .svsl-tc>.svsl-main>.svsl-shelfside{display:grid!important;grid-template-columns:min(var(--shl,60%),calc(100% - 330px)) minmax(150px,300px);justify-content:center;align-items:center;column-gap:26px}
+body.svsl-on.svsl-land .svsl-tc>.svsl-main>.svsl-shelfside>*{grid-column:1;min-width:0}
+body.svsl-on.svsl-land .svsl-tc>.svsl-main>.svsl-shelfside>.svsl-shelf{grid-column:2;align-self:center;margin:0!important;max-width:300px}
+
+/* 창 높이가 낮은 가로 화면(svsl-short): 도구 이름 줄은 위쪽 탭에 이미 있으니 접고, 위·아래 띠를 조금 얇게 해서 조작판 자리를 넓혀요 */
+body.svsl-on.svsl-short.svsl-land.svsl-tabs .svsl-tc>.stage-head{display:none!important}
+body.svsl-on.svsl-short.svsl-land.svsl-tabs .svsl-tc{grid-template-rows:auto minmax(0,1fr);grid-template-areas:"q side" "man side"}
+body.svsl-on.svsl-short.svsl-land.svsl-tabs .svsl-tc.svsl-q4{grid-template-rows:auto minmax(0,1fr);grid-template-areas:"q q" "man side"}
+body.svsl-on.svsl-short #svslNav{padding-top:4px;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
+body.svsl-on.svsl-short #svslTabs{padding:3px 12px}
+body.svsl-on.svsl-short #svslTabs button{padding:3px 10px}
+/* 위아래로 쌓인 두 덩어리(그림 + 목록 등)가 한 화면에 안 들어갈 때: 나란히 */
+body.svsl-on.svsl-land .svsl-tc>.svsl-main>.svsl-cols2{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,auto);align-items:center;column-gap:24px}
+body.svsl-on.svsl-land .svsl-tc>.svsl-main>.svsl-cols2>*{min-width:0;margin-top:0!important;margin-bottom:0!important}
+/* 창 높이가 낮을 때: 보드게임을 하는 동안에는 판 위의 제목 줄을 접어 판 자리를 넓혀요 (제목은 위 막대에 있어요) */
+body.svsl-on.svsl-short[data-svst="s2-board"] #s2body>.card:not(.bxcard)>.stage-head{display:none!important}
+/* 미니게임 고르기 · 함께 하기: [인원 | 캐릭터]를 한 줄에 가운데로 (빈 곳 없이, 화면을 덜 줄이게) */
+body.svsl-on.svsl-land #s2body>.card .mt-3:has(>.players){display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 18px;margin-top:8px}
+body.svsl-on.svsl-land #s2body>.card .mt-3:has(>.players)>.seg{margin-top:0}
+body.svsl-on.svsl-land #s2body>.card .mt-3:has(>.players)>.players{margin-top:0}
+body.svsl-on .svsl-qhide{display:none!important}
+body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
+/* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
+body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -10539,19 +10667,24 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const LS = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const B = document.body;
 const STEPS = [['mission', '오늘의 문제', '🎁', '문제 상황을 보고 학습 목표를 세워요'], ['concept', '개념 탐험', '🔭', '도구로 직접 조작하며 원리를 찾아요'], ['basic', '기본 문제', '✏️', '찾은 원리로 문제를 풀어요'], ['jump', '점프 문제', '🚀', '악당의 방어막을 깨요'], ['result', '결과', '🏆', '오늘 배운 것을 확인해요']];
+/* 단원 마무리(SV_LF.flowU): 세트 1 = 개념 복습 → 결과 */
+const FU = () => !!(window.SV_LF && SV_LF.flowU), STEPS_U = [['concept', '개념 복습', '🔭', '카드를 넘겨 보며 배운 내용을 떠올려요'], ['result', '결과', '🏆', '복습한 것을 확인해요']];
 const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '상황 살펴보기', '내 학습 목표 쓰기'];
 let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
 const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
 /* 글자 크기 범위: 화면에 맞추되 너무 작거나 크게 바뀌지 않게 (넘치면 그 칸만 스크롤) */
 const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.15;
+/* 창 높이가 낮은 화면(노트북 브라우저 창 높이 600~700): 스크롤 대신 조작판을 조금 더 줄여서 한 화면에 */
+const zmin = () => innerHeight >= 740 ? ZMIN : Math.max(.52, ZMIN * innerHeight / 740);
 const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
-const IC2 = { drill: '📚', game: '🎮', board: '🎲', result: '🏆' };
-const steps = () => SET() === 's1' ? STEPS : $$('#sec-s2 .map .station').map(b => [b.dataset.v, (b.querySelector('.lb') || b).textContent.trim(), IC2[b.dataset.v] || '⭐', (b.querySelector('.stsb') || {}).textContent || '']);
-const step = () => SET() === 's1' ? (S1().step || 'mission') : ((state.s2 || {}).step || 'drill');
+const IC2 = { drill: '📚', game: '🎮', board: '🎲', arena: '👑', result: '🏆' };
+const steps = () => SET() === 's1' ? (FU() ? STEPS_U : STEPS) : $$('#sec-s2 .map .station').map(b => [b.dataset.v, (b.querySelector('.lb') || b).textContent.trim(), IC2[b.dataset.v] || '⭐', (b.querySelector('.stsb') || {}).textContent || '']);
+const step = () => SET() === 's1' ? (S1().step || (FU() ? 'concept' : 'mission')) : ((state.s2 || {}).step || 'drill');
 const stepIdx = k => steps().findIndex(s => s[0] === k);
 /* 잠금은 지도 표시가 늦게 바뀔 수 있어서, 세트 1은 실제 기록(목표·배지)으로 먼저 판단해요 */
 const badgeN = () => Object.keys(S1().badges || {}).filter(k => (S1().badges || {})[k]).length;
-const stationLocked = k => { if (SET() === 's1' && (k === 'concept' || k === 'basic') && $$('#s1body .hub [data-act=tool]').length) { if (!S1().goalConfirmed) return true; return k === 'basic' ? badgeN() < 1 : false; }
+const stationLocked = k => { if (FU() && SET() === 's1') return k === 'result' ? badgeN() < 1 : false;
+  if (SET() === 's1' && (k === 'concept' || k === 'basic') && $$('#s1body .hub [data-act=tool]').length) { if (!S1().goalConfirmed) return true; return k === 'basic' ? badgeN() < 1 : false; }
   const b = $(`#sec-${SET()} .map .station[data-v="${k}"]`); return b ? b.classList.contains('sv-lock') : false; };
 const go = k => { try { goStep(SET(), k); } catch (e) {} };
 
@@ -10559,7 +10692,7 @@ const go = k => { try { goStep(SET(), k); } catch (e) {} };
 function frame() {
   const L = window.SV_LF || {};
   const top = document.createElement('div'); top.id = 'svslTop';
-  top.innerHTML = `<div class="ti"><small>${(L.id || '').replace(/^(\d)-(\d)-(\d)-(\d)$/, '$1학년 $3단원 $4차시')}</small>${(L.title || document.title || '').replace(/^\S+\s/, '')}</div><div class="sets"><button type="button" data-v="s1" title="세트 1 · 개념 형성편">세트 1 <span>개념 형성</span></button><button type="button" data-v="s2" title="세트 2 · 적용 & 발전편">세트 2 <span>적용·발전</span></button></div><nav class="stp"></nav><button class="md" type="button">📜 스크롤 보기</button>`;
+  top.innerHTML = `<div class="ti"><small>${(L.id || '').replace(/^(\d)-(\d)-(\d)-(\d)$/, '$1학년 $3단원 $4차시')}</small>${(L.title || document.title || '').replace(/^\S+\s/, '')}</div><div class="sets"><button type="button" data-v="s1" title="세트 1 · ${L.flowU ? '개념 복습' : '개념 형성편'}">세트 1 <span>${L.flowU ? '개념 복습' : '개념 형성'}</span></button><button type="button" data-v="s2" title="세트 2 · ${L.flowU ? '단원 평가 · 왕중왕전' : '적용 & 발전편'}">세트 2 <span>${L.flowU ? '평가·왕중왕전' : '적용·발전'}</span></button></div><nav class="stp"></nav><button class="md" type="button">📜 스크롤 보기</button>`;
   const tabs = document.createElement('div'); tabs.id = 'svslTabs';
   const nav = document.createElement('div'); nav.id = 'svslNav';
   nav.innerHTML = `<button class="nv" data-svn="prev" type="button">◀ 이전</button><div class="lb"><b></b><small></small><div class="dots"></div></div><button class="nv" data-svn="next" type="button">다음 ▶</button><button class="nv sk" data-svn="skip" type="button">✏️ 기본 문제로 ▶</button>`;
@@ -10569,13 +10702,14 @@ function frame() {
   top.querySelector('.sets').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.dataset.v === SET()) return; const t = $(`#tabs .settab[data-v="${b.dataset.v}"]`); if (t) t.click(); });
   top.querySelector('.stp').addEventListener('click', e => { const b = e.target.closest('.st'); if (!b || b.disabled) return; dir = 0; go(b.dataset.v); });
   tabs.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.q != null) { const c = qInfo().ch[+b.dataset.q]; if (c) { dir = 0; c.click(); } return; } const h = $(`#s1body .hub [data-act=tool][data-v="${b.dataset.v}"]`); if (h) { dir = 0; h.click(); } });
-  nav.addEventListener('click', e => { const b = e.target.closest('[data-svn]'); if (!b || b.disabled) return; b.dataset.svn === 'skip' ? (dir = 1, go('basic')) : b.dataset.svn === 'next' ? next() : prev(); });
+  nav.addEventListener('click', e => { const b = e.target.closest('[data-svn]'); if (!b || b.disabled) return; b.dataset.svn === 'skip' ? (dir = 1, go(FU() ? 'result' : 'basic')) : b.dataset.svn === 'next' ? next() : prev(); });
 }
 function sizes() { const t = $('#svslTop'), tb = $('#svslTabs'), n = $('#svslNav'); const th = t.offsetHeight, tbh = B.classList.contains('svsl-tabs') ? tb.offsetHeight : 0;
   tb.style.top = th + 'px'; B.style.setProperty('--svT', th + tbh + 'px'); B.style.setProperty('--svB', n.offsetHeight + 'px');
-  const land = innerWidth >= 760 && innerWidth > innerHeight * 1.05; B.classList.toggle('svsl-land', land); B.classList.toggle('svsl-port', !land);
-  const r = n.querySelector('.say-row'); if (r) { const fb = n.querySelector('[data-svn=prev]'), w = Math.max(0, (fb ? fb.getBoundingClientRect().left : n.clientWidth / 3) - 24); r.style.maxWidth = w + 'px'; const bb0 = r.querySelector('.bubble'); if (bb0) bb0.style.setProperty('max-width', Math.max(0, w - 62) + 'px', 'important'); const bb = r.querySelector('.bubble'); if (bb) { bb.style.display = w < 170 ? 'none' : ''; fitBub(bb); } } }
-function fitBub(bb) { if (!bb || bb.style.display === 'none') return; for (const f of [14, 13, 12, 11.5]) { bb.style.setProperty('font-size', f + 'px', 'important'); if (bb.scrollHeight <= f * 1.4 * 2 + 14) return; } }
+  const land = innerWidth >= 760 && innerWidth > innerHeight * 1.05; B.classList.toggle('svsl-land', land); B.classList.toggle('svsl-port', !land); B.classList.toggle('svsl-short', land && innerHeight < 760);
+  const r = n.querySelector('.say-row'); if (r) { const fb = n.querySelector('[data-svn=prev]'), w = Math.max(0, (fb ? fb.getBoundingClientRect().left : n.clientWidth / 3) - 24); r.style.maxWidth = w + 'px'; const bb0 = r.querySelector('.bubble'); if (bb0) bb0.style.setProperty('max-width', Math.max(0, w - 62) + 'px', 'important'); const bb = r.querySelector('.bubble'); if (bb) { r.classList.toggle('svsl-nobub', w < 170); bb.style.display = w < 170 ? 'none' : ''; fitBub(bb); } } }
+/* 말풍선은 두 줄까지: 낱말이 중간에 끊기지 않게(keep-all) 먼저 맞춰 보고, 안 되면 글자 단위로 줄을 바꿔요 */
+function fitBub(bb) { if (!bb || bb.style.display === 'none') return; bb.style.overflowWrap = 'anywhere'; for (const [f, wb] of [[14, 'keep-all'], [13, 'keep-all'], [14, 'normal'], [13, 'normal'], [12, 'keep-all'], [12, 'normal'], [11.5, 'keep-all'], [11.5, 'normal']]) { bb.style.wordBreak = wb; bb.style.setProperty('font-size', f + 'px', 'important'); if (bb.scrollHeight <= f * 1.4 * 2 + 14) return; } }
 
 /* ---------- 지금 장면 정하기 ---------- */
 /* 차시마다 도구 카드 모양이 달라요: #toolBody 안 카드, 또는 도구 고르기 판 뒤의 카드(4학년 1단원) */
@@ -10590,14 +10724,18 @@ function apply() {
   if (!on || busy) return; busy = true;
   try {
     const k = step(), st = SET(); B.dataset.svst = st === 's1' ? k : 's2-' + k; B.dataset.svset = st;
-    if (st + k !== lastStep) { if (lastStep !== null) banner(k); if (k === 'mission') mi = Math.min(mi, 2); lastStep = st + k; }
+    if (st + k !== lastStep) { if (lastStep !== null) banner(k); if (k === 'mission') mi = Math.min(mi, 2); ri = 0; lastStep = st + k; }
     B.classList.toggle('svsl-tabs', st === 's1' && (k === 'concept' || k === 'basic')); const s2q = st === 's2' && !!$('#sec-s2 .skb > .card.qx .qhead'); B.classList.toggle('svsl-s2q', s2q);
-    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic', 'jump'].includes(k) || (k === 'jump' && innerWidth < innerHeight)));
+    B.classList.toggle('svsl-free', !s2q && (st === 's2' || !['mission', 'concept', 'basic', 'jump'].includes(k)));   /* 세로 화면의 점프 문제도 스크롤하지 않고 쪽을 나눠요(pageCard) */
     $$('.svsl-off').forEach(e => e.classList.remove('svsl-off'));
     if (k === 'mission') { const box = $('#s1body .sv-mission'); if (box) { MSC.forEach((s, i) => { const el = box.querySelector(':scope > ' + s); if (el && i !== mi) el.classList.add('svsl-off'); });
         const p = box.querySelector(':scope > .sv-panel'); if (p) { const dn = !!S1().goalConfirmed; p.classList.toggle('svsl-done', dn);
           if (dn && !p.querySelector(':scope > .svsl-pl')) { const L = document.createElement('div'), R = document.createElement('div'); L.className = 'svsl-pl'; R.className = 'svsl-pr';
             [...p.children].forEach(c => (c.matches('.sv-target,.sv-row,p.sv-small,.sv-rv-again') ? R : L).appendChild(c)); p.append(L, R); } } } }
+    B.classList.toggle('svsl-res', k === 'result'); B.classList.remove('svsl-fit1');
+    if (k === 'result') resLayout(); else if (st === 's2' && k === 'board') B.classList.toggle('svsl-fit1', setupLayout() || boardLayout());
+    else if (st === 's2' && k === 'game') B.classList.toggle('svsl-fit1', menuLayout() || gameLayout());
+    else if (st === 's2' && k === 'drill' && !s2q) B.classList.toggle('svsl-fit1', drillLayout());
     if (st === 's1' && k === 'mission') slideWords();
     if (st === 's1' && k === 'concept') arrangeTool();
     renderTop(k); renderTabs(k); renderNav(k); sizes(); fit(); refit();
@@ -10639,6 +10777,71 @@ function arrangeTool() {
   card.classList.toggle('svsl-cards', !!side.querySelector('.ftcards,.ftwon,.fdlog'));
   card.classList.toggle('svsl-talk', ![...side.children].some(c => !c.matches('.vrow,.cfb')) && !card.classList.contains('svsl-ctl'));
 }
+/* ---------- 결과 · 보드게임 준비 화면: 스크롤하지 않고 [왼쪽 | 오른쪽] 두 칸 + 쪽 나누기(다음 ▶) + 화면에 맞추기 ---------- */
+let ri = 0, rn = 1;
+const RBODY = () => $(SET() === 's1' ? '#s1body' : '#s2body');
+function twoCol(card, rsel, cls) { if (!card || card.querySelector(':scope > .svsl-rl')) return; const L = document.createElement('div'), R = document.createElement('div'); L.className = 'svsl-rl'; R.className = 'svsl-rr';
+  [...card.children].forEach((c, i, A) => { c.dataset.ro = i; ((typeof rsel === 'function' ? rsel(c, i, A) : c.matches(rsel)) ? R : L).appendChild(c); }); if (!R.children.length || !L.children.length) { [...L.children, ...R.children].sort((a, b) => a.dataset.ro - b.dataset.ro).forEach(c => card.appendChild(c)); return; }
+  card.append(L, R); card.classList.add('svsl-2c', cls); }
+function unCol() { $$('.card.svsl-2c').forEach(card => { const kids = $$('.svsl-rl > *, .svsl-rr > *').filter(c => c.parentElement.parentElement === card).sort((a, b) => a.dataset.ro - b.dataset.ro); kids.forEach(c => card.appendChild(c));
+  card.querySelectorAll(':scope > .svsl-rl, :scope > .svsl-rr').forEach(x => x.remove()); card.classList.remove('svsl-2c', 'svsl-res2', 'svsl-set2'); card.style.zoom = ''; }); $$('#s1body > .card, #s2body > .card').forEach(c => { c.style.zoom = ''; c.style.maxHeight = ''; c.style.overflowY = ''; }); }
+function freeAvail(body) { const wrap = $('.wrap'); return wrap.clientHeight - (body.getBoundingClientRect().top - wrap.getBoundingClientRect().top) - 12; }
+function fitCards(body, pg, avail, zmax, zlo) { const lo = zlo || .6, used = () => Math.max(...pg.map(c => c.getBoundingClientRect().bottom)) - body.getBoundingClientRect().top; pg.forEach(c => { c.style.zoom = ''; c.style.maxHeight = ''; c.style.overflowY = ''; });
+  let z = Math.max(lo, Math.min(zmax, avail / Math.max(40, used()))); for (let i = 0; i < 18; i++) { pg.forEach(c => c.style.zoom = z.toFixed(3)); if (used() <= avail + 1 || z <= lo) break; z = Math.max(lo, z * .96); }
+  if (used() > avail + 2 && pg.length === 1) { const off = Math.max(0, pg[0].getBoundingClientRect().top - body.getBoundingClientRect().top); pg[0].style.maxHeight = ((avail - off) / z - 4).toFixed(0) + 'px'; pg[0].style.overflowY = 'auto'; } }
+function resLayout() { const body = RBODY(); rn = 1; if (!body) return; const land = !B.classList.contains('svsl-port');
+  const cards = [...body.children].filter(c => c.matches('.card') && !c.classList.contains('hidden')); if (!cards.length) return;
+  if (land) cards.forEach(c => { if (c.querySelector(':scope > ul.ritems')) twoCol(c, 'ul.ritems, .wrongbox, div.font-black.mt-2', 'svsl-res2'); });
+  cards.forEach(c => { c.classList.remove('svsl-off'); c.style.zoom = ''; c.style.maxHeight = ''; c.style.overflowY = ''; }); body.classList.remove('svsl-rp2');
+  const avail = freeAvail(body), pages = []; let cur = [], h = 0;
+  cards.forEach((c, i) => { const ch = c.getBoundingClientRect().height + 12, pair = land && cur.length === 1 && cur[0].classList.contains('rp-head');
+    if (cur.length && !pair && h + ch > avail * (i === cards.length - 1 && ch < 150 ? 1.25 : 1.1)) { pages.push(cur); cur = []; h = 0; } cur.push(c); h += ch; }); if (cur.length) pages.push(cur);
+  rn = pages.length; ri = Math.max(0, Math.min(rn - 1, ri)); const pg = pages[ri];
+  cards.forEach(c => c.classList.toggle('svsl-off', !pg.includes(c)));
+  body.classList.toggle('svsl-rp2', land && pg.length === 2 && pg[0].classList.contains('rp-head'));
+  fitCards(body, pg, avail, pg.length === 1 && pg[0].classList.contains('svsl-res2') ? 1.25 : 1.12); }
+function menuLayout() { const body = $('#s2body'); if (!body || !body.querySelector(':scope > .card > .lair')) return false; const cards = [...body.children].filter(c => c.matches('.card') && c.getClientRects().length); if (!cards.length) return false; fitCards(body, cards, freeAvail(body), 1.08, .5); return true; }
+/* 미니게임 놀이 화면: 카드 한 장을 화면 높이에 맞춰요 (넘치면 줄이고, 남으면 키워요). 한 게임 안에서는 다시 커지지 않게 해서 화면이 들썩이지 않아요 */
+let gz = { k: '', z: 0, f: 1 };
+function gameLayout() { const body = $('#s2body'), card = body && body.querySelector(':scope > .card.gamecard'); if (!card || !card.getClientRects().length || [...body.children].some(c => c !== card && c.matches('.card') && c.getClientRects().length)) { gz.k = ''; return false; }
+  let id = ''; try { id = String(VG.id || ''); } catch (e) {} const key = id + '|' + innerWidth + 'x' + innerHeight + '|' + (card.querySelector('.qzstage') ? 'play' : 'etc'), same = gz.k === key, avail = freeAvail(body);
+  const used = () => card.getBoundingClientRect().bottom - body.getBoundingClientRect().top, zOf = () => parseFloat(card.style.zoom) || 1;
+  const setW = f => { card.style.maxWidth = f >= 1 ? '' : Math.round(body.clientWidth * f) + 'px'; card.style.marginLeft = card.style.marginRight = f >= 1 ? '' : 'auto'; };
+  let f = same ? gz.f : 1; setW(f);
+  /* 그림판(canvas) 게임은 폭에 따라 키가 정해져요 → 줄이는 대신 카드 폭을 좁혀 한 화면에 (손가락 위치 계산이 어긋나지 않게 배율은 그대로) */
+  const cv = card.querySelector('.gamebox canvas');
+  if (cv) { card.style.zoom = ''; card.style.maxHeight = ''; card.style.overflowY = ''; setW(1);
+    /* 카드 전체가 아니라 그림판 상자만 좁혀요 (카드까지 좁히면 제목 글이 여러 줄이 되어 오히려 길어져요) */
+    const gb = card.querySelector('.gamebox') || cv.parentElement; gb.style.maxWidth = ''; gb.style.marginLeft = gb.style.marginRight = '';
+    for (let i = 0; i < 3; i++) { const over = used() - avail; if (over <= 2) break; const r = gb.getBoundingClientRect(), h = r.height - over - 2; if (h < 140) break; gb.style.maxWidth = Math.floor(r.width * h / r.height) + 'px'; gb.style.marginLeft = gb.style.marginRight = 'auto'; }
+    /* 시작 안내판이 그림판보다 길면 안내판만 줄여요 */
+    const ov = gb.querySelector('.overlay'); if (ov) { ov.style.zoom = ''; if (ov.getClientRects().length && ov.scrollHeight > ov.clientHeight + 3) ov.style.zoom = Math.max(.5, ov.clientHeight / ov.scrollHeight - .02).toFixed(3); }
+    gz = { k: key, z: 1, f: 1 }; return true; }
+  fitCards(body, [card], avail, same ? gz.z : 1.25); let z = zOf();
+  if (z < .7 || used() > avail + 2) { let ok = false;
+    for (const g of [.9, .8, .7, .62, .55, .48]) { if (g >= f) continue; setW(g); fitCards(body, [card], avail, Math.min(same ? gz.z : 1, 1)); if (zOf() >= .7 && used() <= avail + 2) { f = g; z = zOf(); ok = true; break; } }
+    if (!ok) { setW(f); fitCards(body, [card], avail, same ? gz.z : 1.25); z = zOf(); } }
+  gz = { k: key, z, f }; return true; }
+function drillLayout() { const body = $('#s2body'); if (!body) return false; const cards = [...body.children].filter(c => c.matches('.card') && c.getClientRects().length); if (!cards.length || cards.some(c => c.querySelector('.qhead'))) return false;
+  fitCards(body, cards, freeAvail(body), cards[0].classList.contains('fu-fin') ? 1.22 : 1.05); return true; }
+/* 보드게임 준비 화면: [제목·규칙 | 누구와·캐릭터·난이도·시작] 두 칸. 규칙 상자 이름이 차시마다 달라요(.bq-how · .aurule · .hgintro). 규칙 상자가 없으면 「누구와 할까요?」부터 오른쪽 칸 */
+function setupLayout() { const body = $('#s2body'), card = body && body.querySelector(':scope > .card'); if (!card || !card.querySelector('.modecards') || !card.querySelector('[data-act="board-start"]') || [...body.children].some(c => c !== card && c.matches('.card') && c.getClientRects().length)) return false;
+  if (!B.classList.contains('svsl-port')) twoCol(card, (c, i, A) => { let k = A.findIndex(x => x.matches('.bq-how,.aurule,.hgintro'));
+    if (k < 0) { const m = A.findIndex(x => x.matches('.modecards') && x.getClientRects().length); k = m < 0 ? 0 : (m > 0 && A[m - 1].matches('.font-black') ? m - 2 : m - 1); } return i > k; }, 'svsl-set2');
+  fitCards(body, [card], freeAvail(body), 1.15); return true; }
+/* 보드게임 놀이 화면(옛 방식 보드): 카드를 화면 높이에 맞춰요. 새 보드게임(.bxcard)은 스스로 맞춰요. 한 판 안에서는 다시 커지지 않게 */
+let bz = { k: '', z: 0, f: 1 };
+function boardLayout() { const body = $('#s2body'); if (!body) return false; const cards = [...body.children].filter(c => c.matches('.card') && c.getClientRects().length);
+  if (!cards.length || cards.some(c => c.classList.contains('bxcard') || c.querySelector('[data-act="board-start"]'))) { bz.k = ''; return false; }
+  const key = cards.length + '|' + innerWidth + 'x' + innerHeight + '|' + (cards[0].querySelector('.tlover, .podium') ? 'end' : 'play'), avail = freeAvail(body), one = cards.length === 1 ? cards[0] : null, same = bz.k === key;
+  const used = () => Math.max(...cards.map(c => c.getBoundingClientRect().bottom)) - body.getBoundingClientRect().top, zOf = () => parseFloat(cards[0].style.zoom) || 1;
+  const setW = f => { if (!one) return; one.style.maxWidth = f >= 1 ? '' : Math.round(body.clientWidth * f) + 'px'; one.style.marginLeft = one.style.marginRight = f >= 1 ? '' : 'auto'; };
+  let f = same ? bz.f : 1; const zc = same ? bz.z : 1.15; setW(f); fitCards(body, cards, avail, zc, .5); let z = zOf();
+  /* 칸이 정사각형인 판은 폭이 넓을수록 키가 커져서 줄여도 들어가지 않아요 → 판의 폭을 좁혀서 한 화면에 */
+  if (one && (z < .78 || used() > avail + 2)) { let ok = false;
+    for (const g of [.9, .8, .7, .62, .55, .48]) { if (g >= f) continue; setW(g); fitCards(body, cards, avail, Math.min(zc, 1), .5); if (zOf() >= .78 && used() <= avail + 2) { f = g; z = zOf(); ok = true; break; } }
+    if (!ok) { setW(f); fitCards(body, cards, avail, zc, .5); z = zOf(); } }
+  bz = { k: key, z, f }; return true; }
 /* ---------- 위 막대·탭·아래 막대 ---------- */
 const tname = b => { const tn = b.querySelector('.tn'); let t = tn ? tn.textContent : ([...b.querySelectorAll('span,b,div')].find(e => !e.children.length && !e.closest('svg,.ti,.tvf,.vav,.ts') && e.textContent.trim()) || b).textContent; return t.trim().replace(/^도구\s*\d+\s*·\s*/, ''); };
 function renderTop(k) { const i = stepIdx(k), L = steps();
@@ -10650,109 +10853,202 @@ function renderTabs(k) { const tb = $('#svslTabs');
   if (k !== 'concept') { tb.innerHTML = ''; return; } const T = toolInfo();
   tb.innerHTML = T.hub.map(b => { const v = b.dataset.v, nm = tname(b), img = b.querySelector('img'); return `<button type="button" data-v="${v}" class="${b.classList.contains('on') ? 'on' : ''} ${T.badges[v] ? 'ok' : ''}">${T.badges[v] ? '✅' : img ? `<img src="${img.src}" alt="">` : ''}${nm}</button>`; }).join(''); }
 function nextInfo() { const k = step();
+  if (k === 'result' && ri < rn - 1) return { ok: true, t: '다음 ▶' };
   if (SET() === 's1' && k === 'mission') { if (mi < 2) return { ok: true, t: '다음 ▶' }; return { ok: !!S1().goalConfirmed, t: '개념 탐험 ▶', why: '내 생각을 저장하면 다음으로 갈 수 있어요' }; }
   if (SET() === 's1' && k === 'concept') { const T = toolInfo(), fn = INNEXT();
     if (fn) return { ok: true, t: T.si >= T.mis.length - 1 ? '도구 봉인 ▶' : '다음 단계 ▶' };
-    if (T.finished || T.badges[(T.hub[T.cur] || {}).dataset && T.hub[T.cur].dataset.v]) { const nx = T.hub.findIndex((b, j) => j > T.cur && !T.badges[b.dataset.v]); if (nx >= 0) return { ok: true, t: `도구 ${nx + 1} ▶` }; return { ok: !stationLocked('basic'), t: '기본 문제 ▶' }; }
+    if (T.finished || T.badges[(T.hub[T.cur] || {}).dataset && T.hub[T.cur].dataset.v]) { const nx = T.hub.findIndex((b, j) => j > T.cur && !T.badges[b.dataset.v]); if (nx >= 0) return { ok: true, t: `${FU() ? '카드' : '도구'} ${nx + 1} ▶` }; return FU() ? { ok: !stationLocked('result'), t: '결과 ▶' } : { ok: !stationLocked('basic'), t: '기본 문제 ▶' }; }
     return { ok: false, t: '다음 ▶', why: '이 단계를 해결하면 다음으로 갈 수 있어요' }; }
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.cur >= 0 && Q.cur < Q.ch.length - 1) return { ok: true, t: '다음 문제 ▶' }; return { ok: !stationLocked('jump'), t: '점프 문제 ▶', why: ($('#s1body .sv-pass') || {}).textContent || '' }; }
   const L = steps(), i = stepIdx(k), nk = L[i + 1]; return nk ? { ok: !stationLocked(nk[0]), t: nk[1] + ' ▶' } : (SET() === 's1' ? { ok: true, t: '세트 2 ▶' } : { ok: false, t: '끝' }); }
 function renderNav(k) { const nav = $('#svslNav'), N = nextInfo(), nb = nav.querySelector('[data-svn=next]'), pb = nav.querySelector('[data-svn=prev]');
   nb.disabled = !N.ok; nb.textContent = N.t; nb.classList.toggle('go', N.ok && (k !== 'mission' || mi === 2 || false) && !!(k === 'concept' || S1().goalConfirmed && mi === 2));
-  pb.disabled = SET() === 's1' && k === 'mission' && mi === 0;
-  const sk = nav.querySelector('[data-svn=skip]'); if (sk) { const show = SET() === 's1' && k === 'concept' && N.t !== '기본 문제 ▶', lk = stationLocked('basic'); sk.style.display = show ? '' : 'none'; sk.disabled = lk; sk.textContent = lk ? '🔒 기본 문제' : '✏️ 기본 문제로 ▶'; sk.title = lk ? '개념 탐험 도구를 1개 끝내면 기본 문제로 갈 수 있어요' : '개념 탐험을 1개 이상 끝냈어요. 기본 문제로 갈 수 있어요'; }
+  pb.disabled = SET() === 's1' && (k === 'mission' && mi === 0 || FU() && k === 'concept' && toolInfo().cur <= 0);
+  const sk = nav.querySelector('[data-svn=skip]'); if (sk) { const fu = FU(), show = SET() === 's1' && k === 'concept' && N.t !== (fu ? '결과 ▶' : '기본 문제 ▶'), lk = stationLocked(fu ? 'result' : 'basic'); sk.style.display = show ? '' : 'none'; sk.disabled = lk;
+    if (fu) { sk.textContent = lk ? '🔒 결과' : '🏆 결과 보기 ▶'; sk.title = lk ? '개념 카드의 확인 문제를 풀어 배지를 1개 받으면 결과를 볼 수 있어요' : '배지를 1개 이상 받았어요. 결과를 볼 수 있어요'; }
+    else { sk.textContent = lk ? '🔒 기본 문제' : '✏️ 기본 문제로 ▶'; sk.title = lk ? '개념 탐험 도구를 1개 끝내면 기본 문제로 갈 수 있어요' : '개념 탐험을 1개 이상 끝냈어요. 기본 문제로 갈 수 있어요'; } }
   const L = steps(), cs = L[stepIdx(k)] || ['', '', ''];
   let lab = `${cs[2]} ${cs[1]}`, dots = '';
   if (SET() === 's1' && k === 'mission') { lab += ' · ' + (mi === 2 && window.SV_LF && SV_LF.noGoal ? '배운 내용 돌아보기' : MNAME[mi]); dots = MSC.map((_, j) => `<i class="${j === mi ? 'on' : j < mi ? 'ok' : ''}"></i>`).join(''); }
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.ch.length) { lab += ` · ${Q.ch.length}문제 중 ${Q.cur + 1}번`; } }
-  if (SET() === 's1' && k === 'concept') { const T = toolInfo(), b = T.hub[T.cur]; if (b) lab += ` · 도구 ${T.cur + 1} ${tname(b)}`; if (T.mis.length) { lab += ` · ${T.mis.length}단계 중 ${T.si + 1}단계`; dots = T.mis.map((_, j) => `<i class="${j === T.si && !T.finished ? 'on' : T.done[j] || T.finished ? 'ok' : ''}"></i>`).join(''); } }
+  if (k === 'result' && rn > 1) { lab += ` · ${rn}쪽 중 ${ri + 1}쪽`; dots = Array.from({ length: rn }, (_, j) => `<i class="${j === ri ? 'on' : j < ri ? 'ok' : ''}"></i>`).join(''); }
+  if (SET() === 's1' && k === 'concept') { const T = toolInfo(), b = T.hub[T.cur]; if (b) lab += ` · ${FU() ? '카드' : '도구'} ${T.cur + 1} ${tname(b)}`; if (T.mis.length) { lab += ` · ${T.mis.length}단계 중 ${T.si + 1}단계`; dots = T.mis.map((_, j) => `<i class="${j === T.si && !T.finished ? 'on' : T.done[j] || T.finished ? 'ok' : ''}"></i>`).join(''); } }
   nav.querySelector('.lb b').textContent = lab; nav.querySelector('.lb small').textContent = N.ok ? '' : (N.why || ''); nav.querySelector('.dots').innerHTML = dots; }
 function next() { const k = step(), N = nextInfo(); if (!N.ok) return; dir = 1;
+  if (k === 'result' && ri < rn - 1) { ri++; apply(); return; }
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); if (Q.cur >= 0 && Q.cur < Q.ch.length - 1) { Q.ch[Q.cur + 1].click(); return; } go('jump'); return; }
   if (SET() === 's2' || ['basic', 'jump', 'result'].includes(k)) { const L = steps(), nk = L[stepIdx(k) + 1]; if (nk) go(nk[0]); else if (SET() === 's1') { const t = $('#tabs .settab[data-v=s2]'); if (t) t.click(); } return; }
   if (k === 'mission') { if (mi < 2) { mi++; apply(); return; } const s = $('#s1body [data-sv=start]'); if (s) s.click(); else go('concept'); return; }
   if (k === 'concept') { const fn = INNEXT(); if (fn) { fn.click(); return; }
-    const T = toolInfo(), nx = T.hub.findIndex((b, j) => j > T.cur && !T.badges[b.dataset.v]); if (nx >= 0) { T.hub[nx].click(); return; } go('basic'); return; }
+    const T = toolInfo(), nx = T.hub.findIndex((b, j) => j > T.cur && !T.badges[b.dataset.v]); if (nx >= 0) { T.hub[nx].click(); return; } go(FU() ? 'result' : 'basic'); return; }
   }
 function prev() { const k = step(); dir = -1;
+  if (k === 'result' && ri > 0) { ri--; apply(); return; }
   if (SET() === 's2') { const pk = steps()[stepIdx(k) - 1]; if (pk) go(pk[0]); else { const t = $('#tabs .settab[data-v=s1]'); if (t) t.click(); } return; }
   if (k === 'mission') { if (mi > 0) { mi--; apply(); } return; }
   if (k === 'basic') { const Q = qInfo(); if (Q.cur > 0) { Q.ch[Q.cur - 1].click(); return; } }
-  if (k === 'concept') { const T = toolInfo(); if (T.cur > 0) { T.hub[T.cur - 1].click(); return; } mi = 2; go('mission'); return; }
-  const pk = STEPS[stepIdx(k) - 1]; if (pk) { if (pk[0] === 'mission') mi = 2; go(pk[0]); } }
+  if (k === 'concept') { const T = toolInfo(); if (T.cur > 0) { T.hub[T.cur - 1].click(); return; } if (FU()) return; mi = 2; go('mission'); return; }
+  const pk = steps()[stepIdx(k) - 1]; if (pk) { if (pk[0] === 'mission') mi = 2; go(pk[0]); } }
 function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const old = $('#svslBan'); old && old.remove();
   const b = document.createElement('div'); b.id = 'svslBan';
   b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
   B.appendChild(b); setTimeout(() => b.remove(), 2100); }
 /* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
-function zfit(box, inner, max, min) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, ZMIN); inner.style.zoom = 1; const cw = box.clientWidth, ch = box.clientHeight, w = inner.scrollWidth, h = inner.scrollHeight;
+function zfit(box, inner, max, min, floor) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); if (inner.hasAttribute && (inner.hasAttribute('data-svnofit') || (inner.firstElementChild && inner.firstElementChild.hasAttribute('data-svnofit')))) { inner.style.zoom = ''; inner.style.removeProperty('width'); return; } max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, floor || zmin()); inner.style.zoom = 1; inner.style.removeProperty('width'); const cw = box.clientWidth, ch = box.clientHeight; let w = inner.scrollWidth;
+  /* 안쪽 칸이 폭을 다 차지하지만(긴 안내 글 때문에) 실제 내용은 더 좁을 때: 내용 폭에 맞춰 줄인 뒤 키워서 빈 곳을 채워요 */
+  try { const ks = [...inner.children].filter(e => e.getClientRects().length && getComputedStyle(e).position !== 'absolute'); if (ks.length && w >= cw - 48 && w <= cw + 2 && !inner.classList.contains('svsl-shelfside') && !inner.classList.contains('svsl-cols2')) { let L = 1e9, R = -1e9; ks.forEach(e => { const r = e.getBoundingClientRect(); L = Math.min(L, r.left); R = Math.max(R, r.right); }); const ext = Math.ceil(R - L) + 10; if (ext > 200 && ext < w - 30) { inner.style.setProperty('width', ext + 'px', 'important'); if (inner.scrollWidth <= ext + 2) w = ext; else inner.style.removeProperty('width'); } } } catch (e) {}
+  const h = inner.scrollHeight;
   if (!w || !h || !cw || !ch) return; let z = Math.max(lo, Math.min(max || 1.5, cw / w, ch / h)); inner.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); }
+  for (let i = 0; i < (floor ? 14 : 8) && z > lo && (box.scrollHeight > box.clientHeight + 1 || box.scrollWidth > box.clientWidth + 1); i++) { z = Math.max(lo, z * .95); inner.style.zoom = z.toFixed(3); }
   if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
+/* 조작판이 한 화면에 안 들어갈 때 (안쪽에 스크롤이 생기면 끌 것과 놓을 곳이 한 화면에 안 보여 끌 수 없어요):
+   ① 끌 것이 놓인 선반(맨 아래 줄)을 옆으로 옮기거나, 위아래로 쌓인 두 덩어리를 나란히 놓고 ② 그래도 넘치면 DMIN까지 더 줄여요.
+   한 번 바꾼 단계는 그대로 둬요(화면이 들썩이지 않게). 스크롤은 그래도 안 될 때만 남아요. */
+const DMIN = .5; let fitKey = '', fitMode = '', shelfExt = 0;
+const toolKey = () => { try { const k = S1().tool || '', c = (S1().ck || {})[k]; return k + ':' + (c ? c.i : 0); } catch (e) { return ''; } };
+const visKids = fc => [...fc.children].filter(e => e.getClientRects().length);
+function shelfOf(fc) { if (!fc || fc.children.length < 2) return null; const ks = visKids(fc), sh = ks[ks.length - 1]; return ks.length > 1 && sh && sh.querySelector('[data-dg]') && !sh.querySelector('[data-dz]') && !sh.matches('[data-dz]') ? sh : null; }
+function shelfOn(fc, sh, ext) { fc.classList.add('svsl-shelfside'); fc.style.setProperty('--shl', ext + 'px'); sh.classList.add('svsl-shelf'); sh.style.gridRow = '1 / span ' + Math.max(1, visKids(fc).length - 1); }
+function shelfOff(fc) { fc.classList.remove('svsl-shelfside'); [...fc.children].forEach(e => { if (e.classList.contains('svsl-shelf')) { e.classList.remove('svsl-shelf'); e.style.gridRow = ''; } }); }
+function colsOk(fc) { const ks = visKids(fc), z = parseFloat(fc.style.zoom) || 1; return ks.length === 2 && ks.every(e => e.getBoundingClientRect().height / z >= 60 && !e.matches('.t11src,.qzex,.cbub,.row')); }
+function tightFit(m, fc, mx, pre) { if (!m || !fc) return; const key = toolKey();
+  if (pre) { shelfOff(fc); fc.classList.remove('svsl-cols2'); if (fitKey !== key) return;
+    if (fitMode === 'shelf') { const sh = m.querySelector('[data-dg]') ? shelfOf(fc) : null; if (sh) shelfOn(fc, sh, shelfExt); } else if (fitMode === 'cols' && colsOk(fc)) fc.classList.add('svsl-cols2'); return; }
+  if (!m.classList.contains('svsl-scrolly')) return;
+  if (!fc.classList.contains('svsl-shelfside') && !fc.classList.contains('svsl-cols2')) { const h0 = fc.scrollHeight, sh = m.querySelector('[data-dg]') ? shelfOf(fc) : null;
+    if (sh) { /* 나머지 내용이 실제로 차지하는 폭을 재서 왼쪽 칸 폭으로 써요 (원래 폭 그대로 보이게) */
+      const z = parseFloat(fc.style.zoom) || 1; let L = 1e9, R = -1e9; visKids(fc).filter(e => e !== sh).forEach(e => { const r = e.getBoundingClientRect(); L = Math.min(L, r.left); R = Math.max(R, r.right); });
+      shelfExt = Math.max(160, Math.ceil((R - L) / z) + 4); shelfOn(fc, sh, shelfExt); zfit(m, fc, mx, .3, ZMIN);
+      if (fc.scrollHeight > h0 * .92) { shelfOff(fc); zfit(m, fc, mx, .3, ZMIN); } else { fitKey = key; fitMode = 'shelf'; } }
+    else if (colsOk(fc)) { fc.classList.add('svsl-cols2'); zfit(m, fc, mx, .3, ZMIN);
+      if (fc.scrollHeight > h0 * .92) { fc.classList.remove('svsl-cols2'); zfit(m, fc, mx, .3, ZMIN); } else { fitKey = key; fitMode = 'cols'; } } }
+  if (m.classList.contains('svsl-scrolly')) zfit(m, fc, mx, .3);   /* 낮은 창 바닥(zmin)까지 */
+  if (m.classList.contains('svsl-scrolly')) zfit(m, fc, mx, .3, DMIN); }
 /* 세로 화면: 스크롤 없이 칸 폭에 맞춰 다시 배치한 뒤, 칸 높이에 들어가도록 크기를 맞춰요 (끌 것과 놓을 곳이 한 화면에) */
 function pfit(box, inner, max, min) { if (!box || !inner) return; min = Math.max(min || .42, PMIN); max = Math.min(max, ZMAX); const W = () => Math.max(120, box.clientWidth - 6); let z = max; box.classList.remove('svsl-scrolly');
   for (let i = 0; i < 18; i++) { inner.style.zoom = z.toFixed(3); inner.style.setProperty('width', (W() / z).toFixed(1) + 'px', 'important'); inner.style.setProperty('max-width', 'none', 'important');
     if (box.scrollHeight <= box.clientHeight + 1 && box.scrollWidth <= box.clientWidth + 1) break; if (z <= min) break; z = Math.max(min, z * .92); }
   if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-scrolly'); }
-function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const sk = $('#sec-s2 .skb'); fitQ(sk && sk.querySelector(':scope > .card.qx'), sk); return; } if (B.classList.contains('svsl-free')) return;
+function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const sk = $('#sec-s2 .skb'), qc = sk && sk.querySelector(':scope > .card.qx'); fitQ(qc, sk);
+    /* 그림이 큰 문제(띠그래프 여러 개 등)도 스크롤 없이: 그래도 넘치면 카드를 조금 더 줄여요 */
+    if (qc) { const over = () => [document.getElementById('s2body'), sk].some(e => e && e.scrollHeight > e.clientHeight + 2); for (let i = 0; i < 14 && over(); i++) { const z = (parseFloat(qc.style.zoom) || 1) * .965; if (z < .5) break; qc.style.zoom = z.toFixed(3); } }
+    return; } if (B.classList.contains('svsl-free')) return;
   $$('.svsl-tc .svsl-side .vrow, .svsl-tc .svsl-side .cfb').forEach(e => e.style.zoom = '');
   if (k === 'concept') { const card = TCARD(); if (!card) return;
     const man = card.querySelector(':scope > .fdsplit'), main = card.querySelectorAll(':scope > .svsl-main'), side = card.querySelector(':scope > .svsl-side');
-    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.remove('svsl-scrolly'); if (pt) pfit(man, fa, 1.6, .42); else { if (fa) { fa.style.removeProperty('width'); fa.style.removeProperty('max-width'); } zfit(man, fa, 1.7, .3); } }
+    if (man) { const pt = B.classList.contains('svsl-port'), fa = man.querySelector('.fdsplit-a'); man.classList.remove('svsl-scrolly'); if (pt) pfit(man, fa, 1.6, .42); else { if (fa) { fa.style.removeProperty('width'); fa.style.removeProperty('max-width'); } zfit(man, fa, 1.7, .3); if (fa && man.classList.contains('svsl-scrolly')) zfit(man, fa, 1.7, .3, DMIN); } }
     const q4 = card.classList.contains('svsl-q4');
-    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.remove('svsl-scrolly'); const mx = q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5; if (port) pfit(m, m.firstElementChild || m, mx, .42); else { const fc = m.firstElementChild; if (fc) { fc.style.removeProperty('width'); fc.style.removeProperty('max-width'); } zfit(m, m.firstElementChild || m, mx, .3); } });
+    const port = B.classList.contains('svsl-port'); main.forEach(m => { m.classList.remove('svsl-scrolly'); const mx = q4 ? 2.1 : card.querySelector('.ucslide') ? 2 : 1.5; if (port) pfit(m, m.firstElementChild || m, mx, .42); else { const fc = m.firstElementChild; if (fc) { fc.style.removeProperty('width'); fc.style.removeProperty('max-width'); } if (fc) tightFit(m, fc, mx, true); zfit(m, m.firstElementChild || m, mx, .3, ZMIN); if (fc) tightFit(m, fc, mx); else if (m.classList.contains('svsl-scrolly')) zfit(m, m, mx, .3); } });
     const qb = card.querySelector(':scope > .svsl-q'); if (qb) { qb.style.zoom = 1; if (qb.scrollWidth > qb.clientWidth + 2) qb.style.zoom = Math.max(.6, qb.clientWidth / qb.scrollWidth).toFixed(3); }
     if (side && B.classList.contains('svsl-port')) { side.style.zoom = 1; side.classList.add('svsl-scrolly'); }
     else if (side) { side.style.zoom = 1; const h = side.scrollHeight, ch = side.clientHeight, w = side.scrollWidth, cw = side.clientWidth;
       if (card.classList.contains('svsl-ctl') && h < ch * .8 && w <= cw + 2) { let z = Math.min(1.6, ch * .9 / h, cw / w); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > 1 && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .96; side.style.zoom = z.toFixed(3); } }
-      else if (h > ch + 2 || w > cw + 2) { let z = Math.max(ZMIN, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > ZMIN && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
+      else if (h > ch + 2 || w > cw + 2) { const lo = zmin(); let z = Math.max(lo, Math.min(ch / h, cw / w)); side.style.zoom = z.toFixed(3); for (let i = 0; i < 10 && z > lo && (side.scrollHeight > side.clientHeight + 1 || side.scrollWidth > side.clientWidth + 1); i++) { z *= .95; side.style.zoom = z.toFixed(3); } } } }
   if (k === 'basic') fitQ($('#s1body > .qcard'), $('#s1body'));
   if (k === 'jump') fitJ();
   if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.7, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .7 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
     const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const st = hb.querySelector('.sv-hb-story'), tk = hb.querySelector('.sv-hb-task'), ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - (st ? st.offsetHeight + 10 : 0) - (tk ? tk.offsetHeight + 10 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
-function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return;
+/* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
+const PG = { key: '', i: 0 };
+function pgClear(q) { $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
+function pageCard(q, box, deep) { pgClear(q);
+  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
+  const cs = getComputedStyle(q), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 8;
+  let H = box.clientHeight - others - pad - 62; if (H < 160) return false;
+  const part = deep ? q.querySelector(':scope > [id^="part-"]') : null, blocks = [];
+  [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) blocks.push(k); }); else blocks.push(c); });
+  if (blocks.length < 2) return false;
+  const hh = b => b.getBoundingClientRect().height + 10;
+  /* 쪽 수가 3쪽을 넘지 않도록 카드를 조금(최대 20%) 줄여 가며 가장 큰 크기를 골라요 */
+  const pack = z => { q.style.zoom = z; blocks.forEach(b => { if (b.hasAttribute('data-pgz')) { b.style.zoom = ''; b.removeAttribute('data-pgz'); } });
+    blocks.forEach(b => { if (hh(b) > H) { b.style.zoom = Math.max(.42, (H - 10) / (hh(b) - 10)).toFixed(3); b.setAttribute('data-pgz', '1'); } });
+    const P = [[]]; let h = 0; blocks.forEach(b => { const bh = hh(b); if (h + bh > H && P[P.length - 1].length) { P.push([]); h = 0; } P[P.length - 1].push(b); h += bh; }); return P; };
+  let pages = null, best = null;
+  for (const z of [1, .94, .88, .82]) { const P = pack(z); if (!best || P.length < best.n) best = { n: P.length, z }; if (P.length <= 3) { pages = P; break; } }
+  if (!pages) pages = pack(best.z);
+  if (pages.length < 2) { pgClear(q); q.style.zoom = 1; return false; }
+  const key = SET() + '|' + step() + '|' + (q.id || '') + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 40);
+  if (PG.key !== key) { PG.key = key; PG.i = 0; } PG.i = Math.max(0, Math.min(PG.i, pages.length - 1));
+  pages.forEach((P, i) => P.forEach(b => b.classList.toggle('svsl-pgoff', i !== PG.i)));
+  q.classList.add('svsl-paged');
+  q.insertAdjacentHTML('beforeend', `<div class="svsl-pager"><button type="button" data-svpg="-1" ${PG.i ? '' : 'disabled'}>◀ 앞 장면</button><span class="svsl-pgd">${pages.map((_, i) => `<i class="${i === PG.i ? 'on' : ''}"></i>`).join('')}<b>${PG.i + 1} / ${pages.length}</b></span><button type="button" data-svpg="1" ${PG.i < pages.length - 1 ? '' : 'disabled'}>다음 장면 ▶</button></div>`);
+  return true; }
+document.addEventListener('click', e => { const t = e.target.closest('[data-svpg]'); if (!t) return; e.preventDefault(); e.stopPropagation(); PG.i += +t.dataset.svpg; try { fit(); } catch (x) {} }, true);
+function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return; pgClear(q);
   const land = B.classList.contains('svsl-land');
   $$('.svsl-jgrid', q).forEach(e => e.classList.remove('svsl-jgrid')); $$('.svsl-jfig,.svsl-jR', q).forEach(e => e.classList.remove('svsl-jfig', 'svsl-jR'));
   q.style.zoom = 1;
+  if (!land) { box.classList.remove('svsl-qscroll'); if (q.offsetHeight > box.clientHeight - 80) { if (pageCard(q, box, true)) return; } }
   if (land) { const F = [...q.querySelectorAll('.geofig, .sv-fig, .netfig, .afw, .ucfig')].filter(e => e.offsetHeight > 110 && !e.closest('.choices'))[0];
     if (F && F.parentElement && q.contains(F.parentElement)) { const P = F.parentElement, kids = [...P.children], i = kids.indexOf(F), after = kids.slice(i + 1).filter(c => c.offsetHeight > 0);
       if (after.length) { P.classList.add('svsl-jgrid'); F.classList.add('svsl-jfig'); after.forEach(c => c.classList.add('svsl-jR')); } } }
-  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 10, 0);
+  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
-  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
-  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
+  const JMIN = Math.max(.46, (q.id === 'svj0' ? .54 : .62) * Math.min(1, innerHeight / 740));   /* 점프 문제는 스크롤 대신 한 화면에 들어오도록 조금 더 줄일 수 있어요 (오늘의 문제 카드는 글이 많아 조금 더) */
+  box.classList.remove('svsl-qscroll'); let z = Math.max(JMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > JMIN; i++) { z = Math.max(JMIN, z * .97); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) { q.style.zoom = 1; if (pageCard(q, box, false)) { box.classList.remove('svsl-qscroll'); return; } q.style.zoom = z.toFixed(3); box.classList.add('svsl-qscroll'); } }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
   let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel')));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel, .rffig')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel,.rffig')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
   else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
+  /* 그림 문제(가로 화면): [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸 전체를 써요 */
+  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig && qt ? qt.querySelector(':scope > .rffig, :scope > .dxfig') : null; let qF = q.querySelector(':scope > .svsl-qF');
+    if (FG) { if (!qF) { qF = document.createElement('div'); qF.className = 'svsl-qF'; q.insertBefore(qF, q.firstChild); } qF.innerHTML = ''; qF.appendChild(FG); }
+    else if (qF && (!hasFig || !qF.firstElementChild)) { const f = qF.firstElementChild; if (f && qt) { f.style.zoom = ''; qt.appendChild(f); } qF.remove(); qF = null; }
+    q.classList.toggle('svsl-qfL', !!qF); }
   [...q.children].forEach(c => c.classList.toggle('svsl-qans', c === ans));
   const ch = q.querySelector('.choices'), opts = ch ? [...ch.children].filter(e => e.offsetParent !== null || e.matches('button')) : [];
   const longest = Math.max(0, ...opts.map(o => (o.textContent || '').trim().length)), pic = ch && !!ch.querySelector('svg,img');
   q.classList.toggle('svsl-q1col', hasFig && !pic && opts.length > 0 && opts.length <= 5);
+  q.classList.toggle('svsl-qc2', q.classList.contains('svsl-qfL') && !pic && opts.length === 4);
+  q.classList.toggle('svsl-qlong', q.classList.contains('svsl-qfL') && longest > 11);
   q.classList.toggle('svsl-q2col', !hasFig && land && opts.length >= 3 && (opts.length === 4 || longest > 6)); }
-function fitQ(q, box) { if (!q || !box) return; qShape(q);
+const fzIn = e => { const p = e.parentElement && e.parentElement.closest('.afw, .sv-fig, .dxfig, .dxrel, .rffig, .svsl-qF'); return !!p; };
+/* opt: 한 화면에 안 들어갈 때 다시 맞추는 단계 — 1: 옆 카드(보스 띠 등)를 줄이고 2: 옆 카드를 접고 3: 문제 카드를 더 줄여요(.56까지). 그래도 안 되면 스크롤 */
+function fitQ(q, box, opt) { if (!q || !box) return; qShape(q);
+  if (!opt) [...box.children].forEach(c => { if (c !== q) { c.style.zoom = ''; c.classList.remove('svsl-qhide'); } });   /* 다시 잴 때마다 옆 카드를 원래대로 돌려놓고 시작해요 */
+  const sibs = [...box.children].filter(c => c !== q && c.offsetParent !== null);
   const key = SET() + '|' + step() + '|' + qInfo().cur + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 60) + '|' + innerWidth + 'x' + innerHeight;
   const answered = !!q.querySelector('.vrow, .cfb, .rpbar, .choice.ok, .choice.no, .choice.right, .choice.wrong');
   q.classList.add('svsl-meas'); q.style.zoom = 1;
-  const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 8, 0);
+  const others = sibs.reduce((a, c) => a + c.getBoundingClientRect().height + 8, 0);
   const avH = box.clientHeight - others - 4, avW = box.clientWidth - 4, R = answered ? 0 : (q.classList.contains('svsl-qfig') ? 110 : 125);
-  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  /* 그림·표는 남는 공간만큼 키워요 (높이와 문제 칸 너비를 넘지 않는 가장 큰 크기) */
+  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel, .qtext .rffig')].filter(e => !fzIn(e)); if (fz.length && q.classList.contains('svsl-qfig')) { let f = 2.6; const set = v => fz.forEach(e => e.style.zoom = v); set(1); const lim = Math.max(q.scrollHeight, avH - R); set(f);
+    const wide = () => fz.some(e => { const p = e.closest('.qtext') || e.parentElement; return !!p && p.scrollWidth > p.clientWidth + 2; });
+    for (let i = 0; i < 24 && f > 1 && (q.scrollHeight > lim + 1 || wide()); i++) { f -= .07; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  /* 오른쪽 칸(글 + 보기)이 화면 높이를 넘지 않도록 보기 단추 높이를 먼저 맞춰요 (스크롤·잘림 대신) */
+  if (q.classList.contains('svsl-qfL')) { const F0 = q.querySelector(':scope > .svsl-qF'), f0 = F0 && F0.firstElementChild; if (F0) { F0.style.height = ''; F0.style.minHeight = '0px'; } if (f0) { f0.style.zoom = 1; const rw0 = f0.querySelector('.pdrow'); if (rw0) rw0.style.flexDirection = ''; q.classList.toggle('svsl-qwide', !q.classList.contains('svsl-qlong') && f0.offsetWidth / Math.max(1, f0.offsetHeight) > 1.9); f0.style.zoom = .1; }
+    for (const m of [120, 104, 90, 78, 68, 60, 54, 48]) { q.style.setProperty('--chmin', m + 'px'); if (q.scrollHeight + R <= avH) break; } }
+  { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (f) { f.style.zoom = 1; qF.style.height = ''; qF.style.minHeight = '0px';
+      /* 왼쪽 칸 높이 = 화면에 남는 높이(또는 오른쪽 칸 높이)까지, 그림은 그 칸에 꼭 맞는 가장 큰 크기로 (잘림·스크롤 없음) */
+      const chrome = q.scrollHeight - qF.offsetHeight, boxH = Math.max(qF.offsetHeight, avH - R - chrome); qF.style.height = boxH + 'px';
+      const cs = getComputedStyle(qF), pw = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 6, ph = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 6, fw = f.offsetWidth || 1, fh = f.offsetHeight || 1;
+      let z = Math.max(.5, Math.min(3.2, (qF.clientWidth - pw) / fw, (boxH - ph) / fh));
+      /* 그림이 둘(표 + 그래프)이면 옆으로·위아래 가운데 더 크게 보이는 쪽으로 놓아요 */
+      const rw = f.querySelector('.pdrow'); if (rw) { rw.style.flexDirection = 'column'; const z2 = Math.max(.5, Math.min(3.2, (qF.clientWidth - pw) / (f.offsetWidth || 1), (boxH - ph) / (f.offsetHeight || 1))); if (z2 > z * 1.05) z = z2; else rw.style.flexDirection = ''; }
+      f.style.zoom = z.toFixed(3); } }
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
-  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
+  const QN = Math.min((q.classList.contains('svsl-qfL') || q.classList.contains('svsl-qfig')) ? Math.min(QMIN, .64) : QMIN, (opt && opt.floor) || 9);   /* 그림 문제는 잘리거나 스크롤되지 않게 조금 더 줄일 수 있어요 */
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QN, Math.min(QMAX, avH / h, avW / w));
   if (QZ[key] && answered) z = Math.min(QZ[key], z * 1.0) < QZ[key] * .9 ? Math.min(QZ[key], z) : QZ[key]; else if (!answered) QZ[key] = z;
   q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
-  if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
+  for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > QN; i++) { z = Math.max(QN, z * .96); q.style.zoom = z.toFixed(3); }
+  if (box.scrollHeight > box.clientHeight + 1) { const lv = (opt && opt.lv) || 0;
+    if (lv === 0 && sibs.length) { sibs.forEach(c => { c.style.zoom = .62; }); return fitQ(q, box, { lv: 1 }); }
+    if (lv <= 1 && sibs.length) { sibs.forEach(c => c.classList.add('svsl-qhide')); return fitQ(q, box, { lv: 2 }); }
+    if (lv <= 2) return fitQ(q, box, { lv: 3, floor: .56 });
+    box.classList.add('svsl-qscroll'); } }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
@@ -10767,7 +11063,7 @@ function watch() { const body = $('main') || $('.wrap'); if (!body) return; mo =
 let sayHome = null;
 function sayRow(v) { const r = $('.say-row'); if (!r) return; if (v) { if (!sayHome) sayHome = [r.parentNode, r.nextSibling]; $('#svslNav').prepend(r); } else if (sayHome) { sayHome[0].insertBefore(r, sayHome[1]); } }
 let bubMo = null;
-function setMode(v) { on = v; sayRow(v); if (v && !bubMo) { const bb = $('#jaramSay'); if (bb) { bubMo = new MutationObserver(() => on && fitBub(bb)); bubMo.observe(bb, { childList: true, characterData: true, subtree: true }); } } B.classList.toggle('svsl-on', v); LS.set('sv:view2', v ? 'slide' : 'scroll'); if (v) { lastStep = SET() + step(); apply(); } else { slideWords(true); $$('.svsl-off').forEach(e => e.classList.remove('svsl-off')); $$('#s1body [style*=zoom]').forEach(e => e.style.zoom = ''); } }
+function setMode(v) { on = v; sayRow(v); if (v && !bubMo) { const bb = $('#jaramSay'); if (bb) { bubMo = new MutationObserver(() => on && fitBub(bb)); bubMo.observe(bb, { childList: true, characterData: true, subtree: true }); } } B.classList.toggle('svsl-on', v); LS.set('sv:view2', v ? 'slide' : 'scroll'); if (v) { lastStep = SET() + step(); apply(); } else { slideWords(true); $$('.svsl-off').forEach(e => e.classList.remove('svsl-off')); $$('.svsl-qhide').forEach(e => { e.classList.remove('svsl-qhide'); e.style.zoom = ''; }); $$('#s1body [style*=zoom]').forEach(e => e.style.zoom = ''); $$('#s2body > .card').forEach(c => { ['zoom', 'maxHeight', 'overflowY', 'maxWidth', 'marginLeft', 'marginRight'].forEach(k => { c.style[k] = ''; }); }); unCol(); B.classList.remove('svsl-res', 'svsl-fit1'); } }
 if (typeof window.toast === 'function') { const t0 = window.toast; window.toast = function (m) { return t0.call(this, String(m).replace(/\((\d+)\/(\d+)\)/g, '($2개 중 $1개)')); }; }
 function init() { if (!$('#s1body')) return; frame(); watch(); addEventListener('resize', () => on && apply());
   addEventListener('keydown', e => { if (!on || /TEXTAREA|INPUT/.test((e.target || {}).tagName)) return; if (e.key === 'ArrowRight') { const n = $('#svslNav [data-svn=next]'); if (!n.disabled) next(); } if (e.key === 'ArrowLeft') prev(); });
@@ -10777,27 +11073,5 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
-<!--SK-START--><style>/* 연습장 문제 그림: 문제 글 + 풀이 그림을 크게 (색이 잘 보이게) */
-#skBg{align-items:flex-start!important}
-#skBg .skpack{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px;transform-origin:top center!important}
-#skBg .skpack .skq{max-width:760px;font-size:1.05rem}
-#skBg .skpack .skfig{display:flex;justify-content:center}
-#skBg .skpack .fdsrc,#skBg .skpack .fdbots{justify-content:center}
-
-/* 분배표처럼 두 개를 나란히 놓을 수 있는 그림은 가로로 */
-.sv-paper{min-width:min(100%,660px)}
-/* 결과 화면: 활동 기록을 한 줄에 두 개씩 */
-.ritems{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
-.ritems li{margin:0!important;min-width:0}
-@media(max-width:700px){.ritems{grid-template-columns:1fr}}
-
-/* 상황 살펴보기: 문제 이야기 · 할 일 */
-.sv-heroboard .sv-hb-story{max-width:1100px;margin:6px auto 8px;font-size:1.12rem;line-height:1.6;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:12px 18px;text-align:left;color:#1e1b4b}
-.sv-heroboard .sv-hb-task{margin:4px auto 10px;font-weight:900;color:#6d28d9;text-align:center}
-/* 연습장: 화면 위 머리줄·아래 단추줄보다 위에 떠서 항상 닫기·위치 단추가 보이게, 화면 높이를 넘지 않게 */
-#scratch.scratch{z-index:9500!important;max-height:100vh;max-height:100dvh;overflow-y:auto;box-sizing:border-box}
-#scratch .sbar{position:sticky;top:0;z-index:2;background:#fffdf4;flex-wrap:wrap}
-#scratch #skcv{height:min(32vh,280px,calc(100dvh - 130px))}
-</style><!--SK-END-->
 </body>
 </html>
