@@ -6953,7 +6953,7 @@ const DX = (() => {
     let q = '';
     for (let k = L.fs; k <= L.K; k++) { const v = k <= upto ? L.qd[k] : '', act = o.tapQ && k === upto + 1 ? `data-ck="${o.tapQ}" data-v="${k}"` : '';
       q += cell(k, v === '' ? (o.tapQ && k === upto + 1 ? '?' : '') : v, (v === '' ? 'dxe ' : '') + (o.hlQ === k ? 'dxhl ' : '') + (act ? 'dxnow' : ''), act); }
-    if (P < cols && (o.pt || o.ptTap)) q += ptc(o.pt ? '.' : '·', o.pt ? 'dxpt' : 'dxptt', o.ptTap && !o.pt ? `data-ck="${o.ptTap}" data-v="pt"` : '');
+    if (P < cols && (o.pt || o.ptTap)) q += ptc('.', o.pt ? 'dxpt' : 'dxptt', o.ptTap && !o.pt ? `data-ck="${o.ptTap}" data-v="pt"` : '');
     let dv = ''; for (let k = 0; k < L.orig + zs && k < cols; k++) dv += cell(k, L.D[k], k >= L.orig ? 'dxz' : '');
     if (P < cols && (P < L.orig || zs > 0)) dv += ptc('.', '');
     const rows = [], num = (v, endK, cls) => { const t = String(v); let r = ''; for (let i = 0; i < t.length; i++) r += cell(endK - t.length + 1 + i, t[i], cls); return r; };
@@ -7086,7 +7086,7 @@ const DX = (() => {
 .dxrow.dxa::before{content:'';position:absolute;left:-.48em;top:-3px;width:.5em;height:calc(100% + 2px);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 28' preserveAspectRatio='none'%3E%3Cpath d='M1.6 1.2 Q9.6 14 1.6 26.8' fill='none' stroke='%231e293b' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 0 0/100% 100%}
 .dxc{position:absolute;top:0;width:var(--cw);text-align:center}.dxc.dxp{width:calc(var(--cw)*.45)}
 .dxc.dxe{color:#cbd5e1}.dxc.dxnow{background:#fef3c7;border-radius:10px;color:#b45309;cursor:pointer;outline:3px dashed #f59e0b;outline-offset:-5px;box-sizing:border-box;border:2px solid transparent;background-clip:padding-box}
-.dxc.dxz{color:#dc2626}.dxc.dxpt{color:#dc2626}.dxc.dxptt{color:#94a3b8;cursor:pointer;background:linear-gradient(#e2e8f0,#e2e8f0) center/62% 78% no-repeat;border-radius:6px}
+.dxc.dxz{color:#dc2626}.dxc.dxpt{color:#dc2626}.dxc.dxptt{color:#94a3b8;cursor:pointer;background:linear-gradient(#e2e8f0,#e2e8f0) 50% 100%/86% 46% no-repeat;border-radius:6px}
 .dxc.dxnext{color:#2563eb}.dxline{position:absolute;bottom:0;height:3px;background:#1e293b}
 .dxpad{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.btn.dxkey{min-width:52px;min-height:52px;font-size:1.4rem;font-weight:900}
 .dxsh{display:grid;gap:10px}.dxpool,.dxplate{background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:8px;text-align:center}
@@ -7464,7 +7464,7 @@ const MX = (() => {
         return (c.fig || '') + `<div class="rxgw"><div class="mxpg"><div class="mxpgh">${c.title} <b>${c.total}${c.unitLab}</b> = 100칸</div><div class="rfgrid rxg">${Array.from({ length: 100 }, (_, i) => `<button class="${d.on[i] ? 'on' : ''}" data-ck="cl" data-v="${i}" aria-label="칸 ${i + 1}" ${d.ph !== 'paint' ? 'disabled' : ''}></button>`).join('')}</div></div>
           <div class="rxgc">${d.ph === 'pre' ? (c.preAdj ? `한 칸에 <b>${d.pv}</b>${c.unitLab}씩<br><small class="mxmeter">100칸 × ${d.pv}${c.unitLab} = <b>${100 * d.pv}${c.unitLab}</b></small>` : '한 칸은 얼마일까요?') : `칠한 칸 <b>${n}</b>칸` + (d.ph === 'paint' && c.meter ? `<br><small class="mxmeter">칠한 만큼은 <b>${n * per}${c.unitLab}</b></small>` : d.ph === 'paint' && c.noUnit ? '' : `<br><small>${d.ph === 'paint' || c.hideProd ? `한 칸 = ${per}${c.unitLab}` : `${n} × ${per}${c.unitLab} = ${n * per}${c.unitLab}`}</small>`)}</div></div>`
           + (d.ph === 'pre' ? (c.preAdj ? ckRow(ckBtn('pvm', '－ 줄이기', 'btn-sub') + ckBtn('pvp', '＋ 늘리기', 'btn-sub') + ckBtn('mxpre', '✔ 전체와 같아요', 'btn-green')) : recHTML(d, c.pre, 'a') + ckRow(ckBtn('mxpre', '✔ 확인', 'btn-green')))
-            : d.ph === 'paint' ? ckRow(ckBtn('row', '▦ 한 줄(10칸) 칠하기', 'btn-sub') + ckBtn('clr', '🧽 모두 지우기', 'btn-sub') + ckBtn('ok', '✔ 다 칠했어요', 'btn-green'))
+            : d.ph === 'paint' ? `<div class="rxgtip">✋ 칸을 누른 채로 <b>쭉 긁으면</b> 칠해져요. 칠한 칸에서 시작해 긁으면 지워져요.</div>` + ckRow(ckBtn('clr', '🧽 모두 지우기', 'btn-sub') + ckBtn('ok', '✔ 다 칠했어요', 'btn-green'))
               : recHTML(d, c.rec) + recBtn(d, c.hint)); },
       on: { 'act:pvm'(d, v, el, api) { if (d.ph !== 'pre' || d.pv <= 1) return; d.pv--; pop(); api.clear(); }, 'act:pvp'(d, v, el, api) { if (d.ph !== 'pre' || d.pv >= Math.max(10, per * 3)) return; d.pv++; pop(); api.clear(); },
         'act:mxpre'(d, v, el, api) { if (c.preAdj) { if (d.ph !== 'pre') return; if (d.pv !== per) { api.say(false, `한 칸에 ${d.pv}${c.unitLab}씩 놓으면 100칸에 모두 ${100 * d.pv}${c.unitLab}이에요. 전체 ${c.total}${c.unitLab}${hasBk(c.unitLab) ? '과' : '와'} 같아지게 맞추어요.`, true); return; } d.ph = 'paint'; api.say(true, c.mid0 || `한 칸은 ${per}${c.unitLab}! 이제 ${c.goalLab}만큼 칠해요.`); return; }
@@ -7959,7 +7959,7 @@ const MGX = (() => {
 .mgxest{text-align:center;font-weight:900;color:#2563eb;font-size:1.1rem;margin:2px 0 4px}
 .mgxchain{max-width:760px;margin:6px auto 0;background:#fff;border:2px solid #c7d2fe;border-radius:16px;padding:10px 12px;font-weight:900;font-size:1.2rem;color:var(--mi);text-align:center;line-height:2.3}.mgxchain .ln2{display:block}
 .mgxpick{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.mgxcard{border:3px solid #c7d2fe;background:#fff;border-radius:16px;padding:10px 14px;font-weight:900;font-size:1.05rem;font-family:inherit;color:var(--mi);cursor:pointer;line-height:1.45;touch-action:manipulation}.mgxcard.on{border-color:#f97316;background:#fff7ed;box-shadow:0 0 0 3px #fed7aa}.mgxcard.right{border-color:#10b981;background:#ecfdf5}.mgxcard.wrong{border-color:#f43f5e;background:#fff1f2}
-.mgxmulti{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:820px;margin:0 auto}.mgxmulti.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mgxmulti{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;max-width:1240px;margin:0 auto}.mgxmulti.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
 .mgxld{display:flex;justify-content:center;font-size:1.45rem;margin:2px 0}
 .mgxgaps{display:flex;justify-content:center;align-items:center;gap:2px;flex-wrap:wrap;font-weight:900;font-size:2rem;color:var(--mi);margin:8px 0}.mgxexp{font-size:1.4rem;margin-right:8px;color:#475569}.mgxdg{min-width:34px;text-align:center;background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:2px 4px}.mgxdg.pt{border:0;background:none;min-width:10px;color:#dc2626}
 .mgxgap{width:34px;height:54px;border:2.5px dashed #a5b4fc;border-radius:10px;background:#eef2ff;font-weight:900;font-size:1.8rem;font-family:inherit;color:#ea580c;cursor:pointer;padding:0;touch-action:manipulation}.mgxgap.on{border-style:solid;border-color:#f97316;background:#fff7ed}.mgxgap.pt{width:26px}
@@ -7985,7 +7985,7 @@ const MGX = (() => {
 .mgxstrip.cutting .mgxseg{cursor:default}.mgxcutb{position:absolute;top:-8px;bottom:-8px;width:22px;margin-left:-11px;border:0;background:none;cursor:pointer;padding:0;touch-action:manipulation}.mgxcutb::before{content:'';position:absolute;left:10px;top:8px;bottom:8px;border-left:2px dashed rgba(51,65,85,.45)}.mgxcutb.on::before{left:8.5px;top:0;bottom:0;border-left:5px solid #111827}.mgxcutb.on::after{content:'✂';position:absolute;left:1px;top:-16px;font-size:1rem}
 .mgxpiew2{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}.mgxpiedrag{width:min(250px,64vw);touch-action:none;cursor:crosshair}.mgxpies{display:flex;flex-direction:column;gap:7px;align-items:center;max-width:250px}.mgxpies p{font-weight:800;color:#475569;text-align:center;margin:0;line-height:1.5}.mgxpies>div{display:flex;gap:6px}
 .mgxpcw{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}.mgxpcpie{width:210px}.mgxpctray{display:grid;grid-template-columns:repeat(3,112px);gap:8px}.mgxpcb{border:3px solid #c7d2fe;border-radius:14px;background:#fff;padding:2px;cursor:pointer;touch-action:manipulation}.mgxpcb.used{opacity:.2}.mgxpc{width:100%;height:auto;display:block}
-.mgxlink{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;max-width:860px;margin:0 auto}.mgxll,.mgxlr{display:flex;flex-direction:column;gap:7px}.mgxlr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.mgxll .mgxcard{text-align:left;font-size:1rem}.mgxll em{display:block;font-style:normal;color:#ea580c;font-size:.95rem}.mgxll em.no{color:#94a3b8}.mgxcard.g{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px}.mgxcard.g b{font-size:.95rem}
+.mgxlink{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;max-width:860px;margin:0 auto}.mgxll,.mgxlr{display:flex;flex-direction:column;gap:7px}.mgxlr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.mgxll .mgxcard{text-align:center;font-size:1.2rem;word-break:keep-all}.mgxll em{display:block;font-style:normal;color:#ea580c;font-size:.95rem}.mgxll em.no{color:#94a3b8}.mgxcard.g{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px}.mgxcard.g b{font-size:.95rem}
 .mgxtrend{max-width:760px;margin:0 auto}.mgxty{display:flex;align-items:center;gap:8px;margin:5px 0}.mgxty>em{font-style:normal;font-weight:900;color:var(--mi);width:62px;text-align:right;font-size:.95rem}.mgxty .mgxstrip{flex:1;height:44px}.mgxty .mgxseg{cursor:default}
 .mgxtr{max-width:640px;margin:8px auto 0;display:flex;flex-direction:column;gap:6px}.mgxtrr{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap}.mgxtrr>b{min-width:74px;text-align:center;font-weight:900;color:var(--mi);border-left:8px solid;padding-left:6px}.mgxtrr .mgxb{padding:7px 10px;font-size:.95rem}
 @media(max-width:640px){.mgxstage .qzq{font-size:1.05rem}.mgxpad{grid-template-columns:repeat(6,minmax(0,1fr))}.mgxdeal{gap:4px}.mgxtray{padding:4px 3px}.mgxtl{font-size:.8rem}.mgxtb .mgxb{font-size:.74rem;padding:6px 2px}.mgxbl .m1{width:20px;height:20px}.mgxbl .m2{width:6px;height:20px}.mgxbl .m3{width:6px;height:6px}.mgxmulti{grid-template-columns:repeat(2,minmax(0,1fr))}.mgxlink{grid-template-columns:1fr}.mgxgaps{font-size:1.6rem}.mgxrel{font-size:1.1rem}.mgxchain{font-size:1.05rem}.mgxstack em{width:60px;font-size:.8rem}.mgxpctray{grid-template-columns:repeat(3,84px)}.mgxcup{width:44px}.mgxb{padding:9px 12px;font-size:.95rem}}`;
@@ -8076,15 +8076,31 @@ const RF = {
 const GCOL = ['#f97316', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ec4899', '#14b8a6', '#94a3b8'];
 const GR = {
   /* 띠그래프: items [{n, p}] (p 합 100) · o.hide: 백분율 숨김 · o.title */
-  strip(items, o) { o = o || {}; return `<div class="grstrip">${o.title ? `<div class="grt">${o.title}</div>` : ''}<div class="grbar">${items.map((it, i) => `<span style="width:${it.p}%;background:${it.c || GCOL[i % 8]}"><b>${it.n}</b>${o.hide ? '' : `<em>${it.t != null ? it.t : it.p + '%'}</em>`}</span>`).join('')}</div><div class="grtick">${Array.from({ length: 11 }, (_, i) => `<i style="left:${i * 10}%">${i * 10}</i>`).join('')}</div></div>`; },
+  strip(items, o) { o = o || {}; let acc = 0; const lw = t => String(t).replace(/<[^>]+>/g, '').length;
+    const L = items.map((it, i) => { const pv = it.t != null ? it.t : it.p + '%', mid = acc + it.p / 2; acc += it.p; return { it, i, pv, mid, out: it.p < Math.max(lw(it.n) * 3.2, o.hide ? 0 : lw(pv) * 2.2, 7) }; });
+    const outs = L.filter(x => x.out);
+    return `<div class="grstrip">${o.title ? `<div class="grt">${o.title}</div>` : ''}${outs.length ? `<div class="grcall">${outs.map((x, k) => `<span style="left:${x.mid}%;--lift:${(k % 2) * 34}px"><b>${x.it.n}</b>${o.hide ? '' : `<em>${x.pv}</em>`}<i></i></span>`).join('')}</div>` : ''}<div class="grbar">${L.map(x => `<span style="width:${x.it.p}%;background:${x.it.c || GCOL[x.i % 8]}">${x.out ? '' : `<b>${x.it.n}</b>${o.hide ? '' : `<em>${x.pv}</em>`}`}</span>`).join('')}</div><div class="grtick">${Array.from({ length: 11 }, (_, i) => `<i style="left:${i * 10}%">${i * 10}</i>`).join('')}</div></div>`; },
   /* 원그래프 */
-  pie(items, o) { o = o || {}; const R = o.r || 90, C = R + 26, W = C * 2; let a0 = 0, h = '';
+  pie(items, o) { o = o || {}; const R = o.r || 90, C = R + 26; let a0 = 0, h = '', outs = [];
     const pt = (a, r) => [C + r * Math.sin(a * Math.PI * 2 / 100), C - r * Math.cos(a * Math.PI * 2 / 100)];
-    items.forEach((it, i) => { const a1 = a0 + it.p, [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R), lg = it.p > 50 ? 1 : 0, [lx, ly] = pt(a0 + it.p / 2, R * .62);
+    const tw = t => String(t).replace(/<[^>]+>/g, '').split('').reduce((w, ch) => w + (/[가-힣]/.test(ch) ? 12.5 : 7.5), 0);
+    items.forEach((it, i) => { const a1 = a0 + it.p, [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R), lg = it.p > 50 ? 1 : 0, mid = a0 + it.p / 2, [lx, ly] = pt(mid, R * .62), pv = it.t != null ? it.t : it.p + '%';
       h += it.p >= 100 ? `<circle cx="${C}" cy="${C}" r="${R}" fill="${it.c || GCOL[i % 8]}"/>` : `<path d="M${C},${C} L${x0},${y0} A${R},${R} 0 ${lg} 1 ${x1},${y1} Z" fill="${it.c || GCOL[i % 8]}" stroke="#fff" stroke-width="2"/>`;
-      h += `<text x="${lx}" y="${ly - (o.hide ? 0 : 6)}" text-anchor="middle" class="grpl">${it.n}</text>${o.hide ? '' : `<text x="${lx}" y="${ly + 12}" text-anchor="middle" class="grpp">${it.t != null ? it.t : it.p + '%'}</text>`}`; a0 = a1; });
+      /* 조각 안에 글자가 들어가는지: 가운데 둘레의 길이와 글자 폭 비교 */
+      const arc = 2 * Math.PI * R * .62 * it.p / 100, need = Math.max(tw(it.n), o.hide ? 0 : tw(pv)) + 6, fits = it.p >= 100 || (arc >= need && it.p >= 9);
+      if (fits) h += `<text x="${lx}" y="${ly - (o.hide ? 0 : 6)}" text-anchor="middle" class="grpl">${it.n}</text>${o.hide ? '' : `<text x="${lx}" y="${ly + 12}" text-anchor="middle" class="grpp">${pv}</text>`}`;
+      else outs.push({ mid, it, pv, c: it.c || GCOL[i % 8] });
+      a0 = a1; });
+    /* 작은 조각: 밖으로 빼서 지시선과 함께 (위아래로 겹치지 않게 조금씩 밀어요) */
+    let padX = 0, lastY = { L: -1e9, R: -1e9 };
+    outs.sort((p, q) => pt(p.mid, 1)[1] - pt(q.mid, 1)[1]).forEach(d => { const [ax, ay] = pt(d.mid, R * .86), [bx, by0] = pt(d.mid, R + 14), side = bx >= C ? 'R' : 'L';
+      let by = Math.max(by0, 14, lastY[side] + (o.hide ? 18 : 32)); lastY[side] = by; const ex = side === 'R' ? C + R + 34 : C - R - 34, anc = side === 'R' ? 'start' : 'end', tx = ex + (side === 'R' ? 4 : -4);
+      h += `<polyline points="${ax},${ay} ${bx},${by} ${ex},${by}" fill="none" stroke="${d.c}" stroke-width="2"/><circle cx="${ax}" cy="${ay}" r="2.6" fill="#0f172a"/>`
+        + `<text x="${tx}" y="${by - (o.hide ? -4 : 2)}" text-anchor="${anc}" class="grpl out">${d.it.n}</text>${o.hide ? '' : `<text x="${tx}" y="${by + 13}" text-anchor="${anc}" class="grpp out">${d.pv}</text>`}`;
+      padX = Math.max(padX, Math.abs(ex - C) + Math.max(tw(d.it.n), o.hide ? 0 : tw(d.pv)) + 10 - C); });
     const tk = o.ticks === false ? '' : Array.from({ length: 20 }, (_, i) => { const [x0, y0] = pt(i * 5, R + 2), [x1, y1] = pt(i * 5, R + (i % 2 ? 7 : 12)); return `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#475569" stroke-width="${i % 2 ? 1 : 2}"/>` + (i % 2 ? '' : (() => { const [tx, ty] = pt(i * 5, R + 21); return `<text x="${tx}" y="${ty + 4}" text-anchor="middle" class="grtk">${i * 5}</text>`; })()); }).join('');
-    return `<div class="grpie">${o.title ? `<div class="grt">${o.title}</div>` : ''}<svg viewBox="0 0 ${W} ${W}" width="${W}" height="${W}">${h}${tk}</svg></div>`; },
+    const px = Math.max(0, padX), W = C * 2 + px * 2, H = Math.max(C * 2, ...[0].concat(Object.values(lastY).map(y => y + 24)));
+    return `<div class="grpie">${o.title ? `<div class="grt">${o.title}</div>` : ''}<svg viewBox="${-px} 0 ${W} ${H}" width="${W}" height="${H}">${tk}${h}</svg></div>`; },
   /* 작은 그림(분류 카드용): kind = strip | pie | bars | line | picto */
   thumb(kind, d) { d = d || [40, 25, 20, 15]; const c = GCOL;
     if (kind === 'strip') return `<span class="grth"><span class="grthb">${d.map((p, i) => `<i style="width:${p}%;background:${c[i]}"></i>`).join('')}</span></span>`;
@@ -8103,6 +8119,7 @@ const GR = {
 };
 (() => { const st = document.createElement('style'); st.textContent = `.grstrip{width:min(560px,92vw);margin:8px auto}.grt{font-weight:900;text-align:center;margin-bottom:4px}.grbar{display:flex;height:54px;border:2px solid #334155;border-radius:4px;overflow:hidden}.grbar span{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#0f172a;border-right:2px solid #fff;min-width:0;overflow:hidden;line-height:1.1}.grbar span:last-child{border-right:0}.grbar b{font-size:.85rem;white-space:nowrap}.grbar em{font-style:normal;font-weight:900;font-size:.95rem}
 .grtick{position:relative;height:18px}.grtick i{position:absolute;transform:translateX(-50%);font-style:normal;font-size:.75rem;color:#475569;font-weight:700}
+.grcall{position:relative;height:72px;margin:0 auto}.grcall span{position:absolute;bottom:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:.85rem;line-height:1.15;color:#0f172a;padding-bottom:calc(10px + var(--lift,0px))}.grcall span em{font-style:normal;color:#334155}.grcall span i{position:absolute;bottom:0;left:50%;width:2px;height:calc(10px + var(--lift,0px));background:#334155}.grcall span b{white-space:nowrap}
 .grpie{display:flex;flex-direction:column;align-items:center;margin:6px auto}.grpie svg{max-width:92vw;height:auto}.grpl{font-size:12px;font-weight:900;fill:#0f172a}.grpp{font-size:12px;font-weight:900;fill:#0f172a}.grtk{font-size:10px;font-weight:700;fill:#475569}
 .grbars{margin:6px auto;display:flex;flex-direction:column;align-items:center}.grbb{display:flex;gap:14px;align-items:flex-end;border-bottom:2px solid #334155;padding:0 10px}.grbc{display:flex;flex-direction:column;align-items:center;gap:3px}.grbc span{width:34px;border-radius:4px 4px 0 0}.grbc em{font-style:normal;font-weight:900;font-size:.85rem}.grbc b{font-size:.85rem;margin-top:2px}
 .grline{display:flex;flex-direction:column;align-items:center;margin:6px auto}.grpic{display:inline-flex;flex-direction:column;gap:4px;margin:6px auto;background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:8px 12px}.grpic>div{display:flex;gap:10px;align-items:center}.grpic b{min-width:60px}.grpic small{color:#64748b}
@@ -9006,6 +9023,8 @@ showTab = function (k) { _pz_showTab(k); pauseAway(); resumeHere(); };
 .wnimg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:8px 0;background:#fffdf6;border-radius:14px;padding:4px}.wnimg .dtwrap{margin:0;max-width:100%}
 .wnimg .afw{margin:0}.wnimg svg{max-width:100%;height:auto}
 .wnimg.sm{justify-content:flex-start;background:none;padding:0}.wnimg.sm{flex-wrap:wrap;gap:6px}.wnimg.sm svg{max-height:140px;width:auto}.wnimg.sm .dtwrap{margin:0}
+
+.wnimg svg{max-width:100%;height:auto}.wnimg .geogrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.wnimg.sm .geogrid>div>svg{max-height:110px}.wngo{margin-top:6px}
 </style>
 <script>
 /* =====================================================================
@@ -9030,15 +9049,16 @@ const WN = (() => {
   const strip = h => { const d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<br\s*\/?>/gi, ' ').replace(/<\/(div|p|span)>/gi, '$& '); return d.textContent.replace(/\s+/g, ' ').trim(); };
   const hsh = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   /* 문제 속 그림·표는 그림으로, 글은 그림을 뺀 문장만 */
-  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const FIGSEL = '.afw,.dtwrap,.geogrid,.geofig,.rffig,.v2fig,.uqfig,.center.rffig,svg';
+  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   /* 위아래로 쓴 분수(그림 글자)는 글로 옮길 때 '분자/분모'로 바꿔 두면 화면에서 다시 위아래 분수로 보여요 */
   const frText = c => { c.querySelectorAll('.mixf').forEach(m => { const t = [...m.querySelectorAll('span')].map(x => x.textContent.trim()).filter(Boolean); if (t.length === 3) m.replaceWith(`${t[0]} ${t[1]}/${t[2]}`); });
     [...c.querySelectorAll('span,div')].reverse().forEach(f => { if (!c.contains(f) || !/(^|\s)(frc|fr|frac|frx|fr-v|svfr)(\s|$)/.test(f.className || '')) return; const k = [...f.children].filter(x => x.tagName !== 'I' && x.tagName !== 'HR'); if (k.length === 2) f.replaceWith(`${k[0].textContent.trim()}/${k[1].textContent.trim()}`); }); };
-  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll('.afw,.dtwrap,svg,table').forEach(e => e.remove()); frText(c);
+  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll(FIGSEL + ',table').forEach(e => e.remove()); frText(c);
     /* 색칠한 숫자(큰 수 문제)는 [ ]로 표시해서 오답노트에서도 알아볼 수 있게 */
     let hl = false; c.querySelectorAll('.bignum').forEach(n => { n.querySelectorAll('.hl').forEach(h => { h.replaceWith('[' + h.textContent + ']'); hl = true; }); n.replaceWith(n.textContent); });
     let t = strip(c.innerHTML); if (hl) t = t.replace(/색칠한 숫자/g, '[ ] 안의 숫자'); return t; };
-  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   const qtOf = card => { const q = card && card.querySelector('.qtext'); return q ? txtOf(q.innerHTML) : ''; };
   const norm = s => String(s == null ? '' : s).replace(/[,\s원개번]/g, '');
   let sel = new Set(), view = 'list', run = null;
@@ -9095,10 +9115,10 @@ const WN = (() => {
       ${n ? `<div class="wntools"><label class="wnall"><input type="checkbox" data-wn="all" ${picked.length === n ? 'checked' : ''}> 모두 고르기</label><span class="wncnt">모은 문제 ${n}개 중 <b>${picked.length}개</b> 고름</span>${items.some(e => e.cleared) ? '<button class="btn btn-sub sm" data-wn="purge">🧹 맞힌 문제 정리</button>' : ''}</div>
       <div class="wnlist2">${L.map((e, i) => `<label class="wnitem ${e.cleared ? 'cleared' : ''}"><input type="checkbox" data-wn="pick" data-id="${e.id}" ${sel.has(e.id) ? 'checked' : ''}>
         <div class="wnbody"><div class="wnrow">${tag(e)}${e.cnt > 1 ? `<span class="wnrep">${e.cnt}번 틀림</span>` : ''}${e.cleared ? '<span class="wnok">✅ 다시 풀어 맞혔어요</span>' : ''}${!e.retry ? '<span class="wnpo">🖨 인쇄해서 풀기</span>' : ''}</div>
-        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
-      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
+        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}${!e.retry && e.step && !e.game ? `<button class="btn btn-sub sm wngo" data-wn="goto" data-id="${e.id}">↪ 그 단계로 가서 다시 도전</button>` : ''}</div></label>`).join('')}</div>
+      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${picked.length > rp.length ? `고른 ${picked.length}개 중 ${rp.length}개` : rp.length + '개'})</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 이 창에서 다시 풀 수 없어요. 「↪ 그 단계로 가서 다시 도전」을 누르거나 인쇄해서 풀어요.</p>` : ''}${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -9155,6 +9175,7 @@ const WN = (() => {
     if (a === 'close') return close();
     if (a === 'pick') { t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); return paint(); }
     if (a === 'all') { const L = all(); if (t.checked) L.forEach(x => sel.add(x.id)); else sel.clear(); return paint(); }
+    if (a === 'goto') { e.preventDefault(); const it = all().find(x => x.id === t.dataset.id); if (it && it.step) { close(); try { showTab(it.step[0]); if (it.step[1]) goStep(it.step[0], it.step[1]); } catch (er) {} } return; }
     if (a === 'run') { const list = all().filter(x => sel.has(x.id) && x.retry && !x.cleared); if (!list.length) return; run = { list: shuffle(list.slice()), i: 0, ans: null, res: [] }; view = 'run'; try { Sound.click(); } catch (er) {} return paint(); }
     if (a === 'ans') return judge(t.dataset.v);
     if (a === 'type') { const v = (document.getElementById('wnInput') || {}).value || ''; if (!v.trim()) return; return judge(v.trim()); }
@@ -10830,6 +10851,44 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   };
 })();
 
+/* 🎲 SVDICE — 보드게임 공통 주사위 굴리기 연출 (화면 가운데에서 3D 주사위가 구르다 멈추고, 쿵! 눈이 커져요)
+   SVDICE.roll([값…], { faces:6, labels:['가로','세로','높이'], ms:1100 }) → Promise(끝나면) */
+if (!window.SVDICE) window.SVDICE = (function () {
+  const PIPS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+  const face = n => n <= 6 ? `<div class="sdf">${Array.from({ length: 9 }, (_, i) => `<i class="${PIPS[n].includes(i + 1) ? 'on' : ''}"></i>`).join('')}</div>` : `<div class="sdf num">${n}</div>`;
+  const ROT = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+  let css = false;
+  function addCss() { if (css) return; css = true; const st = document.createElement('style'); st.textContent = `
+#sdOv{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;gap:4vmin;pointer-events:none;background:radial-gradient(circle,rgba(15,23,42,.35),rgba(15,23,42,.05) 70%)}
+.sdw{display:flex;flex-direction:column;align-items:center;gap:8px}.sdw b{font:900 1.2rem 'Jua',sans-serif;color:#fff;text-shadow:0 2px 4px #000;background:rgba(30,41,59,.75);padding:2px 12px;border-radius:999px}
+.sdc{--s:min(16vmin,120px);width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;animation:sdThrow var(--ms,1.1s) cubic-bezier(.2,.75,.3,1) forwards}
+.sdc>div{position:absolute;inset:0;border-radius:18%;background:linear-gradient(145deg,#fff,#e2e8f0);border:3px solid #cbd5e1;box-shadow:inset 0 0 12px rgba(0,0,0,.12)}
+.sdc>div:nth-child(1){transform:translateZ(calc(var(--s)/2))}.sdc>div:nth-child(2){transform:rotateY(90deg) translateZ(calc(var(--s)/2))}.sdc>div:nth-child(3){transform:rotateX(90deg) translateZ(calc(var(--s)/2))}
+.sdc>div:nth-child(4){transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}.sdc>div:nth-child(5){transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}.sdc>div:nth-child(6){transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.sdf{position:absolute;inset:12%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);place-items:center}.sdf i{width:62%;height:62%;border-radius:50%}.sdf i.on{background:radial-gradient(circle at 35% 30%,#475569,#0f172a)}
+.sdf.num{display:flex;align-items:center;justify-content:center;font:900 calc(var(--s)*.5) 'Jua',sans-serif;color:#1e293b}
+.sdw.land .sdc{animation:none}.sdw.land{animation:sdPop .45s ease-out}.sdw.land .sdc>div{border-color:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.45),inset 0 0 12px rgba(0,0,0,.12)}
+@keyframes sdThrow{0%{transform:translate3d(-40vw,-30vh,0) rotateX(0) rotateY(0) scale(.6)}60%{transform:translate3d(0,4vh,0) rotateX(var(--rx2)) rotateY(var(--ry2)) scale(1.1)}80%{transform:translate3d(0,-2vh,0) rotateX(var(--rx3)) rotateY(var(--ry3)) scale(1)}100%{transform:translate3d(0,0,0) rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}}
+@keyframes sdPop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+.sdShake{animation:sdShake .35s}@keyframes sdShake{20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}`; document.head.appendChild(st); }
+  function roll(vals, o = {}) {
+    addCss(); vals = [].concat(vals); const ms = o.ms || 1100;
+    return new Promise(res => {
+      const old = document.getElementById('sdOv'); if (old) old.remove();
+      const ov = document.createElement('div'); ov.id = 'sdOv';
+      ov.innerHTML = vals.map((v, i) => { const r = ROT[Math.min(6, Math.max(1, v))] || [0, 0], sp = 2 + i;
+        const faces = v <= 6 ? [1, 2, 3, 4, 5, 6] : [v, v, v, v, v, v];
+        const order = v <= 6 ? [1, 2, 3, 4, 5, 6] : faces;
+        return `<div class="sdw"><div class="sdc" style="--ms:${ms + i * 180}ms;--rx:${v <= 6 ? r[0] : 0}deg;--ry:${v <= 6 ? r[1] : 0}deg;--rx2:${360 * sp + 40}deg;--ry2:${360 * sp - 30}deg;--rx3:${360 * (sp + 1)}deg;--ry3:${360 * (sp + 1)}deg">${order.map(n => `<div>${face(n)}</div>`).join('')}</div>${o.labels ? `<b>${o.labels[i] || ''}</b>` : ''}</div>`; }).join('');
+      document.body.appendChild(ov); try { (Sound.dice || Sound.flip || Sound.pop)(); } catch (e) {}
+      const tot = ms + (vals.length - 1) * 180;
+      setTimeout(() => { ov.querySelectorAll('.sdw').forEach(w => w.classList.add('land')); try { Sound.pop(); } catch (e) {} const card = document.querySelector('#s2body .card'); if (card) { card.classList.remove('sdShake'); void card.offsetWidth; card.classList.add('sdShake'); } }, tot);
+      setTimeout(() => { ov.style.transition = 'opacity .3s'; ov.style.opacity = '0'; setTimeout(() => { ov.remove(); res(); }, 300); }, tot + (o.hold || 650));
+    });
+  }
+  return { roll };
+})();
+
 /* =====================================================================
    🎲 BGX — 6학년 새 보드게임 공통 틀 (진짜 보드게임 원리 + 수학 내용을 직접 조작)
    BGX.make({ id, icon, color, soft, title, short, sub, how:[…], startBtn, startSay, guide:[slides],
@@ -10944,7 +11003,7 @@ body.svsl-on .bxr{padding-bottom:44px}
       const board = `<div class="bxbd">${g.players.map((_, q) => band(q, me && q === p && g.sel >= 0)).join('')}</div>`;
       const rem = 100 - g.fill[p];
       const cds = `<div class="bdcds">${g.cds.map((c, i) => `<button class="bxcd ${me ? 'can' : ''} ${g.sel === i ? 'sel' : ''}" ${me ? `data-bx="cd" data-v="${i}"` : 'disabled'}><small>전체 ${c.tot}명 중</small>${c.nm} ${c.v}명</button>`).join('')}</div>`;
-      const side = `${cds}${me ? (g.sel >= 0 ? `<div class="bxhow">내 띠를 눌러 <b>${g.cds[g.sel].nm}</b>만큼 붙일 길이를 정해요. 지금 <b>${Math.max(0, g.cur - g.fill[p])}%</b> (남은 칸 ${rem}%)</div><div class="bxrow"><button class="btn btn-sub" data-bx="pm" data-v="-5">◀ 5%</button><button class="btn btn-sub" data-bx="pm" data-v="5">5% ▶</button></div><div class="bxrow"><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button><button class="btn btn-primary btn-lg" data-bx="paste" ${g.cur > g.fill[p] ? '' : 'disabled'}>🎀 띠에 붙이기</button></div>`
+      const side = `${cds}${me ? (g.sel >= 0 ? `<div class="bxhow">내 띠를 눌러 <b>${g.cds[g.sel].nm}</b>만큼 붙일 길이를 정해요. 지금 <b>${Math.max(0, g.cur - g.fill[p])}%</b> (남은 칸 ${rem}%)</div><div class="bxrow"><button class="btn btn-sub" data-bx="pm" data-v="-5">◀ 5%</button><button class="btn btn-sub" data-bx="pm" data-v="5">5% ▶</button></div><div class="bxrow"><button class="btn btn-primary btn-lg" data-bx="paste" ${g.cur > g.fill[p] ? '' : 'disabled'}>🎀 띠에 붙이기</button></div>`
         : `<div class="bxhow">조사 카드를 골라요. 남은 칸은 <b>${rem}%</b>예요.</div><div class="bxrow"><button class="btn btn-sub" data-bx="swap">🔄 카드 바꾸기 (차례 넘김)</button></div>`) : ''}`;
       return { board, side }; },
     act(g, a, v, el, api, ev) { const p = g.turn, f = g.fill[p];
@@ -11345,6 +11404,19 @@ const CKS = {
       if (x !== want) { api.say(false, `그 자리는 <b>${ckRead(x)}</b>이에요. 한 칸이 ${ckRead((o.b - o.a) / o.n)}인 것을 생각하며 다시 꽂아요.`, true); return; }
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
+
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
 
 
 /* =====================================================================
@@ -12332,6 +12404,9 @@ body.svsl-on .svsl-qhide{display:none!important}
 body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
 /* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
 body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
+
+/* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
+body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -12722,7 +12797,21 @@ function fitQ(q, box, opt) { if (!q || !box) return; qShape(q);
     if (lv === 0 && sibs.length) { sibs.forEach(c => { c.style.zoom = .62; }); return fitQ(q, box, { lv: 1 }); }
     if (lv <= 1 && sibs.length) { sibs.forEach(c => c.classList.add('svsl-qhide')); return fitQ(q, box, { lv: 2 }); }
     if (lv <= 2) return fitQ(q, box, { lv: 3, floor: .56 });
-    box.classList.add('svsl-qscroll'); } }
+    box.classList.add('svsl-qscroll'); }
+  else figFinal(q, box, key, answered); }
+/* 마지막 배치가 끝난 뒤, 왼쪽 그림 칸의 실제 크기에 그림을 꽉 맞춰요 (빈 칸 없이). 답을 고른 뒤에는 그림이 더 커지지 않아요 */
+const FZ = {};
+function figFinal(q, box, key, answered) { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (!f) return;
+  const keep = f.style.zoom, keepH = qF.style.height; f.style.zoom = 1; const fw = f.offsetWidth || 1, fh = f.offsetHeight || 1; f.style.zoom = .05; qF.style.height = ''; const base = Math.max(box.clientHeight, box.scrollHeight) + 1;
+  const cs = getComputedStyle(qF), W = qF.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8, H = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+  let z = Math.max(.5, Math.min(3.2, W / fw, H / fh)); if (answered && FZ[key]) z = Math.min(z, FZ[key]); else if (!answered) FZ[key] = z;
+  f.style.zoom = z.toFixed(3);
+  const over = () => box.scrollHeight > base;
+  for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+  if (over()) { qF.style.height = keepH; f.style.zoom = .05; const H2 = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+    z = Math.max(.5, Math.min(z / .95 ** 14, W / fw, H2 / fh)); f.style.zoom = z.toFixed(3);
+    for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+    if (over()) f.style.zoom = keep; } }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
