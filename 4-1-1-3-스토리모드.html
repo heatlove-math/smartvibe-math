@@ -9721,6 +9721,9 @@ body.svsl-on .svsl-qhide{display:none!important}
 body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
 /* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
 body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
+
+/* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
+body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
