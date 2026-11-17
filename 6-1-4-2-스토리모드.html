@@ -6163,6 +6163,30 @@ S1_TOOLS.push(['deg1', 'half', '도구 1', '1도를 찾아라', '직각을 90조
 BADGES.length = 0;
 BADGES.push(['deg1', '도구 1 · 1도를 찾아라 (라티오 봉인)', '1️⃣'], ['look', '도구 2 · 각도기 살펴보기 (라티오 봉인)', '🔍'], ['place', '도구 3 · 각도기 대기 (라티오 봉인)', '📐'], ['ext', '도구 4 · 짧은 변 늘여 재기 (라티오 봉인)', '📏']);
 
+/* 보기는 항상 4개: 틀린 보기가 모자라면 답의 꼴(분수·수·이름·비)에 맞추어 채워요 */
+window.svFill4 = function (ans, ds) {
+  ans = String(ans); const D = []; (ds || []).map(String).forEach(x => { if (x !== ans && !D.includes(x)) D.push(x); });
+  if (D.length >= 3) return D;
+  const add = t => { t = String(t); if (D.length < 3 && t !== ans && !D.includes(t) && !/NaN|undefined/.test(t)) D.push(t); };
+  const plain = ans.replace(/<[^>]+>/g, '').trim(); let m;
+  const fam = [['삼각기둥', '사각기둥', '오각기둥', '육각기둥', '칠각기둥', '팔각기둥'], ['삼각뿔', '사각뿔', '오각뿔', '육각뿔', '칠각뿔', '팔각뿔'], ['삼각형', '사각형', '오각형', '육각형'], ['막대그래프', '꺾은선그래프', '띠그래프', '그림그래프']];
+  fam.forEach(F => { if (F.includes(plain)) F.forEach(add); });
+  if (D.length < 3 && (m = /^(\D*?)(\d+) (\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], w = +m[2], n = +m[3], d = +m[4], u = m[5]; [[w + 1, n, d], [w, n + 1 < d ? n + 1 : n - 1, d], [w, n, d + 1], [w - 1, n, d]].forEach(v => { if (v[0] > 0 && v[1] > 0) add(p + v[0] + ' ' + v[1] + '/' + v[2] + u); }); }
+  else if (D.length < 3 && (m = /^(\D*?)(\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], n = +m[2], d = +m[3], u = m[4]; [[n + 1, d], [n, d + 1], [d, n], [n + 2, d], [n, d + 2]].forEach(v => { if (v[0] !== v[1]) add(p + v[0] + '/' + v[1] + u); }); }
+  else if (D.length < 3 && (m = /^(\d+) : (\d+)$/.exec(plain))) { const a = +m[1], b = +m[2]; [[b, a], [a, a + b], [a + b, b], [a + 1, b]].forEach(v => add(v[0] + ' : ' + v[1])); }
+  else if (D.length < 3 && (m = /^(\d+(?:\.\d+)?) ÷ (\d+)$/.exec(plain))) { const a = m[1], b = +m[2]; [b + 1, b + 2, b > 2 ? b - 1 : b + 3].forEach(v => add(a + ' ÷ ' + v)); }
+  else if (D.length < 3 && !/[:÷×=]/.test(plain) && (m = /^(\D*?)(\d+(?:\.\d+)?)(\D*)$/.exec(plain))) { const n = parseFloat(m[2]), st = m[2].includes('.') ? Math.pow(10, -(m[2].split('.')[1].length)) : 1; [n + st, n - st, n + 2 * st, n * 2, n + 3 * st].forEach(v => { if (v > 0) add(m[1] + String(+v.toFixed(6)) + m[3]); }); }
+  if (D.length < 3) ['알 수 없어요', '모두 알맞아요', '모두 알맞지 않아요'].forEach(add);
+  return D;
+};
+(function () {
+  const patch = () => {
+    try { if (typeof mkI === 'function' && !mkI.__f4) { const o = mkI, n = function (text, img, ans, ds, ex, sa) { return o(text, img, ans, window.svFill4(ans, ds), ex, sa); }; n.__f4 = 1; mkI = n; } } catch (e) {}
+    try { if (typeof LC !== 'undefined' && LC && Array.isArray(LC.basic)) LC.basic.forEach(b => { if (!b || b.__f4 || typeof b.gen !== 'function') return; const g = b.gen; b.__f4 = 1;
+      b.gen = function () { const q = g.apply(this, arguments); try { if (q && Array.isArray(q.choices) && q.choices.length >= 2 && q.choices.length < 4 && q.ans != null && !/<svg|<img/.test(q.choices.join(''))) { const A = String(q.ans), W = window.svFill4(A, q.choices.map(String).filter(x => x !== A)); W.forEach(x => { if (q.choices.length < 4 && !q.choices.map(String).includes(x)) q.choices.push(x); }); } } catch (e) {} return q; }; }); } catch (e) {}
+  };
+  patch(); document.addEventListener('DOMContentLoaded', patch); window.addEventListener('load', patch); setTimeout(patch, 0); setTimeout(patch, 600);
+})();
 /* =====================================================================
    📐 2단원 3~6차시 공통 엔진 (u2kit)
    · stepTool : 그림 + 질문 + 끌기 조작을 단계별로 이어 가는 개념 도구
@@ -6352,7 +6376,7 @@ function lessonSetup(C) {
   S1_ITEMS.push({ id: 'j1', label: `보스전 1 · ${C.j1.label}`, keys: ['j1'], max: 22 }, { id: 'j2', label: `보스전 2 · ${C.j2.label}`, keys: ['j2'], max: 15 }, { id: 'j3', label: `보스전 3 · ${C.j3.label}`, keys: ['j3'], max: 15 });
   genParts = function () {
     const P = {};
-    C.basic.forEach((b, i) => { const k = 'b' + (i + 1), q = b.gen(); P[k] = Object.assign({ key: k, label: `기본 문제 ${i + 1} · ${b.label}`, choice: true, write: false }, q); });
+    C.basic.forEach((b, i) => { const k = 'b' + (i + 1), q = b.gen(); try { if (q && Array.isArray(q.choices) && q.choices.length >= 2 && q.choices.length < 4 && q.ans != null && !/<svg|<img/.test(q.choices.join(''))) { const A = String(q.ans); window.svFill4(A, q.choices.map(String).filter(x => x !== A)).forEach(x => { if (q.choices.length < 4 && !q.choices.map(String).includes(x)) q.choices.push(x); }); } } catch (e) {} P[k] = Object.assign({ key: k, label: `기본 문제 ${i + 1} · ${b.label}`, choice: true, write: false }, q); });
     P.j1 = { key: 'j1', label: '보스전 1 · ' + C.j1.label, text: C.j1.label, hint: '', ok: '' };
     ['j2', 'j3'].forEach(k => { P[k] = Object.assign({ key: k, label: `보스전 ${k[1]} · ${C[k].label}`, choice: true, write: false }, C[k].gen()); });
     return P;
@@ -7026,7 +7050,8 @@ const MX = (() => {
   const pop = () => { try { Sound.pop(); } catch (e) {} };
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   const mixed = s => String(s == null ? '' : s).trim().replace(/^(\d+)\s*(?:과|와|\s)\s*(\d+)\s*\/\s*(\d+)$/, (m, w, n, dn) => (+w * +dn + +n) + '/' + dn);
-  const norm = s => mixed(s).replace(/\s+/g, '').replace(/[：∶]/g, ':').replace(/[．。]/g, '.').replace(/／/g, '/').replace(/,/g, '').toLowerCase();
+  const half = v => String(v == null ? '' : v).replace(/[\uFF10-\uFF19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\uFF0E/g, '.').replace(/\uFF05/g, '%').replace(/\uFF1A/g, ':').replace(/\uFF0F/g, '/');
+  const norm = s => mixed(half(s)).replace(/\s+/g, '').replace(/[：∶]/g, ':').replace(/[．。]/g, '.').replace(/／/g, '/').replace(/,/g, '').toLowerCase();
   const UNIT = /(배|개|명|원|컵|칸|번|%|퍼센트|l|kg|g|km|m|cm|시간|마리|자루|권|점|표|쪽|도|℃)$/;
   const unstrip = s => { let x = norm(s); for (let i = 0; i < 2; i++) x = x.replace(UNIT, ''); return x; };
   const isNum = x => /^-?\d+(\.\d+)?$/.test(x), FR = /^(\d+)\/(\d+)$/;
@@ -7415,7 +7440,7 @@ const MX = (() => {
   }
 
   try { const s = document.createElement('style'); s.textContent = `
-.mxin{height:44px;border:3px solid #94a3b8;border-radius:12px;text-align:center;font-size:1.3rem;font-weight:900;font-family:inherit;color:#0f172a;background:#fff;margin:2px 4px;padding:0 4px;vertical-align:middle}
+.mxin{height:46px;min-width:92px;box-sizing:border-box;border:3px solid #94a3b8;border-radius:12px;text-align:center;font-size:1.3rem;font-weight:900;font-family:inherit;letter-spacing:0;color:#0f172a;background:#fff;margin:2px 4px;padding:0 6px;vertical-align:middle}
 .mxin:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px #bfdbfe}.mxin.bad{border-color:#dc2626;background:#fef2f2}
 .mxok{display:inline-block;min-width:36px;text-align:center;color:#15803d;background:#dcfce7;border-radius:10px;padding:2px 8px;font-size:1.25rem}
 .mxrec{background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:10px 14px;margin:10px auto 0;font-size:1.25rem;font-weight:800;line-height:2.3;text-align:center;max-width:860px}.mxrec.sm{font-size:1.05rem;padding:4px 8px;line-height:1.9;margin-top:6px}
@@ -7741,11 +7766,11 @@ const MGX = (() => {
     gen() { const r = c.gen(); r.i = 0; r.B = [0]; r.cur = 0; r.miss = 0; return r; },
     view(r) { const s0 = r.B[r.B.length - 1], its = r.B.slice(1).map((b, i) => ({ n: r.items[i].n, p: (b - r.B[i]) * 5, c: COL[i % 8] }));
       if (r.cur > s0) its.push({ n: '', p: (r.cur - s0) * 5, c: COL[r.i % 8] + '99' }); if (r.done && r.B.length === r.items.length) its.push({ n: r.items[r.items.length - 1].n, p: (20 - s0) * 5, c: COL[(r.items.length - 1) % 8] });
-      return `<div class="qzq">${r.done && r.B.length === r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표를 보고 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b>의 백분율만큼 원에 그려요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpiew2"><div class="mgxpiedrag" data-mgxdrag="ang">${pieSVG(its, { nop: true, w: 250, r: 92 })}</div><div class="mgxpies"><p>원의 눈금을 누르거나 끌어 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b> 조각의 끝을 정해요.<br>눈금 한 칸은 5%예요.</p><div>${btn('adj:-1', '− 한 칸', 'sub', r.cur <= s0)}${btn('adj:1', '＋ 한 칸', 'go', r.cur >= 20)}</div>${btn('ok', '✅ 이만큼이에요', 'ok', r.cur <= s0)}</div></div>`; },
+      return `<div class="qzq">${r.done && r.B.length === r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표를 보고 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b>의 백분율만큼 원에 그려요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpiew2"><div class="mgxpiedrag" data-mgxdrag="ang">${pieSVG(its, { nop: true, w: 250, r: 92 })}</div><div class="mgxpies"><p>원의 눈금을 누르거나 끌어 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b> 조각의 끝을 정해요.<br>원의 눈금은 모두 20칸이에요.</p><div>${btn('adj:-1', '− 한 칸', 'sub', r.cur <= s0)}${btn('adj:1', '＋ 한 칸', 'go', r.cur >= 20)}</div>${btn('ok', '✅ 이만큼이에요', 'ok', r.cur <= s0)}</div></div>`; },
     on: { ang(r, p) { const s0 = r.B[r.B.length - 1]; let t = Math.round(p.ang * 20); if (t < s0) t = s0 >= 10 && t <= 2 ? 20 : s0; r.cur = t; },
       adj(r, x, a) { const s0 = r.B[r.B.length - 1]; r.cur = Math.max(s0, Math.min(20, r.cur + +x)); a.pop(); },
       ok(r, x, a) { const s0 = r.B[r.B.length - 1], it = r.items[r.i], need = Math.round(it.v / r.total * 20); if (r.cur <= s0) return;
-        if (r.cur - s0 !== need) { r.miss++; if (r.miss >= 2) return a.end(false, `${it.n}: ${it.v} ÷ ${r.total} × 100 = ${need * 5}(%) → 눈금 ${need}칸이에요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); r.cur = s0; return a.slip(`${it.n}의 백분율을 구해 봐요: ${it.v} ÷ ${r.total} × 100. 눈금 한 칸이 5%예요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); }
+        if (r.cur - s0 !== need) { r.miss++; if (r.miss >= 2) return a.end(false, `${it.n}: ${it.v} ÷ ${r.total} × 100 = ${need * 5}(%) → 눈금 ${need}칸이에요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); r.cur = s0; return a.slip(`${it.n}의 백분율을 구해 봐요: ${it.v} ÷ ${r.total} × 100. 원 전체 100%가 눈금 20칸이에요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); }
         r.B.push(r.cur); r.i++; a.pop(); if (r.i >= r.items.length - 1) a.end(true, `${r.items.map(q => `${q.n} ${F(q.v / r.total * 100)}%`).join(', ')} · 남은 부분이 ${r.items[r.items.length - 1].n}${J(r.items[r.items.length - 1].n, '이에요', '예요')}.`); } },
     auto(r) { const A = []; r.items.slice(0, -1).forEach(it => { for (let k = 0; k < Math.round(it.v / r.total * 20); k++) A.push('adj:1'); A.push('ok'); }); return A; } }; }
 
@@ -7754,7 +7779,7 @@ const MGX = (() => {
     return {
       gen() { const r = c.gen(); r.P = r.items.map(it => Math.round(it.v / r.total * 100)); const ex = shuffle([5, 10, 15, 20, 25, 30, 35, 40, 45, 50].filter(p => !r.P.includes(p))).slice(0, 2); r.tray = shuffle(r.P.concat(ex)).map(p => ({ p, used: false })); r.i = 0; return r; },
       view(r) { const done = r.items.slice(0, r.i).map((it, i) => ({ n: it.n, p: r.P[i] }));
-        return `<div class="qzq">${r.i >= r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표에서 색칠된 <b>${r.items[r.i].n}</b>의 백분율에 맞는 조각을 골라 원그래프를 완성해요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpcw"><div class="mgxpcpie">${pieSVG(done, { nop: true, w: 210, r: 78, lab: false })}</div><div class="mgxpctray">${r.tray.map((t, k) => `<button class="mgxpcb ${t.used ? 'used' : ''}" data-an="mgx" data-v="t:${k}" ${t.used ? 'disabled' : ''}>${piece(t.p, COL[k % 8])}</button>`).join('')}</div></div><p class="mgxhint">조각의 점선 한 칸은 5%예요. 칸 수를 세어 알맞은 조각을 눌러요</p>`; },
+        return `<div class="qzq">${r.i >= r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표에서 색칠된 <b>${r.items[r.i].n}</b>의 백분율에 맞는 조각을 골라 원그래프를 완성해요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpcw"><div class="mgxpcpie">${pieSVG(done, { nop: true, w: 210, r: 78, lab: false })}</div><div class="mgxpctray">${r.tray.map((t, k) => `<button class="mgxpcb ${t.used ? 'used' : ''}" data-an="mgx" data-v="t:${k}" ${t.used ? 'disabled' : ''}>${piece(t.p, COL[k % 8])}</button>`).join('')}</div></div><p class="mgxhint">원 전체는 점선 20칸이에요. 조각의 칸 수를 세어 알맞은 조각을 눌러요</p>`; },
       on: { t(r, x, a) { const t = r.tray[+x], it = r.items[r.i]; if (!t || t.used) return;
           if (t.p !== r.P[r.i]) return a.slip(`그 조각은 ${t.p / 5}칸, ${t.p}%예요. ${it.n}의 백분율을 구해 봐요: ${it.v} ÷ ${r.total} × 100`, `${r.title} · ${it.n}에 ${t.p}% 조각을 고름`);
           t.used = true; r.i++; a.pop(); if (r.i >= r.items.length) a.end(true, r.items.map((q, i) => `${q.n} ${q.v} ÷ ${r.total} × 100 = ${r.P[i]}(%)`).join(' · ')); } },
@@ -7904,7 +7929,7 @@ const RF = {
   bar(a, b, o) { o = o || {}; const u = n => Array.from({ length: n }, () => '<i></i>').join('');
     return `<div class="rfbar">${o.only !== 'b' ? `<div class="rfrow"><span class="rfl or">${o.la || '비교하는 양'}</span><span class="rfu or">${u(a)}</span><b>${o.na != null ? o.na : a}</b></div>` : ''}${o.only !== 'a' ? `<div class="rfrow"><span class="rfl bl">${o.lb || '기준량'}</span><span class="rfu bl">${u(b)}</span><b>${o.nb != null ? o.nb : b}</b></div>` : ''}</div>`; },
   /* 그림 개수: 이모지 a개와 b개 */
-  pics(ea, a, eb, b, o) { o = o || {}; return `<div class="rfpics"><div class="${o.ka || ''}">${ea.repeat(a)}</div><div class="${o.kb || ''}">${eb.repeat(b)}</div></div>`; },
+  pics(ea, a, eb, b, o) { o = o || {}; const rw = (e, n) => Array.from({ length: n }, (_, i) => e + ((i + 1) % 10 === 0 && i + 1 < n ? '<br>' : '')).join(''); return `<div class="rfpics"><div class="${o.ka || ''}">${rw(ea, a)}</div><div class="${o.kb || ''}">${rw(eb, b)}</div></div>`; },
   /* 100칸 모눈: k칸 칠함 */
   grid(k, o) { o = o || {}; return `<div class="rfgrid ${o.sm ? 'sm' : ''}">${Array.from({ length: 100 }, (_, i) => `<i class="${i < k ? 'on' : ''}"></i>`).join('')}</div>`; },
   tbl(head, rows) { return `<table class="cktable rftab"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`; }
@@ -7913,7 +7938,7 @@ const RF = {
 .rfu{display:inline-flex;gap:2px}.rfu i{display:inline-block;width:26px;height:26px;border-radius:5px}.rfu.or i{background:#fb923c;border:2px solid #ea580c}.rfu.bl i{background:#60a5fa;border:2px solid #2563eb}
 .rfpics{display:flex;flex-direction:column;gap:4px;align-items:center;font-size:1.8rem;line-height:1.15;margin:6px 0}.rfpics .or{background:#fff7ed;border:2px solid #fdba74;border-radius:12px;padding:2px 10px}.rfpics .bl{background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:2px 10px}
 .rfgrid{display:inline-grid;grid-template-columns:repeat(10,22px);gap:2px;padding:4px;background:#e2e8f0;border-radius:8px;margin:6px auto}.rfgrid.sm{grid-template-columns:repeat(10,14px)}.rfgrid i{display:block;aspect-ratio:1;background:#fff;border-radius:2px}.rfgrid i.on{background:#f97316}
-.rftab{margin:6px auto;font-size:1.1rem}.rftab td,.rftab th{padding:6px 12px;text-align:center}.qtext .rfbar,.qtext .rfgrid,.qtext .rfpics,.qtext .rftab{display:flex;margin-left:auto;margin-right:auto}.qtext .rfgrid{display:grid;width:max-content}
+.rftab{margin:6px auto;font-size:1.1rem}.rftab td,.rftab th{padding:6px 12px;text-align:center;border:2px solid #94a3b8}.rftab th{background:#e0e7ff;font-weight:900}.rftab td{background:#fff;font-weight:900}.rftab{border-collapse:collapse}.qtext .rfbar,.qtext .rfgrid,.qtext .rfpics,.qtext .rftab{display:flex;margin-left:auto;margin-right:auto}.qtext .rfgrid{display:grid;width:max-content}
 .cbl{color:#1d4ed8;font-weight:900}.cor{color:#c2410c;font-weight:900}`; document.head.appendChild(st); })();
 /* ---------- 4단원 문제은행 도구 ---------- */
 const TM4 = x => Math.abs(x * 100 - Math.round(x * 100)) < 1e-9;                     /* 소수 둘째 자리까지 나누어떨어지나 */
@@ -8006,14 +8031,14 @@ lessonSetup({
   target: '두 수를 나눗셈으로 비교하여 비로 나타낼 수 있어요.',
   trap: { title: `${VN}의 순서 뒤바꾸기 함정`, sub: `${VN}${jo(VN, '이', '가')} 비의 두 수 순서를 슬쩍 바꾸어 놓았어요.`, taunt: '3 : 5나 5 : 3이나 같은 거지!' },
   basic: [
-    { label: '비로 나타내기', gen: () => { const I = pick(ITEMS), [a, b] = pr(); return { text: `${I[1]} ${a}개, ${I[3]} ${b}개가 있어요. <b>${I[3]} 수에 대한 ${I[1]} 수의 비</b>는?${FIG(RF.pics(I[0], a, I[2], b, { ka: 'or', kb: 'bl' }))}`, choices: opt4(RT(a, b), RW(a, b)), ans: RT(a, b), hint: `“~에 대한” 쪽이 기준량이에요. 기준량은 비의 뒤에 써요.`, ok: `${I[1]} : ${I[3]} = ${RT(a, b)}` }; } },
-    { label: '비 읽기', gen: () => { const [a, b] = pr(), A = `${b}에 대한 ${a}의 비`; return { text: `<b>${RT(a, b)}</b>를 바르게 읽은 것은?${FIG(RF.bar(a, b, { la: `앞의 수 ${a}`, lb: `뒤의 수 ${b}` }))}`, choices: opt4(A, [`${a}에 대한 ${b}의 비`, `${b} 대 ${a}`, `${b}의 ${a}에 대한 비`]), ans: A, hint: '비 □ : △는 “△에 대한 □의 비”로 읽어요.', ok: `${RT(a, b)} = ${a} 대 ${b} = ${b}에 대한 ${a}의 비` }; } },
-    { label: '기준량 찾기', gen: () => { const [a, b] = pr(); return { text: `비 <b>${RT(a, b)}</b>에서 <b>기준량</b>은 얼마일까요?${FIG(RF.bar(a, b, { la: '앞의 수', lb: '뒤의 수' }))}`, choices: opt4(String(b), [String(a), String(a + b), String(Math.abs(a - b))]), ans: String(b), hint: '비에서 기준량은 뒤에 있는 수예요.', ok: `${RT(a, b)}에서 기준량은 ${b}, 비교하는 양은 ${a}` }; } },
-    { label: '순서를 바꾸면', gen: () => { const [a, b] = pr(); return { text: `<b>${RT(a, b)}</b>와 <b>${RT(b, a)}</b>는 같은 비일까요?${FIG(RF.bar(a, b, { la: RT(a, b) + ' 앞', lb: RT(a, b) + ' 뒤' }))}`, choices: ['달라요. 기준량이 달라요.', '같아요. 쓰인 수가 같아요.'], ans: '달라요. 기준량이 달라요.', hint: '각 비의 기준량을 찾아 비교해요.', ok: `${RT(a, b)}의 기준량은 ${b}, ${RT(b, a)}의 기준량은 ${a}예요.` }; } },
-    { label: `${VN}의 함정`, gen: () => { const [a, b] = pr(); return { text: `남학생 ${a}명, 여학생 ${b}명이에요. ${VN}: "여학생 수에 대한 남학생 수의 비는 <b>${RT(b, a)}</b>야!" 바른 비는?${FIG(RF.pics('👦', a, '👧', b, { ka: 'or', kb: 'bl' }))}`, choices: opt4(RT(a, b), RW(a, b)), ans: RT(a, b), hint: '기준량(여학생 수)은 뒤에 써요.', ok: `남학생 : 여학생 = ${RT(a, b)}` }; } },
-    { label: '전체에 대한 비', gen: () => { const [a, b] = pr(); return { text: `빨간 구슬 ${a}개, 파란 구슬 ${b}개가 있어요. <b>전체 구슬 수에 대한 빨간 구슬 수의 비</b>는?${FIG(RF.pics('🔴', a, '🔵', b))}`, choices: opt4(RT(a, a + b), [RT(a, b), RT(a + b, a), RT(b, a + b)]), ans: RT(a, a + b), hint: `전체 구슬 수 = ${a} + ${b}`, ok: `빨간 구슬 : 전체 = ${RT(a, a + b)}` }; } },
-    { label: '읽은 말을 비로', gen: () => { const [a, b] = pr(), f = pick([`${a}의 ${b}에 대한 비`, `${b}에 대한 ${a}의 비`, `${a}${WA(a)} ${b}의 비`]); return { text: `다음을 비로 나타내면?${RCARD(f)}`, choices: opt4(RT(a, b), RW(a, b)), ans: RT(a, b), hint: '“~에 대한” 수가 뒤, 다른 수가 앞이에요.', ok: `${f} = ${RT(a, b)}` }; } },
-    { label: '도형에서 비', gen: () => { const [w, h] = pr(); return { text: `가로 ${w} cm, 세로 ${h} cm인 직사각형이에요. <b>세로에 대한 가로의 비</b>는?<div class="center"><div class="rxrect" style="width:${w * 22}px;height:${h * 22}px"><span class="w">가로 ${w} cm</span><span class="h">세로 ${h} cm</span></div></div>`, choices: opt4(RT(w, h), RW(w, h)), ans: RT(w, h), hint: '기준량은 세로예요.', ok: `가로 : 세로 = ${RT(w, h)}` }; } }
+    { label: '비로 나타내기', gen: () => { const I = pick(ITEMS), [a, b] = pr(); return { text: `${I[1]} ${a}개와 ${I[3]} ${b}개가 있어요. <b>${I[3]} 수에 대한 ${I[1]} 수의 비</b>는 어느 것일까요?${FIG(RF.pics(I[0], a, I[2], b, { ka: 'or', kb: 'bl' }))}`, choices: opt4(RT(a, b), RW(a, b)), ans: RT(a, b), hint: '“~에 대한” 쪽이 기준량이에요. 기준량을 어디에 쓰는지 떠올려요.', ok: `${I[1]} 수 : ${I[3]} 수 = ${RT(a, b)}` }; } },
+    { label: '비 읽기', gen: () => { const [a, b] = pr(), A = `${b}에 대한 ${a}의 비`; return { text: `비 <b>${RT(a, b)}</b>를 바르게 읽은 것은 어느 것일까요?${FIG(RF.bar(a, b, { la: `앞의 수 ${a}`, lb: `뒤의 수 ${b}` }))}`, choices: opt4(A, [`${a}에 대한 ${b}의 비`, `${b} 대 ${a}`, `${b}의 ${a}에 대한 비`]), ans: A, hint: '기호 : 의 오른쪽에 있는 수가 기준량이에요.', ok: `${RT(a, b)} → ${a} 대 ${b}, ${b}에 대한 ${a}의 비` }; } },
+    { label: '기준량 찾기', gen: () => { const I = pick(ITEMS), [a, b] = pr(), sw = Math.random() < .5, base = sw ? I[1] : I[3], cmp = sw ? I[3] : I[1]; return { text: `${I[1]} ${a}개와 ${I[3]} ${b}개가 있어요. <b>${base} 수에 대한 ${cmp} 수의 비</b>에서 기준량은 무엇일까요?${FIG(RF.pics(I[0], a, I[2], b, { ka: 'or', kb: 'bl' }))}`, choices: shuffle([`${base} 수`, `${cmp} 수`, `${I[1]}${jo(I[1], '과', '와')} ${I[3]} 수의 합`, `${I[1]}${jo(I[1], '과', '와')} ${I[3]} 수의 차`]), ans: `${base} 수`, hint: '“~에 대한”이 붙은 양을 찾아요.', ok: `${base} 수를 기준으로 ${cmp} 수를 비교해요. 기준량은 ${base} 수예요.` }; } },
+    { label: '순서를 바꾸면', gen: () => { const [a, b] = pr(); return { text: `두 비 <b>${RT(a, b)}</b>${jn(b, '과', '와')} <b>${RT(b, a)}</b>를 바르게 설명한 것은 어느 것일까요?${FIG(`<div class="rxtwo">${RCARD(RT(a, b))}${RCARD(RT(b, a))}</div>`)}`, choices: shuffle(['기준량이 서로 달라서 다른 비예요', '쓰인 두 수가 같아서 같은 비예요', '두 수의 합이 같아서 같은 비예요', '비교하는 양이 서로 같아서 같은 비예요']), ans: '기준량이 서로 달라서 다른 비예요', hint: '두 비의 기준량을 각각 찾아 견주어요.', ok: `${RT(a, b)}의 기준량은 ${b}, ${RT(b, a)}의 기준량은 ${a}예요.` }; } },
+    { label: `${VN}의 함정`, gen: () => { const [a, b] = pr(); return { text: `남학생 ${a}명과 여학생 ${b}명이 있어요. ${VN}: “여학생 수에 대한 남학생 수의 비는 <b>${RT(b, a)}</b>야!” 바르게 나타낸 비는 어느 것일까요?${FIG(RF.pics('👦', a, '👧', b, { ka: 'or', kb: 'bl' }))}`, choices: opt4(RT(a, b), RW(a, b)), ans: RT(a, b), hint: '기준량은 여학생 수예요. 기준량을 어디에 쓰는지 떠올려요.', ok: `남학생 수 : 여학생 수 = ${RT(a, b)}` }; } },
+    { label: '전체에 대한 비', gen: () => { const [a, b] = pr(); return { text: `빨간 구슬 ${a}개와 파란 구슬 ${b}개가 있어요. <b>전체 구슬 수에 대한 빨간 구슬 수의 비</b>는 어느 것일까요?${FIG(RF.pics('🔴', a, '🔵', b))}`, choices: opt4(RT(a, a + b), [RT(a, b), RT(a + b, a), RT(b, a + b)]), ans: RT(a, a + b), hint: '전체 구슬 수를 먼저 구해요.', ok: `전체 구슬은 ${a} + ${b} = ${a + b}(개) → 빨간 구슬 수 : 전체 구슬 수 = ${RT(a, a + b)}` }; } },
+    { label: '읽은 말을 비로', gen: () => { const [a, b] = pr(), f = pick([`${a}의 ${b}에 대한 비`, `${b}에 대한 ${a}의 비`, `${a}${WA(a)} ${b}의 비`]); return { text: `카드에 적힌 말을 비로 바르게 나타낸 것은 어느 것일까요?${FIG(RCARD(f))}`, choices: opt4(RT(a, b), RW(a, b)), ans: RT(a, b), hint: '“~에 대한”이 붙은 수가 기준량이에요.', ok: `${f} → ${RT(a, b)}` }; } },
+    { label: '도형에서 비', gen: () => { const [w, h] = pr(); return { text: `가로가 ${w} cm, 세로가 ${h} cm인 직사각형이 있어요. <b>세로에 대한 가로의 비</b>는 어느 것일까요?${FIG(`<div style="padding:2px 14px 2px 88px"><div class="rxrect" style="width:${w * 22}px;height:${h * 22}px"><span class="w">가로 ${w} cm</span><span class="h">세로 ${h} cm</span></div></div>`)}`, choices: opt4(RT(w, h), RW(w, h)), ans: RT(w, h), hint: '기준량은 세로예요.', ok: `가로 : 세로 = ${RT(w, h)}` }; } }
   ],
   j1: { label: '다리 봉인', title: '비의 다리 설계도를 되살려라', icon: '🌉', sub: `${VN}${jo(VN, '이', '가')} 다리 설계도 3장을 잠갔어요! 비를 □ : □ 꼴로 써서 풀어요.`, done: '설계도 3장의 봉인을 모두 풀었어요! 🌉',
     rounds: () => { const [a, b] = pr(), [c, d] = pr(), [e, f] = pr(); return [
@@ -8059,7 +8084,7 @@ BANK[2] = [
 ];
 BANK[3] = [
   () => { const [a, b] = ab4(3, 9); return bq(`남학생이 ${a}명, 여학생이 ${b}명 있어요. ${VN}${jo(VN, '은', '는')} “여학생 수에 대한 남학생 수의 비는 ${b} : ${a}야!”라고 했어요. 바른 비는 어느 것일까요?`, `${a} : ${b}`, [`${b} : ${a}`, `${a} : ${a + b}`, `${b} : ${a + b}`], `「여학생 수에 대한」이니까 여학생 수 ${b}${jn(b, '이', '가')} 기준량이에요. 기준량을 뒤에 써요.`); },
-  () => { const b = rnd2(3, 8), d = rnd2(2, 5); return bq(`바구니에 배가 ${b}개 있고, 사과는 배보다 ${d}개 더 많아요. <b>배 수에 대한 사과 수의 비</b>는 어느 것일까요?`, `${b + d} : ${b}`, [`${d} : ${b}`, `${b} : ${b + d}`, `${b + d} : ${d}`], `사과는 ${b} + ${d} = ${b + d}(개)예요. 기준량은 배 수 ${b}${jn(b, '이에요', '예요')}.`); },
+  () => { let b, d; do { b = rnd2(3, 8); d = rnd2(2, 5); } while (b === d); return bq(`바구니에 배가 ${b}개 있고, 사과는 배보다 ${d}개 더 많아요. <b>배 수에 대한 사과 수의 비</b>는 어느 것일까요?`, `${b + d} : ${b}`, [`${d} : ${b}`, `${b} : ${b + d}`, `${b + d} : ${d}`], `사과는 ${b} + ${d} = ${b + d}(개)예요. 기준량은 배 수 ${b}${jn(b, '이에요', '예요')}.`); },
   () => { const t = rnd2(20, 30); let a; do { a = rnd2(5, 12); } while (a * 2 === t); return bq(`우리 반 학생 ${t}명 중 안경을 쓴 학생은 ${a}명이에요. <b>안경을 쓰지 않은 학생 수에 대한 안경을 쓴 학생 수의 비</b>는 어느 것일까요?`, `${a} : ${t - a}`, [`${a} : ${t}`, `${t - a} : ${a}`, `${t - a} : ${t}`], `안경을 쓰지 않은 학생은 ${t} − ${a} = ${t - a}(명)이고, 이 수가 기준량이에요.`); },
   () => { const t = pick([10, 12, 15, 16, 20]); let a; do { a = rnd2(3, t - 4); } while (a * 2 === t); return bq(`전체 ${t}칸 중에서 ${a}칸을 색칠했어요. <b>색칠하지 않은 칸 수에 대한 색칠한 칸 수의 비</b>는 어느 것일까요?`, `${a} : ${t - a}`, [`${a} : ${t}`, `${t - a} : ${a}`, `${t - a} : ${t}`], `색칠하지 않은 칸은 ${t} − ${a} = ${t - a}(칸)이고, 이 수가 기준량이에요.`); },
   () => { const [a, b] = ab4(), R = RD4(a, b); return bq(`「${a}의 ${b}에 대한 비」와 <b>같은</b> 비를 나타내는 말은 어느 것일까요?`, R[3], [`${a}에 대한 ${b}의 비`, `${b} 대 ${a}`, `${b}${jn(b, '과', '와')} ${a}의 비`], `두 말 모두 ${a} : ${b}를 나타내요. 기준량은 ${b}예요.`); },
@@ -8092,10 +8117,10 @@ LC.story = mkStory6({ unitNo: 4, ep: 2, title: '다리 매점의 유자차 레�
   taunt: { tilt: ['기준은 아무거나!'], mixup: ['순서는 상관없어!'], clock: ['읽는 말이 다르면 다른 비지!'], half: ['그림은 내가 지웠지!'], dark: ['다리는 내 거다!', '3 : 5나 5 : 3이나 같은 거지!'] },
   hit: { tilt: ['기준량을 찾다니!'], mixup: ['순서를 바로잡다니!'], clock: ['같은 비를 알아보다니!'], half: ['그림 속 비를 찾았어?!'], dark: ['크윽… 기준량을 찾아내다니!', '비의 순서를 지키다니…!'] },
   prologue: [
-    { w: 'narr', t: `스마트 시티의 <b>비의 다리</b> 매점. 유자청 1컵과 물 4컵으로 유자차 한 병을 만든다.` },
-    { w: 'dark', p: 'laugh', t: `흐흐흐! ${VN}가 왔다! 레시피 판의 1 : 4를 4 : 1로 바꿔 놓았지. 순서쯤이야 상관없잖아?` },
-    { w: 'narr', t: `${avatar('rat', 40, 'happy')} 자람이: "스마트 마스터, <b>크로스 링크</b>! 유자청을 4컵이나 넣었더니 유자차가 너무 진해졌어!"` },
-    { w: 'guide', p: 'determined', t: `좋아! 두 양을 <b>비</b>로 바르게 나타내는 방법을 알아보자!` }],
+    { w: 'narr', t: `스마트 시티의 <b>비의 다리</b> 매점. 유자청 2컵과 물 7컵으로 유자차 한 병을 만든다.` },
+    { w: 'dark', p: 'laugh', t: `흐흐흐! ${VN}가 왔다! 레시피 판의 2 : 7을 7 : 2로 바꿔 놓았지. 순서쯤이야 상관없잖아?` },
+    { w: 'narr', t: `${avatar('rat', 40, 'happy')} 자람이: "스마트 마스터, <b>크로스 링크</b>! 유자청을 7컵이나 넣었더니 유자차가 너무 진해졌어!"` },
+    { w: 'guide', p: 'determined', t: `레시피 판을 어떻게 고쳐야 할까? 이 문제를 해결하려면 무엇을 알아야 할지 생각해 보자!` }],
   ch1: ['다리 설계실 통과!', '두 수를 나눗셈으로 비교할 때 기호 : 를 써서 나타낸 것이 <b>비</b>이고, 뒤의 수가 <b>기준량</b>, 앞의 수가 <b>비교하는 양</b>이라는 것을 알아냈다!', '말도 안 돼! 순서가 그렇게 중요하다니!'],
   ch2: '순서 뒤바꾸기 함정도 다 알아채다니…!',
   ch3: '크윽! 봉인도, 설계도도, 같은 비 모으기까지…!',
@@ -8106,6 +8131,7 @@ LC.story = mkStory6({ unitNo: 4, ep: 2, title: '다리 매점의 유자차 레�
   basicMsg: `${VN}의 함정! 무엇이 기준량인지 먼저 찾아보자.`, jumpMsg: `${VN}의 방어막 3겹! 다리 봉인 · 설계도 · 같은 비 모으기로 깨뜨리자.` });
 (() => { const st = document.createElement('style'); st.textContent = `.dxrel{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:8px 0;font-weight:900;font-size:1.15rem}.dxrel span{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:6px 12px}
 .rxrect{position:relative;background:#fef3c7;border:3px solid #d97706;margin:26px auto 8px}.rxrect .w{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-weight:900;font-size:1rem;color:#c2410c;white-space:nowrap}.rxrect .h{position:absolute;left:-74px;top:50%;transform:translateY(-50%);font-weight:900;font-size:1rem;color:#1d4ed8;white-space:nowrap}`; document.head.appendChild(st); })();
+(() => { const st = document.createElement('style'); st.textContent = `.rxtwo{display:flex;gap:18px;justify-content:center;align-items:center}`; document.head.appendChild(st); })();
 
 /* 세트 2 공통 (1차시에서 가져옴): 그림 문제 · 문제은행 화면 · 미니게임 머리글 */
 function mkI(text, img, ans, ds, ex, sa) { const q = mk(text, ans, ds, ex); q.img = img; q.mcOnly = !sa; return q; }
@@ -9331,8 +9357,8 @@ window.SV_LF={
  "target": "두 양을 나눗셈으로 비교하여 비로 나타낼 수 있다.",
  "title": "🍵 다리 매점의 유자차 레시피",
  "sub": "4단원 · 오늘의 문제",
- "problem": "비의 다리 매점에서는 <b>유자청 1컵</b>과 <b>물 4컵</b>을 넣어 유자차 한 병을 만들어요. 그런데 라티오가 레시피 판의 <b>“1 : 4”</b>를 <b>“4 : 1”</b>로 바꿔 놓아서, 직원들이 유자청을 4컵이나 넣는 바람에 유자차가 너무 진해졌어요. 물의 양을 기준으로 유자청의 양을 비교하여 레시피 판에 바르게 적으려면 어떻게 나타내야 할까요?",
- "placeholder": "예: 두 양을 기호를 써서 나타내는 방법을 알고 싶어요.",
+ "problem": "비의 다리 매점에서는 <b>유자청 2컵</b>과 <b>물 7컵</b>을 넣어 유자차 한 병을 만들어요. 그런데 라티오가 레시피 판의 <b>“2 : 7”</b>을 <b>“7 : 2”</b>로 바꿔 놓아서, 직원들이 유자청을 7컵이나 넣는 바람에 유자차가 너무 진해졌어요. 레시피 판을 어떻게 고쳐 적어야 할까요?",
+ "placeholder": "예: 나는 ~하는 방법을 알아보고 싶어요.",
  "keywords": [
   {
    "k": [
@@ -9365,12 +9391,12 @@ window.SV_LF={
  "prologue": [
   {
    "w": "narr",
-   "t": "비의 다리 매점은 유자차로 유명해요."
+   "t": "비의 다리 매점에서는 유자청 2컵과 물 7컵으로 유자차 한 병을 만들어요."
   },
   {
    "w": "dark",
    "p": "laugh",
-   "t": "1 : 4나 4 : 1이나 같은 거 아냐? 흐흐흐!"
+   "t": "2 : 7이나 7 : 2나 같은 거 아냐? 흐흐흐!"
   },
   {
    "w": "guide",
@@ -9382,37 +9408,83 @@ window.SV_LF={
   "label": "레시피 판 고치기",
   "parts": [
    {
-    "type": "choice",
-    "ans": "아니에요"
+    "type": "num",
+    "ans": [
+     "2"
+    ]
    },
    {
     "type": "num",
     "ans": [
-     "1:4"
+     "7"
     ]
+   },
+   {
+    "type": "choice",
+    "ans": "물의 양"
    }
   ],
   "hints": [
-   "물의 양을 기준으로 해요. 기준량은 비의 뒤에 써요.",
-   "유자청 : 물"
+   "레시피 판의 두 수 가운데 어느 것이 유자청의 양이고, 어느 것이 물의 양인지 생각해요.",
+   "기호 : 의 오른쪽에는 기준이 되는 양을 써요."
   ],
-  "ok": "물의 양에 대한 유자청의 양의 비는 1 : 4!",
-  "wrongTip": "무엇을 기준으로 비교하는지 먼저 찾아요.",
-  "task": "레시피 판의 “4 : 1”이 맞는지 고르고, 바른 비를 써요.",
+  "ok": "물의 양에 대한 유자청의 양의 비는 2 : 7! 기준량은 물의 양이에요.",
+  "wrongTip": "무엇을 기준으로 비교하는지 먼저 찾아봐요.",
+  "task": "유자차 레시피 판을 바르게 고쳐요.",
   "explain": "어떻게 비를 정했는지 설명해 보세요."
  },
  "verify": null
 };
-window.SV_LF.j0.board=function(H){
-return `<div class="sv-paper" style="text-align:left"><div class="sv-paper-h">🍵 유자차 레시피 판</div><div style="display:flex;flex-direction:column;gap:10px;font-size:1.05rem;align-items:center"><div style="font-size:1.5rem">🍯 × 1컵 · 💧 × 4컵 = 유자차 1병</div><table style="border-collapse:collapse;margin:4px auto;font-weight:800;text-align:center"><tr><th style="border:2px solid #cbd5e1;padding:4px 12px;background:#ede9fe">유자차</th><th style="border:2px solid #cbd5e1;padding:4px 12px;background:#ede9fe">1병</th><th style="border:2px solid #cbd5e1;padding:4px 12px;background:#ede9fe">2병</th><th style="border:2px solid #cbd5e1;padding:4px 12px;background:#ede9fe">3병</th></tr><tr><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">유자청(컵)</td><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">1</td><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">2</td><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">3</td></tr><tr><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">물(컵)</td><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">4</td><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">8</td><td style="border:2px solid #cbd5e1;padding:4px 12px;background:#fff">12</td></tr></table><div class="sv-paper-t">라티오의 “4 : 1”이 맞나요? <span class="sv-row" style="display:inline-flex;margin:0">${H.pick(0,'네')}${H.pick(0,'아니에요')}</span></div><div class="sv-paper-t">물의 양에 대한 유자청의 양의 비: ${H.inp(1,{w:110,text:true})}</div></div></div>`};
+(function(){
+const cups=`<div class="tj0c" style="width:100%"><div class="tj0h">🍵 유자차 한 병 만들기</div><div class="uj0r"><span class="uj0l">유자청 2컵</span><span class="uj0e">🍯🍯</span></div><div class="uj0r"><span class="uj0l">물 7컵</span><span class="uj0e">💧💧💧💧💧💧💧</span></div></div>`;
+ const sign=`<div class="tj0n" style="text-align:center">📋 라티오가 바꿔 놓은 레시피 판<div class="uj0s">7 : 2</div></div>`;
+ window.SV_LF.j0.board=function(H){
+  if(!H.play&&!H.done) return `<div class="tj0 view"><div class="tj0f">${cups}</div><div class="tj0a">${sign}</div></div>`;
+  return `<div class="tj0"><div class="tj0f">${cups}${sign}</div><div class="tj0a"><div class="tj0q"><span>📋 바르게 고친 레시피 판</span><span class="uj0fix">${H.inp(0,{w:84})} <b>:</b> ${H.inp(1,{w:84})}</span></div><div>고친 비에서 기준량은 무엇일까요?<span class="sv-row">${['유자청의 양','물의 양','유자차 한 병','두 양의 합'].map(x=>H.pick(2,x)).join('')}</span></div></div></div>`;
+ };
+ { const st=document.createElement('style'); st.textContent=`.uj0r{display:flex;align-items:center;gap:.7em;width:100%}.uj0l{font-weight:900;min-width:6.2em;text-align:right}.uj0e{font-size:1.9em;letter-spacing:.06em;line-height:1.1}.uj0s{font-size:2.1em;font-weight:900;letter-spacing:.08em;color:#7f1d1d}.uj0fix{display:flex;align-items:center;gap:.5em;font-size:1.3em}.uj0fix b{font-size:1.3em}`; document.head.appendChild(st); }
+ const st=document.createElement('style'); st.textContent=`.tj0{font-size:16px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.2em;align-items:center;width:100%;text-align:left}.tj0.view{font-size:clamp(15px,1.25vw,24px);max-width:64em;margin:0 auto;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}body.svsl-on.svsl-land[data-svst=jump] .tj0{font-size:clamp(14px,1.15vw,23px)}.tj0f{display:flex;flex-direction:column;gap:.7em;align-items:center;min-width:0}.tj0h{font-weight:900;font-size:1.1em;text-align:center}.tj0t{border-collapse:collapse;font-weight:800;text-align:center;font-size:1.08em}.tj0t th,.tj0t td{border:2px solid #94a3b8;padding:.4em .7em;white-space:nowrap}.tj0t th{background:#ede9fe}.tj0t td{background:#fff}.tj0n{background:#fef2f2;border:2.5px dashed #fca5a5;border-radius:14px;padding:.55em .85em;line-height:1.5;font-weight:900;color:#991b1b}.tj0a{display:flex;flex-direction:column;gap:.8em;font-size:1.08em;font-weight:800;min-width:0}.tj0a .sv-row{display:grid;grid-template-columns:1fr 1fr;gap:.45em;margin:.4em 0 0}.tj0a .sv-row button{font-size:1em}.tj0q{display:flex;flex-direction:column;gap:.45em}.tj0c{background:#fff;border:2.5px solid #c4b5fd;border-radius:16px;padding:.7em .8em;display:flex;flex-direction:column;gap:.5em;align-items:center;min-width:0}.tj0two{display:grid;grid-template-columns:1fr 1fr;gap:.8em;width:100%}
+body.svsl-on.svsl-land[data-svst=jump] #part-j0.svsl-jgrid{grid-template-columns:minmax(0,1.9fr) minmax(0,1fr)}@media(max-width:820px){.tj0,.tj0.view{grid-template-columns:1fr}}`; document.head.appendChild(st);
+})();
 
-/*HERO*/window.SV_LF.hero={"title": ["유자차 레시피가", "뒤바뀌었어!"], "speech": "라티오가 레시피 판의 두 수 순서를 바꿨어. 유자차가 너무 진해졌어! <b>두 양을 비로 나타내는 방법</b>을 알아보자!", "villain": "라티오", "vkey": "dark", "villainSub": "메트릭의 간부 · 비율 왜곡", "object": "🍵 유자청 1컵 · 물 4컵 = 유자차 1병<div class=\"svh-seals\"><span>🔒 ?</span><span>🔒 ?</span></div>"};
+/*HERO*/window.SV_LF.hero={"title": ["유자차 레시피가", "뒤바뀌었어!"], "speech": "라티오가 레시피 판의 두 수를 바꿔 놓아서 유자차가 너무 진해졌어. <b>레시피 판을 어떻게 고쳐야 할까?</b>", "villain": "라티오", "vkey": "dark", "villainSub": "메트릭의 간부 · 비율 왜곡", "object": "🍵 유자차 한 병: 유자청 2컵 · 물 7컵<div class=\"svh-seals\"><span>🔒 ?</span><span>🔒 ?</span></div>"};
 
 try{window.SV_LF.hero.speaker=GUIDE();window.SV_LF.hero.speakerName=CHARS[GUIDE()].name+' × 자람이';}catch(e){}
 
 /*SCR*/window.SV_LF.j0.scratch={"auto": "fig"};
 window.SV_LF.sceneAlt="다리 매점에서 유자청 1컵과 물 4컵으로 유자차를 만드는 강시우와 자람이, 레시피 판을 4 : 1로 바꾸는 라티오";
 window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
+/* 보기는 항상 4개: 틀린 보기가 모자라면 답의 꼴(분수·수·이름·비)에 맞추어 채워요 */
+window.svFill4 = function (ans, ds) {
+  ans = String(ans); const D = []; (ds || []).map(String).forEach(x => { if (x !== ans && !D.includes(x)) D.push(x); });
+  if (D.length >= 3) return D;
+  const add = t => { t = String(t); if (D.length < 3 && t !== ans && !D.includes(t) && !/NaN|undefined/.test(t)) D.push(t); };
+  const plain = ans.replace(/<[^>]+>/g, '').trim(); let m;
+  const fam = [['삼각기둥', '사각기둥', '오각기둥', '육각기둥', '칠각기둥', '팔각기둥'], ['삼각뿔', '사각뿔', '오각뿔', '육각뿔', '칠각뿔', '팔각뿔'], ['삼각형', '사각형', '오각형', '육각형'], ['막대그래프', '꺾은선그래프', '띠그래프', '그림그래프']];
+  fam.forEach(F => { if (F.includes(plain)) F.forEach(add); });
+  if (D.length < 3 && (m = /^(\D*?)(\d+) (\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], w = +m[2], n = +m[3], d = +m[4], u = m[5]; [[w + 1, n, d], [w, n + 1 < d ? n + 1 : n - 1, d], [w, n, d + 1], [w - 1, n, d]].forEach(v => { if (v[0] > 0 && v[1] > 0) add(p + v[0] + ' ' + v[1] + '/' + v[2] + u); }); }
+  else if (D.length < 3 && (m = /^(\D*?)(\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], n = +m[2], d = +m[3], u = m[4]; [[n + 1, d], [n, d + 1], [d, n], [n + 2, d], [n, d + 2]].forEach(v => { if (v[0] !== v[1]) add(p + v[0] + '/' + v[1] + u); }); }
+  else if (D.length < 3 && (m = /^(\d+) : (\d+)$/.exec(plain))) { const a = +m[1], b = +m[2]; [[b, a], [a, a + b], [a + b, b], [a + 1, b]].forEach(v => add(v[0] + ' : ' + v[1])); }
+  else if (D.length < 3 && (m = /^(\d+(?:\.\d+)?) ÷ (\d+)$/.exec(plain))) { const a = m[1], b = +m[2]; [b + 1, b + 2, b > 2 ? b - 1 : b + 3].forEach(v => add(a + ' ÷ ' + v)); }
+  else if (D.length < 3 && !/[:÷×=]/.test(plain) && (m = /^(\D*?)(\d+(?:\.\d+)?)(\D*)$/.exec(plain))) { const n = parseFloat(m[2]), st = m[2].includes('.') ? Math.pow(10, -(m[2].split('.')[1].length)) : 1; [n + st, n - st, n + 2 * st, n * 2, n + 3 * st].forEach(v => { if (v > 0) add(m[1] + String(+v.toFixed(6)) + m[3]); }); }
+  if (D.length < 3) ['알 수 없어요', '모두 알맞아요', '모두 알맞지 않아요'].forEach(add);
+  return D;
+};
+(function () {
+  const patch = () => {
+    try { if (typeof mkI === 'function' && !mkI.__f4) { const o = mkI, n = function (text, img, ans, ds, ex, sa) { return o(text, img, ans, window.svFill4(ans, ds), ex, sa); }; n.__f4 = 1; mkI = n; } } catch (e) {}
+    try { if (typeof LC !== 'undefined' && LC && Array.isArray(LC.basic)) LC.basic.forEach(b => { if (!b || b.__f4 || typeof b.gen !== 'function') return; const g = b.gen; b.__f4 = 1;
+      b.gen = function () { const q = g.apply(this, arguments); try { if (q && Array.isArray(q.choices) && q.choices.length >= 2 && q.choices.length < 4 && q.ans != null && !/<svg|<img/.test(q.choices.join(''))) { const A = String(q.ans), W = window.svFill4(A, q.choices.map(String).filter(x => x !== A)); W.forEach(x => { if (q.choices.length < 4 && !q.choices.map(String).includes(x)) q.choices.push(x); }); } } catch (e) {} return q; }; }); } catch (e) {}
+  };
+  patch(); document.addEventListener('DOMContentLoaded', patch); window.addEventListener('load', patch); setTimeout(patch, 0); setTimeout(patch, 600);
+})();
+
+/* 전각(１２３％．) 입력을 반각으로 — 한글 입력기의 전각 숫자로 답을 써도 바르게 채점되도록 모든 답 칸에 적용 */
+(function () { try { if (window.__svHalf) return; window.__svHalf = 1;
+  const half = v => String(v).replace(/[０-９Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/．/g, '.').replace(/，/g, ',').replace(/：/g, ':').replace(/／/g, '/').replace(/％/g, '%').replace(/[－−]/g, '-').replace(/　/g, ' ');
+  window.svHalf = half;
+  document.addEventListener('input', e => { const t = e.target; if (!t || t.tagName !== 'INPUT' || e.isComposing) return; const ty = (t.getAttribute('type') || 'text').toLowerCase(); if (!/^(text|search|tel|)$/.test(ty)) return; const v = t.value, h = half(v); if (h !== v) { let a = null; try { a = t.selectionStart; } catch (x) {} t.value = h; try { if (a != null) t.setSelectionRange(a, a); } catch (x) {} } }, true);
+} catch (e) {} })();
 /* =====================================================================
    SmartVibe 공통 수업 흐름 (lessonflow)
    오늘의 문제(생활 속 문제 상황) → 내가 생각한 학습 목표 쓰기·말하기 → 학습 목표 확인
@@ -9629,18 +9701,20 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
   /* ---------- 새 점프 1: 오늘의 문제 (j0) ---------- */
   const J0S = () => { const s = state.s1; if (!s.j0) s.j0 = { a: {}, fb: null, hint: -1, mark: null, redo: false, hintUsed: false }; return s.j0; };
   function H(mode) {
-    const X = J0S(), done = solved('j0') && !X.redo, A = done ? J0.parts.map(p => p.ans) : X.a, M = done ? {} : (X.mark || {}), play = mode === 'play' && !done;
+    const X = J0S(), done = solved('j0') && !X.redo, A = done ? J0.parts.map((p, i) => p.type === 'draw' ? p.sol() : p.type === 'free' ? (X.a[i] || p.eg || '') : p.ans) : X.a, M = done ? {} : (X.mark || {}), play = mode === 'play' && !done;
     const mk = i => done ? ' ok' : M[i] == null ? '' : M[i] ? ' ok' : ' no';
     return { mode, play, done, A,
       inp: (i, o = {}) => play ? `<span class="sv-slot${mk(i)}"><input class="sv-in sv-bin" data-svp="${i}" inputmode="${o.text ? 'text' : 'numeric'}" autocomplete="off" style="width:${o.w || 140}px" value="${esc(A[i] == null ? '' : A[i])}" placeholder="${o.ph || '?'}">${o.unit ? `<small>${o.unit}</small>` : ''}</span>`
         : `<span class="sv-slot sv-q${mk(i)}" style="min-width:${Math.min(o.w || 140, 120)}px">${done ? esc(/^\d{4,}$/.test(String(A[i])) ? Number(A[i]).toLocaleString('en-US') : String(A[i])) + (o.unit ? `<small>${o.unit}</small>` : '') : '🔒 ?'}</span>`,
       pick: (i, o, html) => `<button class="sv-pk ${A[i] === o ? 'on' + mk(i) : ''}" ${play ? `data-sv="j0-pick" data-i="${i}" data-o="${esc(o)}"` : 'disabled'}>${html == null ? esc(o) : html}</button>`,
       ord: i => A[i] || [], ordBtn: (i, o, html) => { const k = (A[i] || []).indexOf(o); return `<button class="sv-pk ${k >= 0 ? 'on' : ''}" ${play && k < 0 ? `data-sv="j0-ord" data-i="${i}" data-o="${esc(o)}"` : 'disabled'}>${html == null ? esc(o) : html}</button>`; },
-      ordReset: i => play ? `<button class="sv-pk sv-ordre" data-sv="j0-ordre" data-i="${i}">↩ 다시</button>` : '', cls: mk };
+      ordReset: i => play ? `<button class="sv-pk sv-ordre" data-sv="j0-ordre" data-i="${i}">↩ 다시</button>` : '', cls: mk,
+      /* 직접 그리기 칸: st(i) 상태 · at(i) 누름 속성 만들기 · val(i) 지금 쓴 값 */
+      st: i => done ? A[i] : (X.a[i] || (X.a[i] = J0.parts[i].init())), at: i => v => play ? `data-sv="j0-act" data-i="${i}" data-v="${v}"` : '', val: i => A[i] };
   }
   function figHTML(mode) { if (!J0) return ''; try { const f = J0.board ? J0.board(H(mode || 'view')) : (typeof J0.fig === 'function' ? J0.fig() : J0.fig); return f ? `<div class="sv-fig">${f}</div>` : ''; } catch (e) { console.warn(e); return ''; } }
-  const norm = v => String(v == null ? '' : v).replace(/[\s,]/g, '').replace(/(원|명|개|회|°|도|cm|칸|년|뒤|묶음|장|만)$/g, '');
-  function partOK(p, v) { if (p.type === 'order') return Array.isArray(v) && v.join('|') === p.ans.join('|'); if (p.type === 'num') return [].concat(p.ans).map(String).includes(norm(v)); return v === p.ans; }
+  const norm = v => (window.svHalf ? window.svHalf(v == null ? '' : v) : String(v == null ? '' : v)).replace(/[\s,]/g, '').replace(/(원|명|개|회|°|도|cm|칸|년|뒤|묶음|장|만)$/g, '');
+  function partOK(p, v) { if (p.type === 'draw') return !!(v && p.ok(v)); if (p.type === 'free') return String(v == null ? '' : v).trim().length >= (p.min || 2); if (p.type === 'order') return Array.isArray(v) && v.join('|') === p.ans.join('|'); if (p.type === 'num') return [].concat(p.ans).map(String).includes(norm(v)); return v === p.ans; }
   function j0Card() {
     const X = J0S(), done = solved('j0') && !X.redo, M = X.mark || {};
     const part = (p, i) => { const v = done ? p.ans : X.a[i], mk = done ? 'ok' : M[i] == null ? '' : M[i] ? 'ok' : 'no';
@@ -9673,8 +9747,8 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
   }
   function j0Check() {
     const X = J0S(); const marks = {}; let all = true; const given = [];
-    J0.parts.forEach((p, i) => { const v = X.a[i]; const ok = partOK(p, v); marks[i] = ok; if (!ok) all = false; given.push(`${i + 1}) ${Array.isArray(v) ? v.join('→') : (v == null || v === '' ? '(빈칸)' : v)}`); });
-    if (J0.parts.some((p, i) => X.a[i] == null || X.a[i] === '' || (p.type === 'order' && X.a[i].length < p.items.length))) { X.fb = { ok: false, msg: J0.board ? '아직 비어 있는 칸이 있어요. 🔒 칸을 모두 채워요!' : '아직 답하지 않은 문제가 있어요. ①부터 차례로 모두 답해요!' }; renderS1Jump(); return; }
+    J0.parts.forEach((p, i) => { const v = X.a[i]; const ok = partOK(p, v); marks[i] = ok; if (!ok) all = false; given.push(`${i + 1}) ${p.type === 'draw' ? (p.show ? p.show(v) : '(그림)') : Array.isArray(v) ? v.join('→') : (v == null || v === '' ? '(빈칸)' : v)}`); });
+    if (J0.parts.some((p, i) => p.type === 'draw' ? false : (X.a[i] == null || X.a[i] === '' || (p.type === 'order' && X.a[i].length < p.items.length)))) { X.fb = { ok: false, msg: J0.board ? '아직 비어 있는 칸이 있어요. 빈칸을 모두 채워요!' : '아직 답하지 않은 문제가 있어요. ①부터 차례로 모두 답해요!' }; renderS1Jump(); return; }
     if (J0.explain && String(X.ex || '').trim().length < 5) { X.fb = { ok: false, msg: '✏️ 어떻게 해결했는지 생각을 한두 문장으로 써 주세요.' }; renderS1Jump(); return; }
     /* 분수 칸 묶음: 크기가 같은 분수도 정답 (예: 3/8과 6/16) */
     (J0.frac || []).forEach(([a, b]) => { const n = +norm(X.a[a]), d = +norm(X.a[b]), an = +[].concat(J0.parts[a].ans)[0], ad = +[].concat(J0.parts[b].ans)[0];
@@ -9684,6 +9758,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const givenTxt = J0.frac ? J0.frac.map(([a, b], k) => `${'①②③④⑤'[k]} ${norm(X.a[a]) || '□'}/${norm(X.a[b]) || '□'}`).join('  ') : given.join(' / ');
     recordAnswer('s1', 'j0', '점프 1 · 오늘의 문제 · ' + J0.label, all, givenTxt);
     if (all) { X.fb = null; X.redo = false; try { good(); FX.rain(150); } catch (e) {} toast('🎉 오늘의 문제 해결! 점프 문제 2~4가 열렸어요.'); }
+    else if (J0.parts.every((p, i) => marks[i] || p.type === 'draw') && J0.parts.some((p, i) => p.type === 'draw' && !marks[i] && p.why)) { const i = J0.parts.findIndex((p, i) => p.type === 'draw' && !marks[i]); X.fb = { ok: false, msg: J0.parts[i].why(X.a[i]) }; try { bad(); } catch (e) {} }
     else { X.fb = { ok: false, msg: J0.board ? `빨간 칸을 다시 생각해 봐요. ${J0.wrongTip || ''}` : `${wrongN.join('·')}번을 다시 생각해 봐요. ${J0.wrongTip || ''}` }; try { bad(); } catch (e) {} }
     persist(); renderS1Jump(); markMap();
   }
@@ -9753,6 +9828,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     else if (act === 'j0-pick') { const X = J0S(); X.a[b.dataset.i] = b.dataset.o; X.mark = null; renderS1Jump(); persist(); }
     else if (act === 'j0-ord') { const X = J0S(), i = b.dataset.i; X.a[i] = (X.a[i] || []).concat([b.dataset.o]); X.mark = null; renderS1Jump(); persist(); }
     else if (act === 'j0-ordre') { const X = J0S(); X.a[b.dataset.i] = []; renderS1Jump(); }
+    else if (act === 'j0-act') { const X = J0S(), i = b.dataset.i, p = J0.parts[i]; if (!X.a[i]) X.a[i] = p.init(); p.on(X.a[i], b.dataset.v); X.mark = null; if (X.fb && !X.fb.ok) X.fb = null; renderS1Jump(); persist(); }
     else if (act === 'j0-check') j0Check();
     else if (act === 'j0-hint') { const X = J0S(); X.hint++; X.hintUsed = true; renderS1Jump(); persist(); try { mood('think', 2400); } catch (x) {} }
     else if (act === 'j0-redo') { state.s1.j0 = { a: {}, fb: null, hint: -1, mark: null, redo: true, hintUsed: (state.s1.j0 || {}).hintUsed, ex: (state.s1.j0 || {}).ex }; renderS1Jump(); }
@@ -9824,9 +9900,9 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const DROP = '.vrow,.cfb,.stage-head,.anmis,button,.btn,.row,.fdtools,.fttiles,.fdsplit-b,.fdlog,.rpbar,.qnav,.hintbox,[data-dg="fd-lens"],.center.muted';
     function clean(el) { const c = el.cloneNode(true); c.querySelectorAll(DROP).forEach(x => x.remove()); return c; }
     function pickFig(card) {
-      const qEl = card.querySelector('.labq > div') || card.querySelector('.qtext') || card.querySelector('.vgq,.ztq,.rcq,.labq');
+      const qEl = card.querySelector('.labq > div') || card.querySelector('.qtext') || card.querySelector('.vgq,.ztq,.rcq,.labq') || card.querySelector('.ancap');
       const qh = qEl && qEl.textContent.trim() ? `<div class="skq">${clean(qEl).innerHTML}</div>` : '';
-      const FIG = '.fdsplit-a,.fdgrid,.sv-fig,.afw,.vmx,table.vm,[class*="tray"]:not(.fdtray),[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg,[class*="stage"]:not(.stage-head):not(.stage-head *)';
+      const FIG = '.pdrow,.pdtblw,table.cktable,table.rftab,.fdsplit-a,.fdgrid,.sv-fig,.afw,.vmx,table.vm,[class*="tray"]:not(.fdtray),[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg,[class*="stage"]:not(.stage-head):not(.stage-head *)';
       let fig = '';
       const sv = [...card.querySelectorAll('svg')].find(x => big(x, 120, 70) && !x.closest('.vrow,.stage-head,button') && !(qEl && qEl.contains(x)));
       const cvs = [...card.querySelectorAll('canvas')].find(x => big(x));
@@ -10668,6 +10744,9 @@ if (typeof BOARD_GUIDE === 'undefined') window.BOARD_GUIDE = 'bingo';
 .foldbox svg{width:min(100%,360px)!important;height:auto!important}
 .gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
 .ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
+
+/* v46: 표는 머리칸까지 모든 칸에 선 */
+.cktable th{border:2px solid #94a3b8;background:#e0e7ff;font-weight:900;padding:6px 12px;text-align:center}.cktable td{border-color:#94a3b8}
 </style>
 <script>
 /* =====================================================================
@@ -10853,9 +10932,15 @@ const JX = (() => {
   const say = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
   const card = (k, v, t) => `<span class="t11piece ${S(k).pick === String(v) ? 'jxpick' : ''}" data-dg="jx-c" data-v="${k}|${v}"><b>${t != null ? t : v}</b></span>`;
   const jxSel = k => { const s = S(k), n = (D[k].slots || []).length; if (s.sel != null && s.slots[s.sel] == null) return s.sel; for (let i = 0; i < n; i++) if (s.slots[i] == null) return i; return -1; };
+  const isTyped = C => !!C && C.type === 'slots' && (C.typed === true || (C.typed !== false && (C.cards || []).length > 0 && C.cards.every(v => typeof v === 'number')));
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
-    if (C.type === 'slots') {
+    if (isTyped(C)) {
+      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
+      if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
+        + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
+    } else if (C.type === 'slots') {
       h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot ${s.slots[i] != null ? 'full' : ''} ${!done && s.slots[i] == null && jxSel(k) === i ? 'jxsel' : ''}" data-dz="jx-s" data-i="${k}|${i}" data-jxsel="${k}|${i}" ${s.slots[i] != null && !done ? `data-jxclr="${k}|${i}" title="눌러서 비우기"` : ''}>${s.slots[i] != null ? (C.show ? C.show(s.slots[i]) : s.slots[i]) : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✋ 카드를 끌거나 눌러서 빈칸에 놓아요 · 숫자 키로도 쓸 수 있어요 · 채운 칸을 누르면 비워져요</span>${C.cards.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`
@@ -10895,7 +10980,7 @@ const JX = (() => {
   document.addEventListener('click', e => { const z = e.target.closest('[data-jxsel]'); if (z && !z.dataset.jxclr) { const [k, i] = z.dataset.jxsel.split('|'); if (D[k] && !solved(k)) { S(k).sel = +i; paint(k); } return; }
     const b = e.target.closest('.jxbins [data-dz="jx-b"]'); if (b) { const [k, i] = (b.dataset.i || '').split('|'), s = D[k] && S(k); if (s && s.pick != null && !solved(k)) { const val = isNaN(+s.pick) ? s.pick : +s.pick; s.bins[val] = +i; s.pick = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); } } });
   document.addEventListener('keydown', e => { if (!/^[0-9]$/.test(e.key) || e.target.closest && e.target.closest('input,textarea')) return;
-    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
+    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || isTyped(C) || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
       const c = C.cards.find(v => String(v) === e.key); if (c == null) continue; s.slots[i] = isNaN(+c) ? c : +c; s.sel = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); e.preventDefault(); return; } });
   document.addEventListener('click', e => { const c = e.target.closest('[data-jxclr]'); if (c) { const [k, i] = c.dataset.jxclr.split('|'); delete S(k).slots[+i]; paint(k); return; }
     const b = e.target.closest('[data-jx]'); if (!b) return; const k = b.dataset.v, a = b.dataset.jx, s = S(k); touch('s1');
@@ -10911,6 +10996,13 @@ const JX = (() => {
     try { const ji = +String(k).slice(1) - 1; if (J_NAMES[ji]) J_NAMES[ji] = J_NAMES[ji].replace(/·.*$/, '· ' + C.label); } catch (e) {} }
   return { set, paint };
 })();
+
+/* 직접 쓰는 빈칸: 쓴 값을 그대로 기억해요 (다시 그리지 않음) */
+(function () { try {
+  document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
+  document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
+  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+} catch (e) {} })();
 
 
 /* 6-1-4-2 비 알아보기 — 기준량 받침에 올리기 · 읽는 말 속 기준량 · 순서를 바꾸어 섞기 · 장면에서 비 만들기 + 보스전 도전 2·3 */
@@ -11715,6 +11807,44 @@ body.svsl-on .svsl-tc .svsl-main .t11src{max-width:100%;box-sizing:border-box}
 /* 상황 살펴보기: 문제 이야기 · 할 일 */
 body.svsl-on .sv-heroboard .sv-hb-story{flex:none;max-width:min(1100px,96%);font-size:1.15em;line-height:1.55;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:10px 18px;text-align:left}
 body.svsl-on .sv-heroboard .sv-hb-task{flex:none;margin:0;font-weight:900;color:#6d28d9;font-size:1.05em}
+
+/* v46: 상황 살펴보기 이름표가 위에서 잘리지 않게 (넘겨 보기에서는 상자 안쪽에 둠) · 그림은 남는 공간만큼 */
+body.svsl-on .sv-heroboard .sv-hb-h{margin:0 0 2px;flex:none}
+body.svsl-on .sv-heroboard{justify-content:flex-start;padding-top:10px}
+body.svsl-on .sv-heroboard .sv-fig{margin:auto}
+
+/* v46: 그림 문제는 [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸을 가득 써요 */
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:stretch}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.svsl-qF,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.svsl-qF{grid-column:1;grid-row:1/span 9;align-self:stretch;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;background:#fffdf5;border:2px solid #f1e3bd;border-radius:18px;padding:10px 12px;box-shadow:0 3px 0 #f1e3bd}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.qhead,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.qhead{grid-column:2;grid-row:1}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.svsl-qans,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.svsl-qans{grid-column:2;grid-row:2;align-self:start}
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2 .choices,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2 .choices{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;display:grid!important}
+.svsl-qF .rffig{margin:0}.svsl-qF .grpie,.svsl-qF .grstrip,.svsl-qF .rftab,.svsl-qF .pdwrap{margin:0 auto}
+
+/* v46b: 왼쪽 그림 칸 — 그림은 제 크기를 지킨 채 통째로 키우고, 오른쪽 칸은 가운데에 크게 */
+.svsl-qF>.rffig,.svsl-qF>.dxfig{width:max-content;max-width:none;flex:none;margin:0;overflow:visible}.svsl-qF .pdrow{flex-wrap:nowrap}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL{grid-template-rows:auto auto;align-content:center}
+body.svsl-on.svsl-land .qcard.svsl-qfL .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL .choice{min-height:var(--chmin,84px)!important}body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2:not(.svsl-qlong) .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2:not(.svsl-qlong) .choice{font-size:1.12em}
+
+/* v46c: 그림 문제의 보기 4개는 늘 2×2 (긴 보기는 줄바꿈) — 오른쪽 칸이 화면 높이를 넘지 않게 */
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2 .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2 .choice{white-space:normal;word-break:keep-all;line-height:1.3;padding-top:8px;padding-bottom:8px}
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qlong .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qlong .choice{font-size:.98em}
+
+/* v46d: 가로로 긴 그림(표 + 그래프 등)은 왼쪽 칸을 더 넓게 */
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL.svsl-qwide,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL.svsl-qwide{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+
+/* v46e: 개념 탐험 — 할 일(물음)은 왼쪽부터 크게, 단계 표시는 오른쪽 끝에 작게 */
+body.svsl-on .svsl-tc>.svsl-q{justify-content:flex-start;flex-wrap:nowrap}
+body.svsl-on .svsl-tc>.svsl-q .ancap,body.svsl-on .svsl-tc>.svsl-q .labq{text-align:left;flex:1 1 auto;max-width:none}
+body.svsl-on .svsl-tc>.svsl-q .t11steps{order:2;margin-left:auto!important;flex:none}
+
+/* v46f: 띠그래프처럼 div로 그린 그림도 왼쪽 칸에서 크게 · 두 띠는 위아래로 */
+.svsl-qF .rxtwin{flex-direction:column;flex-wrap:nowrap;gap:18px}.svsl-qF .grt{white-space:nowrap;font-size:1.02rem}.svsl-qF .grstrip{font-size:1rem}
+
+/* v46g: 예전 종이 모양 오늘의 문제 보드(1·2단원 등)도 점프 1에서 빈 곳 없이 크게 */
+@media (min-width:1500px){body.svsl-on.svsl-land[data-svst=jump] #part-j0 .sv-fig>.sv-paper{zoom:1.25}}
+@media (min-width:1200px) and (max-width:1499px){body.svsl-on.svsl-land[data-svst=jump] #part-j0 .sv-fig>.sv-paper{zoom:1.1}}
+body.svsl-on.svsl-land[data-svst=jump] #part-j0.svsl-jgrid:has(.sv-paper){grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -11905,38 +12035,62 @@ function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.
       if (after.length) { P.classList.add('svsl-jgrid'); F.classList.add('svsl-jfig'); after.forEach(c => c.classList.add('svsl-jR')); } } }
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 10, 0);
   const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
-  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  const JMIN = .62;   /* 점프 문제는 스크롤 대신 한 화면에 들어오도록 조금 더 줄일 수 있어요 */
+  box.classList.remove('svsl-qscroll'); let z = Math.max(JMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > JMIN; i++) { z = Math.max(JMIN, z * .97); q.style.zoom = z.toFixed(3); }
   if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
   let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel')));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel, .rffig')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel,.rffig')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
   else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
+  /* 그림 문제(가로 화면): [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸 전체를 써요 */
+  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig && qt ? qt.querySelector(':scope > .rffig, :scope > .dxfig') : null; let qF = q.querySelector(':scope > .svsl-qF');
+    if (FG) { if (!qF) { qF = document.createElement('div'); qF.className = 'svsl-qF'; q.insertBefore(qF, q.firstChild); } qF.innerHTML = ''; qF.appendChild(FG); }
+    else if (qF && (!hasFig || !qF.firstElementChild)) { const f = qF.firstElementChild; if (f && qt) { f.style.zoom = ''; qt.appendChild(f); } qF.remove(); qF = null; }
+    q.classList.toggle('svsl-qfL', !!qF); }
   [...q.children].forEach(c => c.classList.toggle('svsl-qans', c === ans));
   const ch = q.querySelector('.choices'), opts = ch ? [...ch.children].filter(e => e.offsetParent !== null || e.matches('button')) : [];
   const longest = Math.max(0, ...opts.map(o => (o.textContent || '').trim().length)), pic = ch && !!ch.querySelector('svg,img');
   q.classList.toggle('svsl-q1col', hasFig && !pic && opts.length > 0 && opts.length <= 5);
+  q.classList.toggle('svsl-qc2', q.classList.contains('svsl-qfL') && !pic && opts.length === 4);
+  q.classList.toggle('svsl-qlong', q.classList.contains('svsl-qfL') && longest > 11);
   q.classList.toggle('svsl-q2col', !hasFig && land && opts.length >= 3 && (opts.length === 4 || longest > 6)); }
+const fzIn = e => { const p = e.parentElement && e.parentElement.closest('.afw, .sv-fig, .dxfig, .dxrel, .rffig, .svsl-qF'); return !!p; };
 function fitQ(q, box) { if (!q || !box) return; qShape(q);
   const key = SET() + '|' + step() + '|' + qInfo().cur + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 60) + '|' + innerWidth + 'x' + innerHeight;
   const answered = !!q.querySelector('.vrow, .cfb, .rpbar, .choice.ok, .choice.no, .choice.right, .choice.wrong');
   q.classList.add('svsl-meas'); q.style.zoom = 1;
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 8, 0);
   const avH = box.clientHeight - others - 4, avW = box.clientWidth - 4, R = answered ? 0 : (q.classList.contains('svsl-qfig') ? 110 : 125);
-  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  /* 그림·표는 남는 공간만큼 키워요 (높이와 문제 칸 너비를 넘지 않는 가장 큰 크기) */
+  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel, .qtext .rffig')].filter(e => !fzIn(e)); if (fz.length && q.classList.contains('svsl-qfig')) { let f = 2.6; const set = v => fz.forEach(e => e.style.zoom = v); set(1); const lim = Math.max(q.scrollHeight, avH - R); set(f);
+    const wide = () => fz.some(e => { const p = e.closest('.qtext') || e.parentElement; return !!p && p.scrollWidth > p.clientWidth + 2; });
+    for (let i = 0; i < 24 && f > 1 && (q.scrollHeight > lim + 1 || wide()); i++) { f -= .07; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  /* 오른쪽 칸(글 + 보기)이 화면 높이를 넘지 않도록 보기 단추 높이를 먼저 맞춰요 (스크롤·잘림 대신) */
+  if (q.classList.contains('svsl-qfL')) { const F0 = q.querySelector(':scope > .svsl-qF'), f0 = F0 && F0.firstElementChild; if (F0) { F0.style.height = ''; F0.style.minHeight = '0px'; } if (f0) { f0.style.zoom = 1; const rw0 = f0.querySelector('.pdrow'); if (rw0) rw0.style.flexDirection = ''; q.classList.toggle('svsl-qwide', !q.classList.contains('svsl-qlong') && f0.offsetWidth / Math.max(1, f0.offsetHeight) > 1.9); f0.style.zoom = .1; }
+    for (const m of [120, 104, 90, 78, 68, 60, 54, 48]) { q.style.setProperty('--chmin', m + 'px'); if (q.scrollHeight + R <= avH) break; } }
+  { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (f) { f.style.zoom = 1; qF.style.height = ''; qF.style.minHeight = '0px';
+      /* 왼쪽 칸 높이 = 화면에 남는 높이(또는 오른쪽 칸 높이)까지, 그림은 그 칸에 꼭 맞는 가장 큰 크기로 (잘림·스크롤 없음) */
+      const chrome = q.scrollHeight - qF.offsetHeight, boxH = Math.max(qF.offsetHeight, avH - R - chrome); qF.style.height = boxH + 'px';
+      const cs = getComputedStyle(qF), pw = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 6, ph = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 6, fw = f.offsetWidth || 1, fh = f.offsetHeight || 1;
+      let z = Math.max(.5, Math.min(3.2, (qF.clientWidth - pw) / fw, (boxH - ph) / fh));
+      /* 그림이 둘(표 + 그래프)이면 옆으로·위아래 가운데 더 크게 보이는 쪽으로 놓아요 */
+      const rw = f.querySelector('.pdrow'); if (rw) { rw.style.flexDirection = 'column'; const z2 = Math.max(.5, Math.min(3.2, (qF.clientWidth - pw) / (f.offsetWidth || 1), (boxH - ph) / (f.offsetHeight || 1))); if (z2 > z * 1.05) z = z2; else rw.style.flexDirection = ''; }
+      f.style.zoom = z.toFixed(3); } }
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
-  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
+  const QN = (q.classList.contains('svsl-qfL') || q.classList.contains('svsl-qfig')) ? Math.min(QMIN, .64) : QMIN;   /* 그림 문제는 잘리거나 스크롤되지 않게 조금 더 줄일 수 있어요 */
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QN, Math.min(QMAX, avH / h, avW / w));
   if (QZ[key] && answered) z = Math.min(QZ[key], z * 1.0) < QZ[key] * .9 ? Math.min(QZ[key], z) : QZ[key]; else if (!answered) QZ[key] = z;
   q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > QN; i++) { z = Math.max(QN, z * .96); q.style.zoom = z.toFixed(3); }
   if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
