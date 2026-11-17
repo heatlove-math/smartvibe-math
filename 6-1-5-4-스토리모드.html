@@ -6163,6 +6163,30 @@ S1_TOOLS.push(['deg1', 'half', '도구 1', '1도를 찾아라', '직각을 90조
 BADGES.length = 0;
 BADGES.push(['deg1', '도구 1 · 1도를 찾아라 (차트 마스터 봉인)', '1️⃣'], ['look', '도구 2 · 각도기 살펴보기 (차트 마스터 봉인)', '🔍'], ['place', '도구 3 · 각도기 대기 (차트 마스터 봉인)', '📐'], ['ext', '도구 4 · 짧은 변 늘여 재기 (차트 마스터 봉인)', '📏']);
 
+/* 보기는 항상 4개: 틀린 보기가 모자라면 답의 꼴(분수·수·이름·비)에 맞추어 채워요 */
+window.svFill4 = function (ans, ds) {
+  ans = String(ans); const D = []; (ds || []).map(String).forEach(x => { if (x !== ans && !D.includes(x)) D.push(x); });
+  if (D.length >= 3) return D;
+  const add = t => { t = String(t); if (D.length < 3 && t !== ans && !D.includes(t) && !/NaN|undefined/.test(t)) D.push(t); };
+  const plain = ans.replace(/<[^>]+>/g, '').trim(); let m;
+  const fam = [['삼각기둥', '사각기둥', '오각기둥', '육각기둥', '칠각기둥', '팔각기둥'], ['삼각뿔', '사각뿔', '오각뿔', '육각뿔', '칠각뿔', '팔각뿔'], ['삼각형', '사각형', '오각형', '육각형'], ['막대그래프', '꺾은선그래프', '띠그래프', '그림그래프']];
+  fam.forEach(F => { if (F.includes(plain)) F.forEach(add); });
+  if (D.length < 3 && (m = /^(\D*?)(\d+) (\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], w = +m[2], n = +m[3], d = +m[4], u = m[5]; [[w + 1, n, d], [w, n + 1 < d ? n + 1 : n - 1, d], [w, n, d + 1], [w - 1, n, d]].forEach(v => { if (v[0] > 0 && v[1] > 0) add(p + v[0] + ' ' + v[1] + '/' + v[2] + u); }); }
+  else if (D.length < 3 && (m = /^(\D*?)(\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], n = +m[2], d = +m[3], u = m[4]; [[n + 1, d], [n, d + 1], [d, n], [n + 2, d], [n, d + 2]].forEach(v => { if (v[0] !== v[1]) add(p + v[0] + '/' + v[1] + u); }); }
+  else if (D.length < 3 && (m = /^(\d+) : (\d+)$/.exec(plain))) { const a = +m[1], b = +m[2]; [[b, a], [a, a + b], [a + b, b], [a + 1, b]].forEach(v => add(v[0] + ' : ' + v[1])); }
+  else if (D.length < 3 && (m = /^(\d+(?:\.\d+)?) ÷ (\d+)$/.exec(plain))) { const a = m[1], b = +m[2]; [b + 1, b + 2, b > 2 ? b - 1 : b + 3].forEach(v => add(a + ' ÷ ' + v)); }
+  else if (D.length < 3 && !/[:÷×=]/.test(plain) && (m = /^(\D*?)(\d+(?:\.\d+)?)(\D*)$/.exec(plain))) { const n = parseFloat(m[2]), st = m[2].includes('.') ? Math.pow(10, -(m[2].split('.')[1].length)) : 1; [n + st, n - st, n + 2 * st, n * 2, n + 3 * st].forEach(v => { if (v > 0) add(m[1] + String(+v.toFixed(6)) + m[3]); }); }
+  if (D.length < 3) ['알 수 없어요', '모두 알맞아요', '모두 알맞지 않아요'].forEach(add);
+  return D;
+};
+(function () {
+  const patch = () => {
+    try { if (typeof mkI === 'function' && !mkI.__f4) { const o = mkI, n = function (text, img, ans, ds, ex, sa) { return o(text, img, ans, window.svFill4(ans, ds), ex, sa); }; n.__f4 = 1; mkI = n; } } catch (e) {}
+    try { if (typeof LC !== 'undefined' && LC && Array.isArray(LC.basic)) LC.basic.forEach(b => { if (!b || b.__f4 || typeof b.gen !== 'function') return; const g = b.gen; b.__f4 = 1;
+      b.gen = function () { const q = g.apply(this, arguments); try { if (q && Array.isArray(q.choices) && q.choices.length >= 2 && q.choices.length < 4 && q.ans != null && !/<svg|<img/.test(q.choices.join(''))) { const A = String(q.ans), W = window.svFill4(A, q.choices.map(String).filter(x => x !== A)); W.forEach(x => { if (q.choices.length < 4 && !q.choices.map(String).includes(x)) q.choices.push(x); }); } } catch (e) {} return q; }; }); } catch (e) {}
+  };
+  patch(); document.addEventListener('DOMContentLoaded', patch); window.addEventListener('load', patch); setTimeout(patch, 0); setTimeout(patch, 600);
+})();
 /* =====================================================================
    📐 2단원 3~6차시 공통 엔진 (u2kit)
    · stepTool : 그림 + 질문 + 끌기 조작을 단계별로 이어 가는 개념 도구
@@ -6352,7 +6376,7 @@ function lessonSetup(C) {
   S1_ITEMS.push({ id: 'j1', label: `보스전 1 · ${C.j1.label}`, keys: ['j1'], max: 22 }, { id: 'j2', label: `보스전 2 · ${C.j2.label}`, keys: ['j2'], max: 15 }, { id: 'j3', label: `보스전 3 · ${C.j3.label}`, keys: ['j3'], max: 15 });
   genParts = function () {
     const P = {};
-    C.basic.forEach((b, i) => { const k = 'b' + (i + 1), q = b.gen(); P[k] = Object.assign({ key: k, label: `기본 문제 ${i + 1} · ${b.label}`, choice: true, write: false }, q); });
+    C.basic.forEach((b, i) => { const k = 'b' + (i + 1), q = b.gen(); try { if (q && Array.isArray(q.choices) && q.choices.length >= 2 && q.choices.length < 4 && q.ans != null && !/<svg|<img/.test(q.choices.join(''))) { const A = String(q.ans); window.svFill4(A, q.choices.map(String).filter(x => x !== A)).forEach(x => { if (q.choices.length < 4 && !q.choices.map(String).includes(x)) q.choices.push(x); }); } } catch (e) {} P[k] = Object.assign({ key: k, label: `기본 문제 ${i + 1} · ${b.label}`, choice: true, write: false }, q); });
     P.j1 = { key: 'j1', label: '보스전 1 · ' + C.j1.label, text: C.j1.label, hint: '', ok: '' };
     ['j2', 'j3'].forEach(k => { P[k] = Object.assign({ key: k, label: `보스전 ${k[1]} · ${C[k].label}`, choice: true, write: false }, C[k].gen()); });
     return P;
@@ -7026,7 +7050,8 @@ const MX = (() => {
   const pop = () => { try { Sound.pop(); } catch (e) {} };
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   const mixed = s => String(s == null ? '' : s).trim().replace(/^(\d+)\s*(?:과|와|\s)\s*(\d+)\s*\/\s*(\d+)$/, (m, w, n, dn) => (+w * +dn + +n) + '/' + dn);
-  const norm = s => mixed(s).replace(/\s+/g, '').replace(/[：∶]/g, ':').replace(/[．。]/g, '.').replace(/／/g, '/').replace(/,/g, '').toLowerCase();
+  const half = v => String(v == null ? '' : v).replace(/[\uFF10-\uFF19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\uFF0E/g, '.').replace(/\uFF05/g, '%').replace(/\uFF1A/g, ':').replace(/\uFF0F/g, '/');
+  const norm = s => mixed(half(s)).replace(/\s+/g, '').replace(/[：∶]/g, ':').replace(/[．。]/g, '.').replace(/／/g, '/').replace(/,/g, '').toLowerCase();
   const UNIT = /(배|개|명|원|컵|칸|번|%|퍼센트|l|kg|g|km|m|cm|시간|마리|자루|권|점|표|쪽|도|℃)$/;
   const unstrip = s => { let x = norm(s); for (let i = 0; i < 2; i++) x = x.replace(UNIT, ''); return x; };
   const isNum = x => /^-?\d+(\.\d+)?$/.test(x), FR = /^(\d+)\/(\d+)$/;
@@ -7415,7 +7440,7 @@ const MX = (() => {
   }
 
   try { const s = document.createElement('style'); s.textContent = `
-.mxin{height:44px;border:3px solid #94a3b8;border-radius:12px;text-align:center;font-size:1.3rem;font-weight:900;font-family:inherit;color:#0f172a;background:#fff;margin:2px 4px;padding:0 4px;vertical-align:middle}
+.mxin{height:46px;min-width:92px;box-sizing:border-box;border:3px solid #94a3b8;border-radius:12px;text-align:center;font-size:1.3rem;font-weight:900;font-family:inherit;letter-spacing:0;color:#0f172a;background:#fff;margin:2px 4px;padding:0 6px;vertical-align:middle}
 .mxin:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px #bfdbfe}.mxin.bad{border-color:#dc2626;background:#fef2f2}
 .mxok{display:inline-block;min-width:36px;text-align:center;color:#15803d;background:#dcfce7;border-radius:10px;padding:2px 8px;font-size:1.25rem}
 .mxrec{background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:10px 14px;margin:10px auto 0;font-size:1.25rem;font-weight:800;line-height:2.3;text-align:center;max-width:860px}.mxrec.sm{font-size:1.05rem;padding:4px 8px;line-height:1.9;margin-top:6px}
@@ -7741,11 +7766,11 @@ const MGX = (() => {
     gen() { const r = c.gen(); r.i = 0; r.B = [0]; r.cur = 0; r.miss = 0; return r; },
     view(r) { const s0 = r.B[r.B.length - 1], its = r.B.slice(1).map((b, i) => ({ n: r.items[i].n, p: (b - r.B[i]) * 5, c: COL[i % 8] }));
       if (r.cur > s0) its.push({ n: '', p: (r.cur - s0) * 5, c: COL[r.i % 8] + '99' }); if (r.done && r.B.length === r.items.length) its.push({ n: r.items[r.items.length - 1].n, p: (20 - s0) * 5, c: COL[(r.items.length - 1) % 8] });
-      return `<div class="qzq">${r.done && r.B.length === r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표를 보고 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b>의 백분율만큼 원에 그려요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpiew2"><div class="mgxpiedrag" data-mgxdrag="ang">${pieSVG(its, { nop: true, w: 250, r: 92 })}</div><div class="mgxpies"><p>원의 눈금을 누르거나 끌어 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b> 조각의 끝을 정해요.<br>눈금 한 칸은 5%예요.</p><div>${btn('adj:-1', '− 한 칸', 'sub', r.cur <= s0)}${btn('adj:1', '＋ 한 칸', 'go', r.cur >= 20)}</div>${btn('ok', '✅ 이만큼이에요', 'ok', r.cur <= s0)}</div></div>`; },
+      return `<div class="qzq">${r.done && r.B.length === r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표를 보고 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b>의 백분율만큼 원에 그려요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpiew2"><div class="mgxpiedrag" data-mgxdrag="ang">${pieSVG(its, { nop: true, w: 250, r: 92 })}</div><div class="mgxpies"><p>원의 눈금을 누르거나 끌어 <b>${r.items[Math.min(r.i, r.items.length - 1)].n}</b> 조각의 끝을 정해요.<br>원의 눈금은 모두 20칸이에요.</p><div>${btn('adj:-1', '− 한 칸', 'sub', r.cur <= s0)}${btn('adj:1', '＋ 한 칸', 'go', r.cur >= 20)}</div>${btn('ok', '✅ 이만큼이에요', 'ok', r.cur <= s0)}</div></div>`; },
     on: { ang(r, p) { const s0 = r.B[r.B.length - 1]; let t = Math.round(p.ang * 20); if (t < s0) t = s0 >= 10 && t <= 2 ? 20 : s0; r.cur = t; },
       adj(r, x, a) { const s0 = r.B[r.B.length - 1]; r.cur = Math.max(s0, Math.min(20, r.cur + +x)); a.pop(); },
       ok(r, x, a) { const s0 = r.B[r.B.length - 1], it = r.items[r.i], need = Math.round(it.v / r.total * 20); if (r.cur <= s0) return;
-        if (r.cur - s0 !== need) { r.miss++; if (r.miss >= 2) return a.end(false, `${it.n}: ${it.v} ÷ ${r.total} × 100 = ${need * 5}(%) → 눈금 ${need}칸이에요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); r.cur = s0; return a.slip(`${it.n}의 백분율을 구해 봐요: ${it.v} ÷ ${r.total} × 100. 눈금 한 칸이 5%예요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); }
+        if (r.cur - s0 !== need) { r.miss++; if (r.miss >= 2) return a.end(false, `${it.n}: ${it.v} ÷ ${r.total} × 100 = ${need * 5}(%) → 눈금 ${need}칸이에요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); r.cur = s0; return a.slip(`${it.n}의 백분율을 구해 봐요: ${it.v} ÷ ${r.total} × 100. 원 전체 100%가 눈금 20칸이에요.`, `${r.title} 원그래프 · ${it.n}${J(it.n, '을', '를')} ${(r.cur - s0) * 5}%로 그림`); }
         r.B.push(r.cur); r.i++; a.pop(); if (r.i >= r.items.length - 1) a.end(true, `${r.items.map(q => `${q.n} ${F(q.v / r.total * 100)}%`).join(', ')} · 남은 부분이 ${r.items[r.items.length - 1].n}${J(r.items[r.items.length - 1].n, '이에요', '예요')}.`); } },
     auto(r) { const A = []; r.items.slice(0, -1).forEach(it => { for (let k = 0; k < Math.round(it.v / r.total * 20); k++) A.push('adj:1'); A.push('ok'); }); return A; } }; }
 
@@ -7754,7 +7779,7 @@ const MGX = (() => {
     return {
       gen() { const r = c.gen(); r.P = r.items.map(it => Math.round(it.v / r.total * 100)); const ex = shuffle([5, 10, 15, 20, 25, 30, 35, 40, 45, 50].filter(p => !r.P.includes(p))).slice(0, 2); r.tray = shuffle(r.P.concat(ex)).map(p => ({ p, used: false })); r.i = 0; return r; },
       view(r) { const done = r.items.slice(0, r.i).map((it, i) => ({ n: it.n, p: r.P[i] }));
-        return `<div class="qzq">${r.i >= r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표에서 색칠된 <b>${r.items[r.i].n}</b>의 백분율에 맞는 조각을 골라 원그래프를 완성해요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpcw"><div class="mgxpcpie">${pieSVG(done, { nop: true, w: 210, r: 78, lab: false })}</div><div class="mgxpctray">${r.tray.map((t, k) => `<button class="mgxpcb ${t.used ? 'used' : ''}" data-an="mgx" data-v="t:${k}" ${t.used ? 'disabled' : ''}>${piece(t.p, COL[k % 8])}</button>`).join('')}</div></div><p class="mgxhint">조각의 점선 한 칸은 5%예요. 칸 수를 세어 알맞은 조각을 눌러요</p>`; },
+        return `<div class="qzq">${r.i >= r.items.length ? `<b>${r.title}</b> 원그래프 완성!` : `표에서 색칠된 <b>${r.items[r.i].n}</b>의 백분율에 맞는 조각을 골라 원그래프를 완성해요`}</div>${tbl(r, r.done ? -1 : r.i)}<div class="mgxpcw"><div class="mgxpcpie">${pieSVG(done, { nop: true, w: 210, r: 78, lab: false })}</div><div class="mgxpctray">${r.tray.map((t, k) => `<button class="mgxpcb ${t.used ? 'used' : ''}" data-an="mgx" data-v="t:${k}" ${t.used ? 'disabled' : ''}>${piece(t.p, COL[k % 8])}</button>`).join('')}</div></div><p class="mgxhint">원 전체는 점선 20칸이에요. 조각의 칸 수를 세어 알맞은 조각을 눌러요</p>`; },
       on: { t(r, x, a) { const t = r.tray[+x], it = r.items[r.i]; if (!t || t.used) return;
           if (t.p !== r.P[r.i]) return a.slip(`그 조각은 ${t.p / 5}칸, ${t.p}%예요. ${it.n}의 백분율을 구해 봐요: ${it.v} ÷ ${r.total} × 100`, `${r.title} · ${it.n}에 ${t.p}% 조각을 고름`);
           t.used = true; r.i++; a.pop(); if (r.i >= r.items.length) a.end(true, r.items.map((q, i) => `${q.n} ${q.v} ÷ ${r.total} × 100 = ${r.P[i]}(%)`).join(' · ')); } },
@@ -7912,13 +7937,13 @@ const RF = {
 .rfu{display:inline-flex;gap:2px}.rfu i{display:inline-block;width:26px;height:26px;border-radius:5px}.rfu.or i{background:#fb923c;border:2px solid #ea580c}.rfu.bl i{background:#60a5fa;border:2px solid #2563eb}
 .rfpics{display:flex;flex-direction:column;gap:4px;align-items:center;font-size:1.8rem;line-height:1.15;margin:6px 0}.rfpics .or{background:#fff7ed;border:2px solid #fdba74;border-radius:12px;padding:2px 10px}.rfpics .bl{background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:2px 10px}
 .rfgrid{display:inline-grid;grid-template-columns:repeat(10,22px);gap:2px;padding:4px;background:#e2e8f0;border-radius:8px;margin:6px auto}.rfgrid.sm{grid-template-columns:repeat(10,14px)}.rfgrid i{display:block;aspect-ratio:1;background:#fff;border-radius:2px}.rfgrid i.on{background:#f97316}
-.rftab{margin:6px auto;font-size:1.1rem}.rftab td,.rftab th{padding:6px 12px;text-align:center}.qtext .rfbar,.qtext .rfgrid,.qtext .rfpics,.qtext .rftab{display:flex;margin-left:auto;margin-right:auto}.qtext .rfgrid{display:grid;width:max-content}
+.rftab{margin:6px auto;font-size:1.1rem}.rftab td,.rftab th{padding:6px 12px;text-align:center;border:2px solid #94a3b8}.rftab th{background:#e0e7ff;font-weight:900}.rftab td{background:#fff;font-weight:900}.rftab{border-collapse:collapse}.qtext .rfbar,.qtext .rfgrid,.qtext .rfpics,.qtext .rftab{display:flex;margin-left:auto;margin-right:auto}.qtext .rfgrid{display:grid;width:max-content}
 .cbl{color:#1d4ed8;font-weight:900}.cor{color:#c2410c;font-weight:900}`; document.head.appendChild(st); })();
 /* ---------- 그래프 그림 ---------- */
 const GCOL = ['#f97316', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ec4899', '#14b8a6', '#94a3b8'];
 const GR = {
   /* 띠그래프: items [{n, p}] (p 합 100) · o.hide: 백분율 숨김 · o.title */
-  strip(items, o) { o = o || {}; return `<div class="grstrip">${o.title ? `<div class="grt">${o.title}</div>` : ''}<div class="grbar">${items.map((it, i) => `<span style="width:${it.p}%;background:${it.c || GCOL[i % 8]}"><b>${it.n}</b>${o.hide ? '' : `<em>${it.p}%</em>`}</span>`).join('')}</div><div class="grtick">${Array.from({ length: 11 }, (_, i) => `<i style="left:${i * 10}%">${i * 10}</i>`).join('')}</div></div>`; },
+  strip(items, o) { o = o || {}; return `<div class="grstrip">${o.title ? `<div class="grt">${o.title}</div>` : ''}<div class="grbar">${items.map((it, i) => `<span style="width:${it.p}%;background:${it.c || GCOL[i % 8]}"><b>${it.n}</b>${o.hide ? '' : `<em>${it.t != null ? it.t : it.p + '%'}</em>`}</span>`).join('')}</div><div class="grtick">${Array.from({ length: 11 }, (_, i) => `<i style="left:${i * 10}%">${i * 10}</i>`).join('')}</div></div>`; },
   /* 원그래프 */
   pie(items, o) { o = o || {}; const R = o.r || 90, C = R + 26, W = C * 2; let a0 = 0, h = '';
     const pt = (a, r) => [C + r * Math.sin(a * Math.PI * 2 / 100), C - r * Math.cos(a * Math.PI * 2 / 100)];
@@ -8016,47 +8041,219 @@ function miniKit(defs) { /* defs: [{ id, v, name, title, goal, dur, sub, desc, k
 .qzstage .dxpts{font-size:2.2rem}`; document.head.appendChild(st); })();
 
 /* =====================================================================
+   원그래프 직접 그리기 (PD): 눈금이 있는 빈 원에 중심에서 선을 그어 나누고 이름표를 붙여요.
+   · 선 긋기: 원 안에서 끌면 중심에서 눈금까지 선이 따라와요 (눈금에 달라붙음) · 선 끝 동그라미를 끌면 옮기고, 누르면 지워요
+   · 이름표: 끌어서 조각에 놓거나, 이름표를 누른 뒤 조각을 눌러요 · 붙인 조각을 다시 누르면 떼어져요
+   상태 st = { L: [0, …] 선이 있는 눈금, T: { 조각 시작 눈금: 항목 번호 }, cur: 고른 이름표 }
+   o = { N 눈금 수, items [{n, p}], at: v => 누름 속성, pre: 값 앞말, lock, mark(첫 조각만 칠하기), pct: i => 조각에 쓸 백분율 글, nums, size }
+   ===================================================================== */
+const PD = (() => {
+  const C = 230, R = 168, VB = 460;
+  const pt = (k, r, N) => [+(C + r * Math.sin(k * 2 * Math.PI / N)).toFixed(2), +(C - r * Math.cos(k * 2 * Math.PI / N)).toFixed(2)];
+  const fresh = () => ({ L: [0], T: {}, cur: null });
+  const secs = (st, N) => { const L = st.L.slice().sort((a, b) => a - b); return L.map((a, i) => ({ a, n: (i + 1 < L.length ? L[i + 1] : N + L[0]) - a })); };
+  const wedge = (a, n, N, r) => { if (n >= N) return `M${C},${C - r} A${r},${r} 0 1 1 ${C - 0.01},${C - r} Z`; const [x0, y0] = pt(a, r, N), [x1, y1] = pt(a + n, r, N); return `M${C},${C} L${x0},${y0} A${r},${r} 0 ${n * 2 > N ? 1 : 0} 1 ${x1},${y1} Z`; };
+  function ticks(N, nums) {
+    let h = '';
+    for (let k = 0; k < N; k++) { const pc = k * 100 / N, big = pc % 25 === 0, mid = N >= 100 ? pc % 5 === 0 : N >= 20 ? pc % 25 === 0 : true, len = big ? 17 : mid ? 11 : 6, [x0, y0] = pt(k, R, N), [x1, y1] = pt(k, R + len, N);
+      h += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#334155" stroke-width="${big ? 2.6 : mid ? 1.8 : 1.1}"/>`; }
+    (nums || [0, 25, 50, 75]).forEach(pc => { const [x, y] = pt(pc * N / 100, R + 33, N); h += `<text x="${x}" y="${y + 6}" text-anchor="middle" class="pdnum">${pc}</text>`; });
+    return h;
+  }
+  function html(st, o) {
+    const N = o.N || 100, it = o.items || [], S = secs(st, N), lock = !!o.lock, unit = 100 / N;
+    let g = `<circle cx="${C}" cy="${C}" r="${R}" fill="#fff"/>`;
+    S.forEach((s, i) => { const lab = st.T[s.a], on = lab != null && it[lab];
+      const fill = o.mark ? (i === 0 && S.length > 1 ? '#fb923c' : '#fff') : on ? (it[lab].c || GCOL[lab % 8]) : (S.length > 1 ? (i % 2 ? '#f1f5f9' : '#f8fafc') : '#fff');
+      g += `<path d="${wedge(s.a, s.n, N, R)}" fill="${fill}" class="pdsec"/>`;
+      if (on && !o.mark) { const small = s.n * unit < 9, [lx, ly] = pt(s.a + s.n / 2, R * (small ? .74 : .6), N), pc = o.pct ? o.pct(lab) : null;
+        g += `<text x="${lx}" y="${ly - (pc ? 3 : -5)}" text-anchor="middle" class="pdlab${small ? ' sm' : ''}">${it[lab].n}</text>` + (!pc ? '' : pc === '□%' ? `<rect x="${lx - 30}" y="${ly + 3}" width="34" height="26" rx="4" fill="#fff" stroke="#0f172a" stroke-width="2.4"/><text x="${lx + 18}" y="${ly + 24}" text-anchor="middle" class="pdlab">%</text>` : `<text x="${lx}" y="${ly + (small ? 13 : 17)}" text-anchor="middle" class="pdlab${small ? ' sm' : ''}">(${pc})</text>`); } });
+    g += `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#0f172a" stroke-width="3.2"/>` + ticks(N, o.nums);
+    st.L.slice().sort((a, b) => a - b).forEach(k => { if (o.empty && k === 0) return; const [x, y] = pt(k, R, N); g += `<line x1="${C}" y1="${C}" x2="${x}" y2="${y}" stroke="#0f172a" stroke-width="${k === 0 ? 4 : 3.4}" stroke-linecap="round"/>` + (k !== 0 && !lock && !(o.fix || []).includes(k) ? `<circle cx="${x}" cy="${y}" r="10" class="pdknob"/>` : ''); });
+    g += `<circle cx="${C}" cy="${C}" r="${o.empty ? 4 : 6}" fill="#0f172a"/><line class="pdprev" x1="${C}" y1="${C}" x2="${C}" y2="${C}" style="display:none"/><circle class="pdprevk" cx="${C}" cy="${C}" r="11" style="display:none"/>`;
+    const sz = o.size || 400;
+    const svg = `<svg class="pdsvg${lock ? ' lock' : ''}" viewBox="0 0 ${VB} ${VB}" width="${sz}" height="${sz}" data-n="${N}" data-lines="${st.L.join(',')}" data-fix="${(o.fix || []).join(',')}" data-cur="${st.cur == null ? '' : st.cur}" ${lock ? '' : 'data-pd="1"'}>${g}</svg>`;
+    const used = Object.values(st.T);
+    const tags = o.mark || !it.length || lock ? '' : `<div class="pdtags">${it.map((x, i) => { const pc = o.pct ? o.pct(i) : null; return `<button type="button" class="pdtag${st.cur === i ? ' on' : ''}${used.includes(i) ? ' used' : ''}" ${lock ? 'disabled' : `data-pdtag="${i}" ${o.at('tag:' + i)}`}><i style="background:${x.c || GCOL[i % 8]}"></i>${x.n}${pc ? `<small>(${pc})</small>` : ''}</button>`; }).join('')}</div>`;
+    return `<div class="pdwrap">${o.title != null ? `<div class="pdttl">${o.title}</div>` : ''}${svg}${lock ? '' : `<i class="pdgo" hidden ${o.at('')} data-pdpre="${o.pre || ''}"></i>`}${tags}</div>`;
+  }
+  /* 누름·끌기 결과를 상태에 반영: v = add:k | mv:a:b | rm:k | tag:i | sec:시작눈금 | put:i:시작눈금 | clr */
+  function act(st, v, o) {
+    const N = (o && o.N) || 100, [a, x, y] = String(v).split(':'), k = +x, FX = (o && o.fix) || [], FT = (o && o.fixT) || [];
+    if ((a === 'mv' || a === 'rm') && FX.includes(k)) return st;
+    if (a === 'sec' && FT.includes(k)) return st; if (a === 'put' && FT.includes(+y)) return st; if (a === 'clr') { const keep = st.L.filter(q => FX.includes(q)), T = {}; FT.forEach(q => { if (st.T[q] != null) T[q] = st.T[q]; }); st.L = [0].concat(keep); st.T = T; st.cur = null; return st; }
+    const fix = () => { Object.keys(st.T).forEach(s => { if (!st.L.includes(+s)) delete st.T[s]; }); };
+    if (a === 'add') { if (!st.L.includes(k) && k >= 0 && k < N) st.L.push(k); }
+    else if (a === 'mv') { const b = +y; if (k !== 0 && st.L.includes(k) && !st.L.includes(b)) { st.L = st.L.map(q => q === k ? b : q); if (st.T[k] != null) { st.T[b] = st.T[k]; delete st.T[k]; } const S = st.L.slice().sort((p, q) => p - q); Object.keys(st.T).forEach(s => { if (!S.includes(+s)) delete st.T[s]; }); } }
+    else if (a === 'rm') { if (k !== 0) { st.L = st.L.filter(q => q !== k); delete st.T[k]; } }
+    else if (a === 'tag') st.cur = st.cur === k ? null : k;
+    else if (a === 'sec') { if (st.cur != null) { Object.keys(st.T).forEach(s => { if (st.T[s] === st.cur) delete st.T[s]; }); st.T[k] = st.cur; st.cur = null; } else if (st.T[k] != null) delete st.T[k]; }
+    else if (a === 'put') { const s = +y; Object.keys(st.T).forEach(q => { if (st.T[q] === k) delete st.T[q]; }); st.T[s] = k; st.cur = null; }
+    else if (a === 'clr') { st.L = [0]; st.T = {}; st.cur = null; }
+    fix(); try { Sound.pop(); } catch (e) {}
+    return st;
+  }
+  function judge(st, o) {
+    const N = o.N || 100, it = o.items, S = secs(st, N), u = 100 / N, F = x => +(+x).toFixed(4);
+    if (S.length < it.length) return { ok: false, msg: `원이 아직 ${S.length}부분이에요. 항목은 ${it.length}개이니 선을 더 그어 나누어요.` };
+    if (S.length > it.length) return { ok: false, msg: `원이 ${S.length}부분으로 나뉘어 있어요. 항목은 ${it.length}개예요. 필요 없는 선은 끝의 동그라미를 눌러 지워요.` };
+    const lab = S.map(s => st.T[s.a]);
+    if (lab.some(x => x == null)) return { ok: false, msg: '이름표를 붙이지 않은 부분이 있어요. 이름표를 끌어 알맞은 부분에 붙여요.' };
+    if (o.order && lab.some((x, i) => x !== i)) return { ok: false, msg: `표의 차례대로 나타내요. 0의 눈금부터 시계 방향으로 <b>${it.map(x => x.n).join(' → ')}</b> 차례가 되도록 선과 이름표를 다시 살펴봐요.` };
+    for (let i = 0; i < S.length; i++) { const s = S[i], x = it[lab[i]];
+      if (F(s.n * u) !== F(x.p)) {
+        if (i > 0 && F((s.a + s.n) * u) === F(x.p)) return { ok: false, msg: `<b>${x.n}</b> 부분은 0에서부터가 아니라, 앞 항목이 끝난 눈금 ${F(s.a * u)}에서부터 세어 나누어요.` };
+        return { ok: false, msg: `<b>${x.n}</b> 부분을 다시 살펴봐요. 지금은 눈금 ${F(s.a * u)}부터 ${F((s.a + s.n) * u)}까지예요. ${x.n}의 백분율만큼인지 눈금을 세어 봐요.` }; } }
+    return { ok: true };
+  }
+  const solved = o => { const N = o.N || 100, st = fresh(); let a = 0; o.items.forEach((x, i) => { st.T[a] = i; a += Math.round(x.p * N / 100); if (i < o.items.length - 1) st.L.push(a); }); return st; };
+  /* ---- 끌기 ---- */
+  let dg = null, eat = 0;
+  const pos = (svg, e) => { const r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * VB, y = (e.clientY - r.top) / r.height * VB, N = +svg.dataset.n, dx = x - C, dy = y - C; let an = Math.atan2(dx, -dy); if (an < 0) an += 2 * Math.PI; const f = an / (2 * Math.PI) * N; return { x, y, d: Math.hypot(dx, dy), k: Math.round(f) % N, f, N }; };
+  const fire = (root, v) => { const go = root.querySelector('.pdgo'); if (!go) return; go.dataset.v = (go.dataset.pdpre || '') + v; go.click(); };
+  const secOf = (svg, f) => { const L = svg.dataset.lines.split(',').map(Number).sort((a, b) => a - b); let s = L[L.length - 1]; L.forEach(a => { if (a <= f) s = a; }); if (f < L[0]) s = L[L.length - 1]; return s; };
+  if (typeof document !== 'undefined' && !window.__pdOn) { window.__pdOn = 1;
+    document.addEventListener('pointerdown', e => {
+      const tg = e.target.closest && e.target.closest('[data-pdtag]');
+      if (tg) { dg = { ty: 'tag', el: tg, i: +tg.dataset.pdtag, x0: e.clientX, y0: e.clientY, mv: false, root: tg.closest('.pdwrap') }; return; }
+      const svg = e.target.closest && e.target.closest('svg[data-pd]'); if (!svg) return;
+      const p = pos(svg, e), L = svg.dataset.lines.split(',').map(Number); let from = null;
+      const FXD = (svg.dataset.fix || '').split(',').filter(Boolean).map(Number);
+      L.forEach(k => { if (k === 0 || FXD.includes(k)) return; const [x, y] = pt(k, R, p.N); if (Math.hypot(p.x - x, p.y - y) < 30) from = k; });
+      if (from == null && p.d > R + 46) return;
+      dg = { ty: from != null ? 'mv' : 'add', svg, from, x0: e.clientX, y0: e.clientY, mv: false, root: svg.closest('.pdwrap'), p }; e.preventDefault();
+    });
+    document.addEventListener('pointermove', e => { if (!dg) return; if (!dg.mv && Math.hypot(e.clientX - dg.x0, e.clientY - dg.y0) > 7) dg.mv = true; if (!dg.mv) return;
+      if (dg.ty === 'tag') { if (!dg.gh) { dg.gh = dg.el.cloneNode(true); dg.gh.classList.add('pdghost'); document.body.appendChild(dg.gh); } dg.gh.style.left = e.clientX + 'px'; dg.gh.style.top = e.clientY + 'px'; return; }
+      const p = pos(dg.svg, e); dg.p = p; const [x, y] = pt(p.k, R, p.N), ln = dg.svg.querySelector('.pdprev'), kb = dg.svg.querySelector('.pdprevk');
+      if (ln) { ln.setAttribute('x2', x); ln.setAttribute('y2', y); ln.style.display = ''; } if (kb) { kb.setAttribute('cx', x); kb.setAttribute('cy', y); kb.style.display = ''; } e.preventDefault(); }, { passive: false });
+    const up = e => { if (!dg) return; const d = dg; dg = null; if (d.gh) d.gh.remove();
+      if (d.ty === 'tag') { if (!d.mv) return; eat = Date.now(); const el = document.elementFromPoint(e.clientX, e.clientY), svg = el && el.closest && el.closest('svg[data-pd]'); if (svg && svg.closest('.pdwrap') === d.root) { const p = pos(svg, e); if (p.d <= R + 8) fire(d.root, 'put:' + d.i + ':' + secOf(svg, p.f)); } return; }
+      const p = d.p, L = d.svg.dataset.lines.split(',').map(Number);
+      if (d.ty === 'mv') { eat = Date.now(); fire(d.root, d.mv ? (L.includes(p.k) ? 'mv:' + d.from + ':' + d.from : 'mv:' + d.from + ':' + p.k) : 'rm:' + d.from); return; }
+      if (d.mv) { eat = Date.now(); if (!L.includes(p.k)) fire(d.root, 'add:' + p.k); else { const ln = d.svg.querySelector('.pdprev'), kb = d.svg.querySelector('.pdprevk'); if (ln) ln.style.display = 'none'; if (kb) kb.style.display = 'none'; } return; }
+      eat = Date.now(); if (p.d > R + 8) return;
+      if (d.svg.dataset.cur !== '' || p.d < R * .72) fire(d.root, 'sec:' + secOf(d.svg, p.f)); else if (!L.includes(p.k)) fire(d.root, 'add:' + p.k); };
+    document.addEventListener('pointerup', up); document.addEventListener('pointercancel', () => { if (dg && dg.gh) dg.gh.remove(); dg = null; });
+    document.addEventListener('click', e => { if (Date.now() - eat < 350 && e.isTrusted && e.target.closest && e.target.closest('svg[data-pd],[data-pdtag]')) { e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+  /* 눈금만 있는 빈 원 · 완성된 원(읽기용): blank = 백분율을 □로 비울 항목 번호들, noname = 이름 대신 기호 */
+  function fig(o) { const N = o.N || 100, st = o.st || (o.items && !o.empty ? solved(o) : fresh()); return html(st, Object.assign({ at: () => '', lock: true }, o)); }
+  return { fresh, html, act, judge, solved, secs, fig, pt, C, R, VB };
+})();
+(() => { const st = document.createElement('style'); st.textContent = `.pdwrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px;vertical-align:top}.pdsvg{max-width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}.pdsvg.lock{cursor:default;touch-action:auto}
+.pdnum{font-size:17px;font-weight:900;fill:#334155}.pdlab{font-size:19px;font-weight:900;fill:#0f172a;pointer-events:none;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}.pdlab.sm{font-size:14px}
+.pdknob{fill:#fff;stroke:#ea580c;stroke-width:4;cursor:grab}.pdprev{stroke:#ea580c;stroke-width:4;stroke-dasharray:9 6;stroke-linecap:round;pointer-events:none}.pdprevk{fill:#fed7aa;stroke:#ea580c;stroke-width:3;pointer-events:none}
+.pdttl{font-weight:900;font-size:1.05rem;background:#f1f5f9;border-radius:999px;padding:3px 16px;color:#0f172a}
+.pdtags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:460px}.pdtag{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:900;font-size:1.05rem;padding:7px 14px;border-radius:12px;border:2.5px solid #94a3b8;background:#fff;color:#0f172a;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 3px 0 #cbd5e1}
+.pdtag i{display:inline-block;width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(15,23,42,.35)}.pdtag small{font-weight:900;color:#475569}.pdtag.on{border-color:#ea580c;background:#fff7ed;box-shadow:0 3px 0 #fdba74;transform:translateY(-2px)}.pdtag.used{opacity:.45}
+.pdghost{position:fixed;z-index:99999;pointer-events:none;transform:translate(-50%,-60%) scale(1.08);opacity:.92;box-shadow:0 10px 24px rgba(15,23,42,.3)}
+.pdhelp{font-size:.92rem;font-weight:800;color:#475569;text-align:center;line-height:1.5;margin:2px 0}.pdrow{display:flex;gap:22px;justify-content:center;align-items:center;flex-wrap:wrap}.pdcol{display:flex;flex-direction:column;align-items:center;gap:8px}`; document.head.appendChild(st); })();
+
+/* =====================================================================
+   띠그래프 직접 그리기 (SD): 눈금이 있는 빈 띠에 선을 그어 나누고 이름표를 붙여요. 상태·판정은 PD와 같아요.
+   · 띠 안에서 끌면 세로선이 따라와요(눈금에 달라붙음) · 선 아래 동그라미: 끌면 옮기고 누르면 지워요 · 이름표는 끌어서 붙여요
+   o = { N 눈금 수(100), items [{n, p}], at, pre, lock, pct, fix, fixT, title, w }
+   ===================================================================== */
+const SD = (() => {
+  const X0 = 46, W = 800, Y0 = 64, H = 78, VW = 900, VH = 196;
+  const X = (k, N) => +(X0 + W * k / N).toFixed(2);
+  function ruler(N) { let h = `<line x1="${X0}" y1="${Y0}" x2="${X0 + W}" y2="${Y0}" stroke="#0f172a" stroke-width="2"/>`;
+    for (let k = 0; k <= N; k++) { const pc = k * 100 / N, big = pc % 10 === 0, mid = pc % 5 === 0, len = big ? 16 : mid ? 11 : 6, x = X(k, N); if (N < 100 && !mid && N > 20) continue;
+      h += `<line x1="${x}" y1="${Y0 - len}" x2="${x}" y2="${Y0}" stroke="#334155" stroke-width="${big ? 2.2 : mid ? 1.6 : 1}"/>` + (big ? `<text x="${x}" y="${Y0 - 22}" text-anchor="middle" class="pdnum">${pc}</text>` : ''); }
+    return h + `<text x="${X0 + W + 30}" y="${Y0 - 22}" text-anchor="middle" class="pdnum">%</text>`; }
+  function html(st, o) { const N = o.N || 100, it = o.items || [], S = PD.secs(st, N), lock = !!o.lock, u = 100 / N; let g = '';
+    S.forEach((s, i) => { const lab = st.T[s.a], on = lab != null && it[lab], x = X(s.a, N), w = X(s.a + s.n, N) - x;
+      g += `<rect x="${x}" y="${Y0}" width="${w}" height="${H}" fill="${on ? (it[lab].c || GCOL[lab % 8]) : (S.length > 1 ? (i % 2 ? '#f1f5f9' : '#f8fafc') : '#fff')}"/>`;
+      if (on) { const small = s.n * u < 9, pc = o.pct ? o.pct(lab) : null, cx = x + w / 2;
+        g += small ? `<text x="${cx}" y="${Y0 + H + 24}" text-anchor="middle" class="pdlab sm">${it[lab].n}${pc ? ' (' + pc + ')' : ''}</text><line x1="${cx}" y1="${Y0 + H - 14}" x2="${cx}" y2="${Y0 + H + 9}" stroke="#0f172a" stroke-width="1.6"/>`
+          : `<text x="${cx}" y="${Y0 + H / 2 - (pc ? 4 : -7)}" text-anchor="middle" class="pdlab">${it[lab].n}</text>` + (!pc ? '' : pc === '□%' ? `<rect x="${cx - 30}" y="${Y0 + H / 2 + 4}" width="34" height="26" rx="4" fill="#fff" stroke="#0f172a" stroke-width="2.4"/><text x="${cx + 18}" y="${Y0 + H / 2 + 25}" text-anchor="middle" class="pdlab">%</text>` : `<text x="${cx}" y="${Y0 + H / 2 + 22}" text-anchor="middle" class="pdlab">(${pc})</text>`); } });
+    g += `<rect x="${X0}" y="${Y0}" width="${W}" height="${H}" fill="none" stroke="#0f172a" stroke-width="3"/>` + ruler(N);
+    st.L.slice().sort((a, b) => a - b).forEach(k => { if (k === 0) return; const x = X(k, N); g += `<line x1="${x}" y1="${Y0}" x2="${x}" y2="${Y0 + H}" stroke="#0f172a" stroke-width="3.2"/>` + (!lock && !(o.fix || []).includes(k) ? `<circle cx="${x}" cy="${Y0 + H}" r="10" class="pdknob"/>` : ''); });
+    g += `<line class="pdprev" x1="0" y1="${Y0 - 4}" x2="0" y2="${Y0 + H + 4}" style="display:none"/><circle class="pdprevk" cx="0" cy="${Y0 + H}" r="11" style="display:none"/>`;
+    const used = Object.values(st.T), wpx = o.w || 860;
+    const tags = (!it.length || lock) ? (o.tail ? `<div class="pdtags sdtags">${o.tail}</div>` : '') : `<div class="pdtags sdtags">${it.map((x, i) => { const pc = o.pct ? o.pct(i) : null; return `<button type="button" class="pdtag${st.cur === i ? ' on' : ''}${used.includes(i) ? ' used' : ''}" data-pdtag="${i}" ${o.at('tag:' + i)}><i style="background:${x.c || GCOL[i % 8]}"></i>${x.n}${pc ? `<small>(${pc})</small>` : ''}</button>`; }).join('')}${o.tail || ''}</div>`;
+    return `<div class="pdwrap sdwrap">${o.title != null ? `<div class="pdttl">${o.title}</div>` : ''}<svg class="pdsvg sdsvg${lock ? ' lock' : ''}" viewBox="0 0 ${VW} ${VH}" width="${wpx}" height="${Math.round(wpx * VH / VW)}" data-n="${N}" data-lines="${st.L.join(',')}" data-fix="${(o.fix || []).join(',')}" data-cur="${st.cur == null ? '' : st.cur}" ${lock ? '' : 'data-sd="1"'}>${g}</svg>${lock ? '' : `<i class="pdgo" hidden ${o.at('')} data-pdpre="${o.pre || ''}"></i>`}${tags}</div>`; }
+  let dg = null, eat = 0;
+  const pos = (svg, e) => { const r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * VW, y = (e.clientY - r.top) / r.height * VH, N = +svg.dataset.n, f = Math.max(0, Math.min(N, (x - X0) / W * N)); return { x, y, f, k: Math.max(0, Math.min(N, Math.round(f))), N, inY: y > Y0 - 26 && y < Y0 + H + 30 }; };
+  const fire = (root, v) => { const go = root.querySelector('.pdgo'); if (!go) return; go.dataset.v = (go.dataset.pdpre || '') + v; go.click(); };
+  const secOf = (svg, f) => { const L = svg.dataset.lines.split(',').map(Number).sort((a, b) => a - b); let s = 0; L.forEach(a => { if (a <= f) s = a; }); return s; };
+  if (typeof document !== 'undefined' && !window.__sdOn) { window.__sdOn = 1;
+    document.addEventListener('pointerdown', e => { const svg = e.target.closest && e.target.closest('svg[data-sd]'); if (!svg) return; const p = pos(svg, e); if (!p.inY) return;
+      const L = svg.dataset.lines.split(',').map(Number), FX = (svg.dataset.fix || '').split(',').filter(Boolean).map(Number); let from = null;
+      L.forEach(k => { if (k === 0 || FX.includes(k)) return; if (Math.abs(p.x - X(k, p.N)) < 16 && p.y > Y0 + H - 26) from = k; });
+      dg = { ty: from != null ? 'mv' : 'add', svg, from, x0: e.clientX, y0: e.clientY, mv: false, root: svg.closest('.pdwrap'), p }; e.preventDefault(); });
+    document.addEventListener('pointermove', e => { if (!dg) return; if (!dg.mv && Math.hypot(e.clientX - dg.x0, e.clientY - dg.y0) > 7) dg.mv = true; if (!dg.mv) return;
+      const p = pos(dg.svg, e); dg.p = p; const x = X(p.k, p.N), ln = dg.svg.querySelector('.pdprev'), kb = dg.svg.querySelector('.pdprevk'); if (ln) { ln.setAttribute('x1', x); ln.setAttribute('x2', x); ln.style.display = ''; } if (kb) { kb.setAttribute('cx', x); kb.style.display = ''; } e.preventDefault(); }, { passive: false });
+    document.addEventListener('pointerup', e => { if (!dg) return; const d = dg; dg = null; const p = d.p, L = d.svg.dataset.lines.split(',').map(Number), ok = k => k > 0 && k < p.N && !L.includes(k);
+      eat = Date.now();
+      if (d.ty === 'mv') { fire(d.root, d.mv ? (ok(p.k) ? 'mv:' + d.from + ':' + p.k : 'mv:' + d.from + ':' + d.from) : 'rm:' + d.from); return; }
+      if (d.mv) { if (ok(p.k)) fire(d.root, 'add:' + p.k); else fire(d.root, 'tag:-1'); return; }
+      if (d.svg.dataset.cur !== '' || (p.y > Y0 + 8 && p.y < Y0 + H - 8 && L.length > 1)) { if (p.y > Y0 && p.y < Y0 + H + 30) fire(d.root, 'sec:' + secOf(d.svg, p.f)); } else if (ok(p.k)) fire(d.root, 'add:' + p.k); });
+    document.addEventListener('pointercancel', () => { dg = null; });
+    document.addEventListener('click', e => { if (Date.now() - eat < 350 && e.isTrusted && e.target.closest && e.target.closest('svg[data-sd]')) { e.stopPropagation(); e.preventDefault(); } }, true);
+    /* 이름표를 띠 위에 끌어다 놓기 (PD의 이름표 끌기가 원이 아닌 띠에서 끝난 경우) */
+    let tg = null; document.addEventListener('pointerdown', e => { const t = e.target.closest && e.target.closest('.sdtags [data-pdtag]'); tg = t ? { i: +t.dataset.pdtag, root: t.closest('.pdwrap'), x0: e.clientX, y0: e.clientY } : null; }, true);
+    document.addEventListener('pointerup', e => { if (!tg) return; const t = tg; tg = null; if (Math.hypot(e.clientX - t.x0, e.clientY - t.y0) < 8) return; const el = document.elementFromPoint(e.clientX, e.clientY), svg = el && el.closest && el.closest('svg[data-sd]'); if (svg && svg.closest('.pdwrap') === t.root) { const p = pos(svg, e); if (p.y > Y0 - 6 && p.y < Y0 + H + 34) { eat = Date.now(); fire(t.root, 'put:' + t.i + ':' + secOf(svg, p.f)); } } }, true);
+  }
+  function fig(o) { const st = o.st || (o.items && !o.empty ? PD.solved(o) : PD.fresh()); return html(st, Object.assign({ at: () => '', lock: true }, o)); }
+  return { html, fig, X0, W };
+})();
+(() => { const st = document.createElement('style'); st.textContent = `.sdsvg{cursor:crosshair}.sdwrap{gap:8px}.sdtags{max-width:none}`; document.head.appendChild(st); })();
+
+/* =====================================================================
    🔭 6학년 1학기 5단원 여러 가지 그래프 · 4차시 「띠그래프와 원그래프 해석하기」 (교과서 6차시)
    스마트 마스터 EP.4 「데이터 관측소」 · 간부 차트 마스터 · 파트너 뭉치(개)
    초점: ① 실제 수 구하기 ② 두 해 비교 ③ 참 · 거짓 해석 ④ 백분율과 실제 수
    ===================================================================== */
 S1_TOOLS.length = 0; BADGES.length = 0;
-[['count', 'clock', '도구 1', '실제 수 구하기', '전체 × 백분율', '🧮'], ['years', 'tilt', '도구 2', '두 해 견주기', '무엇이 늘고 줄었을까?', '📅'], ['truth', 'mixup', '도구 3', '해석 판정', '참일까, 거짓일까?', '⚖️'], ['trap2', 'half', '도구 4', '백분율과 실제 수', '%가 크면 수도 클까?', '🏫']]
+[['count', 'clock', '도구 1', '모눈으로 실제 수 구하기', '40%는 몇 명일까?', '🧮'], ['years', 'tilt', '도구 2', '두 그래프 견주기', '무엇이 늘고 줄었을까?', '📅'], ['truth', 'mixup', '도구 3', '해석 판정', '참일까, 거짓일까?', '⚖️'], ['trap2', 'half', '도구 4', '백분율만큼 칠해 견주기', '%가 크면 수도 클까?', '🏫']]
   .forEach(([k, v, no, nm, sh, ic]) => { S1_TOOLS.push([k, v, no, nm, sh]); BADGES.push([k, `${no} · ${nm}`, ic]); TOOL_VK[k] = v; TOOL_RENDER[k] = () => { try { CK.render(k); } catch (e) {} }; });
 const F = x => String(+(+x).toFixed(6));
+const LK = n => `${n}${jo(n, '을', '를')} 좋아하는 학생`;
 const DS = [
-  ['좋아하는 운동', 200, [['축구', 40], ['야구', 20], ['농구', 15], ['배구', 10], ['기타', 15]]],
-  ['좋아하는 과일', 300, [['사과', 35], ['딸기', 30], ['포도', 20], ['귤', 10], ['기타', 5]]],
-  ['등교 방법', 400, [['걷기', 45], ['버스', 25], ['자전거', 20], ['기타', 10]]],
-  ['아침 식사', 500, [['밥', 50], ['빵', 25], ['시리얼', 15], ['기타', 10]]]
+  ['좋아하는 운동', 200, [['축구', 40], ['야구', 20], ['농구', 15], ['배구', 10], ['기타', 15]], LK],
+  ['좋아하는 과일', 300, [['사과', 35], ['딸기', 30], ['포도', 20], ['귤', 10], ['기타', 5]], LK],
+  ['등교 방법', 400, [['걷기', 45], ['버스', 25], ['자전거', 20], ['기타', 10]], n => n === '걷기' ? '걸어서 등교하는 학생' : `${n}로 등교하는 학생`],
+  ['아침 식사', 500, [['밥', 50], ['빵', 25], ['시리얼', 15], ['기타', 10]], n => `아침으로 ${n}${jo(n, '을', '를')} 먹는 학생`]
 ];
 const IT = d => d[2].map(([n, p]) => ({ n, p }));
+const NK = d => d[2].filter(x => x[0] !== '기타');
+const PH = (d, n) => d[3] ? d[3](n) : `${n}${jo(n, '을', '를')} 고른 학생`;
 const SG = d => Math.random() < .5 ? GR.strip(IT(d), { title: `${d[0]} (전체 ${d[1]}명)` }) : GR.pie(IT(d), { title: `${d[0]} (전체 ${d[1]}명)` });
 const Y1 = [['걷기', 40], ['버스', 30], ['자전거', 20], ['기타', 10]], Y2 = [['걷기', 45], ['버스', 20], ['자전거', 25], ['기타', 10]];
-const YS = () => `<div class="rxtwin">${GR.strip(Y1.map(([n, p]) => ({ n, p })), { title: '작년 등교 방법' })}${GR.strip(Y2.map(([n, p]) => ({ n, p })), { title: '올해 등교 방법' })}</div>`;
+/* 두 띠그래프 견주기 자료: [앞 이름, 뒤 이름, 제목, 앞 자료, 뒤 자료] */
+const YY = [['작년', '올해', '등교 방법', Y1, Y2],
+  ['1학기', '2학기', '좋아하는 급식', [['비빔밥', 35], ['카레', 25], ['국수', 25], ['기타', 15]], [['비빔밥', 30], ['카레', 35], ['국수', 20], ['기타', 15]]],
+  ['5학년', '6학년', '배우고 싶은 악기', [['피아노', 40], ['바이올린', 25], ['드럼', 20], ['기타', 15]], [['피아노', 30], ['바이올린', 25], ['드럼', 30], ['기타', 15]]]];
+const YS = y => { y = y || YY[0]; return `<div class="rxtwin">${GR.strip(y[3].map(([n, p]) => ({ n, p })), { title: `${y[0]} ${y[2]}` })}${GR.strip(y[4].map(([n, p]) => ({ n, p })), { title: `${y[1]} ${y[2]}` })}</div>`; };
+/* 전체 수가 다른 두 학교(문제 상황의 200명·400명 자료는 쓰지 않아요): [무엇, 가 전체, 가 %, 나 전체, 나 %] */
+const TWO = [['안경을 쓴 학생', 300, 30, 500, 20], ['자전거로 등교하는 학생', 500, 16, 200, 30], ['학교 도서관을 이용하는 학생', 300, 40, 600, 25], ['반려동물을 키우는 학생', 600, 15, 300, 20]];
+const TWOQ = () => { const [w, t1, p1, t2, p2] = pick(TWO), n1 = t1 * p1 / 100, n2 = t2 * p2 / 100, hi = n1 > n2 ? '가' : '나', lo = n1 > n2 ? '나' : '가', df = Math.abs(n1 - n2), dp = Math.abs(p1 - p2);
+  return { w, t1, p1, t2, p2, n1, n2, ans: `${hi} 학교가 ${df}명 더 많아요`, ds: [`${lo} 학교가 ${df}명 더 많아요`, dp !== df ? `${lo} 학교가 ${dp}명 더 많아요` : `${lo} 학교가 ${df + 20}명 더 많아요`, '두 학교의 학생 수가 같아요'], tb: RF.tbl(['학교', '전체 학생 수', `${w}의 비율`], [['가', `${t1}명`, `${p1}%`], ['나', `${t2}명`, `${p2}%`]]), ex: `가 학교: ${t1} × ${p1} ÷ 100 = ${n1}(명), 나 학교: ${t2} × ${p2} ÷ 100 = ${n2}(명). 전체 학생 수가 다르면 실제 학생 수로 견주어요.` }; };
 
 lessonSetup({
   target: '띠그래프와 원그래프를 해석할 수 있어요.',
   trap: { title: `${VN}의 거짓 해석 함정`, sub: `${VN}${jo(VN, '이', '가')} 관측소 보고서에 그래프와 다른 해석을 적어 놓았어요.`, taunt: '백분율이 크면 학생 수도 무조건 많지!' },
   basic: [
-    { label: '실제 수 구하기', gen: () => { const d = pick(DS), [n, p] = pick(d[2]); return { text: `전체 <b>${d[1]}명</b>을 조사했어요. <b>${n}</b>${jo(n, '을', '를')} 고른 학생은 몇 명일까요?${FIG(SG(d))}`, choices: opt4(`${d[1] * p / 100}명`, [`${p}명`, `${d[1] * p / 1000}명`, `${d[1] - p}명`]), ans: `${d[1] * p / 100}명`, hint: `${d[1]} × ${p}/100`, ok: `${d[1]} × ${F(p / 100)} = ${d[1] * p / 100}(명)` }; } },
-    { label: '가장 많은 항목', gen: () => { const d = pick(DS), m = d[2].slice().sort((a, b) => b[1] - a[1])[0]; return { text: `가장 많은 학생이 고른 항목과 그 비율은?${FIG(SG(d))}`, choices: opt4(`${m[0]} ${m[1]}%`, d[2].filter(x => x !== m).map(x => `${x[0]} ${x[1]}%`)), ans: `${m[0]} ${m[1]}%`, hint: '가장 긴(넓은) 부분을 찾아요.', ok: `${m[0]} ${m[1]}%` }; } },
-    { label: '몇 배', gen: () => { const d = DS[0]; return { text: `축구를 좋아하는 학생 수는 배구를 좋아하는 학생 수의 몇 배일까요?${FIG(SG(d))}`, choices: ['4배', '30배', '2배', '3배'], ans: '4배', hint: '40 ÷ 10', ok: '40% ÷ 10% = 4배' }; } },
-    { label: '두 해 비교', gen: () => ({ text: `작년보다 올해 비율이 <b>줄어든</b> 등교 방법은?${FIG(YS())}`, choices: ['버스', '걷기', '자전거', '기타'], ans: '버스', hint: '항목마다 작년과 올해 백분율을 비교해요.', ok: '버스 30% → 20%로 줄었어요.' }) },
-    { label: `${VN}의 함정`, gen: () => ({ text: `${VN}: "가 학교는 운동을 좋아하는 학생이 <b>30%</b>, 나 학교는 <b>20%</b>니까 가 학교 학생이 더 많아!" 가 학교는 전체 200명, 나 학교는 전체 400명이에요. 운동을 좋아하는 학생이 더 많은 곳은?${FIG(RF.tbl(['학교', '전체 학생 수', '운동을 좋아하는 비율'], [['가', '200명', '30%'], ['나', '400명', '20%']]))}`, choices: ['나 학교', '가 학교', '같아요'], ans: '나 학교', hint: '전체 × 백분율로 실제 학생 수를 구해요.', ok: '가 60명, 나 80명 → 나 학교가 더 많아요.' }) },
-    { label: '두 항목의 합', gen: () => { const d = DS[2]; return { text: `걷기와 자전거로 등교하는 학생은 모두 전체의 몇 %일까요?${FIG(SG(d))}`, choices: ['65%', '45%', '20%', '25%'], ans: '65%', hint: '45 + 20', ok: '45 + 20 = 65(%)' }; } },
-    { label: '해석 고르기', gen: () => { const d = DS[1]; return { text: `그래프를 바르게 해석한 것은?${FIG(SG(d))}`, choices: ['사과를 좋아하는 학생은 105명이에요', '딸기는 귤의 2배예요', '포도를 좋아하는 학생이 가장 적어요', '사과와 딸기를 합하면 75%예요'], ans: '사과를 좋아하는 학생은 105명이에요', hint: '하나씩 계산해 확인해요. 전체 300명!', ok: '300 × 0.35 = 105명' }; } },
-    { label: '실제 수 차이', gen: () => { const d = DS[3]; return { text: `밥을 먹는 학생은 빵을 먹는 학생보다 몇 명 더 많을까요?${FIG(SG(d))}`, choices: ['125명', '25명', '250명', '50명'], ans: '125명', hint: '밥 500 × 0.5, 빵 500 × 0.25', ok: '250 − 125 = 125(명)' }; } }
+    { label: '실제 수 구하기', gen: () => { const d = pick(DS), [n, p] = pick(NK(d)), a = d[1] * p / 100; return { text: `학생 <b>${d[1]}명</b>을 조사하여 나타낸 그래프예요. ${PH(d, n)}은 몇 명일까요?${FIG(SG(d))}`, choices: opt4(`${a}명`, [`${p}명`, `${a + 10}명`, `${d[1] - a + 10}명`, `${a + 20}명`]), ans: `${a}명`, hint: `전체 ${d[1]}명의 ${p}%가 몇 명인지 구해요.`, ok: `${d[1]} × ${p} ÷ 100 = ${a}(명)` }; } },
+    { label: '비율이 가장 높은 항목', gen: () => { const d = pick(DS), m = d[2].slice().sort((a, b) => b[1] - a[1])[0]; return { text: `${d[0]}${jo(d[0], '을', '를')} 조사하여 나타낸 그래프예요. 비율이 가장 높은 항목과 그 백분율을 바르게 쓴 것은 어느 것일까요?${FIG(SG(d))}`, choices: opt4(`${m[0]}, ${m[1]}%`, d[2].filter(x => x !== m).map(x => `${x[0]}, ${x[1]}%`)), ans: `${m[0]}, ${m[1]}%`, hint: '띠에서는 가장 긴 부분, 원에서는 가장 넓은 부분을 찾아요.', ok: `${m[0]}의 비율이 ${m[1]}%로 가장 높아요.` }; } },
+    { label: '몇 배인지 알아보기', gen: () => { const [di, i, j] = pick(RT5), d = DS5[di], a = d[2][i], b = d[2][j], r = a[1] / b[1]; return { text: `${PH(d, a[0])} 수는 ${PH(d, b[0])} 수의 몇 배일까요?${FIG(SG(d))}`, choices: opt4(`${r}배`, [`${r + 1}배`, `${a[1] - b[1]}배`, `${r + 2}배`, `${b[1]}배`]), ans: `${r}배`, hint: `${a[0]}의 백분율은 ${b[0]}의 백분율의 몇 배인지 알아봐요.`, ok: `${a[1]} ÷ ${b[1]} = ${r}(배). 같은 그래프 안에서는 백분율로 몇 배인지 알 수 있어요.` }; } },
+    { label: '두 그래프 견주기', gen: () => { const y = pick(YY), K = ['줄어든', '늘어난'].map(k => [k, y[3].map((x, i) => [x[0], x[1], y[4][i][1]]).filter(x => k === '줄어든' ? x[2] < x[1] : x[2] > x[1])]).filter(x => x[1].length === 1), [k, [h]] = pick(K); return { text: `${y[0]}${jo(y[0], '과', '와')} ${y[1]}의 ${y[2]}${jo(y[2], '을', '를')} 조사하여 나타낸 띠그래프예요. ${y[0]}보다 ${y[1]}에 비율이 <b>${k}</b> 항목은 무엇일까요?${FIG(YS(y))}`, choices: shuffle(y[3].map(x => x[0])), ans: h[0], hint: `항목마다 ${y[0]}${jo(y[0], '과', '와')} ${y[1]}의 백분율을 견주어요.`, ok: `${h[0]}: ${h[1]}% → ${h[2]}%` }; } },
+    { label: `${VN}의 함정`, gen: () => { const q = TWOQ(), hiP = q.p1 > q.p2 ? '가' : '나'; return { text: `${VN}: “${q.w}의 비율은 ${hiP} 학교가 더 높으니까 ${q.w} 수도 ${hiP} 학교가 더 많아!” ${q.w}${jo(q.w, '이', '가')} 실제로 더 많은 학교는 어디이고, 몇 명 더 많을까요?${FIG(q.tb)}`, choices: opt4(q.ans, q.ds), ans: q.ans, hint: '학교마다 (전체 학생 수) × (백분율) ÷ 100으로 실제 학생 수를 구해요.', ok: q.ex }; } },
+    { label: '두 항목의 합', gen: () => { const d = pick(DS), [a, b] = shuffle(NK(d)).slice(0, 2), sm = a[1] + b[1]; return { text: `${PH(d, a[0])}${jo('생', '과', '와')} ${PH(d, b[0])}${jo('생', '을', '를')} 합하면 전체의 몇 %일까요?${FIG(SG(d))}`, choices: opt4(`${sm}%`, [`${Math.abs(a[1] - b[1]) || 5}%`, `${100 - sm}%`, `${sm + 10}%`, `${sm - 5}%`]), ans: `${sm}%`, hint: `${a[0]}${jo(a[0], '과', '와')} ${b[0]}의 백분율을 더해요.`, ok: `${a[1]} + ${b[1]} = ${sm}(%)` }; } },
+    { label: '해석 고르기', gen: () => { const d = pick(DS), S = NK(d).slice().sort((x, y) => y[1] - x[1]), mx = S[0], o = S[S.length - 1], n = d[1] * mx[1] / 100; return { text: `학생 <b>${d[1]}명</b>을 조사하여 나타낸 그래프예요. 그래프를 <b>바르게</b> 해석한 것은 어느 것일까요?${FIG(SG(d))}`, choices: shuffle([`${PH(d, mx[0])}은 ${n}명이에요`, `${PH(d, mx[0])}은 ${mx[1]}명이에요`, `${PH(d, o[0])}이 가장 많아요`, '조사한 학생은 모두 100명이에요']), ans: `${PH(d, mx[0])}은 ${n}명이에요`, hint: `전체가 ${d[1]}명이에요. 문장을 하나씩 그래프와 견주어 확인해요.`, ok: `${d[1]} × ${mx[1]} ÷ 100 = ${n}(명). 백분율과 실제 학생 수는 달라요.` }; } },
+    { label: '실제 수의 차', gen: () => { const d = pick(DS), [a, b] = shuffle(NK(d)).slice(0, 2).sort((x, y) => y[1] - x[1]), na = d[1] * a[1] / 100, nb = d[1] * b[1] / 100; return { text: `학생 <b>${d[1]}명</b>을 조사하여 나타낸 그래프예요. ${PH(d, a[0])}은 ${PH(d, b[0])}보다 몇 명 더 많을까요?${FIG(SG(d))}`, choices: opt4(`${na - nb}명`, [`${a[1] - b[1]}명`, `${na}명`, `${na + nb}명`, `${na - nb + 10}명`]), ans: `${na - nb}명`, hint: '두 항목의 실제 학생 수를 각각 구해서 빼요.', ok: `${na} − ${nb} = ${na - nb}(명)` }; } }
   ],
   j1: { label: '관측소 봉인', title: '데이터 관측소의 봉인을 풀어라', icon: '🔭', sub: `${VN}${jo(VN, '이', '가')} 관측 보고서 3장을 잠갔어요! 그래프를 해석해 답을 써요.`, done: '보고서 3장의 봉인을 모두 풀었어요! 🔭',
     rounds: () => [
-      { name: '① 실제 수', q: '전체 400명을 조사했어요. <b>자전거</b>로 등교하는 학생은 몇 명일까요?', fig: GR.strip(IT(DS[2]), { title: '등교 방법 (전체 400명)' }), ans: ['80', '80명'], unit: '명', hints: ['자전거 20%', '400 × 0.2'], ok: '80명!' },
-      { name: '② 두 해', q: '작년과 올해 모두 전교생이 500명이에요. 올해 <b>자전거</b>로 등교하는 학생은 작년보다 몇 명 늘었을까요?', fig: YS(), ans: ['25', '25명'], unit: '명', hints: ['작년 20%, 올해 25%', '500 × 0.2 = 100, 500 × 0.25 = 125'], ok: '25명!' },
-      { name: '③ 거꾸로', q: '어떤 원그래프에서 <b>30%</b>인 항목이 <b>90명</b>이에요. 전체는 몇 명일까요?', fig: '', ans: ['300', '300명'], unit: '명', hints: ['전체 × 0.3 = 90', '90 ÷ 0.3'], ok: '300명!' }] },
+      { name: '① 실제 수', q: '전체 400명을 조사했어요. <b>자전거</b>로 등교하는 학생은 몇 명일까요?', fig: GR.strip(IT(DS[2]), { title: '등교 방법 (전체 400명)' }), ans: ['80', '80명'], unit: '명', hints: ['띠그래프에서 자전거의 백분율을 읽어요.', '400 × 20 ÷ 100'], ok: '400 × 20 ÷ 100 = 80(명)' },
+      { name: '② 두 해', q: '작년과 올해 모두 전교생이 <b>300명</b>이에요. 올해 <b>자전거</b>로 등교하는 학생은 작년보다 몇 명 늘었을까요?', fig: YS(), ans: ['15', '15명'], unit: '명', hints: ['자전거의 백분율은 작년 20%, 올해 25%예요.', '두 해의 실제 학생 수를 각각 구해서 빼요.'], ok: '작년 60명, 올해 75명 → 15명 늘었어요!' },
+      { name: '③ 거꾸로', q: '학생들이 가고 싶은 체험 학습 장소를 조사하여 나타낸 원그래프예요. <b>과학관</b>에 가고 싶은 학생이 <b>90명</b>일 때, 조사한 학생은 모두 몇 명일까요?', fig: GR.pie([{ n: '놀이공원', p: 40 }, { n: '과학관', p: 30 }, { n: '박물관', p: 20 }, { n: '기타', p: 10 }], { title: '가고 싶은 체험 학습 장소' }), ans: ['300', '300명'], unit: '명', hints: ['30%가 90명이면 10%는 몇 명일까요?', '10%가 30명이면 100%는 30명의 10배예요.'], ok: '10%가 30명이므로 전체는 300명!' }] },
   j2: { label: '보고서 고치기', taunt: '백분율만 보면 충분해!', gen: () => ({ text: '', choices: [], ans: '' }) },
   j3: { label: '참 · 거짓 분류', taunt: '내 보고서는 다 참이야!', gen: () => ({ text: '', choices: [], ans: '' }) },
   bossLines: ['흐흐흐! 관측소 보고서에 거짓 해석을 잔뜩 적어 놓았다. 찾아낼 수 있겠나?', '제법이군… 하지만 방어막은 아직 두 겹 남았다!', '크윽, 그래프를 척척 해석하다니…!', '이번엔 물러나지. 그래프 방송국에서 보자!'],
-  gates: ['실제 수 구하기', '두 해 비교', `${VN}의 함정`],
+  gates: ['실제 수 구하기', '두 그래프 견주기', `${VN}의 함정`],
   essays: [
     { q: '전체 200명 중 축구를 좋아하는 학생이 40%예요. 몇 명인지 구하는 방법을 쓰세요.', a: '200 × 40/100 = 80명', r: '10점' },
     { q: '작년 버스 30%, 올해 버스 20%예요. 그래프에서 알 수 있는 사실을 쓰세요.', a: '버스로 등교하는 학생의 비율이 10% 줄었어요.', r: '10점' },
@@ -8065,38 +8262,38 @@ lessonSetup({
   print: {
     concept: [`<span style="display:block;line-height:2;font-weight:800">① 실제 수 = 전체 수 × <span class="pbl"></span> ÷ 100<br>② 전체 수가 다른 두 그래프는 백분율이 아니라 <span class="pbl"></span>로 비교해야 할 때가 있어요.<br>③ 전체 300명 중 20% = <span class="pbl"></span>명</span>`],
     conceptKey: '① 백분율 ② 실제 수 ③ 60',
-    basic: [() => ['전체 200명 중 축구 40%: 몇 명?', '', '80명'], () => ['가장 많은 항목 (과일)', '', '사과 35%'], () => ['축구 40%는 배구 10%의 몇 배?', '', '4배'], () => ['버스 30% → 20%: 늘었나요, 줄었나요?', '', '줄었어요'],
-      () => ['가 200명 30%, 나 400명 20%: 더 많은 곳', '', '나 학교'], () => ['걷기 45% + 자전거 20%', '', '65%'], () => ['전체 300명 중 사과 35%: 몇 명?', '', '105명'], () => ['전체 500명: 밥 50%와 빵 25%의 학생 수 차', '', '125명'] ],
+    basic: [() => ['전체 200명 중 축구 40%: 몇 명?', '', '80명'], () => ['비율이 가장 높은 항목 (과일)', '', '사과, 35%'], () => ['축구 40%는 배구 10%의 몇 배?', '', '4배'], () => ['버스 30% → 20%: 늘었나요, 줄었나요?', '', '줄었어요'],
+      () => ['가 300명 중 30%, 나 500명 중 20%: 더 많은 곳', '', '나 학교 (90명 < 100명)'], () => ['걷기 45% + 자전거 20%', '', '65%'], () => ['전체 300명 중 사과 35%: 몇 명?', '', '105명'], () => ['전체 500명: 밥 50%와 빵 25%의 학생 수 차', '', '125명'] ],
     jump: [() => ['원그래프에서 25%인 항목이 60명이에요. 전체는?', '', '240명', '🔁 거꾸로'], () => ['작년 400명 중 20%, 올해 500명 중 18%. 학생 수는 늘었나요?', '', '80명 → 90명, 늘었어요', '🧩 추론']] }
 });
 setupJ1({ title: LC.j1.title, icon: LC.j1.icon, sub: LC.j1.sub, done: LC.j1.done, rounds: LC.j1.rounds });
 
-const DS5 = DS.concat([['읽고 싶은 책', 400, [['동화책', 35], ['과학책', 25], ['역사책', 30], ['기타', 10]]], ['좋아하는 채소', 500, [['오이', 30], ['당근', 26], ['호박', 24], ['기타', 20]]]]);
+const DS5 = DS.concat([['읽고 싶은 책', 400, [['동화책', 35], ['과학책', 25], ['역사책', 30], ['기타', 10]], n => `${n}${jo(n, '을', '를')} 읽고 싶은 학생`], ['좋아하는 채소', 500, [['오이', 30], ['당근', 26], ['호박', 24], ['기타', 20]], LK]]);
 const N5 = (d, p) => +dfix(d[1] * p / 100);
-const RT5 = [[0, 0, 1], [0, 0, 3], [1, 0, 3], [1, 1, 3], [1, 2, 3], [2, 2, 3], [3, 0, 1], [3, 0, 3]];
+const RT5 = [[0, 0, 1], [0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 2, 3], [3, 0, 1]];
 BANK[1] = [
-  () => { const d = pick(DS5), [n, p] = pick(d[2]); return bq(`전체 ${d[1]}명을 조사한 그래프예요. ${n}${jo(n, '을', '를')} 고른 학생은 몇 명일까요?`, `${N5(d, p)}명`, [`${p}명`, `${N5(d, p) * 10}명`, `${d[1] - N5(d, p)}명`], `${d[1]} × ${p} ÷ 100 = ${N5(d, p)}`, FIG(SG(d))); },
-  () => { const d = pick(DS5), mx = d[2].slice().sort((x, y) => y[1] - x[1])[0]; return bq('그래프에서 가장 많은 학생이 고른 항목과 그 비율을 바르게 쓴 것은 어느 것일까요?', `${mx[0]} ${mx[1]}%`, d[2].filter(x => x[0] !== mx[0]).map(x => `${x[0]} ${x[1]}%`), `가장 넓은(긴) 부분은 ${mx[0]}${jo(mx[0], '이고', '고')} ${mx[1]}%예요.`, FIG(SG(d))); },
-  () => { const [di, i, j] = pick(RT5), d = DS5[di], a = d[2][i], b = d[2][j], r = dfix(a[1] / b[1]); return bq(`${a[0]}${jo(a[0], '을', '를')} 고른 학생 수는 ${b[0]}${jo(b[0], '을', '를')} 고른 학생 수의 몇 배일까요?`, `${r}배`, [`${a[1] - b[1]}배`, `${dfix(parseFloat(r) + 1)}배`, `${b[1]}배`], `${a[1]} ÷ ${b[1]} = ${r}. 같은 그래프 안에서는 백분율로 몇 배인지 알 수 있어요.`, FIG(SG(d))); },
+  () => { const d = pick(DS5), [n, p] = pick(NK(d)); return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. ${PH(d, n)}은 몇 명일까요?`, `${N5(d, p)}명`, [`${p}명`, `${N5(d, p) * 10}명`, `${d[1] - N5(d, p)}명`], `${d[1]} × ${p} ÷ 100 = ${N5(d, p)}`, FIG(SG(d))); },
+  () => { const d = pick(DS5), mx = d[2].slice().sort((x, y) => y[1] - x[1])[0]; return bq(`${d[0]}${jo(d[0], '을', '를')} 조사하여 나타낸 그래프예요. 비율이 가장 높은 항목과 그 백분율을 바르게 쓴 것은 어느 것일까요?`, `${mx[0]}, ${mx[1]}%`, d[2].filter(x => x[0] !== mx[0]).map(x => `${x[0]}, ${x[1]}%`), `가장 넓은(긴) 부분은 ${mx[0]}${jo(mx[0], '이고', '고')} ${mx[1]}%예요.`, FIG(SG(d))); },
+  () => { const [di, i, j] = pick(RT5), d = DS5[di], a = d[2][i], b = d[2][j], r = a[1] / b[1]; return bq(`${PH(d, a[0])} 수는 ${PH(d, b[0])} 수의 몇 배일까요?`, `${r}배`, [`${a[1] - b[1]}배`, `${r + 1}배`, `${b[1]}배`], `${a[1]} ÷ ${b[1]} = ${r}. 같은 그래프 안에서는 백분율로 몇 배인지 알 수 있어요.`, FIG(SG(d))); },
   () => { const T = pick([200, 300, 400, 500]), p = pick([15, 20, 25, 30, 40]); return bq(`전체 ${T}명의 ${p}%가 몇 명인지 구하는 식으로 알맞은 것은 어느 것일까요?`, `${T} × ${p} ÷ 100`, [`${T} ÷ ${p} × 100`, `${T} − ${p}`, `${T} × ${p}`], '(항목의 수) = (전체 수) × (백분율) ÷ 100'); },
-  () => { const d = pick(DS5), [a, b] = shuffle(d[2]).slice(0, 2); return bq(`${a[0]}${jo(a[0], '과', '와')} ${b[0]}${jo(b[0], '을', '를')} 고른 학생을 합하면 전체의 몇 %일까요?`, `${a[1] + b[1]}%`, [`${Math.abs(a[1] - b[1]) || 5}%`, `${100 - a[1] - b[1]}%`, `${a[1] + b[1] + 10}%`], `${a[1]} + ${b[1]} = ${a[1] + b[1]}`, FIG(SG(d))); },
+  () => { const d = pick(DS5), [a, b] = shuffle(d[2]).slice(0, 2); return bq(`${a[0]}${jo(a[0], '과', '와')} ${PH(d, b[0])}을 합하면 전체의 몇 %일까요?`, `${a[1] + b[1]}%`, [`${Math.abs(a[1] - b[1]) || 5}%`, `${100 - a[1] - b[1]}%`, `${a[1] + b[1] + 10}%`], `${a[1]} + ${b[1]} = ${a[1] + b[1]}`, FIG(SG(d))); },
   () => { const T = pick([200, 300, 400, 500, 1000]); return bq(`전체가 ${T}명일 때 전체의 1%는 몇 명일까요?`, `${T / 100}명`, [`${T / 10}명`, '1명', `${T}명`], `${T} ÷ 100 = ${T / 100}`); }
 ];
 BANK[2] = [
-  () => { const d = pick(DS5), S = shuffle(d[2]).slice(0, 2).sort((x, y) => y[1] - x[1]), [a, b] = S; if (a[1] === b[1]) return bq(`전체 ${d[1]}명을 조사한 그래프예요. ${a[0]}${jo(a[0], '을', '를')} 고른 학생은 몇 명일까요?`, `${N5(d, a[1])}명`, [`${a[1]}명`, `${N5(d, a[1]) * 10}명`, `${d[1] - N5(d, a[1])}명`], `${d[1]} × ${a[1]} ÷ 100 = ${N5(d, a[1])}`, FIG(SG(d))); return bq(`전체 ${d[1]}명을 조사한 그래프예요. ${a[0]}${jo(a[0], '을', '를')} 고른 학생은 ${b[0]}${jo(b[0], '을', '를')} 고른 학생보다 몇 명 더 많을까요?`, `${N5(d, a[1]) - N5(d, b[1])}명`, [`${a[1] - b[1]}명`, `${N5(d, a[1])}명`, `${N5(d, a[1]) + N5(d, b[1])}명`], `${a[0]} ${N5(d, a[1])}명 − ${b[0]} ${N5(d, b[1])}명 = ${N5(d, a[1]) - N5(d, b[1])}명`, FIG(SG(d))); },
+  () => { const d = pick(DS5), S = shuffle(NK(d)).slice(0, 2).sort((x, y) => y[1] - x[1]), [a, b] = S; if (a[1] === b[1]) return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. ${PH(d, a[0])}은 몇 명일까요?`, `${N5(d, a[1])}명`, [`${a[1]}명`, `${N5(d, a[1]) * 10}명`, `${d[1] - N5(d, a[1])}명`], `${d[1]} × ${a[1]} ÷ 100 = ${N5(d, a[1])}`, FIG(SG(d))); return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. ${PH(d, a[0])}은 ${PH(d, b[0])}보다 몇 명 더 많을까요?`, `${N5(d, a[1]) - N5(d, b[1])}명`, [`${a[1] - b[1]}명`, `${N5(d, a[1])}명`, `${N5(d, a[1]) + N5(d, b[1])}명`], `${a[0]} ${N5(d, a[1])}명 − ${b[0]} ${N5(d, b[1])}명 = ${N5(d, a[1]) - N5(d, b[1])}명`, FIG(SG(d))); },
   () => bq('작년과 올해의 등교 방법을 나타낸 띠그래프예요. 작년보다 비율이 <b>줄어든</b> 등교 방법은 무엇일까요?', '버스', ['걷기', '자전거', '기타'], '버스는 30% → 20%로 줄었어요.', YS()),
   () => { const w = pick(['걷기', '자전거']); return bq('작년과 올해의 등교 방법을 나타낸 띠그래프예요. 작년보다 비율이 <b>늘어난</b> 등교 방법은 무엇일까요?', w, ['버스', '기타', '늘어난 것이 없어요'], '걷기는 40% → 45%, 자전거는 20% → 25%로 늘었어요.', YS()); },
-  () => { const d = pick(DS5), [a, b] = shuffle(d[2]).slice(0, 2); return bq(`전체 ${d[1]}명을 조사한 그래프예요. ${a[0]}${jo(a[0], '과', '와')} ${b[0]}${jo(b[0], '을', '를')} 고른 학생은 모두 몇 명일까요?`, `${N5(d, a[1] + b[1])}명`, [`${a[1] + b[1]}명`, `${d[1] - N5(d, a[1] + b[1])}명`, `${N5(d, a[1])}명`], `${a[1]} + ${b[1]} = ${a[1] + b[1]}(%) → ${d[1]} × ${a[1] + b[1]} ÷ 100 = ${N5(d, a[1] + b[1])}`, FIG(SG(d))); },
-  () => { const d = pick(DS5), mn = d[2].filter(x => x[0] !== '기타').sort((x, y) => x[1] - y[1])[0]; return bq(`전체 ${d[1]}명을 조사한 그래프예요. 「기타」를 빼고 가장 적은 학생이 고른 항목은 몇 명이 골랐을까요?`, `${N5(d, mn[1])}명`, [`${mn[1]}명`, `${N5(d, mn[1]) * 10}명`, `${N5(d, d[2].slice().sort((x, y) => y[1] - x[1])[0][1])}명`], `「기타」를 빼면 가장 적은 항목은 ${mn[0]}(${mn[1]}%) → ${d[1]} × ${mn[1]} ÷ 100 = ${N5(d, mn[1])}`, FIG(SG(d))); },
-  () => { const d = pick(DS5), S = d[2].slice().sort((x, y) => y[1] - x[1]), mx = S[0], o = S[S.length - 1]; return bq(`전체 ${d[1]}명을 조사한 그래프예요. 그래프를 <b>바르게</b> 해석한 것은 어느 것일까요?`, `${mx[0]}${jo(mx[0], '을', '를')} 고른 학생은 ${N5(d, mx[1])}명이에요`, [`${mx[0]}${jo(mx[0], '을', '를')} 고른 학생은 ${mx[1]}명이에요`, `${o[0]}${jo(o[0], '을', '를')} 고른 학생이 가장 많아요`, `조사한 학생은 모두 100명이에요`], `${d[1]} × ${mx[1]} ÷ 100 = ${N5(d, mx[1])}. 백분율과 실제 학생 수는 달라요.`, FIG(SG(d))); }
+  () => { const d = pick(DS5), [a, b] = shuffle(d[2]).slice(0, 2); return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. ${a[0]}${jo(a[0], '과', '와')} ${PH(d, b[0])}은 모두 몇 명일까요?`, `${N5(d, a[1] + b[1])}명`, [`${a[1] + b[1]}명`, `${d[1] - N5(d, a[1] + b[1])}명`, `${N5(d, a[1])}명`], `${a[1]} + ${b[1]} = ${a[1] + b[1]}(%) → ${d[1]} × ${a[1] + b[1]} ÷ 100 = ${N5(d, a[1] + b[1])}`, FIG(SG(d))); },
+  () => { const d = pick(DS5), mn = d[2].filter(x => x[0] !== '기타').sort((x, y) => x[1] - y[1])[0]; return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. 「기타」를 빼고 비율이 가장 낮은 항목에 속하는 학생은 몇 명일까요?`, `${N5(d, mn[1])}명`, [`${mn[1]}명`, `${N5(d, mn[1]) * 10}명`, `${N5(d, d[2].slice().sort((x, y) => y[1] - x[1])[0][1])}명`], `「기타」를 빼면 가장 적은 항목은 ${mn[0]}(${mn[1]}%) → ${d[1]} × ${mn[1]} ÷ 100 = ${N5(d, mn[1])}`, FIG(SG(d))); },
+  () => { const d = pick(DS5), S = NK(d).slice().sort((x, y) => y[1] - x[1]), mx = S[0], o = S[S.length - 1]; return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. 그래프를 <b>바르게</b> 해석한 것은 어느 것일까요?`, `${PH(d, mx[0])}은 ${N5(d, mx[1])}명이에요`, [`${PH(d, mx[0])}은 ${mx[1]}명이에요`, `${PH(d, o[0])}이 가장 많아요`, `조사한 학생은 모두 100명이에요`], `${d[1]} × ${mx[1]} ÷ 100 = ${N5(d, mx[1])}. 백분율과 실제 학생 수는 달라요.`, FIG(SG(d))); }
 ];
 BANK[3] = [
-  () => { const [t1, p1, t2, p2] = pick([[200, 30, 400, 20], [300, 40, 500, 30], [500, 16, 250, 30], [400, 25, 300, 30], [600, 15, 200, 40]]), n1 = t1 * p1 / 100, n2 = t2 * p2 / 100; return bq(`가 학교는 전체 ${t1}명 중 ${p1}%가, 나 학교는 전체 ${t2}명 중 ${p2}%가 안경을 썼어요. 안경을 쓴 학생이 더 많은 학교는 어디일까요?`, n1 > n2 ? '가 학교' : '나 학교', ['가 학교', '나 학교', '두 학교가 같아요'], `가: ${t1} × ${p1} ÷ 100 = ${n1}(명), 나: ${t2} × ${p2} ÷ 100 = ${n2}(명). 전체 수가 다르면 실제 수로 견주어요.`); },
+  () => { const q = TWOQ(); return bq(`가 학교와 나 학교의 ${q.w}의 비율을 조사했어요. ${q.w}${jo(q.w, '이', '가')} 더 많은 학교는 어디이고, 몇 명 더 많을까요?`, q.ans, q.ds, q.ex, FIG(q.tb)); },
   () => { const [w, p, k] = pick([['절반', 50, 120], ['절반', 50, 90], ['1/4', 25, 30], ['1/4', 25, 45], ['절반', 50, 150]]); return bq(`어떤 그래프에서 전체의 ${p}%인 항목을 고른 학생이 ${k}명이에요. 조사한 학생은 모두 몇 명일까요?`, `${k * 100 / p}명`, [`${k}명`, `${k * p / 100 % 1 ? k + p : k * p / 100}명`, `${k * 100 / p + k}명`], `${p}%는 전체의 ${w}이에요. 전체는 ${k}명의 ${100 / p}배 → ${k} × ${100 / p} = ${k * 100 / p}`); },
   () => { const T = pick([400, 500, 600]); return bq(`두 해 모두 전교생이 ${T}명이에요. 자전거로 등교하는 학생은 작년보다 올해 몇 명 늘었을까요?`, `${T * 5 / 100}명`, ['5명', `${T * 25 / 100}명`, `${T * 20 / 100}명`], `작년 ${T} × 20 ÷ 100 = ${T * 20 / 100}(명), 올해 ${T} × 25 ÷ 100 = ${T * 25 / 100}(명) → ${T * 5 / 100}명 늘었어요.`, YS()); },
   () => { const [t1, p1, t2, p2] = pick([[400, 20, 500, 18], [500, 30, 600, 24], [300, 40, 400, 35], [200, 45, 300, 28]]), n1 = t1 * p1 / 100, n2 = t2 * p2 / 100; return bq(`도서관을 이용한 학생이 작년에는 전체 ${t1}명 중 ${p1}%, 올해는 전체 ${t2}명 중 ${p2}%였어요. 도서관을 이용한 학생 수는 어떻게 되었을까요?`, n2 > n1 ? `${n2 - n1}명 늘었어요` : `${n1 - n2}명 줄었어요`, [n2 > n1 ? `${n2 - n1}명 줄었어요` : `${n1 - n2}명 늘었어요`, `${Math.abs(p1 - p2)}명 줄었어요`, '변하지 않았어요'], `작년 ${n1}명, 올해 ${n2}명. 비율은 줄었어도 전체 학생 수가 늘어 실제 수는 달라질 수 있어요.`); },
-  () => { const d = pick(DS5), [n, p] = pick(d[2].filter(x => N5(d, x[1]) !== x[1])); return bq(`전체 ${d[1]}명을 조사한 그래프에서 ${n}${jo(n, '은', '는')} ${p}%예요. ${VN}${jo(VN, '은', '는')} “${p}%니까 ${p}명이야!”라고 했어요. ${n}${jo(n, '을', '를')} 고른 학생은 실제로 몇 명일까요?`, `${N5(d, p)}명`, [`${p}명`, `${N5(d, p) * 10}명`, `${d[1] - N5(d, p)}명`], `${d[1]} × ${p} ÷ 100 = ${N5(d, p)}. 전체가 100명일 때만 백분율과 학생 수가 같아요.`, FIG(SG(d))); },
-  () => { const d = pick(DS5), [a, b] = d[2].slice(0, 2), rest = 100 - a[1] - b[1]; return bq(`전체 ${d[1]}명을 조사한 그래프예요. ${a[0]}${jo(a[0], '과', '와')} ${b[0]}${jo(b[0], '을', '를')} 고르지 <b>않은</b> 학생은 모두 몇 명일까요?`, `${N5(d, rest)}명`, [`${rest}명`, `${N5(d, a[1] + b[1])}명`, `${N5(d, rest) + 10}명`], `100 − ${a[1]} − ${b[1]} = ${rest}(%) → ${d[1]} × ${rest} ÷ 100 = ${N5(d, rest)}`, FIG(SG(d))); }
+  () => { const d = pick(DS5), [n, p] = pick(NK(d)); return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. ${VN}${jo(VN, '은', '는')} “${n}${jo(n, '이', '가')} ${p}%니까 ${p}명이야!”라고 했어요. ${PH(d, n)}은 실제로 몇 명일까요?`, `${N5(d, p)}명`, [`${p}명`, `${N5(d, p) * 10}명`, `${d[1] - N5(d, p)}명`], `${d[1]} × ${p} ÷ 100 = ${N5(d, p)}. 전체가 100명일 때만 백분율과 학생 수가 같아요.`, FIG(SG(d))); },
+  () => { const d = pick(DS5), [a, b] = d[2].slice(0, 2), rest = 100 - a[1] - b[1]; return bq(`학생 ${d[1]}명을 조사하여 나타낸 그래프예요. ${a[0]}${jo(a[0], '과', '와')} ${b[0]}${jo(b[0], '이', '가')} <b>아닌</b> 항목에 속하는 학생은 모두 몇 명일까요?`, `${N5(d, rest)}명`, [`${rest}명`, `${N5(d, a[1] + b[1])}명`, `${N5(d, rest) + 10}명`], `100 − ${a[1]} − ${b[1]} = ${rest}(%) → ${d[1]} × ${rest} ÷ 100 = ${N5(d, rest)}`, FIG(SG(d))); }
 ];
 
 /* 미니게임 자료: [제목, 전체 수, [[항목, %]…]] */
@@ -8127,17 +8324,17 @@ const GUIDES = {
 };
 
 LC.story = mkStory6({ unitNo: 5, ep: 4, title: '데이터 관측소의 거짓 보고서', place: '데이터 관측소', door: '관측소의 분석실', icon: '🔭', board: '그래프 카드 배틀',
-  ch1Name: '관측 분석실', ch1Sub: '실제 수 · 두 해 견주기 · 참·거짓 · 백분율과 수',
+  ch1Name: '관측 분석실', ch1Sub: '실제 수 · 두 그래프 견주기 · 참·거짓 · 백분율과 수',
   area: { dark: '데이터 관측소', tilt: '해 바꾸기', mixup: '보고서 뒤섞기', clock: '수 지우기', half: '학교 바꾸기' },
   seal: { tilt: '비교의 봉인', mixup: '해석의 봉인', clock: '계산의 봉인', half: '학교의 봉인', dark: '관측소의 봉인' },
-  toolMsg: { count: '전체와 백분율로 실제 수를 구해 보자.', years: '두 해의 그래프를 견주어 보자.', truth: '보고서의 해석이 맞는지 판정해 보자.', trap2: '백분율과 실제 수를 함께 살펴보자.' },
+  toolMsg: { count: '전체와 백분율로 실제 수를 구해 보자.', years: '두 그래프를 견주어 보자.', truth: '보고서의 해석이 맞는지 판정해 보자.', trap2: '백분율과 실제 수를 함께 살펴보자.' },
   taunt: { tilt: ['작년이나 올해나 똑같아!'], mixup: ['내 보고서는 다 참이야!'], clock: ['백분율이 곧 학생 수야!'], half: ['%가 크면 수도 크지!'], dark: ['관측소는 내 거다!', '백분율만 보면 충분해!'] },
   hit: { tilt: ['변화를 찾아내다니!'], mixup: ['거짓 해석을 찾다니!'], clock: ['실제 수를 구하다니!'], half: ['실제 수로 비교하다니!'], dark: ['크윽… 그래프를 해석해 내다니!', '거짓 보고서를 다 찾다니…!'] },
   prologue: [
     { w: 'narr', t: '스마트 시티의 <b>데이터 관측소</b>. 그래프를 해석해 보고서를 만드는 곳이다.' },
     { w: 'dark', p: 'laugh', t: `흐흐흐! ${VN}가 왔다! 30%인 학교가 20%인 학교보다 학생이 많지? 보고서에 그렇게 적어 놓았다!` },
     { w: 'narr', t: `${avatar('dog', 40, 'happy')} 뭉치: "스마트 마스터, <b>크로스 링크</b>! 두 학교의 전체 학생 수가 다르면 어떻게 될까?"` },
-    { w: 'guide', p: 'determined', t: '좋아! <b>그래프를 바르게 해석</b>해 보자!' }],
+    { w: 'guide', p: 'determined', t: `이 문제를 해결하려면 무엇을 알아야 할까? 먼저 생각해 보자!` }],
   ch1: ['관측 분석실 통과!', '띠그래프와 원그래프에서 비율을 비교하고, <b>전체 수 × 백분율</b>로 실제 수를 구하며, 두 그래프를 견주어 <b>변화</b>를 해석할 수 있게 되었다!', '말도 안 돼! 거짓 해석을 다 찾아내다니!'],
   ch2: '거짓 해석 함정도 다 알아채다니…!',
   ch3: '크윽! 봉인도, 보고서도, 참·거짓 분류까지…!',
@@ -9372,8 +9569,8 @@ window.SV_LF={
  "target": "띠그래프와 원그래프를 해석할 수 있다.",
  "title": "🔭 데이터 관측소의 거짓 보고서",
  "sub": "5단원 · 오늘의 문제",
- "problem": "데이터 관측소에 두 학교의 띠그래프가 있어요. 가 학교(전체 <b>200명</b>)는 운동을 좋아하는 학생이 <b>30%</b>, 나 학교(전체 <b>400명</b>)는 <b>20%</b>예요. 차트 마스터는 “가 학교 학생이 더 많아!”라고 보고서에 적었어요. 정말일까요?",
- "placeholder": "예: 그래프를 보고 바르게 해석하는 방법을 알고 싶어요.",
+ "problem": "데이터 관측소는 운동을 좋아하는 학생이 더 많은 학교에 운동 기구를 먼저 보내려고 해요. 가 학교(전체 <b>200명</b>)와 나 학교(전체 <b>400명</b>)의 띠그래프를 본 차트 마스터가 “운동을 좋아하는 학생은 가 학교에 더 많아!”라고 보고서에 적었어요. 이 보고서대로 보내도 될까요?",
+ "placeholder": "예: 나는 ~하는 방법을 알아보고 싶어요.",
  "keywords": [
   {
    "k": [
@@ -9412,7 +9609,7 @@ window.SV_LF={
   {
    "w": "dark",
    "p": "laugh",
-   "t": "30%가 20%보다 크니까 학생도 더 많지! 흐흐흐!"
+   "t": "운동을 좋아하는 학생은 가 학교에 더 많아! 보고서에 그렇게 적었지. 흐흐흐!"
   },
   {
    "w": "guide",
@@ -9441,26 +9638,65 @@ window.SV_LF={
    }
   ],
   "hints": [
-   "가: 200 × 0.3",
-   "나: 400 × 0.2"
+   "두 학교의 전체 학생 수가 같은지 살펴봐요.",
+   "가 학교: 200명의 30%는 몇 명일까요?"
   ],
   "ok": "가 60명, 나 80명 → 나 학교가 더 많아요!",
-  "wrongTip": "전체 수 × 백분율로 실제 학생 수를 구해 비교해요.",
-  "task": "두 학교의 실제 학생 수를 구하고, 더 많은 학교를 골라요.",
+  "wrongTip": "두 학교는 전체 학생 수가 달라요. 학교마다 운동을 좋아하는 학생이 몇 명인지 구해 봐요.",
+  "task": "운동을 좋아하는 학생이 더 많은 학교를 찾아봐요.",
   "explain": "어떻게 비교했는지 설명해 보세요."
  },
  "verify": null
 };
-window.SV_LF.j0.board=function(H){
-return `<div class="sv-paper" style="text-align:left"><div class="sv-paper-h">🔭 두 학교 띠그래프 확인</div><div style="display:flex;flex-direction:column;gap:8px;font-size:1.05rem;align-items:center"><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:center"><div style="width:min(360px,80vw)"><div style="font-weight:900;font-size:.9rem;text-align:center">가 학교 (전체 200명)</div><div style="display:flex;height:40px;border:2px solid #334155;border-radius:4px;overflow:hidden;font-size:.85rem;font-weight:900"><span style="width:30%;background:#f97316;display:flex;align-items:center;justify-content:center;border-right:2px solid #fff">운동 30%</span><span style="width:70%;background:#e2e8f0;display:flex;align-items:center;justify-content:center">그 밖 70%</span></div><div style="position:relative;height:18px;font-size:.72rem;font-weight:800;color:#334155">${Array.from({length:11},(_,i)=>`<i style="position:absolute;left:${i*10}%;transform:translateX(-50%);font-style:normal">${i*10}</i>`).join('')}</div></div><div style="width:min(360px,80vw)"><div style="font-weight:900;font-size:.9rem;text-align:center">나 학교 (전체 400명)</div><div style="display:flex;height:40px;border:2px solid #334155;border-radius:4px;overflow:hidden;font-size:.85rem;font-weight:900"><span style="width:20%;background:#f97316;display:flex;align-items:center;justify-content:center;border-right:2px solid #fff">운동 20%</span><span style="width:80%;background:#e2e8f0;display:flex;align-items:center;justify-content:center">그 밖 80%</span></div><div style="position:relative;height:18px;font-size:.72rem;font-weight:800;color:#334155">${Array.from({length:11},(_,i)=>`<i style="position:absolute;left:${i*10}%;transform:translateX(-50%);font-style:normal">${i*10}</i>`).join('')}</div></div></div><div class="sv-paper-t">운동을 좋아하는 학생 → 가 학교: ${H.inp(0,{w:70,unit:'명'})} · 나 학교: ${H.inp(1,{w:70,unit:'명'})}</div><div class="sv-paper-t">운동을 좋아하는 학생이 더 많은 곳: <span class="sv-row" style="display:inline-flex;margin:0">${H.pick(2,'가 학교')}${H.pick(2,'나 학교')}</span></div></div></div>`;};
+(function(){
+ const strip=(nm,tot,p)=>`<div class="rj0s"><div class="rj0t">${nm} 학교 (전체 ${tot}명)</div><div class="rj0b"><span style="width:${p}%;background:#fdba74">운동 ${p}%</span><span style="width:${100-p}%;background:#e2e8f0">그 밖 ${100-p}%</span></div><div class="rj0x">${Array.from({length:11},(_,i)=>`<i style="left:${i*10}%">${i*10}</i>`).join('')}<em>(%)</em></div></div>`;
+ const strips=`<div class="rj0g">${strip('가',200,30)}${strip('나',400,20)}</div>`, note=`<div class="rj0n">📝 차트 마스터의 보고서<br>“운동을 좋아하는 학생은<br>가 학교에 더 많아!”</div>`;
+ window.SV_LF.j0.board=function(H){
+  if(!H.play&&!H.done) return `<div class="rj0 view">${strips}<div class="rj0a">${note}<div class="rj0w">🚚 운동 기구를 먼저 보낼 학교는?</div></div></div>`;
+  return `<div class="rj0">${strips}<div class="rj0a">${note}<div>운동을 좋아하는 학생 수<div class="rj0in"><span>가 학교 ${H.inp(0,{w:96,unit:'명'})}</span><span>나 학교 ${H.inp(1,{w:96,unit:'명'})}</span></div></div><div>운동을 좋아하는 학생이 더 많은 학교<span class="sv-row">${H.pick(2,'가 학교')}${H.pick(2,'나 학교')}${H.pick(2,'두 학교가 같아요')}${H.pick(2,'알 수 없어요')}</span></div></div></div>`;
+ };
+ const st=document.createElement('style'); st.textContent=`.rj0{font-size:16px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:1.4em;align-items:center;text-align:left;width:100%}.rj0.view{font-size:clamp(15px,1.25vw,24px);grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);max-width:62em;margin:0 auto}body.svsl-on.svsl-land[data-svst=jump] .rj0{font-size:clamp(14px,.98vw,20px)}.rj0g{display:flex;flex-direction:column;gap:.7em;padding:0 1.3em 0 .8em}.rj0t{font-weight:900;font-size:1.15em;text-align:center;margin-bottom:.2em}.rj0b{display:flex;height:3.7em;border:2.5px solid #334155;border-radius:6px;overflow:hidden;font-size:1.12em;font-weight:900}.rj0b span{display:flex;align-items:center;justify-content:center;white-space:nowrap}.rj0b span:first-child{border-right:2.5px solid #334155}.rj0x{position:relative;height:1.7em;font-size:.9em;font-weight:800;color:#334155;margin-top:2px}.rj0x i{position:absolute;transform:translateX(-50%);font-style:normal}.rj0x em{position:absolute;right:-1.3em;top:1.3em;font-style:normal;font-size:.84em}.rj0a{display:flex;flex-direction:column;gap:.55em;font-size:1.1em;font-weight:800}.rj0a .sv-row{display:grid;grid-template-columns:1fr 1fr;gap:.45em;margin:.4em 0 0}.rj0a .sv-row button{font-size:1em}.rj0in{display:flex;gap:.9em;flex-wrap:wrap;margin-top:.4em}.rj0n{background:#fff7ed;border:2.5px dashed #fb923c;border-radius:14px;padding:.6em .85em;line-height:1.5;font-weight:900}.rj0w{font-weight:900;color:#4c1d95;background:#f5f3ff;border:2.5px solid #c4b5fd;border-radius:14px;padding:.6em .85em;text-align:center}
+body.svsl-on.svsl-land[data-svst=jump] #part-j0.svsl-jgrid{grid-template-columns:minmax(0,1.9fr) minmax(0,1fr)}@media(max-width:820px){.rj0,.rj0.view{grid-template-columns:1fr}}`; document.head.appendChild(st);
+})();
 
-/*HERO*/window.SV_LF.hero={"title": ["관측소 보고서가", "거짓이야!"], "speech": "차트 마스터가 백분율만 보고 보고서를 썼어. <b>그래프를 바르게 해석</b>해 보자!", "villain": "차트 마스터", "vkey": "dark", "villainSub": "메트릭의 간부 · 그래프 왜곡", "object": "🔭 가 30% · 나 20%<div class=\"svh-seals\"><span>🔒 ?</span><span>🔒 ?</span></div>"};
+/*HERO*/window.SV_LF.hero={"title": ["관측소 보고서,", "믿어도 될까?"], "speech": "차트 마스터가 두 학교의 띠그래프를 보고 보고서를 썼어. <b>이 보고서대로 보내도 괜찮을까?</b>", "villain": "차트 마스터", "vkey": "dark", "villainSub": "메트릭의 간부 · 그래프 왜곡", "object": "🔭 두 학교의 띠그래프<div class=\"svh-seals\"><span>🔒 가 학교</span><span>🔒 나 학교</span></div>"};
 
 try{window.SV_LF.hero.speaker=GUIDE();window.SV_LF.hero.speakerName=CHARS[GUIDE()].name+' × 뭉치';}catch(e){}
 
 /*SCR*/window.SV_LF.j0.scratch={"auto": "fig"};
 window.SV_LF.sceneAlt="데이터 관측소에서 그래프를 해석하는 강시우와 뭉치, 거짓 보고서를 쓰는 차트 마스터";
 window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
+/* 보기는 항상 4개: 틀린 보기가 모자라면 답의 꼴(분수·수·이름·비)에 맞추어 채워요 */
+window.svFill4 = function (ans, ds) {
+  ans = String(ans); const D = []; (ds || []).map(String).forEach(x => { if (x !== ans && !D.includes(x)) D.push(x); });
+  if (D.length >= 3) return D;
+  const add = t => { t = String(t); if (D.length < 3 && t !== ans && !D.includes(t) && !/NaN|undefined/.test(t)) D.push(t); };
+  const plain = ans.replace(/<[^>]+>/g, '').trim(); let m;
+  const fam = [['삼각기둥', '사각기둥', '오각기둥', '육각기둥', '칠각기둥', '팔각기둥'], ['삼각뿔', '사각뿔', '오각뿔', '육각뿔', '칠각뿔', '팔각뿔'], ['삼각형', '사각형', '오각형', '육각형'], ['막대그래프', '꺾은선그래프', '띠그래프', '그림그래프']];
+  fam.forEach(F => { if (F.includes(plain)) F.forEach(add); });
+  if (D.length < 3 && (m = /^(\D*?)(\d+) (\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], w = +m[2], n = +m[3], d = +m[4], u = m[5]; [[w + 1, n, d], [w, n + 1 < d ? n + 1 : n - 1, d], [w, n, d + 1], [w - 1, n, d]].forEach(v => { if (v[0] > 0 && v[1] > 0) add(p + v[0] + ' ' + v[1] + '/' + v[2] + u); }); }
+  else if (D.length < 3 && (m = /^(\D*?)(\d+)\/(\d+)(\D*)$/.exec(plain))) { const p = m[1], n = +m[2], d = +m[3], u = m[4]; [[n + 1, d], [n, d + 1], [d, n], [n + 2, d], [n, d + 2]].forEach(v => { if (v[0] !== v[1]) add(p + v[0] + '/' + v[1] + u); }); }
+  else if (D.length < 3 && (m = /^(\d+) : (\d+)$/.exec(plain))) { const a = +m[1], b = +m[2]; [[b, a], [a, a + b], [a + b, b], [a + 1, b]].forEach(v => add(v[0] + ' : ' + v[1])); }
+  else if (D.length < 3 && (m = /^(\d+(?:\.\d+)?) ÷ (\d+)$/.exec(plain))) { const a = m[1], b = +m[2]; [b + 1, b + 2, b > 2 ? b - 1 : b + 3].forEach(v => add(a + ' ÷ ' + v)); }
+  else if (D.length < 3 && !/[:÷×=]/.test(plain) && (m = /^(\D*?)(\d+(?:\.\d+)?)(\D*)$/.exec(plain))) { const n = parseFloat(m[2]), st = m[2].includes('.') ? Math.pow(10, -(m[2].split('.')[1].length)) : 1; [n + st, n - st, n + 2 * st, n * 2, n + 3 * st].forEach(v => { if (v > 0) add(m[1] + String(+v.toFixed(6)) + m[3]); }); }
+  if (D.length < 3) ['알 수 없어요', '모두 알맞아요', '모두 알맞지 않아요'].forEach(add);
+  return D;
+};
+(function () {
+  const patch = () => {
+    try { if (typeof mkI === 'function' && !mkI.__f4) { const o = mkI, n = function (text, img, ans, ds, ex, sa) { return o(text, img, ans, window.svFill4(ans, ds), ex, sa); }; n.__f4 = 1; mkI = n; } } catch (e) {}
+    try { if (typeof LC !== 'undefined' && LC && Array.isArray(LC.basic)) LC.basic.forEach(b => { if (!b || b.__f4 || typeof b.gen !== 'function') return; const g = b.gen; b.__f4 = 1;
+      b.gen = function () { const q = g.apply(this, arguments); try { if (q && Array.isArray(q.choices) && q.choices.length >= 2 && q.choices.length < 4 && q.ans != null && !/<svg|<img/.test(q.choices.join(''))) { const A = String(q.ans), W = window.svFill4(A, q.choices.map(String).filter(x => x !== A)); W.forEach(x => { if (q.choices.length < 4 && !q.choices.map(String).includes(x)) q.choices.push(x); }); } } catch (e) {} return q; }; }); } catch (e) {}
+  };
+  patch(); document.addEventListener('DOMContentLoaded', patch); window.addEventListener('load', patch); setTimeout(patch, 0); setTimeout(patch, 600);
+})();
+
+/* 전각(１２３％．) 입력을 반각으로 — 한글 입력기의 전각 숫자로 답을 써도 바르게 채점되도록 모든 답 칸에 적용 */
+(function () { try { if (window.__svHalf) return; window.__svHalf = 1;
+  const half = v => String(v).replace(/[０-９Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/．/g, '.').replace(/，/g, ',').replace(/：/g, ':').replace(/／/g, '/').replace(/％/g, '%').replace(/[－−]/g, '-').replace(/　/g, ' ');
+  window.svHalf = half;
+  document.addEventListener('input', e => { const t = e.target; if (!t || t.tagName !== 'INPUT' || e.isComposing) return; const ty = (t.getAttribute('type') || 'text').toLowerCase(); if (!/^(text|search|tel|)$/.test(ty)) return; const v = t.value, h = half(v); if (h !== v) { let a = null; try { a = t.selectionStart; } catch (x) {} t.value = h; try { if (a != null) t.setSelectionRange(a, a); } catch (x) {} } }, true);
+} catch (e) {} })();
 /* =====================================================================
    SmartVibe 공통 수업 흐름 (lessonflow)
    오늘의 문제(생활 속 문제 상황) → 내가 생각한 학습 목표 쓰기·말하기 → 학습 목표 확인
@@ -9677,18 +9913,20 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
   /* ---------- 새 점프 1: 오늘의 문제 (j0) ---------- */
   const J0S = () => { const s = state.s1; if (!s.j0) s.j0 = { a: {}, fb: null, hint: -1, mark: null, redo: false, hintUsed: false }; return s.j0; };
   function H(mode) {
-    const X = J0S(), done = solved('j0') && !X.redo, A = done ? J0.parts.map(p => p.ans) : X.a, M = done ? {} : (X.mark || {}), play = mode === 'play' && !done;
+    const X = J0S(), done = solved('j0') && !X.redo, A = done ? J0.parts.map((p, i) => p.type === 'draw' ? p.sol() : p.type === 'free' ? (X.a[i] || p.eg || '') : p.ans) : X.a, M = done ? {} : (X.mark || {}), play = mode === 'play' && !done;
     const mk = i => done ? ' ok' : M[i] == null ? '' : M[i] ? ' ok' : ' no';
     return { mode, play, done, A,
       inp: (i, o = {}) => play ? `<span class="sv-slot${mk(i)}"><input class="sv-in sv-bin" data-svp="${i}" inputmode="${o.text ? 'text' : 'numeric'}" autocomplete="off" style="width:${o.w || 140}px" value="${esc(A[i] == null ? '' : A[i])}" placeholder="${o.ph || '?'}">${o.unit ? `<small>${o.unit}</small>` : ''}</span>`
         : `<span class="sv-slot sv-q${mk(i)}" style="min-width:${Math.min(o.w || 140, 120)}px">${done ? esc(/^\d{4,}$/.test(String(A[i])) ? Number(A[i]).toLocaleString('en-US') : String(A[i])) + (o.unit ? `<small>${o.unit}</small>` : '') : '🔒 ?'}</span>`,
       pick: (i, o, html) => `<button class="sv-pk ${A[i] === o ? 'on' + mk(i) : ''}" ${play ? `data-sv="j0-pick" data-i="${i}" data-o="${esc(o)}"` : 'disabled'}>${html == null ? esc(o) : html}</button>`,
       ord: i => A[i] || [], ordBtn: (i, o, html) => { const k = (A[i] || []).indexOf(o); return `<button class="sv-pk ${k >= 0 ? 'on' : ''}" ${play && k < 0 ? `data-sv="j0-ord" data-i="${i}" data-o="${esc(o)}"` : 'disabled'}>${html == null ? esc(o) : html}</button>`; },
-      ordReset: i => play ? `<button class="sv-pk sv-ordre" data-sv="j0-ordre" data-i="${i}">↩ 다시</button>` : '', cls: mk };
+      ordReset: i => play ? `<button class="sv-pk sv-ordre" data-sv="j0-ordre" data-i="${i}">↩ 다시</button>` : '', cls: mk,
+      /* 직접 그리기 칸: st(i) 상태 · at(i) 누름 속성 만들기 · val(i) 지금 쓴 값 */
+      st: i => done ? A[i] : (X.a[i] || (X.a[i] = J0.parts[i].init())), at: i => v => play ? `data-sv="j0-act" data-i="${i}" data-v="${v}"` : '', val: i => A[i] };
   }
   function figHTML(mode) { if (!J0) return ''; try { const f = J0.board ? J0.board(H(mode || 'view')) : (typeof J0.fig === 'function' ? J0.fig() : J0.fig); return f ? `<div class="sv-fig">${f}</div>` : ''; } catch (e) { console.warn(e); return ''; } }
-  const norm = v => String(v == null ? '' : v).replace(/[\s,]/g, '').replace(/(원|명|개|회|°|도|cm|칸|년|뒤|묶음|장|만)$/g, '');
-  function partOK(p, v) { if (p.type === 'order') return Array.isArray(v) && v.join('|') === p.ans.join('|'); if (p.type === 'num') return [].concat(p.ans).map(String).includes(norm(v)); return v === p.ans; }
+  const norm = v => (window.svHalf ? window.svHalf(v == null ? '' : v) : String(v == null ? '' : v)).replace(/[\s,]/g, '').replace(/(원|명|개|회|°|도|cm|칸|년|뒤|묶음|장|만)$/g, '');
+  function partOK(p, v) { if (p.type === 'draw') return !!(v && p.ok(v)); if (p.type === 'free') return String(v == null ? '' : v).trim().length >= (p.min || 2); if (p.type === 'order') return Array.isArray(v) && v.join('|') === p.ans.join('|'); if (p.type === 'num') return [].concat(p.ans).map(String).includes(norm(v)); return v === p.ans; }
   function j0Card() {
     const X = J0S(), done = solved('j0') && !X.redo, M = X.mark || {};
     const part = (p, i) => { const v = done ? p.ans : X.a[i], mk = done ? 'ok' : M[i] == null ? '' : M[i] ? 'ok' : 'no';
@@ -9721,8 +9959,8 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
   }
   function j0Check() {
     const X = J0S(); const marks = {}; let all = true; const given = [];
-    J0.parts.forEach((p, i) => { const v = X.a[i]; const ok = partOK(p, v); marks[i] = ok; if (!ok) all = false; given.push(`${i + 1}) ${Array.isArray(v) ? v.join('→') : (v == null || v === '' ? '(빈칸)' : v)}`); });
-    if (J0.parts.some((p, i) => X.a[i] == null || X.a[i] === '' || (p.type === 'order' && X.a[i].length < p.items.length))) { X.fb = { ok: false, msg: J0.board ? '아직 비어 있는 칸이 있어요. 🔒 칸을 모두 채워요!' : '아직 답하지 않은 문제가 있어요. ①부터 차례로 모두 답해요!' }; renderS1Jump(); return; }
+    J0.parts.forEach((p, i) => { const v = X.a[i]; const ok = partOK(p, v); marks[i] = ok; if (!ok) all = false; given.push(`${i + 1}) ${p.type === 'draw' ? (p.show ? p.show(v) : '(그림)') : Array.isArray(v) ? v.join('→') : (v == null || v === '' ? '(빈칸)' : v)}`); });
+    if (J0.parts.some((p, i) => p.type === 'draw' ? false : (X.a[i] == null || X.a[i] === '' || (p.type === 'order' && X.a[i].length < p.items.length)))) { X.fb = { ok: false, msg: J0.board ? '아직 비어 있는 칸이 있어요. 빈칸을 모두 채워요!' : '아직 답하지 않은 문제가 있어요. ①부터 차례로 모두 답해요!' }; renderS1Jump(); return; }
     if (J0.explain && String(X.ex || '').trim().length < 5) { X.fb = { ok: false, msg: '✏️ 어떻게 해결했는지 생각을 한두 문장으로 써 주세요.' }; renderS1Jump(); return; }
     /* 분수 칸 묶음: 크기가 같은 분수도 정답 (예: 3/8과 6/16) */
     (J0.frac || []).forEach(([a, b]) => { const n = +norm(X.a[a]), d = +norm(X.a[b]), an = +[].concat(J0.parts[a].ans)[0], ad = +[].concat(J0.parts[b].ans)[0];
@@ -9732,6 +9970,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const givenTxt = J0.frac ? J0.frac.map(([a, b], k) => `${'①②③④⑤'[k]} ${norm(X.a[a]) || '□'}/${norm(X.a[b]) || '□'}`).join('  ') : given.join(' / ');
     recordAnswer('s1', 'j0', '점프 1 · 오늘의 문제 · ' + J0.label, all, givenTxt);
     if (all) { X.fb = null; X.redo = false; try { good(); FX.rain(150); } catch (e) {} toast('🎉 오늘의 문제 해결! 점프 문제 2~4가 열렸어요.'); }
+    else if (J0.parts.every((p, i) => marks[i] || p.type === 'draw') && J0.parts.some((p, i) => p.type === 'draw' && !marks[i] && p.why)) { const i = J0.parts.findIndex((p, i) => p.type === 'draw' && !marks[i]); X.fb = { ok: false, msg: J0.parts[i].why(X.a[i]) }; try { bad(); } catch (e) {} }
     else { X.fb = { ok: false, msg: J0.board ? `빨간 칸을 다시 생각해 봐요. ${J0.wrongTip || ''}` : `${wrongN.join('·')}번을 다시 생각해 봐요. ${J0.wrongTip || ''}` }; try { bad(); } catch (e) {} }
     persist(); renderS1Jump(); markMap();
   }
@@ -9801,6 +10040,7 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     else if (act === 'j0-pick') { const X = J0S(); X.a[b.dataset.i] = b.dataset.o; X.mark = null; renderS1Jump(); persist(); }
     else if (act === 'j0-ord') { const X = J0S(), i = b.dataset.i; X.a[i] = (X.a[i] || []).concat([b.dataset.o]); X.mark = null; renderS1Jump(); persist(); }
     else if (act === 'j0-ordre') { const X = J0S(); X.a[b.dataset.i] = []; renderS1Jump(); }
+    else if (act === 'j0-act') { const X = J0S(), i = b.dataset.i, p = J0.parts[i]; if (!X.a[i]) X.a[i] = p.init(); p.on(X.a[i], b.dataset.v); X.mark = null; if (X.fb && !X.fb.ok) X.fb = null; renderS1Jump(); persist(); }
     else if (act === 'j0-check') j0Check();
     else if (act === 'j0-hint') { const X = J0S(); X.hint++; X.hintUsed = true; renderS1Jump(); persist(); try { mood('think', 2400); } catch (x) {} }
     else if (act === 'j0-redo') { state.s1.j0 = { a: {}, fb: null, hint: -1, mark: null, redo: true, hintUsed: (state.s1.j0 || {}).hintUsed, ex: (state.s1.j0 || {}).ex }; renderS1Jump(); }
@@ -9872,9 +10112,9 @@ window.SV_LF.prologueTtl=window.SV_LF.title.replace(/^\S+\s/,"");
     const DROP = '.vrow,.cfb,.stage-head,.anmis,button,.btn,.row,.fdtools,.fttiles,.fdsplit-b,.fdlog,.rpbar,.qnav,.hintbox,[data-dg="fd-lens"],.center.muted';
     function clean(el) { const c = el.cloneNode(true); c.querySelectorAll(DROP).forEach(x => x.remove()); return c; }
     function pickFig(card) {
-      const qEl = card.querySelector('.labq > div') || card.querySelector('.qtext') || card.querySelector('.vgq,.ztq,.rcq,.labq');
+      const qEl = card.querySelector('.labq > div') || card.querySelector('.qtext') || card.querySelector('.vgq,.ztq,.rcq,.labq') || card.querySelector('.ancap');
       const qh = qEl && qEl.textContent.trim() ? `<div class="skq">${clean(qEl).innerHTML}</div>` : '';
-      const FIG = '.fdsplit-a,.fdgrid,.sv-fig,.afw,.vmx,table.vm,[class*="tray"]:not(.fdtray),[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg,[class*="stage"]:not(.stage-head):not(.stage-head *)';
+      const FIG = '.pdrow,.pdtblw,table.cktable,table.rftab,.fdsplit-a,.fdgrid,.sv-fig,.afw,.vmx,table.vm,[class*="tray"]:not(.fdtray),[class*="board"],[class*="paper"],[class*="fig"],.bdg,.pvmat,.drimg,[class*="stage"]:not(.stage-head):not(.stage-head *)';
       let fig = '';
       const sv = [...card.querySelectorAll('svg')].find(x => big(x, 120, 70) && !x.closest('.vrow,.stage-head,button') && !(qEl && qEl.contains(x)));
       const cvs = [...card.querySelectorAll('canvas')].find(x => big(x));
@@ -10713,6 +10953,9 @@ if (typeof BOARD_GUIDE === 'undefined') window.BOARD_GUIDE = 'battle';
 .foldbox svg{width:min(100%,360px)!important;height:auto!important}
 .gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
 .ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
+
+/* v46: 표는 머리칸까지 모든 칸에 선 */
+.cktable th{border:2px solid #94a3b8;background:#e0e7ff;font-weight:900;padding:6px 12px;text-align:center}.cktable td{border-color:#94a3b8}
 </style>
 <script>
 /* =====================================================================
@@ -10898,9 +11141,15 @@ const JX = (() => {
   const say = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
   const card = (k, v, t) => `<span class="t11piece ${S(k).pick === String(v) ? 'jxpick' : ''}" data-dg="jx-c" data-v="${k}|${v}"><b>${t != null ? t : v}</b></span>`;
   const jxSel = k => { const s = S(k), n = (D[k].slots || []).length; if (s.sel != null && s.slots[s.sel] == null) return s.sel; for (let i = 0; i < n; i++) if (s.slots[i] == null) return i; return -1; };
+  const isTyped = C => !!C && C.type === 'slots' && (C.typed === true || (C.typed !== false && (C.cards || []).length > 0 && C.cards.every(v => typeof v === 'number')));
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
-    if (C.type === 'slots') {
+    if (isTyped(C)) {
+      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
+      if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
+        + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
+    } else if (C.type === 'slots') {
       h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot ${s.slots[i] != null ? 'full' : ''} ${!done && s.slots[i] == null && jxSel(k) === i ? 'jxsel' : ''}" data-dz="jx-s" data-i="${k}|${i}" data-jxsel="${k}|${i}" ${s.slots[i] != null && !done ? `data-jxclr="${k}|${i}" title="눌러서 비우기"` : ''}>${s.slots[i] != null ? (C.show ? C.show(s.slots[i]) : s.slots[i]) : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✋ 카드를 끌거나 눌러서 빈칸에 놓아요 · 숫자 키로도 쓸 수 있어요 · 채운 칸을 누르면 비워져요</span>${C.cards.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`
@@ -10940,7 +11189,7 @@ const JX = (() => {
   document.addEventListener('click', e => { const z = e.target.closest('[data-jxsel]'); if (z && !z.dataset.jxclr) { const [k, i] = z.dataset.jxsel.split('|'); if (D[k] && !solved(k)) { S(k).sel = +i; paint(k); } return; }
     const b = e.target.closest('.jxbins [data-dz="jx-b"]'); if (b) { const [k, i] = (b.dataset.i || '').split('|'), s = D[k] && S(k); if (s && s.pick != null && !solved(k)) { const val = isNaN(+s.pick) ? s.pick : +s.pick; s.bins[val] = +i; s.pick = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); } } });
   document.addEventListener('keydown', e => { if (!/^[0-9]$/.test(e.key) || e.target.closest && e.target.closest('input,textarea')) return;
-    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
+    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || isTyped(C) || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
       const c = C.cards.find(v => String(v) === e.key); if (c == null) continue; s.slots[i] = isNaN(+c) ? c : +c; s.sel = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); e.preventDefault(); return; } });
   document.addEventListener('click', e => { const c = e.target.closest('[data-jxclr]'); if (c) { const [k, i] = c.dataset.jxclr.split('|'); delete S(k).slots[+i]; paint(k); return; }
     const b = e.target.closest('[data-jx]'); if (!b) return; const k = b.dataset.v, a = b.dataset.jx, s = S(k); touch('s1');
@@ -10956,6 +11205,13 @@ const JX = (() => {
     try { const ji = +String(k).slice(1) - 1; if (J_NAMES[ji]) J_NAMES[ji] = J_NAMES[ji].replace(/·.*$/, '· ' + C.label); } catch (e) {} }
   return { set, paint };
 })();
+
+/* 직접 쓰는 빈칸: 쓴 값을 그대로 기억해요 (다시 그리지 않음) */
+(function () { try {
+  document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
+  document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
+  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+} catch (e) {} })();
 
 
 /* 6-1-5-4 띠그래프와 원그래프 해석하기 — 모눈으로 실제 수 구하기 · 두 해 견주기 · 해석 판정 · 백분율만큼 칠해 견주기 + 보스전 도전 2·3 */
@@ -10982,7 +11238,7 @@ const JX = (() => {
         MX.ask({ t: '확인', kind: 'check', q: '도서관에서 빌려 간 책 <b>500권</b>을 조사한 원그래프예요. 실제 권수를 구해 써요.', pre: FIG(GR.pie(it(BK), { title: '빌려 간 책 (전체 500권)', r: 84 })),
           rec: ['500권이 100%이면 1%는 ', { a: '5', why: '500 ÷ 100' }, '권 → 동화책 30%는 ', { a: '150', why: '30 × 5, 또는 500 × 30 ÷ 100을 계산해요.' }, '권 · 역사책 12%는 ', { a: '60', why: '12 × 5를 계산해요.' }, '권'],
           win: '전체 500권 중 동화책 150권, 역사책 60권!' })] },
-    { k: 'years', vk: 'tilt', icon: '📅', name: '두 해 견주기', short: '무엇이 늘고 줄었을까?', dnd: [],
+    { k: 'years', vk: 'tilt', icon: '📅', name: '두 그래프 견주기', short: '무엇이 늘고 줄었을까?', dnd: [],
       sub: '작년과 올해의 등교 방법 띠그래프를 나란히 놓았어요. 두 띠를 견주어 무엇이 늘고 무엇이 줄었는지 찾아봐요.', taunt: '작년이나 올해나 똑같아!', msg: '두 해의 그래프를 견주어 보자!',
       summary: '띠그래프를 나란히 놓으면 각 항목의 <b>비율 변화</b>를 한눈에 견줄 수 있어요.',
       stages: [MX.tapStrip({ t: '줄어든 항목', strips: [['작년', Y1], ['올해', Y2]], on: 1, want: 1, q: '작년과 올해의 띠를 견주어 봐요. 작년보다 비율이 <b>줄어든</b> 등교 방법을 찾아 눌러요.',
@@ -10998,29 +11254,32 @@ const JX = (() => {
       stages: [judge({ t: '보고서 1', q: '그래프(전체 200명)를 보고 각 해석이 맞으면 ⭕, 틀리면 ❌를 눌러요.', pre: FIG(GR.pie(it(D), { title: '좋아하는 운동 (전체 200명)', r: 80 })), items: [['축구를 좋아하는 학생이 가장 많아요.', 1, '원에서 가장 넓은 부분을 찾아봐요.'], ['농구와 기타는 비율이 같아요.', 1, '두 부분의 백분율을 읽어 견주어 봐요.'], ['야구를 좋아하는 학생은 20명이에요.', 0, '20%와 20명은 달라요. 전체 200명의 20%를 구해 봐요.'], ['축구는 야구의 3배예요.', 0, '축구와 야구의 백분율을 읽어 나누어 봐요.']], win: '거짓 해석 2개를 찾았어요!', big: '야구는 200명의 20%인 40명, 축구(40%)는 야구(20%)의 2배!' }),
         judge({ t: '확인', kind: 'check', q: '두 해 띠그래프 해석을 판정해요.', pre: `<div class="rxtwin">${GR.strip(it(Y1), { title: '작년' })}${GR.strip(it(Y2), { title: '올해' })}</div>`, items: [['올해 걷기의 비율이 가장 커요.', 1, '올해 띠에서 가장 긴 부분을 찾아봐요.'], ['버스의 비율은 10%만큼 줄었어요.', 1, '버스의 작년과 올해 백분율을 읽어 봐요.'], ['자전거의 비율은 작년의 2배가 되었어요.', 0, '자전거의 작년과 올해 백분율을 읽어 견주어 봐요.']], win: '해석을 모두 판정했어요!', big: '그래프에서 확인할 수 있는 것만 참이에요.' })] },
     { k: 'trap2', vk: 'half', icon: '🏫', name: '백분율만큼 칠해 견주기', short: '%가 크면 수도 클까?', dnd: [],
-      sub: '두 학교의 그래프를 견주어요. 운동을 좋아하는 학생의 비율이 더 큰 학교가 학생 수도 더 많을까요? 전체 학생 수만큼 긴 막대에 백분율만큼 직접 칠해서 알아봐요.', taunt: '%가 크면 수도 크지!', msg: '백분율만큼 칠해 실제 수를 견주어 보자!',
+      sub: '두 학교의 조사 결과를 견주어요. 줄넘기를 좋아하는 학생의 비율이 더 높은 학교가 학생 수도 더 많을까요? 전체 학생 수만큼 긴 막대에 백분율만큼 직접 칠해서 알아봐요.', taunt: '%가 크면 수도 크지!', msg: '백분율만큼 칠해 실제 수를 견주어 보자!',
       summary: '전체 수가 다르면 백분율이 커도 실제 수는 더 적을 수 있어요. 이때는 <b>실제 수</b>를 구해 견주어요.',
-      stages: [MX.shade({ t: '가와 나', bars: [{ nm: '가 학교', note: '전체 200명 · 운동을 좋아하는 학생 30%', cells: 20, pct: 30 }, { nm: '나 학교', note: '전체 400명 · 운동을 좋아하는 학생 20%', cells: 40, pct: 20 }], cell: '10명', what: '운동을 좋아하는 학생',
-          q: '막대의 길이가 그 학교의 전체 학생 수예요. 학교마다 <b>운동을 좋아하는 학생의 백분율만큼</b> 앞에서부터 칠해요. (칸을 누르면 그 칸까지 칠해져요)',
-          rec: ['운동을 좋아하는 학생 → 가 학교: ', { a: '60', why: '가 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명 · 나 학교: ', { a: '80', why: '나 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명'], hint: '칠한 칸 수 × 10명',
-          pick: { q: '운동을 좋아하는 학생이 <b>더 많은 학교</b>의 막대를 눌러요.', ans: 1, why: '백분율이 아니라 칠한 칸(실제 학생 수)을 견주어 봐요.', win: '백분율은 가 학교(30%)가 더 크지만, 실제 학생 수는 나 학교(80명)가 더 많아요. 전체 수가 다르면 실제 수로 견주어야 해요!' } }),
-        MX.shade({ t: '확인', kind: 'check', bars: [{ nm: '다 학교', note: '전체 500명 · 안경을 쓴 학생 20%', cells: 50, pct: 20 }, { nm: '라 학교', note: '전체 300명 · 안경을 쓴 학생 30%', cells: 30, pct: 30 }], cell: '10명', what: '안경을 쓴 학생',
+      stages: [MX.shade({ t: '가와 나', bars: [{ nm: '하늘 학교', note: '전체 300명 · 줄넘기를 좋아하는 학생 40%', cells: 30, pct: 40 }, { nm: '바다 학교', note: '전체 500명 · 줄넘기를 좋아하는 학생 30%', cells: 50, pct: 30 }], cell: '10명', what: '줄넘기를 좋아하는 학생',
+          q: '막대의 길이가 그 학교의 전체 학생 수예요. 학교마다 <b>줄넘기를 좋아하는 학생의 백분율만큼</b> 앞에서부터 칠해요. (칸을 누르면 그 칸까지 칠해져요)',
+          rec: ['줄넘기를 좋아하는 학생 → 하늘 학교: ', { a: '120', why: '하늘 학교 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명 · 바다 학교: ', { a: '150', why: '바다 학교 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명'], hint: '칠한 칸 수 × 10명',
+          pick: { q: '줄넘기를 좋아하는 학생이 <b>더 많은 학교</b>의 막대를 눌러요.', ans: 1, why: '백분율이 아니라 칠한 칸(실제 학생 수)을 견주어 봐요.', win: '백분율은 하늘 학교(40%)가 더 높지만, 실제 학생 수는 바다 학교(150명)가 더 많아요. 전체 수가 다르면 실제 수로 견주어야 해요!' } }),
+        MX.shade({ t: '확인', kind: 'check', bars: [{ nm: '숲 학교', note: '전체 400명 · 안경을 쓴 학생 25%', cells: 40, pct: 25 }, { nm: '강 학교', note: '전체 200명 · 안경을 쓴 학생 45%', cells: 20, pct: 45 }], cell: '10명', what: '안경을 쓴 학생',
           q: '학교마다 <b>안경을 쓴 학생의 백분율만큼</b> 앞에서부터 칠해요.',
-          rec: ['안경을 쓴 학생 → 다 학교: ', { a: '100', why: '다 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명 · 라 학교: ', { a: '90', why: '라 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명'], hint: '칠한 칸 수 × 10명',
-          pick: { q: '안경을 쓴 학생이 <b>더 많은 학교</b>의 막대를 눌러요.', ans: 0, why: '백분율이 아니라 칠한 칸(실제 학생 수)을 견주어 봐요.', win: '백분율은 라 학교(30%)가 더 크지만, 실제 학생 수는 다 학교(100명)가 더 많아요!' } })] }
+          rec: ['안경을 쓴 학생 → 숲 학교: ', { a: '100', why: '숲 학교 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명 · 강 학교: ', { a: '90', why: '강 학교 막대에서 칠한 칸을 세어요. 한 칸은 10명이에요.' }, '명'], hint: '칠한 칸 수 × 10명',
+          pick: { q: '안경을 쓴 학생이 <b>더 많은 학교</b>의 막대를 눌러요.', ans: 0, why: '백분율이 아니라 칠한 칸(실제 학생 수)을 견주어 봐요.', win: '백분율은 강 학교(45%)가 더 높지만, 실제 학생 수는 숲 학교(100명)가 더 많아요!' } })] }
   ]);
-  const st = document.createElement('style'); st.textContent = `.rxtwin{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}.rxtwin .grstrip{width:min(400px,88vw)}.gjl{display:flex;flex-direction:column;gap:6px;max-width:640px;margin:8px auto}.gjr{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:6px 10px;font-weight:800}.gjr span{flex:1}.gjr.ok{border-color:#16a34a;background:#f0fdf4}.gjr.no{border-color:#dc2626;background:#fef2f2}`; document.head.appendChild(st);
+  const st = document.createElement('style'); st.textContent = `.rxtwin{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}.rxtwin .grstrip{width:min(400px,88vw)}.jxfig{display:flex;justify-content:center;margin:4px 0 8px}.jxfig .grstrip{width:min(640px,92vw)}.gjl{display:flex;flex-direction:column;gap:6px;max-width:640px;margin:8px auto}.gjr{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:6px 10px;font-weight:800}.gjr span{flex:1}.gjr.ok{border-color:#16a34a;background:#f0fdf4}.gjr.no{border-color:#dc2626;background:#fef2f2}`; document.head.appendChild(st);
 })();
 (function () {
-  JX.set('j2', { type: 'slots', label: '보고서 고치기', title: '🔭 차트 마스터의 거짓 보고서', taunt: '백분율만 보면 충분해!',
-    text: '전체 <b>300명</b> 중 사과 35%, 딸기 30%, 포도 20%예요. 보고서의 학생 수를 카드로 고쳐요. (사과 · 딸기 · 포도)',
-    slots: ['사과', '딸기', '포도'], tail: sl => '', show: v => v + '명', cards: [20, 35, 60, 90, 105], need: 1,
-    judge: ([a, b, c]) => a !== 105 ? { ok: false, msg: '300 × 0.35' } : b !== 90 ? { ok: false, msg: '300 × 0.3' } : c !== 60 ? { ok: false, msg: '300 × 0.2' } : { ok: true, key: 'p', msg: '105명 · 90명 · 60명!' },
-    hints: ['전체 × 백분율 ÷ 100', '300 × 0.35 = 105'], done: '보고서를 고쳤어요.' });
-  const IT = ['축구가 가장 많아요', '야구는 40명이에요', '배구는 20명이에요', '농구는 축구의 절반이에요', '축구는 야구의 3배예요', '기타는 15%예요'];
+  const it = L => L.map(([n, p]) => ({ n, p })), D = [['축구', 40], ['야구', 20], ['농구', 15], ['배구', 10], ['기타', 15]];
+  const FR = [['사과', 35], ['딸기', 30], ['포도', 20], ['귤', 10], ['기타', 5]];
+  JX.set('j2', { type: 'slots', typed: true, label: '보고서 고치기', title: '🔭 차트 마스터의 거짓 보고서', taunt: '백분율만 보면 충분해!',
+    text: '차트 마스터가 보고서에 “사과 35명, 딸기 30명, 포도 20명”이라고 적었어요. 학생 <b>300명</b>을 조사한 그래프를 보고 학생 수를 바르게 고쳐 써요.',
+    fig: () => `<div class="jxfig">${GR.strip(it(FR), { title: '좋아하는 과일 (전체 300명)' })}</div>`,
+    slots: ['사과를 좋아하는 학생', '딸기를 좋아하는 학생', '포도를 좋아하는 학생'], tail: sl => '', show: v => v + '명', cards: [20, 35, 60, 90, 105], need: 1,
+    judge: ([a, b, c]) => a !== 105 ? { ok: false, msg: '사과를 좋아하는 학생 수를 다시 구해 봐요. 전체가 300명이에요.' } : b !== 90 ? { ok: false, msg: '딸기를 좋아하는 학생 수를 다시 구해 봐요.' } : c !== 60 ? { ok: false, msg: '포도를 좋아하는 학생 수를 다시 구해 봐요.' } : { ok: true, key: 'p', msg: '105명 · 90명 · 60명!' },
+    hints: ['300명의 1%는 3명이에요.', '300 × 35 ÷ 100 = 105'], done: '보고서를 고쳤어요.' });
+  const IT = ['축구의 비율이 가장 높아요', '야구를 좋아하는 학생은 40명이에요', '배구를 좋아하는 학생은 10명이에요', '농구를 좋아하는 학생은 30명이에요', '축구의 비율은 야구의 3배예요', '축구와 야구를 합하면 전체의 60%예요'];
   JX.set('j3', { type: 'sort', label: '참 · 거짓 분류', title: '⚖️ 차트 마스터의 섞인 해석', taunt: '내 보고서는 다 참이야!',
-    text: '좋아하는 운동(전체 200명: 축구 40%, 야구 20%, 농구 15%, 배구 10%, 기타 15%) 해석 카드를 <b>참</b>과 <b>거짓</b>으로 나누어 넣어요.', bins: ['참', '거짓'], items: IT, ans: s => ['축구가 가장 많아요', '야구는 40명이에요', '배구는 20명이에요', '기타는 15%예요'].includes(s) ? 0 : 1,
-    why: bad => '농구 15%는 축구 40%의 절반(20%)이 아니고, 축구는 야구의 2배예요.', ok: '모두 바르게 판정했어요!', hints: ['200 × 0.2 = 40', '40 ÷ 20 = 2'], done: '해석을 정리했어요.' });
+    text: '학생 <b>200명</b>의 좋아하는 운동을 조사하여 나타낸 그래프예요. 해석 카드를 <b>참</b>과 <b>거짓</b>으로 나누어 넣어요.', fig: () => `<div class="jxfig">${GR.strip(it(D), { title: '좋아하는 운동 (전체 200명)' })}</div>`, bins: ['참', '거짓'], items: IT, ans: s => ['축구의 비율이 가장 높아요', '야구를 좋아하는 학생은 40명이에요', '농구를 좋아하는 학생은 30명이에요', '축구와 야구를 합하면 전체의 60%예요'].includes(s) ? 0 : 1,
+    why: bad => '배구는 200명의 10%인 20명이고, 축구(40%)의 비율은 야구(20%)의 2배예요.', ok: '모두 바르게 판정했어요!', hints: ['전체가 200명이므로 1%는 2명이에요.', '몇 배인지는 두 백분율을 나누어 알아봐요.'], done: '해석을 정리했어요.' });
 })();
 
 </script>
@@ -11757,6 +12016,44 @@ body.svsl-on .svsl-tc .svsl-main .t11src{max-width:100%;box-sizing:border-box}
 /* 상황 살펴보기: 문제 이야기 · 할 일 */
 body.svsl-on .sv-heroboard .sv-hb-story{flex:none;max-width:min(1100px,96%);font-size:1.15em;line-height:1.55;font-weight:700;background:#fff;border:2px solid #ddd6fe;border-radius:16px;padding:10px 18px;text-align:left}
 body.svsl-on .sv-heroboard .sv-hb-task{flex:none;margin:0;font-weight:900;color:#6d28d9;font-size:1.05em}
+
+/* v46: 상황 살펴보기 이름표가 위에서 잘리지 않게 (넘겨 보기에서는 상자 안쪽에 둠) · 그림은 남는 공간만큼 */
+body.svsl-on .sv-heroboard .sv-hb-h{margin:0 0 2px;flex:none}
+body.svsl-on .sv-heroboard{justify-content:flex-start;padding-top:10px}
+body.svsl-on .sv-heroboard .sv-fig{margin:auto}
+
+/* v46: 그림 문제는 [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸을 가득 써요 */
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:stretch}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.svsl-qF,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.svsl-qF{grid-column:1;grid-row:1/span 9;align-self:stretch;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;background:#fffdf5;border:2px solid #f1e3bd;border-radius:18px;padding:10px 12px;box-shadow:0 3px 0 #f1e3bd}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.qhead,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.qhead{grid-column:2;grid-row:1}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL>.svsl-qans,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL>.svsl-qans{grid-column:2;grid-row:2;align-self:start}
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2 .choices,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2 .choices{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;display:grid!important}
+.svsl-qF .rffig{margin:0}.svsl-qF .grpie,.svsl-qF .grstrip,.svsl-qF .rftab,.svsl-qF .pdwrap{margin:0 auto}
+
+/* v46b: 왼쪽 그림 칸 — 그림은 제 크기를 지킨 채 통째로 키우고, 오른쪽 칸은 가운데에 크게 */
+.svsl-qF>.rffig,.svsl-qF>.dxfig{width:max-content;max-width:none;flex:none;margin:0;overflow:visible}.svsl-qF .pdrow{flex-wrap:nowrap}
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL{grid-template-rows:auto auto;align-content:center}
+body.svsl-on.svsl-land .qcard.svsl-qfL .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL .choice{min-height:var(--chmin,84px)!important}body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2:not(.svsl-qlong) .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2:not(.svsl-qlong) .choice{font-size:1.12em}
+
+/* v46c: 그림 문제의 보기 4개는 늘 2×2 (긴 보기는 줄바꿈) — 오른쪽 칸이 화면 높이를 넘지 않게 */
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qc2 .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qc2 .choice{white-space:normal;word-break:keep-all;line-height:1.3;padding-top:8px;padding-bottom:8px}
+body.svsl-on.svsl-land .qcard.svsl-qfL.svsl-qlong .choice,body.svsl-on.svsl-land .card.qx.svsl-qfL.svsl-qlong .choice{font-size:.98em}
+
+/* v46d: 가로로 긴 그림(표 + 그래프 등)은 왼쪽 칸을 더 넓게 */
+body.svsl-on.svsl-land[data-svst=basic] #s1body>.qcard.svsl-qfL.svsl-qwide,body.svsl-on.svsl-land.svsl-s2q #sec-s2 .skb>.card.qx.svsl-qfL.svsl-qwide{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+
+/* v46e: 개념 탐험 — 할 일(물음)은 왼쪽부터 크게, 단계 표시는 오른쪽 끝에 작게 */
+body.svsl-on .svsl-tc>.svsl-q{justify-content:flex-start;flex-wrap:nowrap}
+body.svsl-on .svsl-tc>.svsl-q .ancap,body.svsl-on .svsl-tc>.svsl-q .labq{text-align:left;flex:1 1 auto;max-width:none}
+body.svsl-on .svsl-tc>.svsl-q .t11steps{order:2;margin-left:auto!important;flex:none}
+
+/* v46f: 띠그래프처럼 div로 그린 그림도 왼쪽 칸에서 크게 · 두 띠는 위아래로 */
+.svsl-qF .rxtwin{flex-direction:column;flex-wrap:nowrap;gap:18px}.svsl-qF .grt{white-space:nowrap;font-size:1.02rem}.svsl-qF .grstrip{font-size:1rem}
+
+/* v46g: 예전 종이 모양 오늘의 문제 보드(1·2단원 등)도 점프 1에서 빈 곳 없이 크게 */
+@media (min-width:1500px){body.svsl-on.svsl-land[data-svst=jump] #part-j0 .sv-fig>.sv-paper{zoom:1.25}}
+@media (min-width:1200px) and (max-width:1499px){body.svsl-on.svsl-land[data-svst=jump] #part-j0 .sv-fig>.sv-paper{zoom:1.1}}
+body.svsl-on.svsl-land[data-svst=jump] #part-j0.svsl-jgrid:has(.sv-paper){grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -11947,38 +12244,62 @@ function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.
       if (after.length) { P.classList.add('svsl-jgrid'); F.classList.add('svsl-jfig'); after.forEach(c => c.classList.add('svsl-jR')); } } }
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 10, 0);
   const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
-  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  const JMIN = .62;   /* 점프 문제는 스크롤 대신 한 화면에 들어오도록 조금 더 줄일 수 있어요 */
+  box.classList.remove('svsl-qscroll'); let z = Math.max(JMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > JMIN; i++) { z = Math.max(JMIN, z * .97); q.style.zoom = z.toFixed(3); }
   if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
 function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-land');
   let qR = q.querySelector(':scope > .svsl-qR');
   let ans = qR || [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes'));
-  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel')));
+  const figs = [...q.querySelectorAll('svg, img, canvas, .afw, .mini-bill, .sv-fig, table, .dxfig, .dxrel, .rffig')].filter(e => !e.matches('canvas.pad') && !e.closest('.qno,.vrow,.choices,.modes,.row,.cfb,.qnav') && !(ans && ans.contains(e)) && (e.getBoundingClientRect().width > 60 || e.matches('.afw,.mini-bill,table,.dxfig,.dxrel,.rffig')));
   const hasFig = land && !!ans && figs.length > 0; q.classList.toggle('svsl-qfig', hasFig);
   if (hasFig) { const kids = [...q.children], i = kids.indexOf(ans), after = kids.slice(i + 1).filter(c => c.offsetParent !== null || c.matches('.row,.vrow,.cfb'));
     if (!qR && (after.length || ans.matches('.choices,.modes'))) { qR = document.createElement('div'); qR.className = 'svsl-qR'; q.insertBefore(qR, ans); qR.appendChild(ans); after.forEach(c => qR.appendChild(c)); ans = qR; }
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
   else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
+  /* 그림 문제(가로 화면): [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸 전체를 써요 */
+  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig && qt ? qt.querySelector(':scope > .rffig, :scope > .dxfig') : null; let qF = q.querySelector(':scope > .svsl-qF');
+    if (FG) { if (!qF) { qF = document.createElement('div'); qF.className = 'svsl-qF'; q.insertBefore(qF, q.firstChild); } qF.innerHTML = ''; qF.appendChild(FG); }
+    else if (qF && (!hasFig || !qF.firstElementChild)) { const f = qF.firstElementChild; if (f && qt) { f.style.zoom = ''; qt.appendChild(f); } qF.remove(); qF = null; }
+    q.classList.toggle('svsl-qfL', !!qF); }
   [...q.children].forEach(c => c.classList.toggle('svsl-qans', c === ans));
   const ch = q.querySelector('.choices'), opts = ch ? [...ch.children].filter(e => e.offsetParent !== null || e.matches('button')) : [];
   const longest = Math.max(0, ...opts.map(o => (o.textContent || '').trim().length)), pic = ch && !!ch.querySelector('svg,img');
   q.classList.toggle('svsl-q1col', hasFig && !pic && opts.length > 0 && opts.length <= 5);
+  q.classList.toggle('svsl-qc2', q.classList.contains('svsl-qfL') && !pic && opts.length === 4);
+  q.classList.toggle('svsl-qlong', q.classList.contains('svsl-qfL') && longest > 11);
   q.classList.toggle('svsl-q2col', !hasFig && land && opts.length >= 3 && (opts.length === 4 || longest > 6)); }
+const fzIn = e => { const p = e.parentElement && e.parentElement.closest('.afw, .sv-fig, .dxfig, .dxrel, .rffig, .svsl-qF'); return !!p; };
 function fitQ(q, box) { if (!q || !box) return; qShape(q);
   const key = SET() + '|' + step() + '|' + qInfo().cur + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 60) + '|' + innerWidth + 'x' + innerHeight;
   const answered = !!q.querySelector('.vrow, .cfb, .rpbar, .choice.ok, .choice.no, .choice.right, .choice.wrong');
   q.classList.add('svsl-meas'); q.style.zoom = 1;
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.offsetHeight + 8, 0);
   const avH = box.clientHeight - others - 4, avW = box.clientWidth - 4, R = answered ? 0 : (q.classList.contains('svsl-qfig') ? 110 : 125);
-  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel')]; if (fz.length && q.classList.contains('svsl-qfig')) { let f = 1.75; const set = v => fz.forEach(e => e.style.zoom = v); set(f); for (let i = 0; i < 10 && f > 1 && q.scrollHeight + R > avH; i++) { f -= .08; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  /* 그림·표는 남는 공간만큼 키워요 (높이와 문제 칸 너비를 넘지 않는 가장 큰 크기) */
+  const fz = [...q.querySelectorAll('.qtext .afw, .sv-fig, .qtext .dxfig, .qtext .dxrel, .qtext .rffig')].filter(e => !fzIn(e)); if (fz.length && q.classList.contains('svsl-qfig')) { let f = 2.6; const set = v => fz.forEach(e => e.style.zoom = v); set(1); const lim = Math.max(q.scrollHeight, avH - R); set(f);
+    const wide = () => fz.some(e => { const p = e.closest('.qtext') || e.parentElement; return !!p && p.scrollWidth > p.clientWidth + 2; });
+    for (let i = 0; i < 24 && f > 1 && (q.scrollHeight > lim + 1 || wide()); i++) { f -= .07; set(f.toFixed(2)); } } else fz.forEach(e => e.style.zoom = '');
+  /* 오른쪽 칸(글 + 보기)이 화면 높이를 넘지 않도록 보기 단추 높이를 먼저 맞춰요 (스크롤·잘림 대신) */
+  if (q.classList.contains('svsl-qfL')) { const F0 = q.querySelector(':scope > .svsl-qF'), f0 = F0 && F0.firstElementChild; if (F0) { F0.style.height = ''; F0.style.minHeight = '0px'; } if (f0) { f0.style.zoom = 1; const rw0 = f0.querySelector('.pdrow'); if (rw0) rw0.style.flexDirection = ''; q.classList.toggle('svsl-qwide', !q.classList.contains('svsl-qlong') && f0.offsetWidth / Math.max(1, f0.offsetHeight) > 1.9); f0.style.zoom = .1; }
+    for (const m of [120, 104, 90, 78, 68, 60, 54, 48]) { q.style.setProperty('--chmin', m + 'px'); if (q.scrollHeight + R <= avH) break; } }
+  { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (f) { f.style.zoom = 1; qF.style.height = ''; qF.style.minHeight = '0px';
+      /* 왼쪽 칸 높이 = 화면에 남는 높이(또는 오른쪽 칸 높이)까지, 그림은 그 칸에 꼭 맞는 가장 큰 크기로 (잘림·스크롤 없음) */
+      const chrome = q.scrollHeight - qF.offsetHeight, boxH = Math.max(qF.offsetHeight, avH - R - chrome); qF.style.height = boxH + 'px';
+      const cs = getComputedStyle(qF), pw = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 6, ph = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 6, fw = f.offsetWidth || 1, fh = f.offsetHeight || 1;
+      let z = Math.max(.5, Math.min(3.2, (qF.clientWidth - pw) / fw, (boxH - ph) / fh));
+      /* 그림이 둘(표 + 그래프)이면 옆으로·위아래 가운데 더 크게 보이는 쪽으로 놓아요 */
+      const rw = f.querySelector('.pdrow'); if (rw) { rw.style.flexDirection = 'column'; const z2 = Math.max(.5, Math.min(3.2, (qF.clientWidth - pw) / (f.offsetWidth || 1), (boxH - ph) / (f.offsetHeight || 1))); if (z2 > z * 1.05) z = z2; else rw.style.flexDirection = ''; }
+      f.style.zoom = z.toFixed(3); } }
   const h = q.scrollHeight + R, w = q.scrollWidth;
   q.classList.remove('svsl-meas');
-  box.classList.remove('svsl-qscroll'); let z = Math.max(QMIN, Math.min(QMAX, avH / h, avW / w));
+  const QN = (q.classList.contains('svsl-qfL') || q.classList.contains('svsl-qfig')) ? Math.min(QMIN, .64) : QMIN;   /* 그림 문제는 잘리거나 스크롤되지 않게 조금 더 줄일 수 있어요 */
+  box.classList.remove('svsl-qscroll'); let z = Math.max(QN, Math.min(QMAX, avH / h, avW / w));
   if (QZ[key] && answered) z = Math.min(QZ[key], z * 1.0) < QZ[key] * .9 ? Math.min(QZ[key], z) : QZ[key]; else if (!answered) QZ[key] = z;
   q.style.zoom = z.toFixed(3);
-  for (let i = 0; i < 8 && box.scrollHeight > box.clientHeight + 1 && z > QMIN; i++) { z = Math.max(QMIN, z * .96); q.style.zoom = z.toFixed(3); }
+  for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > QN; i++) { z = Math.max(QN, z * .96); q.style.zoom = z.toFixed(3); }
   if (box.scrollHeight > box.clientHeight + 1) box.classList.add('svsl-qscroll'); }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
