@@ -7009,13 +7009,14 @@ const GEO = (() => {
   /* 각기둥 전개도: 옆면 n개를 가로로, 밑면을 위(top 번째 옆면)·아래(bot 번째 옆면)에 붙여요. sides: 밑면 변 길이(정다각형이면 생략) */
   function net(o) {
     const n = o.n, a = o.a || 40, h = o.h || 70, sides = o.sides || Array(n).fill(a), xs = [0]; sides.forEach(s => xs.push(xs[xs.length - 1] + s));
-    const ext = (A, B, up) => { /* A→B 변 위(up)/아래에 정다각형 또는 직사각형 */ const L = Math.hypot(B[0] - A[0], B[1] - A[1]), V = [A, B];
-      if (o.rect) { const d = o.rect; const sgn = up ? -1 : 1; V.push([B[0], B[1] + sgn * d], [A[0], A[1] + sgn * d]); return V; }
+    const uneven = sides.length === 4 && sides.some(x => Math.abs(x - sides[0]) > 1e-9);   /* 밑면이 직사각형인 사각기둥: 붙는 변 옆의 길이만큼 */
+    const ext = (A, B, up, at) => { /* A→B 변 위(up)/아래에 정다각형 또는 직사각형 */ const L = Math.hypot(B[0] - A[0], B[1] - A[1]), V = [A, B];
+      if (o.rect || uneven) { const d = uneven ? sides[(at + 1) % n] : o.rect; const sgn = up ? -1 : 1; V.push([B[0], B[1] + sgn * d], [A[0], A[1] + sgn * d]); return V; }
       let p = B, dir = Math.atan2(B[1] - A[1], B[0] - A[0]); const turn = (up ? -1 : 1) * 2 * Math.PI / n;
       for (let i = 0; i < n - 2; i++) { dir += turn; p = [p[0] + L * Math.cos(dir), p[1] + L * Math.sin(dir)]; V.push(p); } return V; };
     const rects = sides.map((s, i) => [[xs[i], 0], [xs[i + 1], 0], [xs[i + 1], h], [xs[i], h]]);
-    const tops = (o.top == null ? [] : [].concat(o.top)).map(t => ({ at: t, up: true, V: ext([xs[t], 0], [xs[t + 1], 0], true) }));
-    const bots = (o.bot == null ? [] : [].concat(o.bot)).map(t => ({ at: t, up: false, V: ext([xs[t], h], [xs[t + 1], h], false) }));
+    const tops = (o.top == null ? [] : [].concat(o.top)).map(t => ({ at: t, up: true, V: ext([xs[t], 0], [xs[t + 1], 0], true, t) }));
+    const bots = (o.bot == null ? [] : [].concat(o.bot)).map(t => ({ at: t, up: false, V: ext([xs[t], h], [xs[t + 1], h], false, t) }));
     const all = [...rects.flat(), ...tops.flatMap(t => t.V), ...bots.flatMap(t => t.V)], mnx = Math.min(...all.map(p => p[0])), mxx = Math.max(...all.map(p => p[0])), mny = Math.min(...all.map(p => p[1])), mxy = Math.max(...all.map(p => p[1]));
     const pad = 14, ox = pad - mnx, oy = pad - mny, W = mxx - mnx + 2 * pad, Hh = mxy - mny + 2 * pad, P = p => `${(p[0] + ox).toFixed(1)},${(p[1] + oy).toFixed(1)}`;
     return { W, Hh, ox, oy, rects, tops, bots, xs, h, P, sides };
@@ -7028,11 +7029,11 @@ const GEO = (() => {
     /* 밑면: 경첩(A→B)에서 접히는 방향 d = cos(90°t)·(위/아래) + sin(90°t)·(안쪽) */
     const inward = (A, B) => { const u = [B[0] - A[0], 0, B[2] - A[2]], L = Math.hypot(u[0], u[2]); return [-u[2] / L, 0, u[0] / L]; };
     const baseV = (A, B, vert, k) => { const u = [B[0] - A[0], B[1] - A[1], B[2] - A[2]], L = Math.hypot(...u), U = u.map(x => x / L), nI = inward(A, B), th = Math.PI / 2 * t, D = [0, 1, 2].map(j => Math.cos(th) * vert[j] + Math.sin(th) * nI[j]);
-      const V = [A, B]; if (o.rect) { V.push(B.map((x, j) => x + D[j] * o.rect), A.map((x, j) => x + D[j] * o.rect)); return V; }
+      const V = [A, B], rd = (sides.length === 4 && sides.some(x => Math.abs(x - sides[0]) > 1e-9)) ? sides[(k + 1) % n] : o.rect; if (rd) { V.push(B.map((x, j) => x + D[j] * rd), A.map((x, j) => x + D[j] * rd)); return V; }
       let q2 = [L, 0], dir = 0; const pts = [[0, 0], [L, 0]]; for (let i = 0; i < n - 2; i++) { dir += 2 * Math.PI / n; q2 = [q2[0] + L * Math.cos(dir), q2[1] + L * Math.sin(dir)]; pts.push(q2); }
       return pts.map(([x, y]) => A.map((a0, j) => a0 + x * U[j] + y * D[j])); };
-    [].concat(o.top == null ? [] : o.top).forEach((at, k) => FA.push({ id: 'TP' + k, v: baseV(up(p[at], h), up(p[at + 1], h), [0, 1, 0]), c: '#bfdbfe' }));
-    [].concat(o.bot == null ? [] : o.bot).forEach((at, k) => FA.push({ id: 'BP' + k, v: baseV(p[at], p[at + 1], [0, -1, 0]), c: '#bfdbfe' }));
+    [].concat(o.top == null ? [] : o.top).forEach((at, k) => FA.push({ id: 'TP' + k, v: baseV(up(p[at], h), up(p[at + 1], h), [0, 1, 0], at), c: '#bfdbfe' }));
+    [].concat(o.bot == null ? [] : o.bot).forEach((at, k) => FA.push({ id: 'BP' + k, v: baseV(p[at], p[at + 1], [0, -1, 0], at), c: '#bfdbfe' }));
     /* 둘레 선분(NETV.edges 와 같은 이름) */
     const ED = [], tA = [].concat(o.top == null ? [] : o.top), bA = [].concat(o.bot == null ? [] : o.bot);
     for (let i = 0; i < m; i++) { if (!tA.includes(i)) ED.push(['T' + i, up(p[i], h), up(p[i + 1], h)]); if (!bA.includes(i)) ED.push(['B' + i, p[i], p[i + 1]]); }
@@ -7063,7 +7064,7 @@ const GEO = (() => {
   document.addEventListener('click', e => { if (moved && e.target.closest && e.target.closest('svg.georot')) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   try { const st = document.createElement('style'); st.textContent = 'svg.georot{touch-action:none;cursor:grab}svg.georot:active{cursor:grabbing}svg.georot.georot-did .georothint{display:none}'
     + 'svg.geosvg .geozoom{display:none}svg.geosm .geozoom,[data-dg] svg.geosvg .geozoom{display:inline}[data-dg] .georothint{display:none}'
-    + '.geogrid>div>svg.geosvg{width:min(100%,200px)!important;height:auto!important}.geofig>svg.geosvg{width:min(100%,340px)!important;height:auto!important}.geofig{display:flex!important;justify-content:center}body.svsl-on .qcard .geofig>svg.geosvg{width:min(100%,46vh)!important}body.svsl-on .qcard .geogrid>div>svg.geosvg{width:min(100%,30vh)!important}body.svsl-on.svsl-port .qcard .geofig>svg.geosvg{width:min(100%,28vh)!important}body.svsl-on.svsl-port .qcard .geogrid>div>svg.geosvg{width:min(100%,18vh)!important}' + '#geoZoom{position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.62);display:flex;align-items:center;justify-content:center;padding:16px}#geoZoom .gzbox{background:#fff;border-radius:22px;padding:14px 16px 16px;max-width:min(460px,96vw);width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}#geoZoom .gzbox svg{width:100%;max-height:62vh}#geoZoom .gzt{font-weight:900;font-size:1.05rem;margin-bottom:6px}'; document.head.appendChild(st); } catch (e) {}
+    + 'svg .netzone{cursor:copy;transition:fill .15s,opacity .2s;outline:none!important;opacity:0}body.dg-active svg .netzone{opacity:1}svg .netzone.dzover{fill:rgba(34,197,94,.35)!important;stroke:#16a34a!important;stroke-width:3!important;outline:none!important}.geogrid>div>svg.geosvg{width:min(100%,200px)!important;height:auto!important}.geofig>svg.geosvg{width:min(100%,340px)!important;height:auto!important}.geofig{display:flex!important;justify-content:center}body.svsl-on .qcard .geofig>svg.geosvg{width:min(100%,46vh)!important}body.svsl-on .qcard .geogrid>div>svg.geosvg{width:min(100%,30vh)!important}body.svsl-on.svsl-port .qcard .geofig>svg.geosvg{width:min(100%,28vh)!important}body.svsl-on.svsl-port .qcard .geogrid>div>svg.geosvg{width:min(100%,18vh)!important}' + '#geoZoom{position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.62);display:flex;align-items:center;justify-content:center;padding:16px}#geoZoom .gzbox{background:#fff;border-radius:22px;padding:14px 16px 16px;max-width:min(460px,96vw);width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}#geoZoom .gzbox svg{width:100%;max-height:62vh}#geoZoom .gzt{font-weight:900;font-size:1.05rem;margin-bottom:6px}'; document.head.appendChild(st); } catch (e) {}
   /* 🔍 크게 보기: 작은 그림·카드 속 그림을 누르면 크게 열어 돌려 볼 수 있어요 */
   const zoomStop = e => { if (e.target.closest && e.target.closest('.geozoom')) { e.stopImmediatePropagation(); if (e.type !== 'click') return; e.preventDefault(); let o; try { o = JSON.parse(decodeURIComponent(e.target.closest('.geozoom').dataset.geoz)); } catch (x) { return; } openZoom(o); } };
   ['pointerdown', 'mousedown', 'touchstart', 'click'].forEach(t => window.addEventListener(t, zoomStop, { capture: true, passive: false }));
@@ -7077,16 +7078,19 @@ const GEO = (() => {
 /* 전개도 그림 (6-1-2-3) */
 const NETV = (() => {
   /* o: { n, a, h, sides, rect, top, bot, w, fill:{id:color}, tap:'act', mark:{edgeId:color}, dz:{zones} } → svg */
-  function svg(o) { const N = GEO.net(o), P = N.P, n = o.sides ? o.sides.length : o.n, fl = o.fill || {}, mk = o.mark || {};
-    const sc = Math.min(1.6, (o.w || 360) / N.W), W = Math.round(N.W * sc), H = Math.round(N.Hh * sc);
+  function svg(o) { const N = GEO.net(o); if (o.zones && o.zones.length) { const zu = o.zones.filter(z => z.up).map(z => z.at).concat(o.top == null ? [] : [].concat(o.top)), zd = o.zones.filter(z => !z.up).map(z => z.at).concat(o.bot == null ? [] : [].concat(o.bot)), N2 = GEO.net(Object.assign({}, o, { top: zu, bot: zd })); Object.assign(N, { W: N2.W, Hh: N2.Hh, P: N2.P, ox: N2.ox, oy: N2.oy }); } const P = N.P, n = o.sides ? o.sides.length : o.n, fl = o.fill || {}, mk = o.mark || {};
+    const sc = Math.min(2.4, (o.w || 360) / N.W), W = Math.round(N.W * sc), H = Math.round(N.Hh * sc);
     let s = `<svg class="geosvg netsvg" viewBox="0 0 ${N.W.toFixed(0)} ${N.Hh.toFixed(0)}" width="${W}" height="${H}" style="max-width:100%;height:auto;overflow:visible">`;
     const tf = id => o.tapF ? `data-ck="${o.tapF}" data-v="${id}" style="cursor:pointer"` : '';
-    N.rects.forEach((r, i) => { s += `<polygon points="${r.map(P).join(' ')}" fill="${fl['S' + i] || '#fef3c7'}" stroke="#1e293b" stroke-width="1.6" ${tf('S' + i)}/>`; });
-    [...N.tops.map((t, k) => ['T', t, k]), ...N.bots.map((t, k) => ['B', t, k])].forEach(([w, t, k]) => { s += `<polygon points="${t.V.map(P).join(' ')}" fill="${fl[w + 'P' + k] || '#bfdbfe'}" stroke="#1e293b" stroke-width="1.6" ${tf(w + 'P' + k)}/>`; });
-    /* 둘레 선분 */
+    N.rects.forEach((r, i) => { s += `<polygon points="${r.map(P).join(' ')}" fill="${fl['S' + i] || '#fef3c7'}" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4" ${tf('S' + i)}/>`; });
+    [...N.tops.map((t, k) => ['T', t, k]), ...N.bots.map((t, k) => ['B', t, k])].forEach(([w, t, k]) => { s += `<polygon points="${t.V.map(P).join(' ')}" fill="${fl[w + 'P' + k] || '#bfdbfe'}" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4" ${tf(w + 'P' + k)}/>`; });
+    /* 둘레 선분 (실선) — 안쪽 접는 선은 위 면들의 점선 그대로 */
     const E = edges(N, o); E.forEach(e => { s += `<line x1="${P(e.p)[0] ? P(e.p).split(',')[0] : 0}" y1="${P(e.p).split(',')[1]}" x2="${P(e.q).split(',')[0]}" y2="${P(e.q).split(',')[1]}" stroke="${mk[e.id] || '#1e293b'}" stroke-width="${mk[e.id] ? 6 : 2.4}" stroke-linecap="round"/>`; });
+    /* 밑면이 붙어 둘레가 아닌 옆면의 위·아래 변도 표시할 수 있어요 (옆면을 이은 직사각형의 가로 등) */
+    Object.keys(mk).forEach(id => { const m = /^([TB])(\d+)$/.exec(id); if (!m || E.some(e => e.id === id)) return; const r = N.rects[+m[2]]; if (!r) return; const p = m[1] === 'T' ? r[0] : r[3], q = m[1] === 'T' ? r[1] : r[2];
+      s += `<line x1="${P(p).split(',')[0]}" y1="${P(p).split(',')[1]}" x2="${P(q).split(',')[0]}" y2="${P(q).split(',')[1]}" stroke="${mk[id]}" stroke-width="6" stroke-linecap="round"/>`; });
     if (o.tap) E.forEach(e => { s += `<line x1="${P(e.p).split(',')[0]}" y1="${P(e.p).split(',')[1]}" x2="${P(e.q).split(',')[0]}" y2="${P(e.q).split(',')[1]}" stroke="transparent" stroke-width="16" data-ck="${o.tap}" data-v="${e.id}" style="cursor:pointer"/>`; });
-    if (o.zones) o.zones.forEach(z => { const ph = poly(N, z.at, z.up, o); s += `<polygon points="${ph.map(P).join(' ')}" fill="${z.fill || 'rgba(148,163,184,.12)'}" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="5 4"/>`; });
+    if (o.zones) o.zones.forEach(z => { const ph = poly(N, z.at, z.up, o); s += `<polygon points="${ph.map(P).join(' ')}" fill="${z.fill || 'rgba(148,163,184,.12)'}" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="5 4" ${z.dz ? `data-dz="${z.dz}" data-i="${z.id}" class="netzone"` : ''}/>`; });
     if (o.labels) o.labels.forEach(([x, y, t, c]) => { const pp = [x, y]; s += `<text x="${P(pp).split(',')[0]}" y="${P(pp).split(',')[1]}" text-anchor="middle" dominant-baseline="middle" font-size="${o.fs || 14}" font-weight="900" fill="${c || '#1e293b'}">${t}</text>`; });
     return s + '</svg>'; }
   function poly(N, at, up, o) { const xs = N.xs, h = N.h, A = up ? [xs[at], 0] : [xs[at], h], B = up ? [xs[at + 1], 0] : [xs[at + 1], h]; const g = GEO.net(Object.assign({}, o, { top: up ? at : null, bot: up ? null : at })); return (up ? g.tops[0] : g.bots[0]).V; }
@@ -7164,16 +7168,16 @@ lessonSetup({
   target: '각기둥의 전개도를 알고 그릴 수 있어요.',
   trap: { title: `${VN}의 엉터리 전개도 함정`, sub: `${VN}${jo(VN, '이', '가')} 접히지 않는 전개도를 섞어 놓고, 길이도 엉망으로 적어 놓았어요.`, taunt: '밑면 2개만 있으면 다 전개도야!' },
   basic: [
-    { label: '전개도의 뜻', gen: () => ({ text: `각기둥의 모서리를 잘라서 평면 위에 펼쳐 놓은 그림을 무엇이라고 할까요?<div class="geogrid" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div>${GEO.solid({ kind: 'prism', n: 4, w: 150, yaw: 28, side: '#fef3c7', base: '#bfdbfe' }).svg}</div><div>${NETV.svg(Object.assign({ w: 220 }, NETP.box, { top: 1, bot: 3 }))}<b>?</b></div></div>`, choices: opt4('전개도', ['겨냥도', '밑면', '옆면']), ans: '전개도', hint: '펼친 그림이에요.', ok: '모서리를 잘라 펼친 그림이 전개도예요.' }) },
+    { label: '전개도의 뜻', gen: () => ({ text: `각기둥의 모서리를 잘라서 평면 위에 펼쳐 놓은 그림을 무엇이라고 할까요?<div class="geogrid" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div>${GEO.solid({ kind: 'prism', n: 4, w: 150, yaw: 28, side: '#fef3c7', base: '#bfdbfe' }).svg}</div><div>${NETV.svg({ w: 220, n: 4, a: 40, h: 42, top: 1, bot: 3 })}<b>?</b></div></div>`, choices: opt4('전개도', ['겨냥도', '밑면', '옆면']), ans: '전개도', hint: '펼친 그림이에요.', ok: '모서리를 잘라 펼친 그림이 전개도예요.' }) },
     { label: '어떤 각기둥의 전개도', gen: () => { const k = pick(['tri', 'pen', 'hex']), n = NETP[k].n; return { text: `이 전개도를 접으면 어떤 각기둥이 될까요?${NS(Object.assign({}, NETP[k], { top: 1, bot: 0 }))}`, choices: opt4(NM[n], ['사각기둥', NM[n === 6 ? 5 : n + 1], NM[n === 3 ? 6 : 3]]), ans: NM[n], hint: '밑면의 모양을 봐요.', ok: `밑면이 ${PL[n]}이라 ${NM[n]}이에요.` }; } },
     { label: '전개도가 아닌 것', gen: () => ({ text: `사각기둥의 전개도가 <b>아닌</b> 것은 어느 것일까요?<div class="geogrid">${[['가', { top: 1, bot: 3 }], ['나', { top: [0, 2], bot: null }], ['다', { top: 0, bot: 2 }], ['라', { top: 2, bot: 2 }]].map(([l, o]) => `<div><b>${l}</b>${NETV.svg(Object.assign({}, NETP.box, o, { w: 140 }))}</div>`).join('')}</div>`, choices: ['가', '나', '다', '라'], ans: '나', hint: '두 밑면이 위·아래에 하나씩 있는지 봐요.', ok: '나는 두 밑면이 모두 위쪽에 있어 접으면 겹쳐요.' }) },
     { label: '옆면의 수', gen: () => { const n = pick([5, 6]); return { text: `밑면이 ${PL[n]}인 각기둥의 전개도에서 옆면은 몇 개일까요?${NS(Object.assign({}, n === 5 ? NETP.pen : NETP.hex, { top: 1, bot: 2 }))}`, choices: opt4(`${n}개`, [`${n + 2}개`, `${n * 2}개`, '4개']), ans: `${n}개`, hint: '옆면의 수는 밑면의 변의 수와 같아요.', ok: `밑면의 변이 ${n}개라 옆면도 ${n}개예요.` }; } },
     { label: '맞닿는 선분의 길이', gen: () => ({ text: `전개도를 접었을 때 맞닿는 두 선분(빨강·파랑)의 길이는 어떨까요?${NS(Object.assign({}, NETP.tri, { top: 0, bot: 2, mark: { L: '#dc2626', R: '#2563eb' } }))}`, choices: opt4('같아요', ['빨간 선분이 더 길어요', '파란 선분이 더 길어요', '한쪽이 다른 쪽의 2배예요']), ans: '같아요', hint: '두 선분이 만나 모서리 하나가 돼요.', ok: '맞닿는 선분은 하나의 모서리가 되므로 길이가 같아요.' }) },
     { label: '옆면의 세로', gen: () => { const h = rnd2(5, 9); return { text: `높이가 ${h} cm인 각기둥의 전개도에서 옆면의 세로(빨간 선분)는 몇 cm일까요?${NS(Object.assign({}, NETP.pen, { top: 1, bot: 3, mark: { L: '#dc2626' } }))}`, choices: opt4(`${h} cm`, [`${h * 2} cm`, `${h + 2} cm`, `${h - 1} cm`]), ans: `${h} cm`, hint: '옆면의 세로는 두 밑면 사이의 거리예요.', ok: `옆면의 세로 = 높이 = ${h} cm` }; } },
-    { label: '옆면을 이은 직사각형', gen: () => { const a = rnd2(3, 5), n = pick([3, 4, 5]); return { text: `밑면이 한 변 ${a} cm인 정${PL[n]}이고 높이가 6 cm인 ${NM[n]}의 전개도에서, 옆면을 모두 이은 큰 직사각형의 가로는 몇 cm일까요?${NS(Object.assign({}, [NETP.tri, NETP.box, NETP.pen][n - 3], n === 4 ? { sides: [50, 50, 50, 50], rect: 50 } : {}, { top: 0, bot: n - 1, mark: Object.fromEntries(Array.from({ length: n }, (_, i) => ['B' + i, '#dc2626']).filter(x => x[0] !== 'B' + (n - 1))) }))}`, choices: opt4(`${a * n} cm`, [`${a} cm`, `${a + n} cm`, `${a * n + 6} cm`]), ans: `${a * n} cm`, hint: '옆면들의 가로를 모두 이으면 밑면의 둘레예요.', ok: `${a} × ${n} = ${a * n}(cm)` }; } },
+    { label: '옆면을 이은 직사각형', gen: () => { const a = rnd2(3, 5), n = pick([3, 4, 5]); return { text: `밑면이 한 변 ${a} cm인 정${PL[n]}이고 높이가 6 cm인 ${NM[n]}의 전개도에서, 옆면을 모두 이은 큰 직사각형의 가로는 몇 cm일까요?${NS(Object.assign({}, [NETP.tri, NETP.box, NETP.pen][n - 3], n === 4 ? { sides: [50, 50, 50, 50], rect: 50 } : {}, { top: 0, bot: n - 1, mark: Object.fromEntries(Array.from({ length: n }, (_, i) => ['B' + i, '#dc2626'])) }))}`, choices: opt4(`${a * n} cm`, [`${a} cm`, `${a + n} cm`, `${a * n + 6} cm`]), ans: `${a * n} cm`, hint: '옆면들의 가로를 모두 이으면 밑면의 둘레예요.', ok: `${a} × ${n} = ${a * n}(cm)` }; } },
     { label: '밑면 붙일 자리', gen: () => ({ text: `${VN}${jo(VN, '이', '가')} 사각기둥 전개도의 두 밑면을 모두 옆면의 위쪽에 붙였어요. 어떻게 고쳐야 할까요?${NS(Object.assign({}, NETP.box, { top: [0, 2], bot: null }))}`, choices: opt4('밑면 하나를 옆면의 아래쪽으로 옮겨요', ['그대로 접으면 돼요', '옆면을 하나 더 붙여요', '밑면을 하나 떼어 내요']), ans: '밑면 하나를 옆면의 아래쪽으로 옮겨요', hint: '접으면 위와 아래를 하나씩 막아야 해요.', ok: '밑면은 옆면들의 위와 아래에 하나씩 있어야 해요.' }) }
   ],
-  j1: { label: '전개도 치수 정하기', title: '공작소의 전개도 치수를 정하라', icon: '📐', sub: `${VN}${jo(VN, '이', '가')} 지운 전개도 치수를 다시 정해요. 옆면을 모두 이은 큰 직사각형의 <b>가로와 세로</b>를 단추로 맞추어요. 방어막 1겹이 3단계예요.`,
+  j1: { label: '전개도 치수 정하기', title: '공작소의 전개도 치수를 정하라', icon: '📐', sub: `${VN}${jo(VN, '이', '가')} 지운 전개도 치수를 다시 정해요. 길이 카드를 끌어 옆면의 가로·세로를 맞추고, 옆면을 모두 이은 큰 직사각형의 <b>가로와 세로</b>를 구해요.`,
     done: '세 전개도의 치수를 모두 정했어요! 가로는 밑면의 둘레, 세로는 높이! 📐',
     rounds: () => [{ name: '① 삼각기둥', n: 3, a: 4, h: 7, sides: [4, 4, 4] }, { name: '② 사각기둥', n: 4, h: 5, sides: [3, 2, 3, 2] }, { name: '③ 오각기둥', n: 5, a: 3, h: 6, sides: [3, 3, 3, 3, 3] }] },
   j2: { label: '전개도의 둘레', taunt: '테이프 길이는 아무도 모르지!', gen: () => ({ text: '', choices: [], ans: '' }) },
@@ -7194,36 +7198,48 @@ lessonSetup({
 });
 
 /* ---------- 보스전 도전 1: 전개도 치수 정하기 ---------- */
-function newJ1() { return { i: 0, r: LC.j1.rounds(), fb: null, hintN: -1, w: 0, h: 0 }; }
-const J1H = ['옆면들의 가로를 모두 이으면 밑면의 둘레와 같아요.', '옆면의 세로는 각기둥의 높이와 같아요.', '밑면의 변의 길이를 모두 더해 봐요.'];
+function newJ1() { return { i: 0, r: LC.j1.rounds(), fb: null, hintN: -1, seg: {}, wv: '', hv: '' }; }
+const J1H = ['밑면의 변과 맞닿는 옆면의 가로는 길이가 같아요. 길이 카드를 옆면 아래 칸에 끌어 놓아 봐요.', '옆면의 세로는 각기둥의 높이와 같아요.', '큰 직사각형의 가로는 옆면의 가로를 모두 더한 길이, 곧 밑면의 둘레예요.'];
+try { DND.on('j1len', { drop(v, z, el) { if (z !== 'j1seg') return; const J = state.s1.jump, i = el.dataset.i, R = J.r[J.i]; const want = i === 'h' ? R.h : R.sides[+i];
+  if (+v !== want) { J.fb = { ok: false, msg: i === 'h' ? '옆면의 세로는 각기둥의 높이와 같아요.' : '이 옆면의 가로는 맞닿는 밑면의 변과 길이가 같아요. 밑면 그림의 길이를 살펴봐요.' }; try { Sound.wrong(); } catch (e) {} }
+  else { J.seg[i] = +v; J.fb = null; try { Sound.pop(); } catch (e) {} } renderS1Jump(); }, tap() { toast('✋ 길이 카드를 꾹 누른 채로 끌어 칸에 놓아요'); } }); } catch (e) {}
 renderS1Jump = function () {
-  const st = state.s1; if (!st.jump || !st.jump.r || st.jump.w == null) st.jump = newJ1();
+  const st = state.s1; if (!st.jump || !st.jump.r || !st.jump.seg) st.jump = newJ1();
   const C0 = LC.j1, J = st.jump, done = jOK('j1'), R = J.r[Math.min(J.i, J.r.length - 1)];
   let body = '';
-  if (!done) { const sd = R.sides.map(x => x * 14), o = { n: R.n, sides: sd, h: R.h * 12, top: 1, bot: 0 }; if (R.n === 4) o.rect = sd[1]; else o.a = sd[0];
-    body = `<div class="ancap" style="font-size:1.05rem">${NM[R.n]} · 밑면의 변 ${R.n === 4 ? `${R.sides[0]} cm, ${R.sides[1]} cm (직사각형)` : `한 변 ${R.a} cm (정${PL[R.n]})`} · 높이 ${R.h} cm</div>${NS(Object.assign(o, { w: 340 }))}
-    <div class="j1cnt" style="grid-template-columns:repeat(2,minmax(0,1fr))">${[['w', '큰 직사각형의 가로'], ['h', '큰 직사각형의 세로']].map(([k, t]) => `<div class="j1c"><b>${t}</b><div class="row" style="gap:6px;justify-content:center;flex-wrap:nowrap">${anBtn('j1-d', k + '|-1', '−')}<span class="fun" style="font-size:1.6rem;min-width:56px;text-align:center">${J[k]} cm</span>${anBtn('j1-d', k + '|1', '+')}</div></div>`).join('')}</div>
-    <div class="row mt-2" style="justify-content:center">${anBtn('j1-ok', null, '✅ 치수 확정', 'btn-green')}${anBtn('j1-hint', null, '💡 힌트 듣기')}<button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`; }
+  if (!done) { const sd = R.sides.map(x => x * 16), o = { n: R.n, sides: sd, h: R.h * 14, top: 1, bot: 0 }; if (R.n === 4) o.rect = sd[1]; else o.a = sd[0];
+    const all = R.sides.every((_, i) => J.seg[i] != null) && J.seg.h != null, tags = [...new Set(R.sides.concat([R.h, R.h + 1, R.sides[0] + 2]))].sort((x, y) => x - y);
+    const strip = `<div class="j1strip">${R.sides.map((x, i) => `<div class="j1seg ${J.seg[i] != null ? 'ok' : ''}" style="flex:${x}" data-dz="j1seg" data-i="${i}"><small>옆면 ${i + 1}의 가로</small><b>${J.seg[i] != null ? J.seg[i] + ' cm' : '?'}</b></div>`).join('')}<div class="j1seg h ${J.seg.h != null ? 'ok' : ''}" data-dz="j1seg" data-i="h"><small>옆면의 세로</small><b>${J.seg.h != null ? J.seg.h + ' cm' : '?'}</b></div></div>`;
+    const blab = R.n === 4 ? `밑면: 가로 ${R.sides[0]} cm · 세로 ${R.sides[1]} cm 직사각형` : `밑면: 한 변 ${R.a} cm인 정${PL[R.n]}`;
+    body = `<div class="j1q">${NM[R.n]} · ${blab} · 높이 ${R.h} cm</div><div class="j1net">${NS(Object.assign(o, { w: 460 }))}</div>${strip}
+    ${all ? `<div class="j1sum">큰 직사각형의 가로 = ${R.sides.map(x => x).join(' + ')} = <input id="j1w" class="gkinp" inputmode="numeric" value="${J.wv || ''}" placeholder="?"> cm &nbsp;·&nbsp; 세로 = <input id="j1h" class="gkinp" inputmode="numeric" value="${J.hv || ''}" placeholder="?"> cm</div>
+      <div class="row mt-2" style="justify-content:center">${anBtn('j1-ok', null, '✅ 치수 확정', 'btn-green')}${anBtn('j1-hint', null, '💡 힌트 듣기')}</div>`
+      : `<div class="t11src"><span class="t11lab">✋ 길이 카드를 끌어 옆면의 가로·세로 칸에 놓아요</span>${tags.map(x => `<span class="t11piece" data-dg="j1len" data-v="${x}"><b style="font-size:1.3rem">${x} cm</b></span>`).join('')}</div><div class="row mt-2" style="justify-content:center">${anBtn('j1-hint', null, '💡 힌트 듣기')}</div>`}`; }
   $('#s1body').innerHTML = bossHead() + `<div class="card">
-    <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${C0.icon}</span><div><h2 class="h2">도전 1 · ${C0.title}</h2><p class="sub" style="margin:3px 0 0">${C0.sub}</p></div></div>
+    <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${C0.icon}</span><div><h2 class="h2">도전 1 · ${C0.title}</h2><p class="sub j1sub" style="margin:3px 0 0">${C0.sub}</p></div></div>
     <div class="j1plan">${J.r.map((x, k) => `<div class="jc ${k < J.i || done ? 'ok' : k === J.i ? 'cur' : ''}">${k < J.i || done ? '✅' : k === J.i ? '👉' : '⬜'} ${x.name}</div>`).join('')}</div>
     ${body}${J.hintN >= 0 && !done ? charSay('hint', '💡 ' + J1H[J.hintN % J1H.length]) : ''}${J.fb ? charSay(J.fb.ok ? 'ok' : 'no', J.fb.msg) : ''}${done && typeof rpBtn === 'function' ? rpBtn('j1') : ''}</div>
   <div class="card">${qHead(2, VILLAINS.clock.color, `<span class="qtag" style="background:#dbeafe;color:#1d4ed8">도전 2 · ${LC.j2.label}</span>` + PARTS.j2.text)}${vSay('clock', LC.j2.taunt, 44)}<div id="part-j2" class="mt-2"></div></div>
   <div class="card">${qHead(3, VILLAINS.half.color, `<span class="qtag" style="background:#ffe4ea;color:#e11d48">도전 3 · ${LC.j3.label}</span>` + PARTS.j3.text)}${vSay('half', LC.j3.taunt, 44)}<div id="part-j3" class="mt-2"></div></div>
   <div class="next-row"><button class="btn btn-primary btn-lg" data-act="step" data-v="result">${['j1', 'j2', 'j3'].every(jOK) ? '결과 보러 가기 🏆' : '결과 화면 ➜'}</button></div>`;
   renderPart('j2'); renderPart('j3'); bossCheck();
+  ['j1w', 'j1h'].forEach(id => { const e = document.getElementById(id); if (e) { e.addEventListener('input', () => { J[id === 'j1w' ? 'wv' : 'hv'] = e.value; }); e.addEventListener('keydown', ev => { if (ev.key === 'Enter') AN['j1-ok'](); }); } });
 };
+(() => { const st = document.createElement('style'); st.textContent = `.j1q{font-size:1.35rem;font-weight:900;text-align:center;color:#1e293b;margin:6px 0}.j1sub{font-size:1.02rem!important}.j1net{display:flex;justify-content:center}
+.j1strip{display:flex;gap:4px;max-width:560px;margin:6px auto 0;align-items:stretch}.j1seg{min-width:62px;border:3px dashed #f59e0b;border-radius:12px;background:#fffbeb;padding:4px;text-align:center;display:flex;flex-direction:column;justify-content:center}.j1seg.h{flex:0 0 96px;border-color:#3b82f6;background:#eff6ff;margin-left:10px}
+.j1seg small{font-size:.75rem;font-weight:800;color:#64748b}.j1seg b{font-family:'Jua',sans-serif;font-size:1.35rem}.j1seg.ok{border-style:solid;border-color:#22c55e;background:#f0fdf4}
+.j1sum{text-align:center;font-size:1.3rem;font-weight:900;margin-top:10px}.j1sum .gkinp{width:84px;display:inline-block;text-align:center;font-size:1.3rem;margin:0}`; document.head.appendChild(st); })();
 Object.assign(AN, {
   'j1-hint': () => { const J = state.s1.jump; J.hintN++; mood('think', 2400); renderS1Jump(); },
-  'j1-d': v => { const J = state.s1.jump, [k, d] = v.split('|'); J[k] = Math.max(0, Math.min(40, J[k] + +d)); J.fb = null; renderS1Jump(); },
   'j1-ok': () => { const J = state.s1.jump; if (jOK('j1')) return; touch('s1'); const R = J.r[J.i], W = R.sides.reduce((a, b) => a + b, 0), label = '점프 · ' + LC.j1.label;
-    if (J.w !== W || J.h !== R.h) { recordAnswer('s1', 'j1', label, false, `${NM[R.n]} 가로 ${J.w} 세로 ${J.h}`); J.fb = { ok: false, msg: `${pick(CHEER)} ${J.w !== W ? '가로는 옆면의 가로를 모두 이은 길이, 곧 밑면의 둘레예요.' : '세로는 높이예요.'}` }; try { Sound.wrong(); } catch (e) {} renderS1Jump(); return; }
-    J.i++; J.w = 0; J.h = 0; J.hintN = -1; try { Sound.correct(); } catch (e) {}
+    const w = +String(J.wv || '').replace(/[^0-9.]/g, ''), h = +String(J.hv || '').replace(/[^0-9.]/g, '');
+    if (w !== W || h !== R.h) { recordAnswer('s1', 'j1', label, false, `${NM[R.n]} 가로 ${J.wv} 세로 ${J.hv}`); J.fb = { ok: false, msg: `${pick(CHEER)} ${w !== W ? '가로는 옆면의 가로를 모두 더한 길이, 곧 밑면의 둘레예요.' : '세로는 높이예요.'}` }; try { Sound.wrong(); } catch (e) {} renderS1Jump(); return; }
+    J.i++; J.seg = {}; J.wv = ''; J.hv = ''; J.hintN = -1; try { Sound.correct(); } catch (e) {}
     if (J.i >= J.r.length) { J.i = J.r.length - 1; recordAnswer('s1', 'j1', label, true, '3단계 완성'); J.fb = { ok: true, msg: LC.j1.done }; try { Sound.win(); } catch (e) {} FX.rain(160); }
     else J.fb = { ok: true, msg: `가로 ${R.sides.join(' + ')} = ${W} cm, 세로 ${R.h} cm! 다음 전개도로!` };
     bossRefresh(); renderS1Jump(); }
 });
-['j1-ok', 'j1-d'].forEach(k => AN_QUIET.add(k));
+['j1-ok'].forEach(k => AN_QUIET.add(k));
 (() => { const r0 = resetS1; resetS1 = function () { r0(); state.s1.jump = newJ1(); }; })();
 
 /* ---------- 문제은행 ---------- */
@@ -7861,6 +7877,8 @@ showTab = function (k) { _pz_showTab(k); pauseAway(); resumeHere(); };
 .wnimg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:8px 0;background:#fffdf6;border-radius:14px;padding:4px}.wnimg .dtwrap{margin:0;max-width:100%}
 .wnimg .afw{margin:0}.wnimg svg{max-width:100%;height:auto}
 .wnimg.sm{justify-content:flex-start;background:none;padding:0}.wnimg.sm{flex-wrap:wrap;gap:6px}.wnimg.sm svg{max-height:140px;width:auto}.wnimg.sm .dtwrap{margin:0}
+
+.wnimg svg{max-width:100%;height:auto}.wnimg .geogrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.wnimg.sm .geogrid>div>svg{max-height:110px}.wngo{margin-top:6px}
 </style>
 <script>
 /* =====================================================================
@@ -7885,15 +7903,16 @@ const WN = (() => {
   const strip = h => { const d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<br\s*\/?>/gi, ' ').replace(/<\/(div|p|span)>/gi, '$& '); return d.textContent.replace(/\s+/g, ' ').trim(); };
   const hsh = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   /* 문제 속 그림·표는 그림으로, 글은 그림을 뺀 문장만 */
-  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const FIGSEL = '.afw,.dtwrap,.geogrid,.geofig,.rffig,.v2fig,.uqfig,.center.rffig,svg';
+  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   /* 위아래로 쓴 분수(그림 글자)는 글로 옮길 때 '분자/분모'로 바꿔 두면 화면에서 다시 위아래 분수로 보여요 */
   const frText = c => { c.querySelectorAll('.mixf').forEach(m => { const t = [...m.querySelectorAll('span')].map(x => x.textContent.trim()).filter(Boolean); if (t.length === 3) m.replaceWith(`${t[0]} ${t[1]}/${t[2]}`); });
     [...c.querySelectorAll('span,div')].reverse().forEach(f => { if (!c.contains(f) || !/(^|\s)(frc|fr|frac|frx|fr-v|svfr)(\s|$)/.test(f.className || '')) return; const k = [...f.children].filter(x => x.tagName !== 'I' && x.tagName !== 'HR'); if (k.length === 2) f.replaceWith(`${k[0].textContent.trim()}/${k[1].textContent.trim()}`); }); };
-  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll('.afw,.dtwrap,svg,table').forEach(e => e.remove()); frText(c);
+  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll(FIGSEL + ',table').forEach(e => e.remove()); frText(c);
     /* 색칠한 숫자(큰 수 문제)는 [ ]로 표시해서 오답노트에서도 알아볼 수 있게 */
     let hl = false; c.querySelectorAll('.bignum').forEach(n => { n.querySelectorAll('.hl').forEach(h => { h.replaceWith('[' + h.textContent + ']'); hl = true; }); n.replaceWith(n.textContent); });
     let t = strip(c.innerHTML); if (hl) t = t.replace(/색칠한 숫자/g, '[ ] 안의 숫자'); return t; };
-  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   const qtOf = card => { const q = card && card.querySelector('.qtext'); return q ? txtOf(q.innerHTML) : ''; };
   const norm = s => String(s == null ? '' : s).replace(/[,\s원개번]/g, '');
   let sel = new Set(), view = 'list', run = null;
@@ -7950,10 +7969,10 @@ const WN = (() => {
       ${n ? `<div class="wntools"><label class="wnall"><input type="checkbox" data-wn="all" ${picked.length === n ? 'checked' : ''}> 모두 고르기</label><span class="wncnt">모은 문제 ${n}개 중 <b>${picked.length}개</b> 고름</span>${items.some(e => e.cleared) ? '<button class="btn btn-sub sm" data-wn="purge">🧹 맞힌 문제 정리</button>' : ''}</div>
       <div class="wnlist2">${L.map((e, i) => `<label class="wnitem ${e.cleared ? 'cleared' : ''}"><input type="checkbox" data-wn="pick" data-id="${e.id}" ${sel.has(e.id) ? 'checked' : ''}>
         <div class="wnbody"><div class="wnrow">${tag(e)}${e.cnt > 1 ? `<span class="wnrep">${e.cnt}번 틀림</span>` : ''}${e.cleared ? '<span class="wnok">✅ 다시 풀어 맞혔어요</span>' : ''}${!e.retry ? '<span class="wnpo">🖨 인쇄해서 풀기</span>' : ''}</div>
-        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
-      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
+        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}${!e.retry && e.step && !e.game ? `<button class="btn btn-sub sm wngo" data-wn="goto" data-id="${e.id}">↪ 그 단계로 가서 다시 도전</button>` : ''}</div></label>`).join('')}</div>
+      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${picked.length > rp.length ? `고른 ${picked.length}개 중 ${rp.length}개` : rp.length + '개'})</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 이 창에서 다시 풀 수 없어요. 「↪ 그 단계로 가서 다시 도전」을 누르거나 인쇄해서 풀어요.</p>` : ''}${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -8010,6 +8029,7 @@ const WN = (() => {
     if (a === 'close') return close();
     if (a === 'pick') { t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); return paint(); }
     if (a === 'all') { const L = all(); if (t.checked) L.forEach(x => sel.add(x.id)); else sel.clear(); return paint(); }
+    if (a === 'goto') { e.preventDefault(); const it = all().find(x => x.id === t.dataset.id); if (it && it.step) { close(); try { showTab(it.step[0]); if (it.step[1]) goStep(it.step[0], it.step[1]); } catch (er) {} } return; }
     if (a === 'run') { const list = all().filter(x => sel.has(x.id) && x.retry && !x.cleared); if (!list.length) return; run = { list: shuffle(list.slice()), i: 0, ans: null, res: [] }; view = 'run'; try { Sound.click(); } catch (er) {} return paint(); }
     if (a === 'ans') return judge(t.dataset.v);
     if (a === 'type') { const v = (document.getElementById('wnInput') || {}).value || ''; if (!v.trim()) return; return judge(v.trim()); }
@@ -9718,61 +9738,211 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   };
 })();
 
-/* 6-1-2-3 · 🏁 폴리곤의 전개도 레이스 — 주사위로 말을 움직이고, 도착한 칸의 전개도 미션을 해결하면 보너스 (말판 레이스 원리) */
-if (typeof BOARD_GUIDE === 'undefined') window.BOARD_GUIDE = 'race';
-(function () {
-  const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1)), PK = a => a[Math.floor(Math.random() * a.length)];
-  const E = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])), T = f => { try { return f(); } catch (e) {} };
-  const GOAL = 20, NETP = { tri: { n: 3, a: 50, h: 80 }, box: { n: 4, sides: [60, 40, 60, 40], rect: 40, h: 70 }, pen: { n: 5, a: 36, h: 64 } };
-  const NM = { 3: '삼각기둥', 4: '사각기둥', 5: '오각기둥' };
-  /* 미션: 맞닿는 선분 누르기 · 전개도 O/X(접히는 쪽 고르기는 그림 두 장 중 하나 누르기) */
-  function mission() { const k = PK(Object.keys(NETP)), b = NETP[k], n = b.n;
-    if (Math.random() < .55) { const o = Object.assign({}, b, { top: R(0, n - 1), bot: R(0, n - 1) }), E2 = NETV.edges(GEO.net(o), o).filter(e => NETV.mate(o, e.id)), hi = PK(E2).id; return { t: 'meet', o, hi, want: NETV.mate(o, hi) }; }
-    const good = Object.assign({}, b, { top: R(0, n - 1), bot: R(0, n - 1) }), bad = Object.assign({}, b, { top: [0, Math.min(2, n - 1)], bot: null }), first = Math.random() < .5; return { t: 'pick', A: first ? good : bad, B: first ? bad : good, want: first ? 'A' : 'B', n }; }
-  function newG(mode) { const players = mkPlayers(mode); return { solo: mode === 'ai', players, pos: players.map(() => 0), turn: 0, ph: 'roll', die: 0, mis: null, tries: 0, bad: 0, wrong: [], log: `${players[0].name}부터! 주사위를 굴려요.`, over: false }; }
-  const g_ = () => state.s2.au;
-  function roll(g) { g.die = R(1, 3); const p = g.turn; g.pos[p] = Math.min(GOAL, g.pos[p] + g.die); g.log = `🎲 ${g.players[p].name}: ${g.die}칸 이동!`; try { Sound.flip(); } catch (e) {} if (g.pos[p] >= GOAL) return finish(g); g.mis = mission(); g.ph = 'mis'; paint(); if (g.players[p].ai) setTimeout(() => aiSolve(g), 1300); }
-  function solve(g, ans) { const p = g.turn, P = g.players[p], m = g.mis, ok = ans === m.want; if (!P.ai) g.tries++;
-    if (ok) { g.pos[p] = Math.min(GOAL, g.pos[p] + 2); g.log = `✅ ${P.name}: 미션 성공! 보너스 2칸!`; if (!P.ai) try { Sound.correct(); } catch (e) {} }
-    else { if (!P.ai) { g.bad++; if (g.solo && g.wrong.length < 12) g.wrong.push(m.t === 'meet' ? '전개도 레이스: 맞닿는 선분을 잘못 고름' : '전개도 레이스: 접히지 않는 그림을 전개도로 고름'); try { Sound.wrong(); } catch (e) {} } g.log = `❌ ${P.name}: ${m.t === 'meet' ? '짝 선분이 아니에요.' : '두 밑면이 같은 쪽이면 접히지 않아요.'} 보너스 없음!`; }
-    g.mis.done = ans; paint(); if (g.pos[p] >= GOAL) return setTimeout(() => finish(g), 900);
-    setTimeout(() => { if (g_() !== g || g.over) return; g.turn = (g.turn + 1) % g.players.length; g.ph = 'roll'; g.mis = null; paint(); if (g.players[g.turn].ai) setTimeout(() => roll(g), 900); else T(() => SVBG.handoff && SVBG.handoff(g.turn, g.players[g.turn].name)); }, 1400); }
-  function aiSolve(g) { if (g_() !== g || g.over || g.ph !== 'mis') return; const smart = Math.random() < (window.SVBG ? SVBG.k(.55, .78, .95) : .78), m = g.mis;
-    let a = m.want; if (!smart) a = m.t === 'pick' ? (m.want === 'A' ? 'B' : 'A') : 'x'; solve(g, a); }
-  function finish(g) { g.over = true; const rk = g.players.map((P, i) => Object.assign({}, P, { idx: i, ps: g.pos[i] })).sort((a, b) => b.ps - a.ps || a.idx - b.idx); g.ranking = rk;
-    if (g.solo) { const win = rk[0].idx === 0, acc = g.tries ? (g.tries - g.bad) / g.tries : 0; g.score = Math.round(Math.max(20, Math.min(100, (win ? 60 : 35) + 40 * acc))); bgRecord(g.score, g.wrong); try { win ? (Sound.win(), FX.rain(160)) : Sound.wrong(); } catch (e) {} } else { try { Sound.win(); FX.rain(160); } catch (e) {} }
-    g.log = `🏆 ${rk[0].name} 도착! 승리!`; paint(); }
-  function paint() { const el = $('#rcArea'), g = g_(); if (!el || !g) return; const p = g.turn, P = g.players[p], me = !P.ai && !g.over;
-    const track = `<div class="rctrack">${Array.from({ length: GOAL + 1 }, (_, i) => `<div class="rccell ${i === GOAL ? 'goal' : ''}">${i === GOAL ? '🏁' : i}${g.players.map((Q, k) => g.pos[k] === i ? `<span class="rcpawn" style="--pc:${Q.color}">${avatar(Q.char, 22)}</span>` : '').join('')}</div>`).join('')}</div>`;
-    const sc = `<div class="bq-score">${g.players.map((Q, i) => `<div class="bq-pl ${i === p && !g.over ? 'turn' : ''}" style="--pc:${Q.color}">${avatar(Q.char, 30)}<div><b>${E(Q.name)}</b><small>${g.pos[i]}칸 / ${GOAL}칸</small></div></div>`).join('')}</div>`;
-    let mid = '';
-    if (g.over) mid = `<div class="tlover">${podiumHTML(g.ranking.map(r => ({ name: r.name, char: r.char, color: r.color, score: r.ps, label: `${r.ps}칸` })))}${g.solo ? `<p class="center font-bold">이번 기록 ${g.score}점</p>` : ''}
-      <div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-act="board-again">🔁 한 판 더</button><button class="btn btn-sub" data-act="board-setup">⚙️ 다시 설정</button><button class="btn btn-primary" data-act="step" data-v="result">🏁 CH.5 최종 결전 ➜</button></div></div>`;
-    else if (g.ph === 'roll') mid = me ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-primary btn-lg" data-rc="roll">🎲 주사위 굴리기 (1~3)</button></div>` : `<div class="center font-black mt-2">${avatar(P.char, 28)} ${E(P.name)} 주사위 굴리는 중…</div>`;
-    else { const m = g.mis, act = me && !m.done;
-      if (m.t === 'meet') { const mk = { [m.hi]: '#dc2626' }; if (m.done) mk[m.want] = '#16a34a'; mid = `<div class="center font-black mt-1">🧩 미션: 빨간 선분과 <b>맞닿는 선분</b>을 눌러요!</div><div class="center">${NETV.svg(Object.assign({}, m.o, { w: 320, tap: act ? 'rcm' : null, mark: mk }))}</div>`; }
-      else mid = `<div class="center font-black mt-1">🧩 미션: ${NM[m.n]}의 <b>전개도</b>를 눌러요!</div><div class="rcpick">${['A', 'B'].map(k => `<button class="rcnet ${m.done && m.want === k ? 'ok' : ''}" ${act ? `data-rc="${k}"` : 'disabled'}>${NETV.svg(Object.assign({}, m[k], { w: 150 }))}</button>`).join('')}</div>`; }
-    el.innerHTML = `<div class="tltable">${sc}${track}${mid}<div class="blog rblog">${E(g.log)}</div></div>`; }
-  renderBoardPage = function () { const st = state.s2, body = $('#s2body'); if (!body) return; if (!st.bmode) st.bmode = 'ai';
-    if (!st.au) { const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', '한 화면에서 차례로!']];
-      body.innerHTML = `<div class="card"><div class="stage-head"><span class="ti" style="background:#dcfce7">🏁</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">폴리곤의 전개도 레이스</h2><p class="sub" style="margin:3px 0 0">주사위를 굴려 말을 움직이고, 도착한 칸의 <b>전개도 미션</b>을 해결하면 2칸 더! ${GOAL}칸에 먼저 도착하면 승리!</p></div></div>
-        <div class="bq-how mt-3">${['내 차례에 주사위(1~3)를 굴려 말을 옮겨요.', '도착하면 미션! 맞닿는 선분 찾기 또는 진짜 전개도 고르기예요.', '미션에 성공하면 <b>보너스 2칸</b>!', `${GOAL}칸에 먼저 도착한 사람이 승리!`].map((r, i) => `<div class="bq-step"><span>${i + 1}</span><div>${r}</div></div>`).join('')}</div>
-        <div class="font-black mt-3">🙋 누구와 할까요?</div><div class="modecards mt-1">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
-        ${st.bmode === 'multi' ? T(() => partyHTML()) || '' : T(() => SVBG.lvHTML()) || ''}
-        <div class="next-row"><button class="btn btn-primary btn-lg" data-act="board-start">🏁 레이스 시작!</button></div></div>`; }
-    else { body.innerHTML = `<div class="card"><div class="stage-head"><span class="ti" style="background:#dcfce7">🏁</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">전개도 레이스</h2><p class="sub" style="margin:3px 0 0">미션 성공하면 보너스 2칸!</p></div></div><div id="rcArea" class="mt-2"></div></div>`; paint(); }
-    T(() => { Story._sig = null; Story.paint(); }); };
-  startAU = function () { const st = state.s2; T(() => moodBase('idle')); T(() => touch('s2')); st.au = newG(st.bmode); renderBoardPage(); T(() => say('전개도 레이스 시작! 접었을 때를 떠올려 봐 🏁')); };
-  document.addEventListener('click', e => { const t = e.target.closest('[data-rc],[data-ck="rcm"]'); if (!t) return; e.preventDefault(); const g = g_(); if (!g || g.over || g.players[g.turn].ai) return;
-    if (t.dataset.rc === 'roll') { if (g.ph === 'roll') roll(g); return; } if (g.ph !== 'mis' || g.mis.done) return;
-    if (t.dataset.ck === 'rcm') { if (t.dataset.v === g.mis.hi) return; solve(g, t.dataset.v); return; } solve(g, t.dataset.rc); }, true);
-  T(() => { GUIDES[BOARD_GUIDE] = { title: '🏁 전개도 레이스', color: '#16a34a', slides: [
-    { t: '1. 미션', ill: () => '<div class="gsay">빨간 선분과 맞닿는 선분 찾기 · 진짜 전개도 고르기</div>', txt: '도착한 칸에서 미션을 해결하면 보너스 2칸!', practice: { q: '두 밑면이 같은 쪽에 붙은 그림은?', opts: ['전개도가 아니에요', '전개도예요'], ans: 0, ex: '접으면 한쪽이 비어요.' } },
-    { t: '2. 이기는 법', ill: () => `<div class="gsay">${GOAL}칸에 먼저 도착!</div>`, txt: '주사위는 1~3이 나와요.' }] }; });
-  T(() => SVBG.use({ key: 'au', handoff: true, kick: g => { if (g.players[g.turn].ai) { if (g.ph === 'roll') roll(g); else aiSolve(g); } }, onReady: g => paint() }));
-  const st = document.createElement('style'); st.textContent = `#rcArea .bq-pl b{color:#1e293b}.rctrack{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:8px auto;max-width:640px}.rccell{position:relative;min-height:44px;border-radius:10px;background:#dcfce7;border:2px solid #86efac;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;font-weight:900;color:#166534;font-size:.8rem}.rccell.goal{background:#fde047;border-color:#ca8a04}
-.rcpawn{display:inline-flex;border-radius:50%;box-shadow:0 0 0 3px var(--pc)}.rcpick{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.rcnet{background:#fff;border:4px solid #cbd5e1;border-radius:14px;padding:6px;cursor:pointer}.rcnet.ok{border-color:#16a34a}`; document.head.appendChild(st);
+/* 🎲 SVDICE — 보드게임 공통 주사위 굴리기 연출 (화면 가운데에서 3D 주사위가 구르다 멈추고, 쿵! 눈이 커져요)
+   SVDICE.roll([값…], { faces:6, labels:['가로','세로','높이'], ms:1100 }) → Promise(끝나면) */
+if (!window.SVDICE) window.SVDICE = (function () {
+  const PIPS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+  const face = n => n <= 6 ? `<div class="sdf">${Array.from({ length: 9 }, (_, i) => `<i class="${PIPS[n].includes(i + 1) ? 'on' : ''}"></i>`).join('')}</div>` : `<div class="sdf num">${n}</div>`;
+  const ROT = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+  let css = false;
+  function addCss() { if (css) return; css = true; const st = document.createElement('style'); st.textContent = `
+#sdOv{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;gap:4vmin;pointer-events:none;background:radial-gradient(circle,rgba(15,23,42,.35),rgba(15,23,42,.05) 70%)}
+.sdw{display:flex;flex-direction:column;align-items:center;gap:8px}.sdw b{font:900 1.2rem 'Jua',sans-serif;color:#fff;text-shadow:0 2px 4px #000;background:rgba(30,41,59,.75);padding:2px 12px;border-radius:999px}
+.sdc{--s:min(16vmin,120px);width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;animation:sdThrow var(--ms,1.1s) cubic-bezier(.2,.75,.3,1) forwards}
+.sdc>div{position:absolute;inset:0;border-radius:18%;background:linear-gradient(145deg,#fff,#e2e8f0);border:3px solid #cbd5e1;box-shadow:inset 0 0 12px rgba(0,0,0,.12)}
+.sdc>div:nth-child(1){transform:translateZ(calc(var(--s)/2))}.sdc>div:nth-child(2){transform:rotateY(90deg) translateZ(calc(var(--s)/2))}.sdc>div:nth-child(3){transform:rotateX(90deg) translateZ(calc(var(--s)/2))}
+.sdc>div:nth-child(4){transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}.sdc>div:nth-child(5){transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}.sdc>div:nth-child(6){transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.sdf{position:absolute;inset:12%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);place-items:center}.sdf i{width:62%;height:62%;border-radius:50%}.sdf i.on{background:radial-gradient(circle at 35% 30%,#475569,#0f172a)}
+.sdf.num{display:flex;align-items:center;justify-content:center;font:900 calc(var(--s)*.5) 'Jua',sans-serif;color:#1e293b}
+.sdw.land .sdc{animation:none}.sdw.land{animation:sdPop .45s ease-out}.sdw.land .sdc>div{border-color:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.45),inset 0 0 12px rgba(0,0,0,.12)}
+@keyframes sdThrow{0%{transform:translate3d(-40vw,-30vh,0) rotateX(0) rotateY(0) scale(.6)}60%{transform:translate3d(0,4vh,0) rotateX(var(--rx2)) rotateY(var(--ry2)) scale(1.1)}80%{transform:translate3d(0,-2vh,0) rotateX(var(--rx3)) rotateY(var(--ry3)) scale(1)}100%{transform:translate3d(0,0,0) rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}}
+@keyframes sdPop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+.sdShake{animation:sdShake .35s}@keyframes sdShake{20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}`; document.head.appendChild(st); }
+  function roll(vals, o = {}) {
+    addCss(); vals = [].concat(vals); const ms = o.ms || 1100;
+    return new Promise(res => {
+      const old = document.getElementById('sdOv'); if (old) old.remove();
+      const ov = document.createElement('div'); ov.id = 'sdOv';
+      ov.innerHTML = vals.map((v, i) => { const r = ROT[Math.min(6, Math.max(1, v))] || [0, 0], sp = 2 + i;
+        const faces = v <= 6 ? [1, 2, 3, 4, 5, 6] : [v, v, v, v, v, v];
+        const order = v <= 6 ? [1, 2, 3, 4, 5, 6] : faces;
+        return `<div class="sdw"><div class="sdc" style="--ms:${ms + i * 180}ms;--rx:${v <= 6 ? r[0] : 0}deg;--ry:${v <= 6 ? r[1] : 0}deg;--rx2:${360 * sp + 40}deg;--ry2:${360 * sp - 30}deg;--rx3:${360 * (sp + 1)}deg;--ry3:${360 * (sp + 1)}deg">${order.map(n => `<div>${face(n)}</div>`).join('')}</div>${o.labels ? `<b>${o.labels[i] || ''}</b>` : ''}</div>`; }).join('');
+      document.body.appendChild(ov); try { (Sound.dice || Sound.flip || Sound.pop)(); } catch (e) {}
+      const tot = ms + (vals.length - 1) * 180;
+      setTimeout(() => { ov.querySelectorAll('.sdw').forEach(w => w.classList.add('land')); try { Sound.pop(); } catch (e) {} const card = document.querySelector('#s2body .card'); if (card) { card.classList.remove('sdShake'); void card.offsetWidth; card.classList.add('sdShake'); } }, tot);
+      setTimeout(() => { ov.style.transition = 'opacity .3s'; ov.style.opacity = '0'; setTimeout(() => { ov.remove(); res(); }, 300); }, tot + (o.hold || 650));
+    });
+  }
+  return { roll };
 })();
+
+/* =====================================================================
+   🎲 BGX — 6학년 새 보드게임 공통 틀 (진짜 보드게임 원리 + 수학 내용을 직접 조작)
+   BGX.make({ id, icon, color, soft, title, short, sub, how:[…], startBtn, startSay, guide:[slides],
+              init(g, api), view(g, me, api) → { board, side }, act(g, a, v, el, api), ai(g, api),
+              turn(g)?, done(g)?, scoreLabel(g, i)?, hand?(가려야 하는 패), realtime?, css? })
+   · 상태는 state.s2.au (저장·이어 하기를 위해 JSON으로 바꿀 수 있는 값만)
+   · 혼자 하기 기록 = (이기면 60, 지면 35) + 40 × 정확도
+   ===================================================================== */
+if (!window.BGX) window.BGX = (function () {
+  const T = f => { try { return f(); } catch (e) {} }, E = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1)), PK = a => a[Math.floor(Math.random() * a.length)];
+  const SH = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const K = (a, b, c) => window.SVBG ? SVBG.k(a, b, c) : b, av = (ch, n) => T(() => avatar(ch, n)) || '';
+  const VN = () => T(() => G56.C.vname) || '악당';
+  let D = null;
+  const g_ = () => T(() => state.s2.au) || null, $1 = s => document.querySelector(s);
+  const frac = (a, b, cls) => `<span class="bxfr ${cls || ''}"><i>${a}</i><i>${b}</i></span>`;
+  const api = { T, E, R, PK, SH, K, av, VN, frac, g: g_, paint, next, finish, good, bad, later, kick };
+  function later(g, ms, fn) { g.lock = true; paint(); setTimeout(() => { if (g_() !== g || g.over) return; g.lock = false; fn(); }, ms); }
+  function good(g, log, pts) { const P = g.players[g.turn]; if (!P.ai) { g.tries++; T(() => Sound.correct()); } if (pts) g.score[g.turn] += pts; g.log = '✅ ' + log; g.msg = 'ok'; }
+  function bad(g, log, wrongTxt) { const P = g.players[g.turn]; if (!P.ai) { g.tries++; g.bad++; if (g.solo && wrongTxt && g.wrong.length < 12) g.wrong.push(D.short + ': ' + wrongTxt); T(() => Sound.wrong()); } g.log = '❌ ' + log; g.msg = 'no'; }
+  function next(g, same) { if (g_() !== g || g.over) return; if (D.done && D.done(g)) return finish(g);
+    if (!same) g.turn = (g.turn + 1) % g.players.length; g.msg = ''; g.lock = false; T(() => D.turn && D.turn(g, api));
+    if (D.done && D.done(g)) return finish(g); paint(); kick(g); }
+  function kick(g) { if (!g || g_() !== g || g.over) return; if (D.realtime) { T(() => D.run && D.run(g, api)); return; } const P = g.players[g.turn];
+    if (P.ai && D.ai) { g.lock = true; paint(); const go = () => { if (g_() !== g || g.over) return; if (window.SVBG && SVBG.paused) { setTimeout(go, 500); return; } g.lock = false; D.ai(g, api); }; setTimeout(go, 1000 + Math.random() * 500); }
+    else T(() => Sound.pop()); }
+  function finish(g) { if (g.over) return; g.over = true; g.lock = false;
+    const rk = g.players.map((P, i) => Object.assign({}, P, { idx: i, ps: g.score[i] })).sort((a, b) => b.ps - a.ps || a.idx - b.idx); g.ranking = rk;
+    const tie = rk.length > 1 && rk[0].ps === rk[1].ps;
+    if (g.solo) { const win = rk[0].idx === 0 && !tie, acc = g.tries ? (g.tries - g.bad) / g.tries : 0; g.score100 = Math.round(Math.max(20, Math.min(100, (win ? 60 : tie ? 50 : 35) + 40 * acc)));
+      T(() => bgRecord(g.score100, g.wrong)); T(() => win || tie ? (Sound.win(), FX.rain(160)) : Sound.wrong()); } else T(() => { Sound.win(); FX.rain(160); });
+    g.log = tie ? `🤝 ${E(rk[0].name)}, ${E(rk[1].name)} 비겼어요! ${D.winLog ? D.winLog(g, rk) : ''}` : `🏆 ${E(rk[0].name)} 승리! ${D.winLog ? D.winLog(g, rk) : ''}`; g.msg = ''; paint(); }
+  let fitT1 = 0, fitT2 = 0;
+  function fit() { requestAnimationFrame(() => { const card = $1('#s2body > .card.bxcard'); if (!card) return; card.style.zoom = ''; if (!document.body.classList.contains('svsl-on')) return;
+    const wrap = $1('.wrap'); if (!wrap) return; const avail = () => wrap.clientHeight - (card.getBoundingClientRect().top - wrap.getBoundingClientRect().top) - 12, H = () => card.getBoundingClientRect().height;
+    let z = Math.max(.55, Math.min(1.3, avail() / Math.max(60, H()))); for (let i = 0; i < 12; i++) { card.style.zoom = z.toFixed(3); if (H() <= avail() + 1 || z <= .55) break; z = Math.max(.55, z * .96); } }); }
+  function paint() { const el = document.getElementById('bxArea'), g = g_(); if (!el || !g) return; const p = g.turn, P = g.players[p], me = !P.ai && !g.over && !g.lock;
+    const sc = `<div class="bxsc">${g.players.map((Q, i) => `<div class="bxpl ${i === p && !g.over && !D.realtime ? 'turn' : ''}" style="--pc:${Q.color}">${av(Q.char, 34)}<div><b>${E(Q.name)}</b><small>${D.scoreLabel ? D.scoreLabel(g, i) : g.score[i] + '점'}</small></div></div>`).join('')}</div>`;
+    const v = D.view(g, me, api) || {};
+    const over = g.over ? `<div class="tlover">${T(() => podiumHTML(g.ranking.map(r => ({ name: r.name, char: r.char, color: r.color, score: r.ps, label: D.scoreLabel ? D.scoreLabel(g, r.idx) : r.ps + '점' })))) || ''}${g.solo ? `<p class="center font-bold">이번 기록 ${g.score100}점</p>` : ''}
+      <div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-act="board-again">🔁 한 판 더</button><button class="btn btn-sub" data-act="board-setup">⚙️ 다시 설정</button><button class="btn btn-primary" data-act="step" data-v="result">🏁 CH.5 최종 결전 ➜</button></div></div>` : '';
+    const who = g.over || D.realtime ? '' : `<div class="bxwho" style="--pc:${P.color}">${av(P.char, 28)} <b>${E(P.name)}</b>${P.ai ? ' 생각 중…' : '의 차례'}</div>`;
+    el.innerHTML = `<div class="bxw ${D.layout || ''}"><div class="bxl">${v.board || ''}</div><div class="bxr">${sc}${g.over ? over : who + (v.side || '')}<div class="blog rblog bxlog ${g.msg || ''}">${g.log || ''}</div></div></div>`; fit(); clearTimeout(fitT1); clearTimeout(fitT2); fitT1 = setTimeout(fit, 400); fitT2 = setTimeout(fit, 1200); }
+  function newG(mode) { const players = mkPlayers(mode), g = { solo: mode === 'ai', players, score: players.map(() => 0), turn: 0, tries: 0, bad: 0, wrong: [], log: '', msg: '', lock: false, over: false };
+    D.init(g, api); if (!g.log) g.log = `${E(players[0].name)}부터 시작해요!`; return g; }
+  function make(def) { D = def; if (typeof BOARD_GUIDE === 'undefined') window.BOARD_GUIDE = D.id;
+    const title = () => `${VN()}의 ${D.title}`;
+    renderBoardPage = function () { const st = state.s2, body = $1('#s2body'); if (!body) return; if (!st.bmode) st.bmode = 'ai';
+      if (!st.au) { const M = [['ai', '👤', '혼자 하기', '컴퓨터와 대결 · 맞춤 난이도 · 기록 제출'], ['multi', '👥', '함께 하기 (2~4인)', D.hand ? '한 화면에서 차례로! 패는 내 차례에만 보여요' : '한 화면에서 차례로!']];
+        body.innerHTML = `<div class="card"><div class="stage-head"><span class="ti" style="background:${D.soft}">${D.icon}</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">${E(title())}</h2><p class="sub" style="margin:3px 0 0">${D.sub}</p></div></div>
+          <div class="bq-how mt-2">${D.how.map((x, i) => `<div class="bq-step"><span>${i + 1}</span><div>${x}</div></div>`).join('')}</div>
+          <div class="font-black mt-2">🙋 누구와 할까요?</div><div class="modecards mt-1">${M.map(([k, i, t, s]) => `<button class="modecard ${st.bmode === k ? 'on' : ''}" data-act="bmode" data-v="${k}"><div class="mi">${i}</div><div class="mt">${t}</div><div class="ms">${s}</div></button>`).join('')}</div>
+          ${st.bmode === 'multi' ? T(() => partyHTML()) || '' : T(() => SVBG.lvHTML()) || ''}
+          <div class="next-row"><button class="btn btn-primary btn-lg" data-act="board-start">${D.startBtn || D.icon + ' 시작!'}</button></div></div>`; }
+      else { body.innerHTML = `<div class="card bxcard" style="--bc:${D.color};--bs:${D.soft}"><div class="stage-head"><span class="ti" style="background:${D.soft}">${D.icon}</span><div><span class="stchap">CHAPTER 4-3</span><h2 class="h2">${E(D.title)}</h2></div></div><div id="bxArea" class="mt-1"></div></div>`; paint(); }
+      T(() => { Story._sig = null; Story.paint(); }); };
+    startAU = function () { const st = state.s2; T(() => moodBase('idle')); T(() => touch('s2')); st.au = newG(st.bmode); renderBoardPage(); T(() => say(D.startSay || D.title + ' 시작!')); kick(st.au); };
+    document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('[data-bx]'); if (!t) return; const g = g_(); if (!g || g.over || T(() => state.s2.step !== 'board')) return; e.preventDefault();
+      if (!D.realtime && (g.lock || g.players[g.turn].ai)) return; D.act(g, t.dataset.bx, t.dataset.v, t, api, e); }, true);
+    T(() => { GUIDES[BOARD_GUIDE] = { title: D.icon + ' ' + D.title, color: D.color, slides: D.guide }; });
+    T(() => SVBG.use({ key: 'au', handoff: !!D.hand, ownLv: true, realtime: !!D.realtime, kick: g => kick(g), onReady: g => paint(), restore: g => { g.lock = false; } }));
+    const st = document.createElement('style'); st.textContent = CSS + (D.css || ''); document.head.appendChild(st);
+    addEventListener('resize', () => T(() => fit())); }
+  const CSS = `.bxw{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px;align-items:start}.bxw.wide{grid-template-columns:1fr}.bxl{min-width:0}.bxr{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bxsc{display:flex;gap:8px;flex-wrap:wrap}.bxpl{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:14px;background:#fff;border:3px solid #e2e8f0;flex:1;min-width:140px}.bxpl.turn{border-color:var(--pc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 25%,transparent)}.bxpl b{display:block;font-size:.95rem}.bxpl small{font-weight:900;color:var(--pc);font-size:1rem}
+.bxwho{display:flex;align-items:center;gap:6px;font-weight:800;font-size:1.05rem;color:#1e293b;background:color-mix(in srgb,var(--pc) 12%,#fff);border-radius:12px;padding:6px 12px}.bxwho b{color:var(--pc)}
+.bxlog{font-weight:800}.bxlog.ok{background:#f0fdf4;border-color:#86efac;color:#166534}.bxlog.no{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.bxbd{background:linear-gradient(160deg,color-mix(in srgb,var(--bc) 14%,#fff),#fff);border:4px solid color-mix(in srgb,var(--bc) 55%,#fff);border-radius:24px;padding:14px;box-shadow:0 8px 0 color-mix(in srgb,var(--bc) 22%,#fff)}
+.bxtk{background:#fffbeb;border:3px dashed #f59e0b;border-radius:18px;padding:10px 14px;font-weight:800;font-size:1.15rem;line-height:1.5;color:#1e293b}.bxtk b{color:#c2410c}.bxtk h4{margin:0 0 4px;font-size:1rem;color:#92400e}
+.bxhow{font-weight:800;color:#334155;background:#f1f5f9;border-radius:12px;padding:8px 12px;font-size:.98rem;line-height:1.5}
+.bxrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.bxrow .btn{flex:1;min-width:120px}
+.bxfr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;font-weight:900;margin:0 .12em}.bxfr i{font-style:normal;padding:0 .2em}.bxfr i:first-child{border-bottom:.09em solid currentColor}
+.bxcd{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:74px;min-height:92px;padding:6px 8px;border-radius:14px;background:#fff;border:3px solid #cbd5e1;box-shadow:0 4px 0 #cbd5e1;font-weight:900;font-size:1.15rem;color:#1e293b;cursor:default;text-align:center;line-height:1.25}
+.bxcd.can{cursor:pointer;border-color:var(--bc);box-shadow:0 4px 0 color-mix(in srgb,var(--bc) 45%,#fff)}.bxcd.can:hover{transform:translateY(-3px)}.bxcd.sel{background:#fef3c7;border-color:#f59e0b;box-shadow:0 4px 0 #fcd34d;transform:translateY(-4px)}.bxcd.back{background:repeating-linear-gradient(45deg,#6366f1 0 8px,#818cf8 8px 16px);border-color:#4338ca;color:#fff}
+.bxcd small{font-size:.72rem;color:#64748b;font-weight:800}
+body.svsl-on .bxr{padding-bottom:44px}
+@media(max-width:820px){.bxw{grid-template-columns:1fr}}`;
+  /* 점검용: 사람 차례를 바르게 한 걸음 진행 */
+  function auto() { const g = g_(); if (!g || g.over) return 'over'; if (!D.realtime && (g.lock || g.players[g.turn].ai)) return 'wait'; if (D.bot) { D.bot(g, api); return 'step'; } return 'nobot'; }
+  return { make, api, auto };
+})();
+
+/* 6-1-2-3 · 🏁 전개도 레이스 — 둘레 16칸 보드판을 주사위로 달려요. 미션 칸에 서면 「미션 카드」가 펼쳐져요.
+   🧩 접힐까? (전개도 판정) · 🏷️ 무슨 기둥? (전개도를 보고 각기둥 이름) · 🔗 맞닿는 선분 (전개도에서 직접 눌러 찾기)
+   맞히면 ⭐ 도안 별, 틀리면 🌀 폴리곤에게 한 칸 밀려나요. 별을 먼저 5개 모으면 승리! */
+(function () {
+  const { R, PK, SH, K, E, av } = BGX.api;
+  const NM = { 3: '삼각기둥', 4: '사각기둥', 5: '오각기둥', 6: '육각기둥' };
+  const BASE = { 3: { n: 3, a: 46, h: 70 }, 4: { n: 4, a: 40, h: 62 }, 5: { n: 5, a: 34, h: 60 }, 6: { n: 6, a: 28, h: 56 }, r: { n: 4, sides: [54, 36, 54, 36], h: 62 } };
+  /* 판: 5×5 둘레 16칸 */
+  const POS = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [4, 3], [4, 2], [4, 1], [4, 0], [3, 0], [2, 0], [1, 0]];
+  const KIND = { start: ['🏁', '출발'], judge: ['🧩', '접힐까?'], name: ['🏷️', '무슨 기둥?'], meet: ['🔗', '맞닿는 선분'], star: ['⭐', '별 보너스'], trap: ['🌀', '폴리곤 함정'] };
+  const LAYOUT = ['start', 'judge', 'name', 'meet', 'star', 'judge', 'meet', 'name', 'trap', 'judge', 'name', 'meet', 'star', 'meet', 'judge', 'trap'];
+  const net = (o, w, extra) => NETV.svg(Object.assign({}, o, { w: w || 330 }, extra || {}));
+  function mission(kind, lv) {
+    const ns = lv === 1 ? [3, 4] : lv === 2 ? [3, 4, 5, 'r'] : [3, 4, 5, 6, 'r'], k = PK(ns), b = BASE[k], n = b.n;
+    if (kind === 'name') { const o = Object.assign({}, b, { top: R(0, n - 1), bot: R(0, n - 1) }), ans = NM[n];
+      return { kind, q: '이 전개도를 접으면 어떤 입체도형이 될까요?', fig: net(o, 300), opts: SH([3, 4, 5, 6].map(x => NM[x])), ans, ex: `밑면이 ${n}각형이고 옆면이 ${n}개 → ${ans}` }; }
+    if (kind === 'judge') { const t = PK(['ok', 'ok', 'same', 'less']); let o, ans;
+      if (t === 'ok') { o = Object.assign({}, b, { top: R(0, n - 1), bot: R(0, n - 1) }); ans = '접으면 각기둥이 돼요'; }
+      else if (t === 'same') { const a = R(0, n - 1); let c = (a + R(1, n - 1)) % n; o = Object.assign({}, b, { top: [a, c] }); ans = '두 밑면이 같은 쪽에 있어 겹쳐요'; }
+      else { const s = b.sides ? b.sides.slice(0, n - 1) : Array(n - 1).fill(b.a); o = Object.assign({}, b, { sides: s, top: 0, bot: n - 2 }); ans = '옆면이 하나 모자라요'; }
+      return { kind, q: '이 그림을 접으면 각기둥이 될까요?', fig: net(o, 300), opts: SH(['접으면 각기둥이 돼요', '두 밑면이 같은 쪽에 있어 겹쳐요', '옆면이 하나 모자라요', '옆면이 하나 남아요']), ans, ex: ans === '접으면 각기둥이 돼요' ? '밑면 2개가 위아래로 하나씩, 옆면의 수가 밑면의 변의 수와 같아요.' : ans }; }
+    /* meet: 빨간 선분과 맞닿는 선분을 전개도에서 누르기 */
+    for (let t = 0; t < 30; t++) { const o = Object.assign({}, b, { top: R(0, n - 1), bot: R(0, n - 1) }), E2 = NETV.edges(GEO.net(o), o).filter(e => NETV.mate(o, e.id)); if (!E2.length) continue;
+      const hi = PK(E2).id, want = NETV.mate(o, hi); return { kind, q: '전개도를 접었을 때 <b style="color:#dc2626">빨간 선분</b>과 맞닿는 선분을 <b>전개도에서 직접 눌러요</b>.', o, hi, ans: want, ex: '접으면 두 선분이 만나 하나의 모서리가 돼요. 길이도 같아요.' }; }
+    return mission('name', lv);
+  }
+  const target = 5;
+  function land(g, api) { const p = g.turn, P = g.players[p], kind = LAYOUT[g.pos[p]];
+    if (kind === 'start') { g.stars[p]++; g.log = `🏁 ${E(P.name)}: 출발 칸! ⭐ +1`; g.score[p] = g.stars[p]; return api.later(g, 1300, () => api.next(g)); }
+    if (kind === 'star') { g.stars[p]++; g.score[p] = g.stars[p]; g.log = `⭐ ${E(P.name)}: 별 보너스 칸! ⭐ +1`; try { Sound.coin ? Sound.coin() : Sound.pop(); } catch (e) {} return api.later(g, 1300, () => api.next(g)); }
+    if (kind === 'trap') { g.log = `🌀 ${E(P.name)}: 폴리곤 함정! 두 칸 뒤로…`; try { Sound.wrong(); } catch (e) {} g.lock = true; api.paint();
+      let k = 0; const back = () => { if (BGX.api.g() !== g || g.over) return; if (k < 2) { k++; g.pos[p] = (g.pos[p] + POS.length - 1) % POS.length; api.paint(); setTimeout(back, 300); return; } g.lock = false; api.later(g, 600, () => api.next(g)); }; return setTimeout(back, 700); }
+    g.m = mission(kind, window.SVBG ? SVBG.lv : 2); g.pick = null; g.ph = 'mis'; g.log = `${KIND[kind][0]} ${E(P.name)}: 미션 카드 「${KIND[kind][1]}」!`; api.paint();
+    if (P.ai) { g.lock = true; setTimeout(() => { if (BGX.api.g() !== g || g.over) return; g.lock = false; const m = g.m, smart = Math.random() < K(.55, .78, .93);
+      let v = m.ans; if (!smart) { if (m.kind === 'meet') { const E2 = NETV.edges(GEO.net(m.o), m.o).map(e => e.id).filter(x => x !== m.hi && x !== m.ans); v = PK(E2); } else v = PK(m.opts.filter(x => x !== m.ans)); } solve(g, api, v); }, 1800); } }
+  function solve(g, api, v) { const p = g.turn, P = g.players[p], m = g.m; if (!m || g.ph !== 'mis') return; g.pick = v; g.ph = 'done';
+    if (v === m.ans) { g.stars[p]++; g.score[p] = g.stars[p]; api.good(g, `${E(P.name)}: 정답! ${m.kind === 'meet' ? '맞닿는 선분을 찾았어요.' : m.ans} ⭐ +1`, 0); }
+    else { api.bad(g, `${E(P.name)}: 아쉬워요. ${m.kind === 'meet' ? '초록 선분이 빨간 선분과 맞닿아요.' : `정답은 「${m.ans}」`} 🌀 한 칸 뒤로`, `${KIND[m.kind][1]}: ${m.kind === 'meet' ? '다른 선분을 고름' : v}`); g.pos[p] = (g.pos[p] + POS.length - 1) % POS.length; }
+    api.later(g, v === m.ans ? 1800 : 3000, () => { g.m = null; g.ph = 'roll'; api.next(g); }); }
+  function roll(g, api) { const p = g.turn, d = R(1, 3); g.die = d; g.ph = 'move'; g.lock = true; g.log = `🎲 ${E(g.players[p].name)} 주사위 굴리는 중…`; api.paint();
+    let k = 0; const hop = () => { if (BGX.api.g() !== g || g.over) return; if (k < d) { k++; g.pos[p] = (g.pos[p] + 1) % POS.length; if (g.pos[p] === 0 && k < d) { g.stars[p]++; g.score[p] = g.stars[p]; } try { Sound.tick ? Sound.tick() : Sound.pop(); } catch (e) {} api.paint(); setTimeout(hop, 330); return; }
+      g.lock = false; api.later(g, 350, () => land(g, api)); };
+    SVDICE.roll([d]).then(() => setTimeout(hop, 100)); }
+  BGX.make({ id: 'netrace', icon: '🏁', color: '#0891b2', soft: '#cffafe', title: '전개도 레이스', short: '전개도 레이스',
+    sub: '주사위를 굴려 보드판을 달려요. <b>미션 칸</b>에 서면 미션 카드가 펼쳐져요 — 전개도가 접힐지, 무슨 기둥이 될지, 어느 선분과 맞닿을지! 맞히면 ⭐, 별 <b>5개</b>를 먼저 모으면 승리!',
+    how: ['내 차례에 <b>🎲 주사위</b>를 굴려 나온 수만큼 말이 달려요.', '🧩 <b>접힐까?</b> · 🏷️ <b>무슨 기둥?</b> 칸: 미션 카드의 전개도를 보고 알맞은 답을 골라요.', '🔗 <b>맞닿는 선분</b> 칸: 접었을 때 빨간 선분과 만나는 선분을 <b>전개도에서 직접</b> 눌러요.', '맞히면 ⭐ +1, 틀리면 한 칸 뒤로! ⭐ 별 칸·출발 칸은 보너스, 🌀 함정 칸은 두 칸 뒤로. 별 5개를 먼저 모으면 승리!'],
+    startBtn: '🏁 레이스 출발!', startSay: '전개도 레이스 출발! 미션 칸에서 전개도를 잘 살펴봐! 🏁',
+    guide: [{ t: '1. 미션 카드', ill: () => '<div class="gsay">🧩 접힐까? · 🏷️ 무슨 기둥? · 🔗 맞닿는 선분<br>맞히면 ⭐ +1 · 틀리면 한 칸 뒤로</div>', txt: '전개도는 밑면 2개가 위아래로 하나씩, 옆면의 수는 밑면의 변의 수와 같아요.', practice: { q: '밑면이 오각형이고 옆면이 5개인 전개도를 접으면?', opts: ['오각기둥', '오각뿔', '사각기둥'], ans: 0, ex: '밑면 2개가 오각형 → 오각기둥' } },
+      { t: '2. 보드판', ill: () => '<div class="gsay">🏁 출발 칸·⭐ 별 칸 = 보너스<br>🌀 폴리곤 함정 = 두 칸 뒤로</div>', txt: '별 5개를 먼저 모으면 이겨요. 판이 오래 걸리면 별이 많은 사람이 이겨요.' }],
+    init(g) { g.pos = g.players.map(() => 0); g.stars = g.players.map(() => 0); g.ph = 'roll'; g.m = null; g.die = 0; g.turns = 0; g.max = g.players.length * 10; g.log = `${E(g.players[0].name)}부터! 🎲 주사위를 굴려요.`; },
+    turn: g => { g.turns++; },
+    done: g => g.stars.some(x => x >= target) || g.turns >= g.max,
+    scoreLabel: (g, i) => `⭐ ${g.stars[i]}개 / ${target}개`,
+    view(g, me) { const p = g.turn, act = me && !g.lock && !g.over;
+      const cell = (k, i) => `<div class="nrc ${k} ${g.pos[p] === i && !g.over ? 'cur' : ''}" style="grid-row:${POS[i][0] + 1};grid-column:${POS[i][1] + 1}"><span class="ic">${KIND[k][0]}</span><small>${KIND[k][1]}</small><span class="pcs">${g.players.map((Q, j) => g.pos[j] === i ? `<i style="--pc:${Q.color}">${av(Q.char, 26)}</i>` : '').join('')}</span></div>`;
+      let mid, card = '';
+      if (g.m && (g.ph === 'mis' || g.ph === 'done')) { const m = g.m, done = g.ph === 'done', can = act && !done;
+        let fig = m.fig, opts = '';
+        if (m.kind === 'meet') { const mk = { [m.hi]: '#dc2626' }; if (done) { mk[m.ans] = '#16a34a'; if (g.pick && g.pick !== m.ans) mk[g.pick] = '#f59e0b'; }
+          fig = net(m.o, 300, { mark: mk, tap: can ? 'bxmeet' : null }).replace(/data-ck="bxmeet"/g, 'data-bx="meet"'); }
+        else opts = `<div class="nrop">${m.opts.map(o => `<button class="nro ${done ? (o === m.ans ? 'ok' : o === g.pick ? 'no' : '') : ''}" ${can ? `data-bx="pick" data-v="${E(o)}"` : 'disabled'}>${o}</button>`).join('')}</div>`;
+        card = `<div class="nrcard ${m.kind}"><div class="nrch">${KIND[m.kind][0]} 미션 카드 · ${KIND[m.kind][1]}</div><div class="nrq">${m.q}</div><div class="nrfig">${fig}</div>${opts}${done ? `<div class="nrex">💡 ${m.ex}</div>` : ''}</div>`; }
+      mid = `<div class="nrmid"><div class="nrlogo">🏁 전개도 레이스</div><div class="nrstars">${g.players.map((Q, j) => `<div style="--pc:${Q.color}">${av(Q.char, 34)}<b>${'⭐'.repeat(g.stars[j])}${'☆'.repeat(Math.max(0, target - g.stars[j]))}</b></div>`).join('')}</div>${me && g.ph === 'roll' && !g.lock ? '<button class="btn btn-primary btn-lg nrroll" data-bx="roll">🎲 주사위 굴리기</button>' : `<div class="nrwait">${g.ph === 'move' ? '🎲 달리는 중…' : ''}</div>`}</div>`;
+      const board = `<div class="bxbd"><div class="nrboard">${LAYOUT.map(cell).join('')}<div class="nrcenter">${mid}</div></div></div>`;
+      const side = card + (me && g.ph === 'mis' ? `<div class="bxhow">${g.m && g.m.kind === 'meet' ? '전개도에서 빨간 선분과 맞닿는 선분을 직접 눌러요.' : '미션 카드의 전개도를 보고 답을 골라요.'}</div>` : me && g.ph === 'roll' ? '<div class="bxhow">🎲 주사위를 굴려 말을 옮겨요. 미션 칸에서 미션 카드를 풀어요.</div>' : '');
+      return { board, side }; },
+    act(g, a, v, el, api) { if (g.lock || g.over) return; if (a === 'roll' && g.ph === 'roll') return roll(g, api); if ((a === 'pick' || a === 'meet') && g.ph === 'mis') return solve(g, api, a === 'pick' ? el.dataset.v || v : v); },
+    bot(g, api) { if (g.ph === 'roll') return roll(g, api); if (g.ph === 'mis') solve(g, api, g.m.ans); },
+    ai(g, api) { roll(g, api); },
+    css: `.nrboard{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(5,76px);gap:7px;position:relative;background:linear-gradient(135deg,#0e7490,#155e75);padding:10px;border-radius:22px;box-shadow:inset 0 0 0 4px #67e8f9,0 8px 0 #164e63}
+.nrc{position:relative;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;min-height:74px;background:#ecfeff;border:3px solid #a5f3fc;box-shadow:0 4px 0 rgba(0,0,0,.18)}.nrc .ic{font-size:1.7rem;line-height:1.1}.nrc small{font-weight:900;font-size:.78rem;color:#155e75}
+.nrc.start{background:#dcfce7;border-color:#22c55e}.nrc.star{background:#fef9c3;border-color:#eab308}.nrc.trap{background:#ede9fe;border-color:#8b5cf6}.nrc.judge{background:#fff7ed;border-color:#fdba74}.nrc.name{background:#eff6ff;border-color:#93c5fd}.nrc.meet{background:#fdf2f8;border-color:#f9a8d4}
+.nrc.cur{box-shadow:0 0 0 4px #fde047,0 4px 0 rgba(0,0,0,.18);transform:translateY(-2px)}.nrc .pcs{position:absolute;right:2px;bottom:2px;display:flex}.nrc .pcs i{border-radius:50%;box-shadow:0 0 0 3px var(--pc);background:#fff;margin-left:-8px;display:flex;animation:nrHop .33s}
+@keyframes nrHop{40%{transform:translateY(-10px)}}
+.nrcenter{grid-row:2/5;grid-column:2/5;display:flex;align-items:center;justify-content:center;background:#f0fdfa;border-radius:18px;padding:10px;box-shadow:inset 0 0 0 3px #99f6e4}
+.nrmid{text-align:center}.nrlogo{font-family:'Jua',sans-serif;font-size:1.9rem;color:#0e7490}.nrstars{display:flex;flex-direction:column;gap:6px;margin:10px 0}.nrstars>div{display:flex;align-items:center;gap:8px;justify-content:center;font-size:1.3rem}.nrroll{font-size:1.25rem!important;padding:12px 26px!important;animation:nrPulse 1.4s infinite}
+@keyframes nrPulse{50%{transform:scale(1.06)}}.nrwait{font-weight:900;color:#0e7490;min-height:1.4em}
+.nrcard{width:100%;max-width:560px;background:#fff;border-radius:18px;border:4px solid #0891b2;padding:10px 12px;box-shadow:0 6px 0 #155e75;animation:nrIn .35s ease-out}@keyframes nrIn{from{transform:rotateY(80deg) scale(.8);opacity:0}}
+.nrcard.judge{border-color:#f97316;box-shadow:0 6px 0 #9a3412}.nrcard.name{border-color:#3b82f6;box-shadow:0 6px 0 #1e3a8a}.nrcard.meet{border-color:#ec4899;box-shadow:0 6px 0 #9d174d}
+.nrch{font-family:'Jua',sans-serif;font-size:1.15rem;color:#fff;background:#0f172a;border-radius:999px;display:inline-block;padding:2px 14px}.nrq{font-size:1.15rem;font-weight:900;color:#1e293b;margin:8px 0 4px}
+.nrfig{display:flex;justify-content:center}.nrfig svg{max-width:100%;height:auto}.nrop{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.nro{border:3px solid #cbd5e1;border-radius:14px;background:#f8fafc;padding:10px 6px;font-weight:900;font-size:1rem;cursor:pointer;color:#1e293b}.nro:hover:not(:disabled){border-color:#f59e0b;background:#fffbeb}
+.nro.ok{border-color:#22c55e;background:#dcfce7}.nro.no{border-color:#ef4444;background:#fee2e2}.nrex{margin-top:6px;font-weight:800;color:#0f766e;background:#f0fdfa;border-radius:10px;padding:4px 8px}` });
+})();
+
 
 /* ---------- 🐾 캐릭터 고르기: 4학년 1학기에 나온 친구들 중에서 ---------- */
 (function () {
@@ -10155,6 +10325,19 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
+
 
 /* =====================================================================
    🧗 JX · 보스전 도전 2·3을 조작형 사고력 문제로 (보기 고르기 대신 직접 만들기)
@@ -10266,16 +10449,20 @@ const JX = (() => {
       on: { 'ck-nt:drop'(d, v, z, el, api) { if (z !== 'ck-nt') return; const i = +el.dataset.i, N = NETS[v], want = N[1] ? 0 : 1; if (i !== want) { api.say(false, N[1] ? '밑면이 위·아래에 하나씩, 옆면의 수가 밑면의 변의 수와 같아요. 접으면 각기둥이 돼요.' : N[2], true); return; }
         d.bin[v] = i; try { Sound.pop(); } catch (e) {} if (!left(d).length) api.win(say()); else api.clear(); } } }; };
   /* ③ 밑면 붙이기 */
+  const basePiece = base => { const n = base.sides ? base.sides.length : base.n, sd = base.sides || Array(n).fill(base.a || 40), r = 34;
+    let P; if (n === 4 && sd.some(x => x !== sd[0])) { const w = 60, h = 60 * sd[1] / sd[0]; P = [[0, 0], [w, 0], [w, h], [0, h]]; } else P = Array.from({ length: n }, (_, i) => [r + r * Math.cos(-Math.PI / 2 + 2 * Math.PI * i / n), r + r * Math.sin(-Math.PI / 2 + 2 * Math.PI * i / n)]);
+    const xs = P.map(p => p[0]), ys = P.map(p => p[1]); return `<svg viewBox="${Math.min(...xs) - 3} ${Math.min(...ys) - 3} ${Math.max(...xs) - Math.min(...xs) + 6} ${Math.max(...ys) - Math.min(...ys) + 6}" width="78" height="72"><polygon points="${P.map(p => p.join(',')).join(' ')}" fill="#bfdbfe" stroke="#1e293b" stroke-width="2"/></svg><b>밑면</b>`; };
+  const ZD = z => Object.assign({}, z, { dz: 'ck-pl', id: (z.up ? 'u' : 'd') + z.at });
   const place = (t, kind, base, top, say) => { const n = base.sides ? base.sides.length : base.n, zones = []; for (let i = 0; i < n; i++) { if (i !== top) zones.push({ at: i, up: true }); zones.push({ at: i, up: false }); }
     return { _ty: 'place', t, kind,
       q: d => d.ok ? '완성!' : '전개도에 <b>밑면이 하나 빠졌어요</b>. 밑면 조각을 끌어 알맞은 점선 자리에 놓아요. 놓을 수 있는 자리는 여러 곳일 수도 있어요!',
       init: () => ({ ok: false, at: null }),
       view: d => { const o = Object.assign({}, base, { top, bot: d.ok ? d.at : null });
         const N = GEO.net(Object.assign({}, base, { top, bot: 0 })), zs = d.ok ? [] : zones;
-        let net = NETV.svg(Object.assign({}, o, { w: 380, zones: zs }));
+        let net = NETV.svg(Object.assign({}, o, { w: 380, zones: zs.map(ZD) }));
         /* 놓을 자리(드롭 칸)를 그림 위에 겹쳐요 */
-        const ov = d.ok ? '' : `<div class="netdz">${zones.map((z, k) => `<span class="ckzone" data-dz="ck-pl" data-i="${z.up ? 'u' : 'd'}${z.at}" style="min-height:34px;padding:2px 8px;font-size:.85rem">${z.up ? '⬆ 위' : '⬇ 아래'} ${z.at + 1}번 옆면</span>`).join('')}</div>`;
-        return `<div class="center">${net}</div>${ov}${d.ok ? `<div class="ckbig">밑면은 옆면들의 <b>위와 아래에 하나씩</b>! 아래쪽이면 어느 옆면에 붙여도 접혀요.</div>` : ckSrc('✋ 밑면 조각을 끌어 자리 단추에 놓아요', ckPiece('ck-pl', 'base', `<b style="font-size:1.1rem">🟦 밑면 조각</b>`))}`; },
+        const ov = '';
+        return `<div class="center">${net}</div>${ov}${d.ok ? `<div class="ckbig">밑면은 옆면들의 <b>위와 아래에 하나씩</b>! 아래쪽이면 어느 옆면에 붙여도 접혀요.</div>` : ckSrc('✋ 밑면 조각을 끌면 붙일 수 있는 <b>점선 자리</b>가 나타나요. 붙이고 싶은 자리에 놓아요', ckPiece('ck-pl', 'base', basePiece(base)))}`; },
       on: { 'ck-pl:drop'(d, v, z, el, api) { if (z !== 'ck-pl') return; const s = el.dataset.i, up = s[0] === 'u', at = +s.slice(1);
         if (up) { api.say(false, '위쪽에는 이미 밑면이 있어요. 두 밑면이 같은 쪽에 있으면 접었을 때 한쪽이 비어요.', true); return; } d.ok = true; d.at = at; api.win(say()); } } }; };
   /* ④ 길이 맞추기 */
@@ -10283,21 +10470,39 @@ const JX = (() => {
     return { _ty: 'len', t, kind,
       q: d => d.s.some(x => x == null) ? `사각기둥의 밑면은 가로 ${a} cm, 세로 ${b} cm, 높이는 ${h} cm예요. 전개도의 <b>㉠ ㉡ ㉢</b> 길이를 수 카드로 채워요.` : '완성!',
       init: () => ({ s: [null, null, null] }),
-      view: d => { const N = GEO.net(o), lab = [[N.xs[1] + b * 5, N.h / 2, '㉠ ' + (d.s[0] ?? '?') + ' cm', '#dc2626'], [N.xs[2] + a * 5, N.h + 10, '㉡ ' + (d.s[1] ?? '?') + ' cm', '#2563eb'], [N.xs[3] + b * 5, -10, '㉢ ' + (d.s[2] ?? '?') + ' cm', '#16a34a'], [N.xs[0] + a * 5, N.h / 2, `${a}×${h}`, '#64748b']];
+      view: d => { const N = GEO.net(o), lab = [[N.xs[0] - 26, N.h / 2, '㉠ ' + (d.s[0] ?? '?') + ' cm', '#dc2626'], [N.xs[2] + a * 5, N.h + 10, '㉡ ' + (d.s[1] ?? '?') + ' cm', '#2563eb'], [N.xs[3] + b * 5, -10, '㉢ ' + (d.s[2] ?? '?') + ' cm', '#16a34a']];
         return `<div class="center">${NETV.svg(Object.assign({}, o, { w: 400, labels: lab, fs: 11 }))}</div><div class="row" style="justify-content:center;gap:8px">${['㉠ 옆면의 세로', '㉡ 옆면의 가로', '㉢ 옆면의 가로'].map((x, i) => `<span class="ckzone" data-dz="ck-ln" data-i="${i}" style="min-width:110px;padding:4px 8px"><small>${x}</small><br><b style="font-size:1.2rem">${d.s[i] ?? '?'} cm</b></span>`).join('')}</div>`
           + (d.s.every(x => x != null) ? `<div class="ckbig">옆면의 세로는 <b>높이</b>, 옆면의 가로는 맞닿는 <b>밑면의 변</b>의 길이와 같아요!</div>` : ckSrc('✋ 수 카드를 끌어 칸에 놓아요', cards.map(c => ckPiece('ck-ln', c, `<b style="font-size:1.2rem">${c}</b>`)).join(''))); },
       on: { 'ck-ln:drop'(d, v, z, el, api) { if (z !== 'ck-ln') return; const i = +el.dataset.i, want = [h, a, b][i]; if (+v !== want) { api.say(false, ['옆면의 세로는 두 밑면 사이의 거리, 곧 높이예요.', '이 옆면의 가로는 붙어 있는 밑면의 변과 맞닿아요. 아래 밑면의 그 변 길이를 봐요.', '위쪽 밑면의 그 변과 맞닿아요.'][i], true); return; }
         d.s[i] = want; try { Sound.pop(); } catch (e) {} if (d.s.every(x => x != null)) api.win(say()); else api.clear(); } } }; };
   /* 접기 단추와 접힌 그림 */
-  const TS = [0, .25, .5, .75, 1], foldBar = t => ckRow(ckBtn('ft', '⏪ 펼치기', 'btn-sub', '-') + `<span class="font-black">접은 정도 ${Math.round(t * 100)}%</span>` + ckBtn('ft', '접기 ⏩', 'btn-primary', '+') + ckBtn('ft', '⏭ 끝까지 접기', 'btn-sub', '1'));
-  const stepT = (d, v) => { const k = TS.indexOf(d.t); d.t = v === '1' ? 1 : TS[Math.max(0, Math.min(4, k + (v === '+' ? 1 : -1)))]; if (d.t === 1) d.seen = true; };
+  /* 접기: 단추 대신 직접 끌어서 — 접은 모습 그림이나 아래 막대의 손잡이를 끌면 접은 정도가 이어서 바뀌어요 */
+  let FR = null;
+  const FD = (o, t, opt) => { FR = tt => GEO.fold(o, tt, opt); return `<div class="folddrag" title="좌우로 끌어 접었다 펼쳐요">${GEO.fold(o, t, opt)}</div>`; };
+  const foldBar = t => `<div class="foldtrack" title="손잡이를 끌어 접어요"><span class="ftl">펼침</span><div class="ftbar"><i style="width:${(t * 100).toFixed(1)}%"></i><b style="left:${(t * 100).toFixed(1)}%">✋</b></div><span class="ftl">다 접힘</span><span class="ftp">${Math.round(t * 100)}%</span><button data-ck="ft" data-v="v:${t}" hidden></button></div>
+    <div class="center ftsay">✋ <b>접은 모습</b>을 좌우로 끌거나 막대의 손잡이를 끌어서 접었다 펼쳤다 해요.</div>`;
+  const stepT = (d, v) => { const x = String(v || ''); d.t = x.startsWith('v:') ? Math.max(0, Math.min(1, +x.slice(2))) : x === '1' ? 1 : x === '-' ? 0 : d.t; if (d.t > .985) d.t = 1; if (d.t < .015) d.t = 0; if (d.t === 1) d.seen = true; };
+  (() => { if (window.__foldDrag) return; window.__foldDrag = 1; let D = null;
+    const paint = t => { const tb = document.getElementById('toolBody'); if (!tb) return; const f = tb.querySelector('.folddrag'); if (f && FR) f.innerHTML = FR(t);
+      const i = tb.querySelector('.ftbar i'), h = tb.querySelector('.ftbar b'), p = tb.querySelector('.ftp'); if (i) i.style.width = (t * 100).toFixed(1) + '%'; if (h) h.style.left = (t * 100).toFixed(1) + '%'; if (p) p.textContent = Math.round(t * 100) + '%'; };
+    document.addEventListener('pointerdown', e => { const tr = e.target.closest && e.target.closest('#toolBody .ftbar'), fg = e.target.closest && e.target.closest('#toolBody .folddrag'); if (!tr && !fg) return;
+      const b = document.querySelector('#toolBody .foldtrack button[data-ck="ft"]'); if (!b) return; const t0 = parseFloat(b.dataset.v.slice(2)) || 0; e.preventDefault();
+      D = { tr: !!tr, el: tr || fg, x: e.clientX, t0, t: t0, id: e.pointerId }; if (tr) { const r = tr.getBoundingClientRect(); D.t = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); paint(D.t); } }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const r = D.el.getBoundingClientRect();
+      D.t = D.tr ? Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) : Math.max(0, Math.min(1, D.t0 + (e.clientX - D.x) / Math.max(160, r.width * .8))); paint(D.t); }, { passive: false });
+    const up = e => { if (!D) return; const t = D.t; D = null; const b = document.querySelector('#toolBody .foldtrack button[data-ck="ft"]'); if (b) { b.dataset.v = 'v:' + t.toFixed(3); b.click(); } };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+    const st = document.createElement('style'); st.textContent = `.folddrag{cursor:ew-resize;touch-action:none;user-select:none;border-radius:16px;outline:3px dashed rgba(234,88,12,.35);outline-offset:4px}.folddrag:hover{outline-color:#ea580c}
+.foldtrack{display:flex;align-items:center;gap:10px;justify-content:center;margin:10px auto 2px;width:min(620px,92%);font-weight:900}.ftl{color:#475569;font-size:.95rem;white-space:nowrap}.ftp{min-width:52px;color:#ea580c;font-size:1.1rem}
+.ftbar{position:relative;flex:1 1 300px;min-width:240px;height:18px;margin:0 16px;border-radius:999px;background:#e2e8f0;border:2px solid #94a3b8;cursor:pointer;touch-action:none}.ftbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#ea580c);border-radius:999px}
+.ftbar b{position:absolute;top:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:#fff;border:3px solid #ea580c;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 3px 8px rgba(0,0,0,.18);cursor:grab}.ftsay{color:#64748b;font-size:.92rem;font-weight:800}`; document.head.appendChild(st); })();
   /* ① 펼치고 접기: 접었을 때 밑면이 되는 면 찾기 */
   const foldS = (t, kind, base, top, bot, say) => { const o = Object.assign({}, base, { top, bot });
     return { _ty: 'fold', t, kind,
-      q: d => d.ok ? '완성!' : !d.seen ? '단추를 눌러 전개도를 <b>접었다 펼쳤다</b> 해 보세요. 끝까지 접으면 어떤 입체도형이 되나요?' : `접었을 때 <b>밑면</b>이 되는 면을 전개도에서 모두 찾아 눌러요. (2개 중 ${d.got.length}개)`,
+      q: d => d.ok ? '완성!' : !d.seen ? '<b>접은 모습</b>을 끌어서 전개도를 <b>접었다 펼쳤다</b> 해 보세요. 끝까지 접으면 어떤 입체도형이 되나요?' : `접었을 때 <b>밑면</b>이 되는 면을 전개도에서 모두 찾아 눌러요. (2개 중 ${d.got.length}개)`,
       init: () => ({ t: 0, seen: false, got: [] }),
       view: d => { const fill = {}; d.got.forEach(id => fill[id] = '#60a5fa'); if (d.bad) fill[d.bad] = '#fca5a5';
-        return `<div class="foldbox"><div>${NETV.svg(Object.assign({}, o, { w: 340, fill, tapF: d.seen && !d.ok ? 'nf' : null }))}<div class="center"><small>펼친 그림(전개도)</small></div></div><div>${GEO.fold(o, d.t, { w: 300, fill })}<div class="center"><small>접은 모습</small></div></div></div>`
+        return `<div class="foldbox"><div>${NETV.svg(Object.assign({}, o, { w: 340, fill, tapF: d.seen && !d.ok ? 'nf' : null }))}<div class="center"><small>펼친 그림(전개도)</small></div></div><div>${FD(o, d.t, { w: 300, fill })}<div class="center"><small>접은 모습</small></div></div></div>`
           + foldBar(d.t) + (d.ok ? `<div class="ckbig">각기둥의 모서리를 잘라서 펼친 그림을 <b>전개도</b>라고 해요.</div>` : ''); },
       on: { 'act:ft'(d, v, el, api) { stepT(d, v); api.clear(); },
         'act:nf'(d, v, el, api) { if (v[0] === 'S') { d.bad = v; api.say(false, '이 면은 접으면 옆을 빙 둘러싸요. 접은 모습에서 같은 색을 찾아봐요.', true); return; } d.bad = null; if (!d.got.includes(v)) d.got.push(v); try { Sound.pop(); } catch (e) {} if (d.got.length === 2) { d.ok = true; api.win(say()); } else api.clear(); } } }; };
@@ -10307,7 +10512,7 @@ const JX = (() => {
       q: d => d.ok ? '완성!' : `전개도를 접을 때 <b style="color:#dc2626">빨간 선분</b>과 만나는 선분을 예상해서 눌러요. 그다음 <b>접어서</b> 확인해요.`,
       init: () => ({ t: 0, pick: null, ok: false }),
       view: d => { const mk = { [hi]: '#dc2626' }; if (d.pick) mk[d.pick] = d.ok ? '#16a34a' : '#f59e0b';
-        return `<div class="foldbox"><div>${NETV.svg(Object.assign({}, o, { w: 340, tap: d.ok ? null : 'mt', mark: mk }))}<div class="center"><small>내가 고른 선분 = <b style="color:#d97706">주황</b></small></div></div><div>${GEO.fold(o, d.t, { w: 300, mark: mk })}<div class="center"><small>접은 모습</small></div></div></div>`
+        return `<div class="foldbox"><div>${NETV.svg(Object.assign({}, o, { w: 340, tap: d.ok ? null : 'mt', mark: mk }))}<div class="center"><small>내가 고른 선분 = <b style="color:#d97706">주황</b></small></div></div><div>${FD(o, d.t, { w: 300, mark: mk })}<div class="center"><small>접은 모습</small></div></div></div>`
           + foldBar(d.t) + (d.ok ? `<div class="ckbig">접으면 두 선분이 만나 하나의 <b>모서리</b>가 돼요. 맞닿는 선분은 길이가 같아요!</div>` : d.pick ? ckRow(ckBtn('mchk', '✔ 이 선분이에요', 'btn-green')) : ''); },
       on: { 'act:ft'(d, v, el, api) { stepT(d, v); api.clear(); }, 'act:mt'(d, v, el, api) { if (v === hi) return; d.pick = v; api.clear(); },
         'act:mchk'(d, v, el, api) { if (d.t < 1) { api.say(false, '먼저 끝까지 접어서 빨간 선분과 주황 선분이 만나는지 확인해 봐요.', true); return; }
@@ -10324,7 +10529,7 @@ const JX = (() => {
     init: () => ({ cur: keys[0], t: 0, m: {} }),
     view: d => { const N = NETS[d.cur][0];
       return `<div class="gkchips">${keys.map((k, i) => ckBtn('nc', `${'가나다라마바'[i]} ${d.m[k] == null ? '' : d.m[k] ? '✅' : '❌'}`, d.cur === k ? 'btn-primary gkchip' : 'btn-sub gkchip', k)).join('')}</div>`
-        + `<div class="foldbox"><div>${NETV.svg(Object.assign({}, N, { w: 320 }))}</div><div>${GEO.fold(N, d.t, { w: 300 })}</div></div>` + foldBar(d.t)
+        + `<div class="foldbox"><div>${NETV.svg(Object.assign({}, N, { w: 320 }))}</div><div>${FD(N, d.t, { w: 300 })}</div></div>` + foldBar(d.t)
         + (d.m[d.cur] == null ? ckRow(ckBtn('nj', '✅ 각기둥의 전개도예요', 'btn-green', '1') + ckBtn('nj', '❌ 전개도가 아니에요', 'btn-sub', '0')) : ''); },
     on: { 'act:ft'(d, v, el, api) { stepT(d, v); api.clear(); }, 'act:nc'(d, v, el, api) { d.cur = v; d.t = 0; api.clear(); },
       'act:nj'(d, v, el, api) { const N = NETS[d.cur]; if (d.t < 1) { api.say(false, '먼저 끝까지 접어 보고 판정해요.', true); return; } if (+v !== N[1]) { api.say(false, N[1] ? '접은 모습을 다시 보세요. 빈 곳이나 겹치는 곳이 있나요?' : N[2], true); return; }
@@ -10343,9 +10548,9 @@ const JX = (() => {
       q: d => d.ok ? '완성!' : !d.at ? '전개도에 <b>밑면이 하나 빠졌어요</b>. 밑면 조각을 끌어 붙이고 싶은 자리에 놓은 뒤 <b>접어서</b> 확인해요.' : '접어서 각기둥이 되는지 확인해요.',
       init: () => ({ at: null, t: 0, ok: false }),
       view: d => { const o = Object.assign({}, base, d.at ? (d.at.up ? { top: [top, d.at.i], bot: null } : { top, bot: d.at.i }) : { top, bot: null });
-        const ov = d.ok ? '' : `<div class="netdz">${zones.map(z => `<span class="ckzone" data-dz="ck-pl" data-i="${z.up ? 'u' : 'd'}${z.at}" style="min-height:34px;padding:2px 8px;font-size:.85rem">${z.up ? '⬆ 위' : '⬇ 아래'} ${z.at + 1}번 옆면</span>`).join('')}</div>`;
-        return `<div class="foldbox"><div>${NETV.svg(Object.assign({}, o, { w: 340, zones: d.at || d.ok ? [] : zones }))}</div><div>${d.at ? GEO.fold(o, d.t, { w: 300 }) : '<div class="center" style="color:#64748b;font-weight:800">밑면을 붙이면<br>여기서 접어 볼 수 있어요</div>'}</div></div>`
-          + (d.at ? foldBar(d.t) + (d.ok ? `<div class="ckbig">밑면은 옆면들의 <b>위와 아래에 하나씩</b>! 아래쪽이면 어느 옆면에 붙여도 접혀요.</div>` : ckRow(ckBtn('pj', '✅ 각기둥이 돼요', 'btn-green', '1') + ckBtn('pj', '↺ 다른 자리에 붙이기', 'btn-sub', '0'))) : ov + ckSrc('✋ 밑면 조각을 끌어 자리 단추에 놓아요', ckPiece('ck-pl', 'base', `<b style="font-size:1.1rem">🟦 밑면 조각</b>`))); },
+        const ov = '';
+        return `<div class="foldbox"><div>${NETV.svg(Object.assign({}, o, { w: 340, zones: d.at || d.ok ? [] : zones.map(ZD) }))}</div><div>${d.at ? FD(o, d.t, { w: 300 }) : '<div class="center" style="color:#64748b;font-weight:800">밑면을 붙이면<br>여기서 접어 볼 수 있어요</div>'}</div></div>`
+          + (d.at ? foldBar(d.t) + (d.ok ? `<div class="ckbig">밑면은 옆면들의 <b>위와 아래에 하나씩</b>! 아래쪽이면 어느 옆면에 붙여도 접혀요.</div>` : ckRow(ckBtn('pj', '✅ 각기둥이 돼요', 'btn-green', '1') + ckBtn('pj', '↺ 다른 자리에 붙이기', 'btn-sub', '0'))) : ov + ckSrc('✋ 밑면 조각을 끌면 붙일 수 있는 <b>점선 자리</b>가 나타나요. 붙이고 싶은 자리에 놓아요', ckPiece('ck-pl', 'base', basePiece(base)))); },
       on: { 'ck-pl:drop'(d, v, z, el, api) { if (z !== 'ck-pl') return; const s = el.dataset.i; d.at = { up: s[0] === 'u', i: +s.slice(1) }; d.t = 0; api.clear(); },
         'act:ft'(d, v, el, api) { stepT(d, v); if (d.t === 1 && d.at && d.at.up) api.say(false, '접어 보니 위쪽에 밑면이 두 개 겹치고, 아래쪽은 비었어요!', true); else api.clear(); },
         'act:pj'(d, v, el, api) { if (v === '0') { d.at = null; d.t = 0; api.clear(); return; } if (d.t < 1) { api.say(false, '먼저 끝까지 접어서 확인해요.', true); return; } if (d.at.up) { api.say(false, '접은 모습을 보세요. 위는 겹치고 아래는 비었어요. 다른 자리에 붙여 봐요.', true); return; } d.ok = true; api.win(say()); } } }; };
@@ -11215,6 +11420,9 @@ body.svsl-on .svsl-qhide{display:none!important}
 body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
 /* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
 body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
+
+/* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
+body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -11605,7 +11813,21 @@ function fitQ(q, box, opt) { if (!q || !box) return; qShape(q);
     if (lv === 0 && sibs.length) { sibs.forEach(c => { c.style.zoom = .62; }); return fitQ(q, box, { lv: 1 }); }
     if (lv <= 1 && sibs.length) { sibs.forEach(c => c.classList.add('svsl-qhide')); return fitQ(q, box, { lv: 2 }); }
     if (lv <= 2) return fitQ(q, box, { lv: 3, floor: .56 });
-    box.classList.add('svsl-qscroll'); } }
+    box.classList.add('svsl-qscroll'); }
+  else figFinal(q, box, key, answered); }
+/* 마지막 배치가 끝난 뒤, 왼쪽 그림 칸의 실제 크기에 그림을 꽉 맞춰요 (빈 칸 없이). 답을 고른 뒤에는 그림이 더 커지지 않아요 */
+const FZ = {};
+function figFinal(q, box, key, answered) { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (!f) return;
+  const keep = f.style.zoom, keepH = qF.style.height; f.style.zoom = 1; const fw = f.offsetWidth || 1, fh = f.offsetHeight || 1; f.style.zoom = .05; qF.style.height = ''; const base = Math.max(box.clientHeight, box.scrollHeight) + 1;
+  const cs = getComputedStyle(qF), W = qF.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8, H = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+  let z = Math.max(.5, Math.min(3.2, W / fw, H / fh)); if (answered && FZ[key]) z = Math.min(z, FZ[key]); else if (!answered) FZ[key] = z;
+  f.style.zoom = z.toFixed(3);
+  const over = () => box.scrollHeight > base;
+  for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+  if (over()) { qF.style.height = keepH; f.style.zoom = .05; const H2 = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+    z = Math.max(.5, Math.min(z / .95 ** 14, W / fw, H2 / fh)); f.style.zoom = z.toFixed(3);
+    for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+    if (over()) f.style.zoom = keep; } }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];

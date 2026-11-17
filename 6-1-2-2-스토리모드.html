@@ -7009,13 +7009,14 @@ const GEO = (() => {
   /* 각기둥 전개도: 옆면 n개를 가로로, 밑면을 위(top 번째 옆면)·아래(bot 번째 옆면)에 붙여요. sides: 밑면 변 길이(정다각형이면 생략) */
   function net(o) {
     const n = o.n, a = o.a || 40, h = o.h || 70, sides = o.sides || Array(n).fill(a), xs = [0]; sides.forEach(s => xs.push(xs[xs.length - 1] + s));
-    const ext = (A, B, up) => { /* A→B 변 위(up)/아래에 정다각형 또는 직사각형 */ const L = Math.hypot(B[0] - A[0], B[1] - A[1]), V = [A, B];
-      if (o.rect) { const d = o.rect; const sgn = up ? -1 : 1; V.push([B[0], B[1] + sgn * d], [A[0], A[1] + sgn * d]); return V; }
+    const uneven = sides.length === 4 && sides.some(x => Math.abs(x - sides[0]) > 1e-9);   /* 밑면이 직사각형인 사각기둥: 붙는 변 옆의 길이만큼 */
+    const ext = (A, B, up, at) => { /* A→B 변 위(up)/아래에 정다각형 또는 직사각형 */ const L = Math.hypot(B[0] - A[0], B[1] - A[1]), V = [A, B];
+      if (o.rect || uneven) { const d = uneven ? sides[(at + 1) % n] : o.rect; const sgn = up ? -1 : 1; V.push([B[0], B[1] + sgn * d], [A[0], A[1] + sgn * d]); return V; }
       let p = B, dir = Math.atan2(B[1] - A[1], B[0] - A[0]); const turn = (up ? -1 : 1) * 2 * Math.PI / n;
       for (let i = 0; i < n - 2; i++) { dir += turn; p = [p[0] + L * Math.cos(dir), p[1] + L * Math.sin(dir)]; V.push(p); } return V; };
     const rects = sides.map((s, i) => [[xs[i], 0], [xs[i + 1], 0], [xs[i + 1], h], [xs[i], h]]);
-    const tops = (o.top == null ? [] : [].concat(o.top)).map(t => ({ at: t, up: true, V: ext([xs[t], 0], [xs[t + 1], 0], true) }));
-    const bots = (o.bot == null ? [] : [].concat(o.bot)).map(t => ({ at: t, up: false, V: ext([xs[t], h], [xs[t + 1], h], false) }));
+    const tops = (o.top == null ? [] : [].concat(o.top)).map(t => ({ at: t, up: true, V: ext([xs[t], 0], [xs[t + 1], 0], true, t) }));
+    const bots = (o.bot == null ? [] : [].concat(o.bot)).map(t => ({ at: t, up: false, V: ext([xs[t], h], [xs[t + 1], h], false, t) }));
     const all = [...rects.flat(), ...tops.flatMap(t => t.V), ...bots.flatMap(t => t.V)], mnx = Math.min(...all.map(p => p[0])), mxx = Math.max(...all.map(p => p[0])), mny = Math.min(...all.map(p => p[1])), mxy = Math.max(...all.map(p => p[1]));
     const pad = 14, ox = pad - mnx, oy = pad - mny, W = mxx - mnx + 2 * pad, Hh = mxy - mny + 2 * pad, P = p => `${(p[0] + ox).toFixed(1)},${(p[1] + oy).toFixed(1)}`;
     return { W, Hh, ox, oy, rects, tops, bots, xs, h, P, sides };
@@ -7028,11 +7029,11 @@ const GEO = (() => {
     /* 밑면: 경첩(A→B)에서 접히는 방향 d = cos(90°t)·(위/아래) + sin(90°t)·(안쪽) */
     const inward = (A, B) => { const u = [B[0] - A[0], 0, B[2] - A[2]], L = Math.hypot(u[0], u[2]); return [-u[2] / L, 0, u[0] / L]; };
     const baseV = (A, B, vert, k) => { const u = [B[0] - A[0], B[1] - A[1], B[2] - A[2]], L = Math.hypot(...u), U = u.map(x => x / L), nI = inward(A, B), th = Math.PI / 2 * t, D = [0, 1, 2].map(j => Math.cos(th) * vert[j] + Math.sin(th) * nI[j]);
-      const V = [A, B]; if (o.rect) { V.push(B.map((x, j) => x + D[j] * o.rect), A.map((x, j) => x + D[j] * o.rect)); return V; }
+      const V = [A, B], rd = (sides.length === 4 && sides.some(x => Math.abs(x - sides[0]) > 1e-9)) ? sides[(k + 1) % n] : o.rect; if (rd) { V.push(B.map((x, j) => x + D[j] * rd), A.map((x, j) => x + D[j] * rd)); return V; }
       let q2 = [L, 0], dir = 0; const pts = [[0, 0], [L, 0]]; for (let i = 0; i < n - 2; i++) { dir += 2 * Math.PI / n; q2 = [q2[0] + L * Math.cos(dir), q2[1] + L * Math.sin(dir)]; pts.push(q2); }
       return pts.map(([x, y]) => A.map((a0, j) => a0 + x * U[j] + y * D[j])); };
-    [].concat(o.top == null ? [] : o.top).forEach((at, k) => FA.push({ id: 'TP' + k, v: baseV(up(p[at], h), up(p[at + 1], h), [0, 1, 0]), c: '#bfdbfe' }));
-    [].concat(o.bot == null ? [] : o.bot).forEach((at, k) => FA.push({ id: 'BP' + k, v: baseV(p[at], p[at + 1], [0, -1, 0]), c: '#bfdbfe' }));
+    [].concat(o.top == null ? [] : o.top).forEach((at, k) => FA.push({ id: 'TP' + k, v: baseV(up(p[at], h), up(p[at + 1], h), [0, 1, 0], at), c: '#bfdbfe' }));
+    [].concat(o.bot == null ? [] : o.bot).forEach((at, k) => FA.push({ id: 'BP' + k, v: baseV(p[at], p[at + 1], [0, -1, 0], at), c: '#bfdbfe' }));
     /* 둘레 선분(NETV.edges 와 같은 이름) */
     const ED = [], tA = [].concat(o.top == null ? [] : o.top), bA = [].concat(o.bot == null ? [] : o.bot);
     for (let i = 0; i < m; i++) { if (!tA.includes(i)) ED.push(['T' + i, up(p[i], h), up(p[i + 1], h)]); if (!bA.includes(i)) ED.push(['B' + i, p[i], p[i + 1]]); }
@@ -7063,7 +7064,7 @@ const GEO = (() => {
   document.addEventListener('click', e => { if (moved && e.target.closest && e.target.closest('svg.georot')) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   try { const st = document.createElement('style'); st.textContent = 'svg.georot{touch-action:none;cursor:grab}svg.georot:active{cursor:grabbing}svg.georot.georot-did .georothint{display:none}'
     + 'svg.geosvg .geozoom{display:none}svg.geosm .geozoom,[data-dg] svg.geosvg .geozoom{display:inline}[data-dg] .georothint{display:none}'
-    + '.geogrid>div>svg.geosvg{width:min(100%,200px)!important;height:auto!important}.geofig>svg.geosvg{width:min(100%,340px)!important;height:auto!important}.geofig{display:flex!important;justify-content:center}body.svsl-on .qcard .geofig>svg.geosvg{width:min(100%,46vh)!important}body.svsl-on .qcard .geogrid>div>svg.geosvg{width:min(100%,30vh)!important}body.svsl-on.svsl-port .qcard .geofig>svg.geosvg{width:min(100%,28vh)!important}body.svsl-on.svsl-port .qcard .geogrid>div>svg.geosvg{width:min(100%,18vh)!important}' + '#geoZoom{position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.62);display:flex;align-items:center;justify-content:center;padding:16px}#geoZoom .gzbox{background:#fff;border-radius:22px;padding:14px 16px 16px;max-width:min(460px,96vw);width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}#geoZoom .gzbox svg{width:100%;max-height:62vh}#geoZoom .gzt{font-weight:900;font-size:1.05rem;margin-bottom:6px}'; document.head.appendChild(st); } catch (e) {}
+    + 'svg .netzone{cursor:copy;transition:fill .15s,opacity .2s;outline:none!important;opacity:0}body.dg-active svg .netzone{opacity:1}svg .netzone.dzover{fill:rgba(34,197,94,.35)!important;stroke:#16a34a!important;stroke-width:3!important;outline:none!important}.geogrid>div>svg.geosvg{width:min(100%,200px)!important;height:auto!important}.geofig>svg.geosvg{width:min(100%,340px)!important;height:auto!important}.geofig{display:flex!important;justify-content:center}body.svsl-on .qcard .geofig>svg.geosvg{width:min(100%,46vh)!important}body.svsl-on .qcard .geogrid>div>svg.geosvg{width:min(100%,30vh)!important}body.svsl-on.svsl-port .qcard .geofig>svg.geosvg{width:min(100%,28vh)!important}body.svsl-on.svsl-port .qcard .geogrid>div>svg.geosvg{width:min(100%,18vh)!important}' + '#geoZoom{position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.62);display:flex;align-items:center;justify-content:center;padding:16px}#geoZoom .gzbox{background:#fff;border-radius:22px;padding:14px 16px 16px;max-width:min(460px,96vw);width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}#geoZoom .gzbox svg{width:100%;max-height:62vh}#geoZoom .gzt{font-weight:900;font-size:1.05rem;margin-bottom:6px}'; document.head.appendChild(st); } catch (e) {}
   /* 🔍 크게 보기: 작은 그림·카드 속 그림을 누르면 크게 열어 돌려 볼 수 있어요 */
   const zoomStop = e => { if (e.target.closest && e.target.closest('.geozoom')) { e.stopImmediatePropagation(); if (e.type !== 'click') return; e.preventDefault(); let o; try { o = JSON.parse(decodeURIComponent(e.target.closest('.geozoom').dataset.geoz)); } catch (x) { return; } openZoom(o); } };
   ['pointerdown', 'mousedown', 'touchstart', 'click'].forEach(t => window.addEventListener(t, zoomStop, { capture: true, passive: false }));
@@ -7077,16 +7078,19 @@ const GEO = (() => {
 /* 전개도 그림 (6-1-2-3) */
 const NETV = (() => {
   /* o: { n, a, h, sides, rect, top, bot, w, fill:{id:color}, tap:'act', mark:{edgeId:color}, dz:{zones} } → svg */
-  function svg(o) { const N = GEO.net(o), P = N.P, n = o.sides ? o.sides.length : o.n, fl = o.fill || {}, mk = o.mark || {};
-    const sc = Math.min(1.6, (o.w || 360) / N.W), W = Math.round(N.W * sc), H = Math.round(N.Hh * sc);
+  function svg(o) { const N = GEO.net(o); if (o.zones && o.zones.length) { const zu = o.zones.filter(z => z.up).map(z => z.at).concat(o.top == null ? [] : [].concat(o.top)), zd = o.zones.filter(z => !z.up).map(z => z.at).concat(o.bot == null ? [] : [].concat(o.bot)), N2 = GEO.net(Object.assign({}, o, { top: zu, bot: zd })); Object.assign(N, { W: N2.W, Hh: N2.Hh, P: N2.P, ox: N2.ox, oy: N2.oy }); } const P = N.P, n = o.sides ? o.sides.length : o.n, fl = o.fill || {}, mk = o.mark || {};
+    const sc = Math.min(2.4, (o.w || 360) / N.W), W = Math.round(N.W * sc), H = Math.round(N.Hh * sc);
     let s = `<svg class="geosvg netsvg" viewBox="0 0 ${N.W.toFixed(0)} ${N.Hh.toFixed(0)}" width="${W}" height="${H}" style="max-width:100%;height:auto;overflow:visible">`;
     const tf = id => o.tapF ? `data-ck="${o.tapF}" data-v="${id}" style="cursor:pointer"` : '';
-    N.rects.forEach((r, i) => { s += `<polygon points="${r.map(P).join(' ')}" fill="${fl['S' + i] || '#fef3c7'}" stroke="#1e293b" stroke-width="1.6" ${tf('S' + i)}/>`; });
-    [...N.tops.map((t, k) => ['T', t, k]), ...N.bots.map((t, k) => ['B', t, k])].forEach(([w, t, k]) => { s += `<polygon points="${t.V.map(P).join(' ')}" fill="${fl[w + 'P' + k] || '#bfdbfe'}" stroke="#1e293b" stroke-width="1.6" ${tf(w + 'P' + k)}/>`; });
-    /* 둘레 선분 */
+    N.rects.forEach((r, i) => { s += `<polygon points="${r.map(P).join(' ')}" fill="${fl['S' + i] || '#fef3c7'}" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4" ${tf('S' + i)}/>`; });
+    [...N.tops.map((t, k) => ['T', t, k]), ...N.bots.map((t, k) => ['B', t, k])].forEach(([w, t, k]) => { s += `<polygon points="${t.V.map(P).join(' ')}" fill="${fl[w + 'P' + k] || '#bfdbfe'}" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4" ${tf(w + 'P' + k)}/>`; });
+    /* 둘레 선분 (실선) — 안쪽 접는 선은 위 면들의 점선 그대로 */
     const E = edges(N, o); E.forEach(e => { s += `<line x1="${P(e.p)[0] ? P(e.p).split(',')[0] : 0}" y1="${P(e.p).split(',')[1]}" x2="${P(e.q).split(',')[0]}" y2="${P(e.q).split(',')[1]}" stroke="${mk[e.id] || '#1e293b'}" stroke-width="${mk[e.id] ? 6 : 2.4}" stroke-linecap="round"/>`; });
+    /* 밑면이 붙어 둘레가 아닌 옆면의 위·아래 변도 표시할 수 있어요 (옆면을 이은 직사각형의 가로 등) */
+    Object.keys(mk).forEach(id => { const m = /^([TB])(\d+)$/.exec(id); if (!m || E.some(e => e.id === id)) return; const r = N.rects[+m[2]]; if (!r) return; const p = m[1] === 'T' ? r[0] : r[3], q = m[1] === 'T' ? r[1] : r[2];
+      s += `<line x1="${P(p).split(',')[0]}" y1="${P(p).split(',')[1]}" x2="${P(q).split(',')[0]}" y2="${P(q).split(',')[1]}" stroke="${mk[id]}" stroke-width="6" stroke-linecap="round"/>`; });
     if (o.tap) E.forEach(e => { s += `<line x1="${P(e.p).split(',')[0]}" y1="${P(e.p).split(',')[1]}" x2="${P(e.q).split(',')[0]}" y2="${P(e.q).split(',')[1]}" stroke="transparent" stroke-width="16" data-ck="${o.tap}" data-v="${e.id}" style="cursor:pointer"/>`; });
-    if (o.zones) o.zones.forEach(z => { const ph = poly(N, z.at, z.up, o); s += `<polygon points="${ph.map(P).join(' ')}" fill="${z.fill || 'rgba(148,163,184,.12)'}" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="5 4"/>`; });
+    if (o.zones) o.zones.forEach(z => { const ph = poly(N, z.at, z.up, o); s += `<polygon points="${ph.map(P).join(' ')}" fill="${z.fill || 'rgba(148,163,184,.12)'}" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="5 4" ${z.dz ? `data-dz="${z.dz}" data-i="${z.id}" class="netzone"` : ''}/>`; });
     if (o.labels) o.labels.forEach(([x, y, t, c]) => { const pp = [x, y]; s += `<text x="${P(pp).split(',')[0]}" y="${P(pp).split(',')[1]}" text-anchor="middle" dominant-baseline="middle" font-size="${o.fs || 14}" font-weight="900" fill="${c || '#1e293b'}">${t}</text>`; });
     return s + '</svg>'; }
   function poly(N, at, up, o) { const xs = N.xs, h = N.h, A = up ? [xs[at], 0] : [xs[at], h], B = up ? [xs[at + 1], 0] : [xs[at + 1], h]; const g = GEO.net(Object.assign({}, o, { top: up ? at : null, bot: up ? null : at })); return (up ? g.tops[0] : g.bots[0]).V; }
@@ -7854,6 +7858,8 @@ showTab = function (k) { _pz_showTab(k); pauseAway(); resumeHere(); };
 .wnimg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:8px 0;background:#fffdf6;border-radius:14px;padding:4px}.wnimg .dtwrap{margin:0;max-width:100%}
 .wnimg .afw{margin:0}.wnimg svg{max-width:100%;height:auto}
 .wnimg.sm{justify-content:flex-start;background:none;padding:0}.wnimg.sm{flex-wrap:wrap;gap:6px}.wnimg.sm svg{max-height:140px;width:auto}.wnimg.sm .dtwrap{margin:0}
+
+.wnimg svg{max-width:100%;height:auto}.wnimg .geogrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.wnimg.sm .geogrid>div>svg{max-height:110px}.wngo{margin-top:6px}
 </style>
 <script>
 /* =====================================================================
@@ -7878,15 +7884,16 @@ const WN = (() => {
   const strip = h => { const d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<br\s*\/?>/gi, ' ').replace(/<\/(div|p|span)>/gi, '$& '); return d.textContent.replace(/\s+/g, ' ').trim(); };
   const hsh = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   /* 문제 속 그림·표는 그림으로, 글은 그림을 뺀 문장만 */
-  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const FIGSEL = '.afw,.dtwrap,.geogrid,.geofig,.rffig,.v2fig,.uqfig,.center.rffig,svg';
+  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   /* 위아래로 쓴 분수(그림 글자)는 글로 옮길 때 '분자/분모'로 바꿔 두면 화면에서 다시 위아래 분수로 보여요 */
   const frText = c => { c.querySelectorAll('.mixf').forEach(m => { const t = [...m.querySelectorAll('span')].map(x => x.textContent.trim()).filter(Boolean); if (t.length === 3) m.replaceWith(`${t[0]} ${t[1]}/${t[2]}`); });
     [...c.querySelectorAll('span,div')].reverse().forEach(f => { if (!c.contains(f) || !/(^|\s)(frc|fr|frac|frx|fr-v|svfr)(\s|$)/.test(f.className || '')) return; const k = [...f.children].filter(x => x.tagName !== 'I' && x.tagName !== 'HR'); if (k.length === 2) f.replaceWith(`${k[0].textContent.trim()}/${k[1].textContent.trim()}`); }); };
-  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll('.afw,.dtwrap,svg,table').forEach(e => e.remove()); frText(c);
+  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll(FIGSEL + ',table').forEach(e => e.remove()); frText(c);
     /* 색칠한 숫자(큰 수 문제)는 [ ]로 표시해서 오답노트에서도 알아볼 수 있게 */
     let hl = false; c.querySelectorAll('.bignum').forEach(n => { n.querySelectorAll('.hl').forEach(h => { h.replaceWith('[' + h.textContent + ']'); hl = true; }); n.replaceWith(n.textContent); });
     let t = strip(c.innerHTML); if (hl) t = t.replace(/색칠한 숫자/g, '[ ] 안의 숫자'); return t; };
-  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   const qtOf = card => { const q = card && card.querySelector('.qtext'); return q ? txtOf(q.innerHTML) : ''; };
   const norm = s => String(s == null ? '' : s).replace(/[,\s원개번]/g, '');
   let sel = new Set(), view = 'list', run = null;
@@ -7943,10 +7950,10 @@ const WN = (() => {
       ${n ? `<div class="wntools"><label class="wnall"><input type="checkbox" data-wn="all" ${picked.length === n ? 'checked' : ''}> 모두 고르기</label><span class="wncnt">모은 문제 ${n}개 중 <b>${picked.length}개</b> 고름</span>${items.some(e => e.cleared) ? '<button class="btn btn-sub sm" data-wn="purge">🧹 맞힌 문제 정리</button>' : ''}</div>
       <div class="wnlist2">${L.map((e, i) => `<label class="wnitem ${e.cleared ? 'cleared' : ''}"><input type="checkbox" data-wn="pick" data-id="${e.id}" ${sel.has(e.id) ? 'checked' : ''}>
         <div class="wnbody"><div class="wnrow">${tag(e)}${e.cnt > 1 ? `<span class="wnrep">${e.cnt}번 틀림</span>` : ''}${e.cleared ? '<span class="wnok">✅ 다시 풀어 맞혔어요</span>' : ''}${!e.retry ? '<span class="wnpo">🖨 인쇄해서 풀기</span>' : ''}</div>
-        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
-      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
+        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}${!e.retry && e.step && !e.game ? `<button class="btn btn-sub sm wngo" data-wn="goto" data-id="${e.id}">↪ 그 단계로 가서 다시 도전</button>` : ''}</div></label>`).join('')}</div>
+      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${picked.length > rp.length ? `고른 ${picked.length}개 중 ${rp.length}개` : rp.length + '개'})</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 이 창에서 다시 풀 수 없어요. 「↪ 그 단계로 가서 다시 도전」을 누르거나 인쇄해서 풀어요.</p>` : ''}${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -8003,6 +8010,7 @@ const WN = (() => {
     if (a === 'close') return close();
     if (a === 'pick') { t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); return paint(); }
     if (a === 'all') { const L = all(); if (t.checked) L.forEach(x => sel.add(x.id)); else sel.clear(); return paint(); }
+    if (a === 'goto') { e.preventDefault(); const it = all().find(x => x.id === t.dataset.id); if (it && it.step) { close(); try { showTab(it.step[0]); if (it.step[1]) goStep(it.step[0], it.step[1]); } catch (er) {} } return; }
     if (a === 'run') { const list = all().filter(x => sel.has(x.id) && x.retry && !x.cleared); if (!list.length) return; run = { list: shuffle(list.slice()), i: 0, ans: null, res: [] }; view = 'run'; try { Sound.click(); } catch (er) {} return paint(); }
     if (a === 'ans') return judge(t.dataset.v);
     if (a === 'type') { const v = (document.getElementById('wnInput') || {}).value || ''; if (!v.trim()) return; return judge(v.trim()); }
@@ -10152,6 +10160,19 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
+
 
 /* =====================================================================
    🧗 JX · 보스전 도전 2·3을 조작형 사고력 문제로 (보기 고르기 대신 직접 만들기)
@@ -11318,6 +11339,9 @@ body.svsl-on .svsl-qhide{display:none!important}
 body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
 /* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
 body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
+
+/* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
+body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -11708,7 +11732,21 @@ function fitQ(q, box, opt) { if (!q || !box) return; qShape(q);
     if (lv === 0 && sibs.length) { sibs.forEach(c => { c.style.zoom = .62; }); return fitQ(q, box, { lv: 1 }); }
     if (lv <= 1 && sibs.length) { sibs.forEach(c => c.classList.add('svsl-qhide')); return fitQ(q, box, { lv: 2 }); }
     if (lv <= 2) return fitQ(q, box, { lv: 3, floor: .56 });
-    box.classList.add('svsl-qscroll'); } }
+    box.classList.add('svsl-qscroll'); }
+  else figFinal(q, box, key, answered); }
+/* 마지막 배치가 끝난 뒤, 왼쪽 그림 칸의 실제 크기에 그림을 꽉 맞춰요 (빈 칸 없이). 답을 고른 뒤에는 그림이 더 커지지 않아요 */
+const FZ = {};
+function figFinal(q, box, key, answered) { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (!f) return;
+  const keep = f.style.zoom, keepH = qF.style.height; f.style.zoom = 1; const fw = f.offsetWidth || 1, fh = f.offsetHeight || 1; f.style.zoom = .05; qF.style.height = ''; const base = Math.max(box.clientHeight, box.scrollHeight) + 1;
+  const cs = getComputedStyle(qF), W = qF.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8, H = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+  let z = Math.max(.5, Math.min(3.2, W / fw, H / fh)); if (answered && FZ[key]) z = Math.min(z, FZ[key]); else if (!answered) FZ[key] = z;
+  f.style.zoom = z.toFixed(3);
+  const over = () => box.scrollHeight > base;
+  for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+  if (over()) { qF.style.height = keepH; f.style.zoom = .05; const H2 = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+    z = Math.max(.5, Math.min(z / .95 ** 14, W / fw, H2 / fh)); f.style.zoom = z.toFixed(3);
+    for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+    if (over()) f.style.zoom = keep; } }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];

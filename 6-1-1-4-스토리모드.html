@@ -7784,6 +7784,8 @@ showTab = function (k) { _pz_showTab(k); pauseAway(); resumeHere(); };
 .wnimg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:8px 0;background:#fffdf6;border-radius:14px;padding:4px}.wnimg .dtwrap{margin:0;max-width:100%}
 .wnimg .afw{margin:0}.wnimg svg{max-width:100%;height:auto}
 .wnimg.sm{justify-content:flex-start;background:none;padding:0}.wnimg.sm{flex-wrap:wrap;gap:6px}.wnimg.sm svg{max-height:140px;width:auto}.wnimg.sm .dtwrap{margin:0}
+
+.wnimg svg{max-width:100%;height:auto}.wnimg .geogrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.wnimg.sm .geogrid>div>svg{max-height:110px}.wngo{margin-top:6px}
 </style>
 <script>
 /* =====================================================================
@@ -7808,15 +7810,16 @@ const WN = (() => {
   const strip = h => { const d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<br\s*\/?>/gi, ' ').replace(/<\/(div|p|span)>/gi, '$& '); return d.textContent.replace(/\s+/g, ' ').trim(); };
   const hsh = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   /* 문제 속 그림·표는 그림으로, 글은 그림을 뺀 문장만 */
-  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const FIGSEL = '.afw,.dtwrap,.geogrid,.geofig,.rffig,.v2fig,.uqfig,.center.rffig,svg';
+  const figOf = card => { const q = card && card.querySelector('.qtext'); if (!q) return ''; return [...q.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   /* 위아래로 쓴 분수(그림 글자)는 글로 옮길 때 '분자/분모'로 바꿔 두면 화면에서 다시 위아래 분수로 보여요 */
   const frText = c => { c.querySelectorAll('.mixf').forEach(m => { const t = [...m.querySelectorAll('span')].map(x => x.textContent.trim()).filter(Boolean); if (t.length === 3) m.replaceWith(`${t[0]} ${t[1]}/${t[2]}`); });
     [...c.querySelectorAll('span,div')].reverse().forEach(f => { if (!c.contains(f) || !/(^|\s)(frc|fr|frac|frx|fr-v|svfr)(\s|$)/.test(f.className || '')) return; const k = [...f.children].filter(x => x.tagName !== 'I' && x.tagName !== 'HR'); if (k.length === 2) f.replaceWith(`${k[0].textContent.trim()}/${k[1].textContent.trim()}`); }); };
-  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll('.afw,.dtwrap,svg,table').forEach(e => e.remove()); frText(c);
+  const txtOf = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); c.querySelectorAll(FIGSEL + ',table').forEach(e => e.remove()); frText(c);
     /* 색칠한 숫자(큰 수 문제)는 [ ]로 표시해서 오답노트에서도 알아볼 수 있게 */
     let hl = false; c.querySelectorAll('.bignum').forEach(n => { n.querySelectorAll('.hl').forEach(h => { h.replaceWith('[' + h.textContent + ']'); hl = true; }); n.replaceWith(n.textContent); });
     let t = strip(c.innerHTML); if (hl) t = t.replace(/색칠한 숫자/g, '[ ] 안의 숫자'); return t; };
-  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll('.afw,.dtwrap')].filter(e => !e.parentElement.closest('.afw,.dtwrap')).map(e => e.outerHTML).join(''); };
+  const figOfHtml = html => { const c = document.createElement('div'); c.innerHTML = String(html || ''); return [...c.querySelectorAll(FIGSEL)].filter(e => !e.parentElement.closest(FIGSEL)).map(e => e.outerHTML).join(''); };
   const qtOf = card => { const q = card && card.querySelector('.qtext'); return q ? txtOf(q.innerHTML) : ''; };
   const norm = s => String(s == null ? '' : s).replace(/[,\s원개번]/g, '');
   let sel = new Set(), view = 'list', run = null;
@@ -7873,10 +7876,10 @@ const WN = (() => {
       ${n ? `<div class="wntools"><label class="wnall"><input type="checkbox" data-wn="all" ${picked.length === n ? 'checked' : ''}> 모두 고르기</label><span class="wncnt">모은 문제 ${n}개 중 <b>${picked.length}개</b> 고름</span>${items.some(e => e.cleared) ? '<button class="btn btn-sub sm" data-wn="purge">🧹 맞힌 문제 정리</button>' : ''}</div>
       <div class="wnlist2">${L.map((e, i) => `<label class="wnitem ${e.cleared ? 'cleared' : ''}"><input type="checkbox" data-wn="pick" data-id="${e.id}" ${sel.has(e.id) ? 'checked' : ''}>
         <div class="wnbody"><div class="wnrow">${tag(e)}${e.cnt > 1 ? `<span class="wnrep">${e.cnt}번 틀림</span>` : ''}${e.cleared ? '<span class="wnok">✅ 다시 풀어 맞혔어요</span>' : ''}${!e.retry ? '<span class="wnpo">🖨 인쇄해서 풀기</span>' : ''}</div>
-        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
-      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
+        <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}${!e.retry && e.step && !e.game ? `<button class="btn btn-sub sm wngo" data-wn="goto" data-id="${e.id}">↪ 그 단계로 가서 다시 도전</button>` : ''}</div></label>`).join('')}</div>
+      <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${picked.length > rp.length ? `고른 ${picked.length}개 중 ${rp.length}개` : rp.length + '개'})</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 이 창에서 다시 풀 수 없어요. 「↪ 그 단계로 가서 다시 도전」을 누르거나 인쇄해서 풀어요.</p>` : ''}${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -7933,6 +7936,7 @@ const WN = (() => {
     if (a === 'close') return close();
     if (a === 'pick') { t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); return paint(); }
     if (a === 'all') { const L = all(); if (t.checked) L.forEach(x => sel.add(x.id)); else sel.clear(); return paint(); }
+    if (a === 'goto') { e.preventDefault(); const it = all().find(x => x.id === t.dataset.id); if (it && it.step) { close(); try { showTab(it.step[0]); if (it.step[1]) goStep(it.step[0], it.step[1]); } catch (er) {} } return; }
     if (a === 'run') { const list = all().filter(x => sel.has(x.id) && x.retry && !x.cleared); if (!list.length) return; run = { list: shuffle(list.slice()), i: 0, ans: null, res: [] }; view = 'run'; try { Sound.click(); } catch (er) {} return paint(); }
     if (a === 'ans') return judge(t.dataset.v);
     if (a === 'type') { const v = (document.getElementById('wnInput') || {}).value || ''; if (!v.trim()) return; return judge(v.trim()); }
@@ -10098,6 +10102,19 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
+
 
 /* =====================================================================
    🧗 JX · 보스전 도전 2·3을 조작형 사고력 문제로 (보기 고르기 대신 직접 만들기)
@@ -11030,6 +11047,9 @@ body.svsl-on .svsl-qhide{display:none!important}
 body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
 /* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
 body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
+
+/* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
+body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -11420,7 +11440,21 @@ function fitQ(q, box, opt) { if (!q || !box) return; qShape(q);
     if (lv === 0 && sibs.length) { sibs.forEach(c => { c.style.zoom = .62; }); return fitQ(q, box, { lv: 1 }); }
     if (lv <= 1 && sibs.length) { sibs.forEach(c => c.classList.add('svsl-qhide')); return fitQ(q, box, { lv: 2 }); }
     if (lv <= 2) return fitQ(q, box, { lv: 3, floor: .56 });
-    box.classList.add('svsl-qscroll'); } }
+    box.classList.add('svsl-qscroll'); }
+  else figFinal(q, box, key, answered); }
+/* 마지막 배치가 끝난 뒤, 왼쪽 그림 칸의 실제 크기에 그림을 꽉 맞춰요 (빈 칸 없이). 답을 고른 뒤에는 그림이 더 커지지 않아요 */
+const FZ = {};
+function figFinal(q, box, key, answered) { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (!f) return;
+  const keep = f.style.zoom, keepH = qF.style.height; f.style.zoom = 1; const fw = f.offsetWidth || 1, fh = f.offsetHeight || 1; f.style.zoom = .05; qF.style.height = ''; const base = Math.max(box.clientHeight, box.scrollHeight) + 1;
+  const cs = getComputedStyle(qF), W = qF.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8, H = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+  let z = Math.max(.5, Math.min(3.2, W / fw, H / fh)); if (answered && FZ[key]) z = Math.min(z, FZ[key]); else if (!answered) FZ[key] = z;
+  f.style.zoom = z.toFixed(3);
+  const over = () => box.scrollHeight > base;
+  for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+  if (over()) { qF.style.height = keepH; f.style.zoom = .05; const H2 = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+    z = Math.max(.5, Math.min(z / .95 ** 14, W / fw, H2 / fh)); f.style.zoom = z.toFixed(3);
+    for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+    if (over()) f.style.zoom = keep; } }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
