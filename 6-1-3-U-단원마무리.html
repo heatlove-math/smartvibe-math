@@ -8216,6 +8216,9 @@ body.svsl-on .svsl-qhide{display:none!important}
 body.svsl-on.svsl-land[data-svst=jump] .svsl-jgrid>.svsl-jfig{overflow:visible!important}
 /* 창 높이가 낮을 때 그림판(canvas) 게임: 악당 말 줄과 설명 글을 접어 그림판을 크게 */
 body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.stage-head p.sub{display:none!important}
+
+/* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
+body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -8837,6 +8840,23 @@ window.SV_ARENA={"u": "6-1-3-U", "unit": "3단원 「소수의 나눗셈」", "g
 .fu-fin .dgtab{margin:0 auto}
 .fu-tip{margin:10px 0 0;font-weight:800;color:#92400e;background:#fffbeb;border:2px dashed #fcd34d;border-radius:14px;padding:8px 12px;text-align:left;line-height:1.5}
 @media (max-width:760px){.fu-fin{grid-template-columns:1fr}.fu-menu .gates{grid-template-columns:1fr}}
+
+/* ⚔️ 도전장 (단원 마무리 첫 장면) */
+#stOv.fu-chal #stBox{width:min(1120px,95vw)!important;max-width:none!important;max-height:94vh;overflow:auto;padding:18px 22px!important;background:radial-gradient(circle at 18% 30%,#4c1d95 0,#1e1b4b 55%,#0f172a 100%)!important;border:4px solid #a78bfa!important;color:#fff}
+.fuch{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px;align-items:center}
+.fuchL{text-align:center}.fuchV{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:250px}.fuchV img{width:100%;max-height:min(62vh,460px);object-fit:contain;border-radius:18px;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}.fuchV img+.fuchF{display:none}
+.fuchF{animation:fuchBob 2.4s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(167,139,250,.9))}@keyframes fuchBob{50%{transform:translateY(-8px) scale(1.03)}}
+.fuchN{font-family:'Jua',sans-serif;font-size:1.6rem;color:#fde68a;text-shadow:0 2px 0 #7c2d12;margin-top:4px}
+.fuchR{display:flex;flex-direction:column;gap:10px}.fuchR .stcap{align-self:flex-start}.fuchT{font-family:'Jua',sans-serif;font-size:2rem;color:#fde68a;text-shadow:0 3px 0 #7c2d12,0 0 18px rgba(253,230,138,.5);line-height:1.2}
+.fuchB{position:relative;background:#fff;color:#1e1b4b;border:4px solid #f43f5e;border-radius:20px;padding:12px 16px;font-weight:800;font-size:1.08rem;line-height:1.55}.fuchB b{color:#e11d48}
+.fuchB::before{content:'';position:absolute;left:-18px;top:26px;border:10px solid transparent;border-right:12px solid #f43f5e}
+.fuchG{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap}.fugt{flex:1 1 0;min-width:120px;background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.35);border-radius:16px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.fugt b{font-size:1.05rem}.fugt small{font-size:.82rem;opacity:.85;font-weight:700}.fugi{font-size:1.7rem}.fugt.now{border-color:#fde68a;background:rgba(253,230,138,.18);box-shadow:0 0 18px rgba(253,230,138,.45)}.fugt.ok{border-color:#4ade80;background:rgba(74,222,128,.15)}
+.fuga{align-self:center;font-weight:900;color:#fde68a;font-size:1.3rem}
+#stOv.fu-chal .stline .stbub2{color:#1e1b4b}#stOv.fu-chal .stwho{color:#e9d5ff}#stOv.fu-chal .stbtns{justify-content:flex-start}
+@media(max-width:760px){.fuch{grid-template-columns:1fr}.fuchV{min-height:150px}.fuchT{font-size:1.5rem}.fuchB::before{display:none}}
+@media(max-height:700px){.fuchV{min-height:170px}.fuchV img{max-height:52vh}.fuchT{font-size:1.6rem}.fuchB{font-size:.98rem;padding:9px 12px}.fugi{font-size:1.3rem}}
+.fuchFull{max-height:min(58vh,420px);max-width:100%;object-fit:contain}
 </style><script>
 /* =====================================================================
    🧭 단원 마무리 새 순서 (6학년 1학기 · SV_LF.flowU)
@@ -8955,6 +8975,28 @@ window.SV_ARENA={"u": "6-1-3-U", "unit": "3단원 「소수의 나눗셈」", "g
     Story.stepV = function () { const r = sv0(), tab = state.tab, step = (state[tab] || {}).step || (tab === 's2' ? 'drill' : 'concept');
       const M = { 's1:concept': `카드를 넘기며 배운 내용을 떠올리고, 확인 문제로 핵심 개념 배지 ${N}개를 모으자!`, 's1:result': '세트 1 결과를 확인하고 세트 2 단원 평가로!', 's2:drill': '단원 평가 하 · 중 · 상! 단계마다 10문제로 실력을 확인하자!', 's2:result': '단원 보고서 — 차시 진단 · 오답노트 · 제출 · 인쇄!' };
       if (r && M[tab + ':' + step]) r.m = M[tab + ':' + step]; return r; }; });
+  /* ---------- ⚔️ 도전장: 단원 마무리 첫 장면 (악당이 "나를 이겨 봐!") ---------- */
+  T(() => { const sc0 = Story.scene.bind(Story), P0 = BEATS.prologue;
+    Story.scene = function (id) {
+      if (id !== 'prologue' || !P0 || !document.getElementById('stBox')) { T(() => document.getElementById('stOv').classList.remove('fu-chal')); return sc0(id); }
+      this.cur = P0; const vk = P0.v || 'dark', V = VILLAINS[vk] || {}, vn = V.name || '악당', p = T(() => this.prog()) || { ch: [] }, G = T(() => SV_ARENA.games.length) || 0;
+      const dl = (P0.lines || []).find(l => l.w !== 'guide' && l.w !== 'narr'), gl = (P0.lines || []).filter(l => l.w === 'guide').pop();
+      const lid = String(CONFIG.LESSON_ID || ''), img = `./assets/scenes/${lid}-challenge.webp`;
+      const gates = [['🧭', '개념 복습', `개념 카드 ${N}장 · 확인 문제`, p.ch[0]], ['📋', '단원 평가', '하 · 중 · 상 각 10문항', p.ch[1]], ['👑', '왕중왕전', `차시 게임 ${G}개`, p.ch[2]]];
+      const nx = gates.findIndex(g => !g[3]), go = nx === 0 ? ['s1', 'concept'] : nx === 1 ? ['s2', 'drill'] : nx === 2 ? ['s2', 'arena'] : ['s2', 'result'];
+      P0.btns = [{ t: nx < 0 ? '📜 결과 보러 가기' : nx ? `⚔️ ${gates[nx][1]}에 도전!` : '⚔️ 도전 받기!', act: 'go', to: go }, { t: '😈 악당 보기', c: 'btn-sub', act: 'scene', to: 'villains' }];
+      $('#stBox').innerHTML = `<div class="fuch">
+        <div class="fuchL"><div class="fuchV"><img src="${img}" alt="" onerror="this.remove()"><div class="fuchF">${(() => { const u = T(() => typeof G56 !== 'undefined' && G56.full && G56.full(vk, 'laugh')); return u ? `<img class="fuchFull" src="${u}" alt="">` : this.face(vk, 230, 'happy'); })()}</div></div><div class="fuchN">${esc(vn)}</div></div>
+        <div class="fuchR"><span class="stcap">${esc(P0.cap || '최종 결전')}</span><div class="fuchT">📜 ${esc(vn)}의 도전장</div>
+          <div class="fuchB">${dl ? dl.t : ''} <b>세 관문을 모두 넘어 나를 이겨 봐라!</b></div>
+          <div class="fuchG">${gates.map((g, i) => `<div class="fugt ${g[3] ? 'ok' : i === nx ? 'now' : ''}"><span class="fugi">${g[3] ? '✅' : g[0]}</span><b>${i + 1}. ${g[1]}</b><small>${g[2]}</small></div>${i < 2 ? '<span class="fuga">➜</span>' : ''}`).join('')}</div>
+          ${gl ? `<div class="stline me"><span class="stav">${avatar(GUIDE(), 46, 'determined')}</span><div style="flex:1;min-width:0"><div class="stwho">${esc(CHARS[GUIDE()].name)}</div><div class="stbub2">${gl.t}</div></div></div>` : ''}
+          <div class="stbtns">${P0.btns.map((x, k) => `<button class="btn ${x.c || 'btn-primary'}" data-st="btn" data-i="${k}">${x.t}</button>`).join('')}</div></div></div>`;
+      const ov = document.getElementById('stOv'); ov.classList.add('fu-chal'); ov.classList.remove('hidden'); T(() => { Sound.whoosh(); });
+    };
+    /* 처음 열 때 다른 곳(수업 흐름)에서 옛 모양으로 그린 첫 장면도 도전장으로 바꿔 그려요 */
+    const box = document.getElementById('stBox'), cap = P0 && P0.cap;
+    if (box && cap) new MutationObserver(() => { if (box.querySelector('.fuch')) return; const c = box.querySelector('.stcap'); if (c && c.textContent.trim() === String(cap).trim() && !document.getElementById('stOv').classList.contains('hidden')) Story.scene('prologue'); else T(() => document.getElementById('stOv').classList.remove('fu-chal')); }).observe(box, { childList: true }); });
   /* 수호 보석: 6학년 1학기 차시 보석으로 세기 */
   T(() => { const uid = String(CONFIG.LESSON_ID || '').replace(/-U$/, ''); UnitGem.lessons = function () { const g = Gems.load(); return LESSONS.map(l => !!g[uid + '-' + l.n]); }; });
   T(() => { if (state.tab === 's2') renderS2(); else renderS1(); });
