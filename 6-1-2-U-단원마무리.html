@@ -9422,7 +9422,84 @@ body.um-on #toolBody>.ucwrap,body.um-on #toolBody>.ucwrap+.card{border:0!importa
 .umem.flip{animation:umFlip .6s ease-in forwards}@keyframes umFlip{0%{transform:perspective(900px) rotateY(0)}100%{transform:perspective(900px) rotateY(90deg);opacity:.2}}@keyframes umIn{from{transform:scale(.85);opacity:0}}
 .ucslide.umreveal{animation:umRev .6s .3s cubic-bezier(.3,1.3,.5,1) both}@keyframes umRev{0%{transform:perspective(900px) rotateY(-90deg);opacity:0}100%{transform:none;opacity:1}}
 @media(max-width:700px){*:has(>.umem){min-height:300px!important}.umem b{font-size:1.7rem}.umem em{font-size:1.2rem}.umst.on .umi{transform:none}.umw{height:auto;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:8px 0}.umw svg,.umchest{display:none}.umst{position:static;transform:none;width:30%}}
-</style><script>/* ===== 단원 마무리 · 개념 복습 새 디자인: 단원 모험 지도 + 뒤집는 기억 카드 ===== */
+
+.umwarn{margin-top:10px;background:#fef2f2;border:3px solid #fca5a5;border-left:10px solid #ef4444;border-radius:14px;padding:8px 12px;font-weight:800;color:#7f1d1d;font-size:1rem;line-height:1.5;word-break:keep-all;animation:umRev .5s .5s both}.umwarn b{color:#dc2626;margin-right:4px}
+.umem em{max-width:640px;line-height:1.45;word-break:keep-all}
+@media(max-width:700px){body.um-on #toolBody,body.um-on #toolBody>.ucwrap,body.um-on #toolBody>.ucwrap>.svsl-main,body.um-on #toolBody>.ucwrap>.svsl-main>div,body.um-on #toolBody>.ucwrap .ucslide{display:block!important;height:auto!important;max-height:none!important;overflow:visible!important;zoom:1!important}body.um-on #toolBody>.ucwrap>.svsl-main{position:relative;min-height:330px!important;margin-top:8px}body.um-on #toolBody>.ucwrap .ucfig{min-height:0!important;margin-bottom:8px}body.um-on #toolBody>.ucwrap .ucvis{zoom:1!important;max-width:100%}body.um-on #toolBody>.ucwrap .ucsum{zoom:1!important}body.um-on #toolBody>.ucwrap+.card{margin-top:10px!important}.umem{inset:2px}.umem-in{padding:0 10px;gap:6px}.umem-ic{font-size:2.4rem}.umem small{font-size:.85rem}.umem i{font-size:.85rem}.umt{font-size:.66rem}.umi{width:42px;height:42px}}
+</style><script>/* 단원 마무리 기억 카드: [기억나니? 질문, 조심! 자주 하는 실수] — 키: 단원|카드|장 */
+window.UMQ = {
+'4-1-1|man|0':['1000이 10개 모이면 어떤 수가 되고, 어떻게 읽었지?','10000을 「십천」이라고 읽지 않아요. 「만」 또는 「일만」이에요.'],
+'4-1-1|man|1':['다섯 자리 수에서 숫자 2가 천의 자리에 있으면 얼마를 나타냈지?','숫자 2라고 2만 나타내는 게 아니에요. 자리에 따라 2000, 20000이 돼요.'],
+'4-1-1|man|2':['만이 10개, 100개, 1000개이면 각각 얼마였지?','100만을 「백만」이 아니라 「만백」으로 읽지 않아요.'],
+'4-1-1|eok|0':['1000만이 10개이면 어떤 수가 되었지?','1억 = 100000000, 0이 8개예요. 7개로 쓰지 않게 조심!'],
+'4-1-1|eok|1':['큰 수는 몇 자리씩 끊어서 읽었지?','세 자리씩(쉼표) 끊어 읽으면 헷갈려요. 우리말은 네 자리씩 끊어요.'],
+'4-1-1|jo|0':['1000억이 10개이면 어떤 수가 되었지?','1조는 0이 12개예요.'],
+'4-1-1|jo|1':['0만 있는 자리는 어떻게 읽었지?','「영억」, 「영만」처럼 0인 자리를 읽지 않아요.'],
+'4-1-1|skip|0':['1억씩 뛰어 세면 어느 자리 숫자가 바뀌었지?','다른 자리 숫자는 그대로예요. 바뀌는 자리를 먼저 찾아요.'],
+'4-1-1|skip|1':['뛰어 세다가 그 자리 숫자가 9에서 1 커지면 어떻게 되었지?','9 다음에 「10」을 그 자리에 쓰지 않아요. 0이 되고 윗자리가 1 커져요.'],
+'4-1-1|skip|2':['10배씩 뛰어 세면 수의 끝이 어떻게 바뀌었지?','10배는 10을 더하는 것이 아니에요. 끝에 0이 하나 늘어요.'],
+'4-1-1|cmp|0':['자리 수가 다른 두 수는 무엇으로 크기를 비교했지?','맨 앞 숫자가 크다고 큰 수가 아니에요. 자리 수부터 세요.'],
+'4-1-1|cmp|1':['자리 수가 같으면 어느 자리부터 비교했지?','일의 자리부터 비교하지 않아요. 가장 높은 자리부터!'],
+'4-1-1|cmp|2':['「삼조 사천억」과 숫자로 쓴 수는 어떻게 비교했지?','모양이 다르면 같은 모양(숫자)으로 바꿔서 비교해요.'],
+'4-1-3|mt|0':['245 × 30은 245 × 3과 어떤 관계였지?','245 × 3을 하고 0을 안 붙이면 10배가 안 돼요.'],
+'4-1-3|mt|1':['500 × 40을 빠르게 계산하는 방법이 뭐였지?','5 × 4 = 20의 0을 빼먹고 2000이라고 하지 않아요. 답은 20000!'],
+'4-1-3|mtt|0':['213 × 18을 쉽게 계산하려면 18을 어떻게 나누었지?','213 × 8만 하고 213 × 10을 더하는 걸 잊지 않아요.'],
+'4-1-3|mtt|1':['세로셈 둘째 줄은 어디서부터 썼지?','둘째 줄을 일의 자리부터 쓰면 10배가 빠져요. 한 칸 왼쪽부터!'],
+'4-1-3|dt|0':['275 ÷ 30은 30씩 몇 번 덜어 낼 수 있었지?','나머지가 30보다 크거나 같으면 몫이 모자란 거예요.'],
+'4-1-3|dt|1':['나눗셈을 바르게 했는지 어떻게 확인했지?','검산할 때 나머지를 더하는 걸 잊지 않아요.'],
+'4-1-3|d1|0':['185 ÷ 23의 몫은 어떻게 짐작했지?','어림한 몫이 늘 정답은 아니에요. 꼭 곱해서 확인해요.'],
+'4-1-3|d1|1':['곱이 나누어지는 수보다 크면 몫을 어떻게 고쳤지?','나머지가 나누는 수와 같거나 크면 몫을 1 늘려야 해요.'],
+'4-1-3|d2|0':['437 ÷ 18의 몫이 두 자리 수인지 어떻게 알았지?','앞 한 자리만 보지 않아요. 앞 두 자리와 나누는 수를 비교해요.'],
+'4-1-3|d2|1':['몫이 두 자리 수인 나눗셈은 몇 번 나누었지?','남은 수에 일의 자리 숫자를 내리는 걸 잊지 않아요.'],
+'4-1-3|est|0':['498 × 39는 어떻게 어림했지?','세 자리 수는 몇백, 두 자리 수는 몇십으로! 둘 다 몇십으로 어림하지 않아요.'],
+'4-1-3|est|1':['모두 크게 어림했는데 예산 이하이면 어떻게 판단했지?','작게 어림해서 예산 이하라고 충분한 건 아니에요.'],
+'6-1-1|q1|0':['3 ÷ 4의 몫을 분수로 나타내면 분자와 분모는 각각 무엇이었지?','분모와 분자를 거꾸로 써서 4/3으로 쓰지 않아요.'],
+'6-1-1|q1|1':['7 ÷ 3처럼 몫이 1보다 크면 분수로 어떻게 나타냈지?','나머지 1을 버리지 않아요. 7/3 = 2 1/3'],
+'6-1-1|fd|0':['분자가 자연수의 배수일 때 (분수) ÷ (자연수)는 어떻게 계산했지?','분모를 나누지 않아요. 분자만 나누고 분모는 그대로예요.'],
+'6-1-1|fd|1':['분자가 자연수의 배수가 아니면 어떻게 바꾸어 나누었지?','분모와 분자에 같은 수를 곱해야 크기가 같아요.'],
+'6-1-1|fm|0':['÷ 3은 어떤 분수의 곱셈과 같았지?','÷ 3을 × 3으로 바꾸지 않아요. × 1/3이에요.'],
+'6-1-1|fm|1':['분수의 곱셈으로 바꾸면 분모는 어떻게 되었지?','자연수를 분자에 곱하지 않아요. 분모에 곱해요.'],
+'6-1-1|mx|0':['(대분수) ÷ (자연수)는 먼저 대분수를 무엇으로 바꾸었지?','대분수 그대로 분자만 나누면 틀려요. 가분수로!'],
+'6-1-1|mx|1':['자연수 부분만 나누면 왜 틀렸지?','분수 부분도 똑같이 나누어야 해요.'],
+'6-1-2|pr1|0':['각기둥의 밑면은 어떤 두 면이었지?','아래에 있다고 밑면이 아니에요. 평행하고 합동인 두 면이에요.'],
+'6-1-2|pr1|1':['각기둥의 옆면은 모두 어떤 모양이었지?','누워 있는 각기둥에서 바닥 면을 밑면이라고 하지 않아요.'],
+'6-1-2|pr2|0':['각기둥의 이름은 무엇을 보고 붙였지?','옆면의 모양이 아니라 밑면의 모양으로 이름을 붙여요.'],
+'6-1-2|pr2|1':['■각기둥의 꼭짓점, 면, 모서리 수는 어떤 규칙이었지?','꼭짓점 ■×2, 면 ■+2, 모서리 ■×3 — 섞어 쓰지 않아요.'],
+'6-1-2|net|0':['전개도를 접으면 맞닿는 선분은 길이가 어땠지?','맞닿는 선분의 길이가 다르면 접을 수 없어요.'],
+'6-1-2|net|1':['옆면의 세로와 가로는 각각 무엇과 같았지?','옆면의 세로는 밑면의 변이 아니라 높이예요.'],
+'6-1-2|pyr|0':['각뿔의 옆면은 어떤 모양이었고, 꼭짓점은 어디였지?','각뿔의 높이는 옆면의 빗변 길이가 아니에요. 밑면에 수직인 선분이에요.'],
+'6-1-2|pyr|1':['각뿔의 밑면은 몇 개였지?','각기둥처럼 밑면이 2개라고 생각하지 않아요. 각뿔은 1개!'],
+'6-1-3|dn1|0':['나누어지는 수가 1/100배가 되면 몫은 어떻게 되었지?','나누는 수가 같을 때만 몫도 똑같이 1/100배가 돼요.'],
+'6-1-3|dn1|1':['세로셈에서 몫의 소수점은 어디에 찍었지?','몫의 소수점을 아무 데나 찍지 않아요. 나누어지는 수의 소수점 바로 위!'],
+'6-1-3|dn2|0':['나누어지는 수가 나누는 수보다 작으면 몫의 일의 자리에 무엇을 썼지?','0을 빼먹고 몫을 쓰면 크기가 10배가 돼요.'],
+'6-1-3|dn2|1':['계산하기 전에 몫이 1보다 작은지 어떻게 알 수 있었지?','나누어지는 수 < 나누는 수이면 몫은 1보다 작아요.'],
+'6-1-3|zero|0':['나누어떨어지지 않으면 어떻게 계속 나누었지?','계산을 멈추고 나머지를 쓰지 않아요. 0을 내려 계속!'],
+'6-1-3|zero|1':['내린 수가 나누는 수보다 작으면 몫에 무엇을 썼지?','몫에 0을 쓰지 않고 넘어가면 자리가 밀려요.'],
+'6-1-3|nat|0':['분수로 나타낸 몫을 소수로 바꾸려면 분모를 무엇으로 만들었지?','분모와 분자에 같은 수를 곱해야 해요.'],
+'6-1-3|nat|1':['나머지가 남으면 소수점을 찍고 어떻게 했지?','나머지를 「…」로 남기지 않아요. 0을 내려 끝까지 나누어요.'],
+'6-1-3|est|0':['나누어지는 수를 어떻게 바꾸면 몫의 크기를 짐작할 수 있었지?','어림할 때 나누어지는 수만 바꾸지, 엉뚱하게 크게 바꾸지 않아요.'],
+'6-1-3|est|1':['어림한 값으로 소수점 위치를 어떻게 확인했지?','어림한 값과 크기가 맞지 않으면 소수점 위치가 틀린 거예요.'],
+'6-1-4|cmp|0':['두 수를 비교하는 두 가지 방법은 무엇이었지?','뺄셈과 나눗셈의 비교 결과는 달라요. 무엇을 묻는지 봐요.'],
+'6-1-4|cmp|1':['모둠 수가 늘어나도 변하지 않는 것은 차였지, 몇 배였지?','차가 커졌다고 관계가 바뀐 게 아니에요. 몇 배는 그대로예요.'],
+'6-1-4|ratio|0':['3 : 2에서 기준량은 어느 쪽 수였지?','기호 : 의 오른쪽이 기준량이에요. 왼쪽이 아니에요.'],
+'6-1-4|ratio|1':['3 : 2와 2 : 3은 같은 비였지?','순서를 바꾸면 다른 비예요.'],
+'6-1-4|rate|0':['비율은 무엇을 무엇으로 나누어 구했지?','기준량 ÷ 비교하는 양으로 거꾸로 나누지 않아요.'],
+'6-1-4|rate|1':['기준량이 다른 것끼리는 무엇으로 비교했지?','비교하는 양만 보고 크기를 판단하지 않아요.'],
+'6-1-4|pct|0':['백분율은 기준량을 얼마로 할 때의 비율이었지?','비율 0.35를 그대로 0.35%라고 쓰지 않아요. × 100 → 35%'],
+'6-1-4|pct|1':['할인율은 어떻게 구했지?','할인된 가격이 아니라 할인 금액을 원래 가격으로 나눠요.'],
+'6-1-5|know|0':['전체에 대한 부분의 비율을 띠 모양에 나타낸 그래프는?','막대그래프와 헷갈리지 않아요. 띠 전체가 100%예요.'],
+'6-1-5|know|1':['원 모양에 비율을 나타낸 그래프는?','원그래프의 조각 크기는 실제 수가 아니라 비율이에요.'],
+'6-1-5|strip|0':['띠그래프를 그리기 전에 무엇을 먼저 구하고 확인했지?','백분율의 합계가 100%인지 꼭 확인해요.'],
+'6-1-5|strip|1':['띠를 나눈 다음 무엇을 써 넣었지?','항목·백분율·제목 중 하나라도 빠뜨리지 않아요.'],
+'6-1-5|pie|0':['원그래프는 원 둘레를 무엇으로 나누어 그렸지?','눈금 칸 수를 백분율과 맞게 세어요.'],
+'6-1-5|pie|1':['원을 나눌 때 어디서부터 어느 방향으로 나누었지?','아무 곳에서나 시작하지 않아요. 0의 눈금부터 시계 방향!'],
+'6-1-5|read|0':['항목의 실제 수는 어떻게 구했지?','백분율을 실제 수로 착각하지 않아요. 전체 수 × 백분율 ÷ 100'],
+'6-1-5|read|1':['전체 수가 다른 두 그래프는 무엇으로 비교했지?','백분율이 크다고 실제 수도 크다고 단정하지 않아요.'],
+'6-1-5|use|0':['알고 싶은 것에 따라 그래프를 어떻게 골랐지?','비율을 보려면 띠·원그래프, 수량 변화는 꺾은선·막대그래프예요.'],
+'6-1-5|use|1':['여러 해의 비율 변화는 어떻게 비교했지?','띠그래프를 나란히 놓고 같은 항목끼리 비교해요.']
+};
+
+/* ===== 단원 마무리 · 개념 복습 새 디자인: 단원 모험 지도 + 뒤집는 기억 카드 ===== */
 (function () { if (window.__UMAP) return; window.__UMAP = 1; const seen = {};
   function map(body) { const hub = body.querySelector('.uchub'); if (!hub) return; const cards = [...hub.querySelectorAll('.uccard')]; if (!cards.length) return;
     const sig = cards.map(c => c.dataset.v + (c.classList.contains('on') ? 'O' : '') + (c.classList.contains('got') ? 'G' : '')).join(',');
@@ -9440,8 +9517,12 @@ body.um-on #toolBody>.ucwrap,body.um-on #toolBody>.ucwrap+.card{border:0!importa
   function mem(body) { const w = body.querySelector('#toolBody>.ucwrap'); if (!w) return; const main = w.querySelector('.svsl-main') || w, sl = main.querySelector('.ucslide'); if (!sl) return;
     const on = body.querySelector('.uchub .uccard.on'), key = (on ? on.dataset.v : '') + '|' + ((sl.querySelector('.ucst') || {}).textContent || '');
     if (seen[key] || main.querySelector('.umem')) return; const t = (sl.querySelector('.ucst') || {}).textContent || '', ic = on ? (on.querySelector('.uci') || {}).innerHTML : '⭐', ls = on ? (on.querySelector('.uct') || {}).textContent : '';
-    const f = document.createElement('button'); f.className = 'umem'; f.innerHTML = `<span class="umem-in"><span class="umem-ic">${ic}</span><small>${ls}</small><b>🤔 기억나니?</b><em>「${t.replace(/^\d+/, '')}」</em><i>잠깐 떠올려 보고, 카드를 눌러 뒤집어 확인해요 👆</i></span>`;
+    let unit = ''; try { unit = String(CONFIG.LESSON_ID || '').replace(/-U$/, ''); } catch (e) {} const si = [...((w.querySelector('.ucdots') || {}).children || [])].findIndex(x => x.classList.contains('on')), Q = (window.UMQ || {})[unit + '|' + (on ? on.dataset.v : '') + '|' + Math.max(0, si)];
+    if (Q && Q[1] && !sl.querySelector('.umwarn')) { const sum = sl.querySelector('.ucsum') || sl; sum.insertAdjacentHTML('beforeend', `<div class="umwarn"><b>⚠️ 조심!</b> ${Q[1]}</div>`); [60, 400, 900, 1400].forEach(t => setTimeout(() => fitW(sl), t)); }
+    const f = document.createElement('button'); f.className = 'umem'; f.innerHTML = `<span class="umem-in"><span class="umem-ic">${ic}</span><small>${ls} · ${t.replace(/^\d+/, '')}</small><b>🤔 기억나니?</b><em>${Q ? Q[0] : '「' + t.replace(/^\d+/, '') + '」'}</em><i>먼저 떠올려 말해 보고, 카드를 눌러 뒤집어 확인해요 👆</i></span>`;
     main.style.position = 'relative'; main.appendChild(f); f.onclick = () => { seen[key] = 1; f.classList.add('flip'); sl.classList.add('umreveal'); setTimeout(() => f.remove(), 650); try { Sound.flip && Sound.flip(); } catch (e) {} }; }
+  function fitW(sl) { try { if (!sl.isConnected) return; const vis = sl.querySelector('.ucvis'), wn = sl.querySelector('.umwarn'); if (!wn) return; const lim = () => sl.getBoundingClientRect().bottom - 4;
+      for (let i = 0; i < 20 && wn.getBoundingClientRect().bottom > lim(); i++) { if (vis) { const z = parseFloat(vis.style.zoom || 1); if (z > .45) { vis.style.zoom = (z * .9).toFixed(2); continue; } } const sm = sl.querySelector('.ucsum'); if (sm) { const z = parseFloat(sm.style.zoom || 1); if (z > .6) { sm.style.zoom = (z * .93).toFixed(2); continue; } } break; } } catch (e) {} }
   function run() { const body = document.getElementById('s1body'); if (!body || !document.querySelector('.uchub')) return; document.body.classList.add('um-on'); map(body); mem(body); }
   try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 20); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {} })();
 </script><!--BGUP-END-->
