@@ -964,7 +964,7 @@
   <!-- ===== 세트 탭 ===== -->
   <nav id="tabs" class="settabs">
     <button data-act="tab" data-v="s1" class="settab on"><span class="ic" id="tabIc1">📘</span><span><span class="t">세트 1 · 개념 형성편</span><br><span class="s">CH.1 냉동 창고 관리실 → CH.2 0 개수 바꿔치기 함정 → CH.3 볼륨 킹 보스전</span></span></button>
-    <button data-act="tab" data-v="s2" class="settab"><span class="ic" id="tabIc2">🎮</span><span><span class="t">세트 2 · 적용 &amp; 발전편</span><br><span class="s">CH.4 볼륨 킹의 마법진(문제은행·미니게임·m³ 원카드) → CH.5 최종 결전</span></span></button>
+    <button data-act="tab" data-v="s2" class="settab"><span class="ic" id="tabIc2">🎮</span><span><span class="t">세트 2 · 적용 &amp; 발전편</span><br><span class="s">CH.4 볼륨 킹의 마법진(문제은행·미니게임·창고 부피 수사대) → CH.5 최종 결전</span></span></button>
   </nav>
 
   <main>
@@ -2615,7 +2615,7 @@ function j3Check() {
 const S2_STEPS = () => [
   ['drill', '문제은행', '📊', 'CH.4-1 볼륨 킹'],
   ['game', '미니게임', '🎮', 'CH.4-2 볼륨 킹의 마법진'],
-  ['board', '보드 게임', '🎲', 'CH.4-3 m³ 원카드'],
+  ['board', '보드 게임', '🎲', 'CH.4-3 창고 부피 수사대'],
   ['result', '결과', '🏆', 'CH.5 최종 결전']
 ];
 function renderS2() {
@@ -2855,7 +2855,7 @@ function renderLairEnd() {
     <div class="row mt-3" style="justify-content:center">
       <button class="btn btn-green" data-act="vg-again">🔁 다시 도전</button>
       <button class="btn btn-sub" data-act="vg-quit">😈 다른 악당 고르기</button>
-      <button class="btn btn-primary" data-act="step" data-v="board">🎲 m³ 원카드 ➜</button></div></div>`;
+      <button class="btn btn-primary" data-act="step" data-v="board">🎲 창고 부피 수사대 ➜</button></div></div>`;
   countUp($('#vgScore'), R.score, '점');
   say(win ? '잘했어! 악당을 물리쳤어!' : '괜찮아! 한 번 더 도전해 보자!');
 }
@@ -3532,7 +3532,7 @@ function computeResult(k) {
   const items = [
     { label: '문제은행 드릴', state: d.rounds ? 'ok' : 'todo', note: d.rounds ? `${d.rounds}회 · 최고 ${d.best}점` : '미도전', pt: Math.round(d.best * 0.4), max: 40 },
     { label: '볼륨 킹의 마법진 (미니게임 3종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
-    { label: '보드 게임 · m³ 원카드 (컴퓨터와 대결)', state: bOver ? (bBest === 100 ? 'ok' : 'retry') : 'todo', note: bOver ? (bBest === 100 ? '승리!' : '아쉬운 결과 · 최고 ' + bBest + '점') : '미완료', pt: bOver ? Math.round(bBest * 0.3) : 0, max: 30 }
+    { label: '보드 게임 · 창고 부피 수사대 (컴퓨터와 대결)', state: bOver ? (bBest === 100 ? 'ok' : 'retry') : 'todo', note: bOver ? (bBest === 100 ? '승리!' : '아쉬운 결과 · 최고 ' + bBest + '점') : '미완료', pt: bOver ? Math.round(bBest * 0.3) : 0, max: 30 }
   ];
   const wrong = [...d.wrongAll, ...g.wrongAll.slice(0, 10), ...(st.bgWrong || [])];
   return { k, setName: '세트 2: 적용 & 발전편', score: items.reduce((a, i) => a + i.pt, 0), elapsed, items, wrong };
@@ -8750,7 +8750,7 @@ const GUIDES = {
   zerog: { title: '0️⃣ 0 여섯 개 공장', color: '#7c3aed', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">5 m³ → 5<b>000000</b> cm³<br>7000000 cm³ → 7 m³</div>', txt: 'm³를 cm³로 바꿀 때는 0을 6개 붙이고, cm³를 m³로 바꿀 때는 0을 6개 떼어요.' }, { t: '2. 점수', ill: () => '<div class="gsay">꼭 맞게 출고 = 점수 ⬆</div>', txt: '0의 개수를 꼭 세어 보고 출고해요.' }] }
 };
 
-LC.story = mkStory6({ unitNo: 6, ep: 3, title: '냉동 창고의 비밀', place: '냉동 보관 창고', door: '창고의 문', icon: '🧊', board: 'm³ 원카드',
+LC.story = mkStory6({ unitNo: 6, ep: 3, title: '냉동 창고의 비밀', place: '냉동 보관 창고', door: '창고의 문', icon: '🧊', board: '창고 부피 수사대',
   ch1Name: '냉동 창고 관리실', ch1Sub: '1 m³ · 두 단위 · 0 여섯 개 · 알맞은 단위',
   area: { dark: '창고 장부', tilt: '쌓기나무 숨기기', mixup: '자 바꿔치기', clock: '0 뻥튀기', half: '단위 뒤섞기' },
   seal: { tilt: '1 m³의 봉인', mixup: '자의 봉인', clock: '0의 봉인', half: '단위의 봉인', dark: '창고의 봉인' },
@@ -8845,7 +8845,7 @@ renderLairHub = function () {
         <div class="ls" style="color:${V.color};font-weight:900">${best ? '🏅 최고 ' + best + '점 · 한 번 더!' : '▶ 도전하기'}</div></button>`;
     }).join('')}</div>
     ${gs.plays ? `<p class="center font-bold muted mt-3">지금까지 ${gs.plays}회 도전 · 최고 ${gs.best}점</p>` : ''}
-    <div class="next-row"><button class="btn btn-sub" data-act="step" data-v="board">🎲 CH.4-3 m³ 원카드 ➜</button></div></div>`;
+    <div class="next-row"><button class="btn btn-sub" data-act="step" data-v="board">🎲 CH.4-3 창고 부피 수사대 ➜</button></div></div>`;
 };
 
 
@@ -11240,76 +11240,63 @@ body.svsl-on .bxr{padding-bottom:44px}
   return { make, api, auto };
 })();
 
-/* 6-1-6-3 · 🃏 m³ 원카드 — 냉동 창고 장부 카드(파랑 m³ · 주황 cm³)로 하는 원카드(우노식) 보드게임.
-   바닥 카드와 부피가 같으면 단위가 달라도 낼 수 있고, 같은 단위면 수가 더 클 때 낼 수 있어요. 손패를 먼저 다 내면 승리! */
+/* 6-1-6-3 · 🔎 창고 부피 수사대 — 숫자야구(Bulls and Cows) 원리. 볼륨 킹이 숨긴 비밀 창고의 부피(m³, 숫자가 겹치지 않는 두 자리 수)를
+   차례로 추리해요. 추리한 부피는 반드시 cm³로 바꾸어 적어 내고(0 여섯 개!), 돌아오는 단서 ⚾ 스트라이크(숫자와 자리 모두 맞음) · ⚪ 볼(숫자만 맞음)로 범위를 좁혀요.
+   모든 단서는 모두에게 공개 — 컴퓨터도 같은 단서만 써요. 비밀 부피를 먼저 맞히면 그 판 승리, 3판 중 많이 이긴 쪽이 우승! */
 (function () {
   const { R, PK, SH, K, E, av } = BGX.api;
-  const Z6 = n => String(n) + '000000';
-  function deck(lv) { const pool = lv === 1 ? [1, 2, 3, 4, 5, 6, 7, 8] : lv === 2 ? [2, 3, 4, 5, 6, 8, 20, 30, 50] : [2, 3, 4, 5, 7, 20, 30, 40, 70];
-    let id = 0, D = []; pool.forEach(v => { D.push({ id: id++, u: 'm', v }, { id: id++, u: 'm', v }, { id: id++, u: 'c', v }, { id: id++, u: 'c', v }); });
-    for (let k = 0; k < 4; k++) D.push({ id: id++, u: 'k', v: 0 }); return SH(D); }
-  const txt = c => c.u === 'k' ? '👑 볼륨 킹' : c.u === 'm' ? `${c.v} m³` : `${Z6(c.v)} cm³`;
-  const ok = (c, t) => c.u === 'k' || c.v === t.v || (c.u === t.u && c.v > t.v);
-  function why(c, t) { if (c.u === t.u) return `같은 단위인데 ${txt(c)}는 ${txt(t)}보다 크지 않아요.`;
-    return `${txt(c)}와 ${txt(t)}는 부피가 달라요. ${c.u === 'm' ? `${c.v} m³ = ${Z6(c.v)} cm³` : `${Z6(c.v)} cm³ = ${c.v} m³`}이에요. 0의 개수를 세어 봐요!`; }
-  function draw(g, p, n) { for (let k = 0; k < n; k++) { if (!g.pile.length) { const keep = g.disc.pop(); g.pile = SH(g.disc); g.disc = [keep]; } if (!g.pile.length) return; g.hand[p].push(g.pile.pop()); } }
-  const top = g => g.disc[g.disc.length - 1];
-  const base = g => { for (let i = g.disc.length - 1; i >= 0; i--) if (g.disc[i].u !== 'k') return g.disc[i]; return g.disc[0]; };
-  const playable = (g, p) => g.hand[p].filter(c => ok(c, base(g)));
-  function play(g, api, id) { const p = g.turn, P = g.players[p], H = g.hand[p], k = H.findIndex(c => c.id === id); if (k < 0) return; const c = H[k], t = base(g);
-    g.moves++;
-    if (!ok(c, t)) { api.bad(g, `${E(P.name)}: ${why(c, t)}`, `${txt(t)} 위에 ${txt(c)}`); g.shake = id; return api.later(g, 1500, () => { g.shake = -1; api.paint(); }); }
-    H.splice(k, 1); g.disc.push(c); g.played[p]++; g.score[p] = g.played[p] + (H.length ? 0 : 5); g.fresh = c.id; try { Sound.flip ? Sound.flip() : Sound.pop(); } catch (e) {}
-    if (c.u === 'k') { const q = (p + 1) % g.players.length; draw(g, q, 2); g.skip = 1; api.good(g, `${E(P.name)}: 👑 볼륨 킹 카드! ${E(g.players[q].name)}은(는) 2장을 가져가고 한 번 쉬어요.`, 0); }
-    else api.good(g, `${E(P.name)}: ${txt(t)} 위에 ${txt(c)}! ${c.v === t.v ? (c.u !== t.u ? '단위는 달라도 같은 부피!' : '같은 부피!') : '같은 단위, 더 큰 수!'}`, 0);
-    g.drew = false; api.later(g, 1400, () => nextTurn(g, api)); }
-  function nextTurn(g, api) { if (g.skip) { g.skip = 0; g.turn = (g.turn + 1) % g.players.length; } api.next(g); }
-  function take(g, api) { const p = g.turn, P = g.players[p], had = playable(g, p); g.moves++;
-    if (g.drew) { g.log = `⏭ ${E(P.name)}: 낼 카드가 없어 차례를 넘겨요.`; g.msg = ''; g.drew = false; return api.later(g, 900, () => nextTurn(g, api)); }
-    if (had.length) api.bad(g, `${E(P.name)}: 낼 수 있는 카드(${txt(had[0])})가 있었어요! 한 장을 가져가요.`, `낼 카드가 있는데 가져감`);
-    else { g.log = `🃏 ${E(P.name)}: 낼 카드가 없어 한 장을 가져가요.`; g.msg = ''; }
-    draw(g, p, 1); g.drew = true; const nw = g.hand[p][g.hand[p].length - 1]; g.fresh = nw && nw.id;
-    if (!nw || !ok(nw, base(g))) { g.drew = false; return api.later(g, 1300, () => nextTurn(g, api)); }
-    g.log += ' 가져온 카드를 낼 수 있어요!'; api.paint(); }
-  const card = (c, attr, cls) => `<button class="okc ${c.u} ${cls || ''}" ${attr || 'disabled'}><span class="okt">${c.u === 'k' ? '👑' : c.u === 'm' ? 'm³' : 'cm³'}</span><b>${c.u === 'k' ? '볼륨 킹' : c.u === 'm' ? c.v : Z6(c.v)}</b><em>${c.u === 'k' ? '+2 · 쉬기' : c.u === 'm' ? '세제곱미터' : '세제곱센티미터'}</em></button>`;
-  BGX.make({ id: 'm3uno', icon: '🃏', color: '#1d4ed8', soft: '#dbeafe', title: 'm³ 원카드', short: 'm³ 원카드', hand: true,
-    sub: '냉동 창고 장부 카드로 하는 원카드! 바닥 카드와 <b>부피가 같으면</b> 단위가 달라도 낼 수 있고, <b>같은 단위</b>면 수가 더 클 때 낼 수 있어요. 손패를 먼저 다 내면 승리!',
-    how: ['카드는 두 가지 단위예요: <b style="color:#1d4ed8">파랑 m³</b> · <b style="color:#c2410c">주황 cm³</b>', '바닥 카드와 <b>부피가 같으면</b> 낼 수 있어요. 예: 3 m³ 위에 3000000 cm³ (1 m³ = 1000000 cm³)', '<b>같은 색(단위)</b>이면 수가 더 큰 카드를 낼 수 있어요.', '낼 카드가 없으면 🃏 한 장 가져오기. 👑 볼륨 킹 카드는 언제나 낼 수 있고, 다음 사람이 2장을 가져가고 한 번 쉬어요. 손패를 먼저 다 내면 승리!'],
-    startBtn: '🃏 카드 나누기!', startSay: 'm³ 원카드 시작! 0이 몇 개인지 꼭 세어 보고 내자! 🃏',
-    guide: [{ t: '1. 같은 부피면 OK', ill: () => '<div class="gsay">바닥 [ 4 m³ ] ← [ 4000000 cm³ ] ✅<br>바닥 [ 4 m³ ] ← [ 400000 cm³ ] ❌</div>', txt: '1 m³ = 1000000 cm³예요. m³ 수 뒤에 0이 6개 붙은 cm³ 카드는 같은 부피예요.', practice: { q: '바닥이 5 m³일 때 낼 수 있는 주황 카드는?', opts: ['5000000 cm³', '50000 cm³', '500000 cm³'], ans: 0, ex: '5 뒤에 0이 6개' } },
-      { t: '2. 같은 단위면 더 큰 수', ill: () => '<div class="gsay">바닥 [ 3 m³ ] ← [ 8 m³ ] ✅<br>바닥 [ 3 m³ ] ← [ 2 m³ ] ❌</div>', txt: '같은 색 카드는 바닥보다 수가 클 때만 낼 수 있어요. 손패를 먼저 다 내면 이겨요.' }],
-    init(g) { g.lv = window.SVBG ? SVBG.lv : 2; g.pile = deck(g.lv); g.hand = g.players.map(() => []); g.players.forEach((_, p) => draw(g, p, 6));
-      let f = g.pile.findIndex(c => c.u !== 'k'); g.disc = [g.pile.splice(f, 1)[0]]; g.played = g.players.map(() => 0); g.moves = 0; g.max = g.players.length * 22; g.drew = false; g.skip = 0; g.shake = -1; g.fresh = -1;
-      g.log = `${E(g.players[0].name)}부터! 바닥 카드와 부피가 같거나, 같은 단위로 더 큰 카드를 내요.`; },
-    done: g => g.hand.some(h => !h.length) || g.moves >= g.max,
-    scoreLabel: (g, i) => `손패 ${g.hand[i].length}장 · 낸 카드 ${g.played[i]}장`,
-    view(g, me) { const p = g.turn, t = top(g), b = base(g), can = me && !g.lock && !g.over;
-      const hum = g.players.map((Q, j) => Q.ai ? -1 : j).filter(j => j >= 0), vw = g.players[p].ai ? (hum.length === 1 ? hum[0] : -1) : p, show = vw >= 0 && !g.over;
-      const opp = g.players.map((Q, j) => j === vw ? '' : `<div class="okop" style="--pc:${Q.color}">${av(Q.char, 26)}<b>${E(Q.name)}</b><span>${g.hand[j].map(() => '<i></i>').join('')}</span><small>${g.hand[j].length}장</small></div>`).join('');
-      const H = vw >= 0 ? vw : p, mine = show ? g.hand[H].map(c => card(c, can && H === p ? `data-bx="play" data-v="${c.id}"` : '', `${g.shake === c.id ? 'shk' : ''} ${g.fresh === c.id && H === p ? 'new' : ''}`)).join('') : g.hand[H].map(() => '<span class="okback">🧊</span>').join('');
-      const board = `<div class="okbd"><div class="okops">${opp}</div>
-        <div class="okmid"><div class="okpile"><span class="okback big">🧊</span><small>더미 ${g.pile.length}장</small></div><div class="okdisc">${card(t, '', 'top ' + (g.fresh === t.id ? 'new' : ''))}${t.u === 'k' ? `<small>👑 아래 바닥: <b>${txt(b)}</b></small>` : '<small>바닥 카드</small>'}</div></div>
-        <div class="okhand" style="--pc:${g.players[H].color}"><div class="okwho">${av(g.players[H].char, 26)}<b>${E(g.players[H].name)}</b>의 손패${H !== p ? ' <small>(상대 차례)</small>' : ''}</div><div class="okcards">${mine}</div></div></div>`;
-      const side = g.over ? '' : `<div class="bxtk"><h4>📋 낼 수 있는 카드</h4><div class="okrule">바닥 <b>${txt(b)}</b><br>① 부피가 같은 카드 (단위는 달라도 OK)<br>② 같은 단위(색)이고 수가 더 큰 카드<br>③ 👑 볼륨 킹 카드</div><small class="okz">1 m³ = 1000000 cm³ (0이 6개)</small></div>
-        ${me ? `<div class="bxrow"><button class="btn ${g.drew ? 'btn-sub' : 'btn-primary'}" data-bx="take" ${g.lock ? 'disabled' : ''}>${g.drew ? '⏭ 차례 넘기기' : '🃏 한 장 가져오기'}</button></div>` : ''}`;
+  const M6 = '000000';
+  const LEN = lv => lv >= 3 ? 3 : 2;
+  function secret(n) { const D = SH([1, 2, 3, 4, 5, 6, 7, 8, 9]); return D.slice(0, n).join(''); }
+  function clue(s, gs) { let S = 0, B = 0; for (let i = 0; i < s.length; i++) { if (gs[i] === s[i]) S++; else if (s.includes(gs[i])) B++; } return [S, B]; }
+  function all(n) { const L = []; const rec = (p) => { if (p.length === n) { L.push(p); return; } for (let d = 1; d <= 9; d++) if (!p.includes(String(d))) rec(p + d); }; rec(''); return L; }
+  const fits = (g, c) => g.log2.filter(r => r.ok).every(r => { const [s, b] = clue(c, r.m3); return s === r.S && b === r.B; });
+  function newRound(g) { g.sec = secret(LEN(g.lv)); g.log2 = []; g.in = ''; g.notes = {}; g.rd++; }
+  function submit(g, api, str) { const p = g.turn, P = g.players[p], n = LEN(g.lv);
+    g.in = ''; g.moves++;
+    const ok = str.length === n + 6 && str.endsWith(M6) && /^[1-9]+$/.test(str.slice(0, n)) && new Set(str.slice(0, n)).size === n;
+    if (!ok) { const m3 = str.endsWith(M6) ? str.slice(0, -6) : null;
+      api.bad(g, `${E(P.name)}: ${str} cm³는 ${n}자리 m³(숫자가 겹치지 않음)가 아니에요. 1 m³ = 1000000 cm³, 0이 6개예요!`, `추리 부피를 ${str} cm³로 씀`);
+      g.log2.push({ who: p, cm: str, m3: m3 || '?', S: '-', B: '-', ok: false }); return api.later(g, 1600, () => api.next(g)); }
+    const m3 = str.slice(0, n), [S, B] = clue(g.sec, m3); g.log2.push({ who: p, cm: str, m3, S, B, ok: true });
+    if (S === n) { g.wins[p]++; g.score[p] = g.wins[p]; api.good(g, `${E(P.name)}: ${str} cm³ = ${m3} m³ — 비밀 창고를 찾았어요! 🏆 이번 판 승리`, 0); try { Sound.win(); } catch (e) {}
+      return api.later(g, 2600, () => { if (g.wins.some(w => w >= 2) || g.rd >= 3) { g.end = true; return api.next(g); } newRound(g); g.turn = (g.rd + 1) % g.players.length; g.log = `🔎 ${g.rd}판 시작! 볼륨 킹이 새 창고를 숨겼어요.`; api.next(g, true); }); }
+    api.good(g, `${E(P.name)}: ${str} cm³ = ${m3} m³ → ⚾ ${S}스트라이크 · ⚪ ${B}볼`, 0); try { Sound.pop(); } catch (e) {}
+    api.later(g, 1500, () => api.next(g)); }
+  function aiGuess(g) { const n = LEN(g.lv), C = all(n).filter(c => fits(g, c)); let pick = C.length ? PK(C) : secret(n);
+    if (Math.random() > K(.55, .78, .95)) pick = secret(n);
+    let str = pick + M6; if (Math.random() > K(.85, .93, .99)) str = pick + '00000'; return str; }
+  BGX.make({ id: 'volsleuth', icon: '🔎', color: '#0f766e', soft: '#ccfbf1', title: '창고 부피 수사대', short: '부피 수사대',
+    sub: '볼륨 킹이 비밀 창고의 부피(m³)를 숨겼어요! 추리한 부피를 <b>cm³로 바꾸어</b> 적어 내면 ⚾ 스트라이크 · ⚪ 볼 단서가 돌아와요. 단서로 숫자를 좁혀 먼저 맞히면 승리!',
+    how: ['비밀 창고의 부피는 숫자가 겹치지 않는 <b>두 자리 수 m³</b>예요(1~9만 써요).', '내 차례에 추리한 부피를 <b>cm³로</b> 숫자판에 써서 내요. 예: 37 m³ → 37000000 cm³ (0이 6개!)', '단서: <b>⚾ 스트라이크</b> = 숫자와 자리 모두 맞음, <b>⚪ 볼</b> = 숫자는 있지만 자리가 다름. 모든 단서는 모두가 함께 봐요.', '숫자 메모판의 숫자를 눌러 지울 수 있어요. 먼저 맞히면 그 판 승리! 3판 중 2판을 먼저 이기면 우승. cm³를 잘못 쓰면 실수예요.'],
+    startBtn: '🔎 수사 시작!', startSay: '창고 부피 수사대 출동! cm³로 바꿔 적고, 단서로 비밀 부피를 좁혀 봐! 🔎',
+    guide: [{ t: '1. cm³로 적어 내기', ill: () => '<div class="gsay">추리: 52 m³<br>→ 적어 낼 때: <b>52000000 cm³</b></div>', txt: '1 m³ = 1000000 cm³예요. m³ 수 뒤에 0을 6개 붙여 적어 내요.', practice: { q: '46 m³를 cm³로 바르게 쓴 것은?', opts: ['46000000 cm³', '4600000 cm³', '460000000 cm³'], ans: 0, ex: '46 뒤에 0이 6개' } },
+      { t: '2. 단서 읽기', ill: () => '<div class="gsay">비밀 <b>37</b> m³, 추리 <b>73</b> m³<br>→ ⚾ 0 · ⚪ 2 (숫자는 맞고 자리가 바뀜)<br>추리 <b>35</b> m³ → ⚾ 1 · ⚪ 0</div>', txt: '스트라이크는 자리까지 맞은 숫자, 볼은 자리만 다른 숫자예요. 단서를 모아 비밀 부피를 좁혀요.' }],
+    init(g) { g.lv = window.SVBG ? SVBG.lv : 2; g.wins = g.players.map(() => 0); g.rd = 0; g.moves = 0; g.end = false; newRound(g); g.log = `${E(g.players[0].name)}부터! 비밀 창고의 부피를 추리해 cm³로 적어 내요.`; },
+    done: g => g.end || g.moves >= g.players.length * 30,
+    scoreLabel: (g, i) => `🏆 ${g.wins[i]}판 승리`,
+    view(g, me) { const n = LEN(g.lv), p = g.turn;
+      const rows = g.log2.slice(-8).map(r => `<tr class="${r.ok ? '' : 'bad'}"><td style="color:${g.players[r.who].color}">${av(g.players[r.who].char, 22)}</td><td class="sl-cm">${r.cm} cm³</td><td>${r.ok ? `<b>${r.m3}</b> m³` : '❌ 단위 실수'}</td><td class="sl-s">${r.ok ? `<b class="slS ${r.S ? 'on' : ''}">${r.S}</b>` : ''}</td><td class="sl-b">${r.ok ? `<b class="slB ${r.B ? 'on' : ''}">${r.B}</b>` : ''}</td></tr>`).join('');
+      const board = `<div class="slbd"><div class="sltop">🔎 볼륨 킹의 비밀 창고 · ${g.rd}판</div>
+        <div class="slsafe">${Array.from({ length: n }, () => '<span>?</span>').join('')}<em>m³</em></div>
+        <table class="sltab"><tr><th></th><th>적어 낸 부피</th><th>= m³</th><th>⚾ 스트라이크</th><th>⚪ 볼</th></tr>${rows || '<tr><td colspan="5" class="slempty">아직 단서가 없어요. 첫 추리를 적어 내요!</td></tr>'}</table>
+        <div class="slnote"><small>📝 숫자 메모판 (눌러서 지우기)</small>${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => `<button class="sln ${g.notes[d] ? 'x' : ''}" data-bx="note" data-v="${d}">${d}</button>`).join('')}</div></div>`;
+      const pad = me ? `<div class="slin">${g.in || '<i>?</i>'}<em>cm³</em></div><div class="slpad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(d => `<button class="btn btn-sub" data-bx="k" data-v="${d}" ${g.lock ? 'disabled' : ''}>${d}</button>`).join('')}<button class="btn btn-sub" data-bx="del" ${g.lock ? 'disabled' : ''}>⌫</button></div><div class="bxrow"><button class="btn btn-primary" data-bx="go" ${g.in && !g.lock ? '' : 'disabled'}>🔎 추리 적어 내기</button></div>` : '';
+      const side = g.over ? '' : `<div class="bxtk"><h4>✍️ 추리한 부피를 cm³로</h4>${pad}<div class="bxhow">비밀 부피는 숫자가 겹치지 않는 <b>${n}자리 m³</b> (1~9)</div></div>`;
       return { board, side }; },
-    act(g, a, v, el, api) { if (g.lock) return; if (a === 'play') play(g, api, +v); else if (a === 'take') take(g, api); },
-    bot(g, api) { const p = g.turn, L = playable(g, p); if (Math.random() < .15 && g.hand[p].length) { const bad = g.hand[p].find(c => !ok(c, base(g))); if (bad) return play(g, api, bad.id); }
-      if (L.length) play(g, api, (L.find(c => c.u !== 'k') || L[0]).id); else take(g, api); },
-    ai(g, api) { const p = g.turn, L = playable(g, p), go = () => { if (g.over || g.turn !== p) return; const L2 = playable(g, p); if (L2.length && g.drew) play(g, api, L2[0].id); else if (g.drew) take(g, api); };
-      if (L.length && Math.random() < K(.7, .85, .96)) { const eq = L.filter(c => c.u !== 'k').sort((x, y) => x.v - y.v); play(g, api, (eq[0] || L[0]).id); }
-      else { take(g, api); setTimeout(go, 1600); } },
-    css: `.okbd{background:radial-gradient(ellipse at center,#1e3a8a,#172554);border:6px solid #0c4a6e;border-radius:22px;padding:10px 12px;box-shadow:0 8px 0 #082f49;color:#fff}
-.okops{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.okop{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:2px solid var(--pc);border-radius:12px;padding:3px 8px}.okop b{font-size:.9rem}.okop span{display:flex}.okop i{width:14px;height:20px;border-radius:3px;background:linear-gradient(135deg,#38bdf8,#0369a1);border:1px solid #fff;margin-left:-5px}.okop small{font-weight:900}
-.okmid{display:flex;gap:28px;justify-content:center;align-items:center;margin:10px 0}.okpile,.okdisc{display:flex;flex-direction:column;align-items:center;gap:4px}.okpile small,.okdisc small{font-weight:800;color:#bfdbfe}
-.okback{display:inline-flex;align-items:center;justify-content:center;width:44px;height:62px;border-radius:8px;background:repeating-linear-gradient(45deg,#38bdf8 0 6px,#0284c7 6px 12px);border:2px solid #fff;font-size:1.2rem}.okback.big{width:88px;height:122px;font-size:2rem;box-shadow:4px 4px 0 #0c4a6e,8px 8px 0 #082f49}
-.okc{width:96px;height:132px;border-radius:12px;border:3px solid #fff;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 4px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.35);transition:transform .15s;font-family:inherit}
-.okc.m{background:linear-gradient(160deg,#60a5fa,#1d4ed8);color:#fff}.okc.c{background:linear-gradient(160deg,#fdba74,#c2410c);color:#fff}.okc.k{background:linear-gradient(160deg,#c084fc,#6b21a8);color:#fff}
-.okc .okt{font-weight:900;font-size:.85rem;align-self:flex-start;background:rgba(255,255,255,.25);border-radius:6px;padding:0 5px}.okc b{font-family:'Jua',sans-serif;font-size:1.9rem;line-height:1;word-break:break-all}.okc.c b{font-size:1.02rem;letter-spacing:.3px}.okc.k b{font-size:1.15rem}.okc em{font-style:normal;font-size:.62rem;font-weight:800;opacity:.9}
-.okc.top{width:116px;height:158px;cursor:default}.okc.top.c b{font-size:1.2rem}.okc:not(:disabled):hover{transform:translateY(-10px)}.okc:disabled{cursor:default}
-.okc.new{animation:okIn .45s ease-out}.okc.shk{animation:okShk .4s}@keyframes okIn{0%{transform:translateY(-40px) rotate(-12deg) scale(1.2);opacity:0}100%{transform:none;opacity:1}}@keyframes okShk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.okhand{border-top:2px dashed rgba(255,255,255,.35);padding-top:6px}.okwho{display:flex;align-items:center;gap:6px;font-weight:900;color:#fef3c7;margin-bottom:4px}.okcards{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.okrule{font-weight:800;line-height:1.7;font-size:.95rem}.okrule b{color:#1d4ed8}.okz{display:block;margin-top:4px;font-weight:900;color:#c2410c}` });
+    act(g, a, v, el, api) { if (a === 'note') { g.notes[v] = !g.notes[v]; return api.paint(); } if (g.lock) return;
+      if (a === 'k') { if (g.in.length < 12) g.in += v; return api.paint(); } if (a === 'del') { g.in = g.in.slice(0, -1); return api.paint(); }
+      if (a === 'go' && g.in) submit(g, api, g.in); },
+    bot(g, api) { const n = LEN(g.lv), C = all(n).filter(c => fits(g, c)); submit(g, api, (C.length ? (Math.random() < .3 ? PK(C) : C.find(c => c === g.sec) || C[0]) : secret(n)) + M6); },
+    ai(g, api) { const str = aiGuess(g); g.in = ''; let k = 0; const typ = () => { if (g.over || g.turn === undefined) return; if (k < str.length) { g.in = str.slice(0, ++k); api.paint(); setTimeout(typ, 110); } else setTimeout(() => { if (!g.over) submit(g, api, str); }, 500); }; typ(); },
+    css: `.slbd{background:linear-gradient(160deg,#134e4a,#0f766e);border:6px solid #042f2e;border-radius:20px;padding:10px 12px;color:#fff;box-shadow:0 8px 0 #022c22}
+.sltop{text-align:center;font-family:'Jua',sans-serif;font-size:1.25rem;color:#ccfbf1}
+.slsafe{display:flex;gap:8px;justify-content:center;align-items:center;margin:6px 0}.slsafe span{width:52px;height:62px;border-radius:10px;background:linear-gradient(#334155,#0f172a);border:3px solid #94a3b8;display:flex;align-items:center;justify-content:center;font:900 2rem 'Jua',sans-serif;color:#fbbf24}.slsafe em{font-style:normal;font-weight:900;font-size:1.3rem}
+.sltab{width:100%;border-collapse:separate;border-spacing:0 3px;background:#f0fdfa;border-radius:12px;padding:4px;color:#0f172a;font-size:.95rem}.sltab th{font-size:.78rem;color:#0f766e}.sltab td{background:#fff;text-align:center;padding:3px 4px}.sltab tr.bad td{background:#fef2f2;color:#b91c1c}
+.sl-cm{font-family:'Jua',sans-serif;font-size:1.05rem;letter-spacing:.5px}.sl-s,.sl-b{white-space:nowrap}.slS,.slB{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:28px;border-radius:999px;font:900 1.1rem 'Jua',sans-serif;background:#e2e8f0;color:#94a3b8}.slS.on{background:#dc2626;color:#fff}.slB.on{background:#2563eb;color:#fff}.slempty{color:#64748b;font-weight:800;padding:10px!important}
+.slnote{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:8px}.slnote small{width:100%;text-align:center;font-weight:800;color:#ccfbf1}.sln{width:38px;height:38px;border-radius:10px;border:2px solid #99f6e4;background:#ecfeff;font:900 1.2rem 'Jua',sans-serif;color:#0f766e;cursor:pointer}.sln.x{background:#334155;color:#64748b;text-decoration:line-through;border-color:#475569}
+.slin{display:flex;align-items:baseline;justify-content:center;gap:6px;min-height:52px;border:3px solid #0f766e;border-radius:12px;background:#fff;font:900 1.7rem 'Jua',sans-serif;color:#0f172a;padding:2px 10px;margin-bottom:6px;word-break:break-all}.slin i{color:#cbd5e1;font-style:normal}.slin em{font-style:normal;font-size:1rem;color:#0f766e}
+.slpad{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.slpad .btn{font-size:1.2rem;padding:6px 0}` });
 })();
 
 
