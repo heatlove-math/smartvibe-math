@@ -7995,7 +7995,7 @@ const WN = (() => {
         const qt = qtOf(card), extra = p && p.prompt ? ' ' + strip(p.prompt) : '';
         const text = (qt || txtOf(p && p.text) || label).replace(/^도전 \d · [^ ]+ [^ ]+ /, '') + extra;
         const canRetry = !!(p && p.ans && !p.jw && (p.choices || p.write));
-        add({ src: key[0] === 'j' ? '점프 문제' : '기본 문제', img: figOf(card) || figOfHtml(p && p.text), text, my: String(given == null ? '' : given), ans: p && p.ans ? strip(p.ans) : '', choices: canRetry && p.choices ? p.choices.map(strip) : null, ex: p ? strip(p.ok || p.hint || '') : '', retry: canRetry, step: ['s1', key[0] === 'j' ? 'jump' : 'basic'] });
+        const isDraw = !!(p && p.draw); add({ src: key[0] === 'j' ? '점프 문제' : (isDraw ? '기본 문제 · 그리기' : '기본 문제'), img: figOf(card) || figOfHtml(p && p.text), text, my: isDraw ? '(모눈에 직접 그린 도형)' : String(given == null ? '' : given), ans: p && p.ans ? strip(p.ans) : '', choices: canRetry && p.choices ? p.choices.map(strip) : null, ex: p ? strip(p.ok || p.hint || '') : '', retry: canRetry, step: ['s1', key[0] === 'j' ? 'jump' : 'basic'] });
       } catch (e) {}
     }
     return r;
@@ -8027,7 +8027,7 @@ const WN = (() => {
         <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}${!e.retry && e.step && !e.game ? `<button class="btn btn-sub sm wngo" data-wn="goto" data-id="${e.id}">↪ 그 단계로 가서 다시 도전</button>` : ''}</div></label>`).join('')}</div>
       <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${picked.length > rp.length ? `고른 ${picked.length}개 중 ${rp.length}개` : rp.length + '개'})</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 이 창에서 다시 풀 수 없어요. 「↪ 그 단계로 가서 다시 도전」을 누르거나 인쇄해서 풀어요.</p>` : ''}${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(그리기·점프 문제·게임 기록)는 이 창에서 다시 풀 수 없어요. 「↪ 그 단계로 가서 다시 도전」을 누르거나 인쇄해서 풀어요.</p>` : ''}${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(그리기·점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -12101,7 +12101,7 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 .svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap{margin:0!important}.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap svg{width:100%!important;height:auto!important}
 .svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbhint{display:none}}
 /* 위로 올린 조작 안내 띠 */
-.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
+.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:auto;max-width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
 /* ===== 말판 레이스(bq race) 공통 업그레이드: 경기장 트랙 · 체크 깃발 · 말 크게 · 차례 빛 ===== */
 .bq-main.race .bq-boardw{position:relative;padding:18px 16px 16px;border-radius:26px;background:radial-gradient(ellipse at 50% 0,#4ade80,#15803d 70%);box-shadow:inset 0 0 0 6px #166534,0 8px 0 #14532d,0 12px 24px rgba(0,0,0,.25)}
@@ -12164,6 +12164,59 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
     document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+/* 위로 올린 안내 띠(.uni-cap) 높이만큼 그림 칸을 줄여 화면 안에 다 들어오게 해요 (데스크톱) */
+(function () {
+  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main').forEach(main => {
+    const cap = main.querySelector(':scope>.uni-cap'); if (!cap) return;
+    const inner = [...main.children].find(e => e !== cap && e.getClientRects().length); if (!inner) return;
+    const avail = main.clientHeight - cap.offsetHeight - 14, h = inner.getBoundingClientRect().height; if (avail < 120 || h <= avail + 1) return;
+    const z = parseFloat(inner.style.zoom) || 1; inner.style.zoom = Math.max(.45, z * avail / h); main.classList.remove('svsl-scrolly'); }); }
+  addEventListener('resize', () => { setTimeout(capFit, 40); setTimeout(capFit, 260); });
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; capFit(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
+/* 결과 화면: 아직 안 한(또는 다시 할) 활동 줄마다 「▶ 하러 가기」 — 누르면 그 단계·그 도구·그 게임으로 바로 가요 (모든 차시 공통) */
+(function () {
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  function target(li) {
+    const body = li.closest('#s1body,#s2body'); if (!body) return null; const tab = body.id === 's1body' ? 's1' : 's2', t = li.textContent;
+    if (tab === 's1') {
+      if (/기본 문제/.test(t)) { const m = t.match(/기본 문제\s*(\d+)/); return { tab, step: 'basic', q: m ? +m[1] - 1 : null }; }
+      if (/점프|보스전|오늘의 문제|도전 \d/.test(t)) { const m = t.match(/(?:보스전|도전)\s*(\d+)/); return { tab, step: 'jump', q: m ? +m[1] - 1 : (/오늘의 문제|점프 1/.test(t) ? 0 : null) }; }
+      const tool = T(() => S1_TOOLS.find(x => t.includes(x[3]))); if (tool || /도구|개념 카드|개념 탐험|배지/.test(t)) return { tab, step: 'concept', tool: tool && tool[0] };
+      return null;
+    }
+    if (/문제은행|드릴|단원 평가/.test(t)) return { tab, step: 'drill' };
+    if (/보드/.test(t)) return { tab, step: 'board' };
+    const g = T(() => LAIR.find(x => t.includes(x.name))); if (g || /소굴|미니게임/.test(t)) return { tab, step: 'game', game: g && g.id };
+    if (/왕중왕/.test(t)) return { tab, step: 'arena' };
+    return null;
+  }
+  function go(G) {
+    T(() => showTab(G.tab));
+    if (G.tool) T(() => { state.s1.tool = G.tool; });
+    T(() => goStep(G.tab, G.step));
+    if (G.step === 'jump' && T(() => state.s1.step) !== 'jump') T(() => goStep('s1', 'basic'));
+    setTimeout(() => {
+      if (G.tool) T(() => { const b = [...document.querySelectorAll('.hub .tool')].find(x => x.dataset.v === G.tool || x.textContent.includes((S1_TOOLS.find(y => y[0] === G.tool) || [])[3])); b && !b.classList.contains('on') && b.click(); });
+      if (G.q != null && (G.step === 'basic' || G.step === 'jump')) T(() => qGo(G.step, G.q));
+      if (G.game) T(() => { const c = document.querySelector('[data-act="lair-pick"][data-v="' + G.game + '"]'); c && c.click(); });
+      T(() => scrollTo({ top: 0, behavior: 'smooth' }));
+    }, 260);
+    T(() => Sound.click());
+  }
+  function add() {
+    document.querySelectorAll('ul.ritems li').forEach(li => {
+      if (li.classList.contains('ok') || li.querySelector('button,.fu-go,.ugo')) return;
+      const G = target(li); if (!G) return;
+      const b = document.createElement('button'); b.className = 'ugo'; b.type = 'button'; b.textContent = li.classList.contains('retry') ? '🔄 다시 하기' : '▶ 하러 가기';
+      b.onclick = e => { e.preventDefault(); e.stopPropagation(); go(G); }; li.appendChild(b);
+    });
+  }
+  const st = document.createElement('style');
+  st.textContent = '.ugo{flex:none;border:0;cursor:pointer;font-weight:900;font-size:.85rem;color:#fff;background:linear-gradient(180deg,#fb923c,#ea580c);border-radius:999px;padding:5px 12px;box-shadow:0 3px 0 #c2410c;margin-left:6px;white-space:nowrap}.ugo:hover{transform:translateY(-1px)}.ritems li.retry .ugo{background:linear-gradient(180deg,#a78bfa,#7c3aed);box-shadow:0 3px 0 #5b21b6}';
+  (document.head || document.documentElement).appendChild(st);
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; add(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
