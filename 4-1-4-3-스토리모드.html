@@ -6145,6 +6145,8 @@ const mgSvg2 = (tool, inner, W, H) => '<div class="gbwrap"><svg class="gb" id="g
 
 
 const FC = 40, FW = 640, FH = 360;
+const MOB = (typeof innerWidth !== 'undefined') && innerWidth < 700;
+const TW = MOB ? 400 : 640, TH = MOB ? 560 : 360;
 const FD = ['up', 'down', 'left', 'right'];
 const FDNM = { up: '위쪽', down: '아래쪽', left: '왼쪽', right: '오른쪽' };
 const FDAR = { up: '⬆', down: '⬇', left: '⬅', right: '➡' };
@@ -6203,9 +6205,9 @@ function fLabs(P, C, col, names) {
 function fFilmR(P, pad) { const b = fBB(P); pad = pad == null ? .35 : pad; return [[b.x0 - pad, b.y0 - pad], [b.x1 + pad, b.y0 - pad], [b.x1 + pad, b.y1 + pad], [b.x0 - pad, b.y1 + pad]]; }
 const fFilm = (R, C, back) => '<polygon points="' + fPts(R, C) + '" fill="' + (back ? 'rgba(224,242,254,.75)' : 'rgba(186,230,253,.38)') + '" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>'
   + '<line x1="' + f1(R[0][0] * C + 8) + '" y1="' + f1(R[0][1] * C + 14) + '" x2="' + f1(R[0][0] * C + 22) + '" y2="' + f1(R[0][1] * C + 6) + '" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>';
-const flSvg = (tool, inner) => '<div class="gbwrap"><svg class="gb flsvg" id="gb-' + tool + '" data-gb="' + tool + '" viewBox="0 0 ' + FW + ' ' + FH + '" width="' + FW + '" height="' + FH + '">' + inner + '</svg></div>';
+const flSvg = (tool, inner, w, hh) => { w = w || FW; hh = hh || FH; return '<div class="gbwrap"><svg class="gb flsvg' + (hh > w ? ' flport' : '') + '" id="gb-' + tool + '" data-gb="' + tool + '" viewBox="0 0 ' + w + ' ' + hh + '" width="' + w + '" height="' + hh + '">' + inner + '</svg></div>'; };
 const flBody = (vk, no, title, sub, mis, tool, taunt) => toolCard(vk, no, title, sub, mis,
-  vSay(vk, taunt, 44) + flSvg(tool, GBT[tool].inner()) + '<div id="gbctl-' + tool + '" class="gbctl">' + GBT[tool].ctl() + '</div>');
+  vSay(vk, taunt, 44) + flSvg(tool, GBT[tool].inner(), TW, TH) + '<div id="gbctl-' + tool + '" class="gbctl">' + GBT[tool].ctl() + '</div>');
 /* 손잡이 (끌어서 넘겨요) */
 function fKnobs(P, ds, C) {
   const b = fBB(P), cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2, off = .55;
@@ -6303,7 +6305,7 @@ Object.keys(TOOL_RENDER).forEach(k => delete TOOL_RENDER[k]);
 Object.assign(TOOL_RENDER, { dial: () => renderDial(), rdraw: () => renderRDraw(), rwhich: () => renderRWhich(), ptn: () => renderPtn() });
 
 /* ---------- 도구 1 · 바늘 돌리기 (교과서 96쪽) ---------- */
-const D1C = [320, 186], D1R = 128;
+const D1C = MOB ? [200, 230] : [320, 186], D1R = 128;
 const NEEDLE = [[-9, 22], [9, 22], [9, -58], [26, -58], [0, -104], [-26, -58], [-9, -58]];
 const D1CELLS = [['cw', 90], ['cw', 180], ['cw', 270], ['cw', 360], ['ccw', 90], ['ccw', 180], ['ccw', 270], ['ccw', 360]];
 function newDial() { return { R: { on: false, acc: 0 }, shown: 0, cells: {}, q: 0, fb: null }; }
@@ -6314,14 +6316,14 @@ function needleSvg(c, deg, col, sc) {
 GBT.dial = {
   inner() {
     const t = AN_().dial, deg = t.R.on ? t.R.acc : t.shown;
-    let s = fGrid(FW, FH, FC, { bg: '#f8fafc' });
+    let s = fGrid(TW, TH, FC, { bg: '#f8fafc' });
     s += '<circle cx="' + D1C[0] + '" cy="' + D1C[1] + '" r="' + (D1R + 18) + '" fill="#fff" stroke="#cbd5e1" stroke-width="4"/>';
     [[0, '0°'], [90, '90°'], [180, '180°'], [270, '270°']].forEach(([a, l]) => { const r = (a - 90) * Math.PI / 180, x = D1C[0] + Math.cos(r) * (D1R + 4), y = D1C[1] + Math.sin(r) * (D1R + 4);
       s += '<circle cx="' + f1(x) + '" cy="' + f1(y) + '" r="5" fill="#94a3b8"/>' + fTxt(D1C[0] + Math.cos(r) * (D1R + 42), D1C[1] + Math.sin(r) * (D1R + 42) + 5, l, '#64748b', 14); });
     s += rArc(D1C, D1R - 14, deg, deg > 0 ? '#f59e0b' : '#8b5cf6');
     s += '<g opacity=".25">' + needleSvg(D1C, 0, '#94a3b8') + '</g>' + needleSvg(D1C, deg);
-    if (Math.abs(deg) > 2) s += '<rect x="' + (D1C[0] + 170) + '" y="20" width="140" height="56" rx="14" fill="' + (deg > 0 ? '#fffbeb' : '#f5f3ff') + '" stroke="' + (deg > 0 ? '#f59e0b' : '#8b5cf6') + '" stroke-width="2.5"/>'
-      + fTxt(D1C[0] + 240, 44, RAR[deg > 0 ? 'cw' : 'ccw'] + ' ' + RD[deg > 0 ? 'cw' : 'ccw'], deg > 0 ? '#b45309' : '#6d28d9', 13) + fTxt(D1C[0] + 240, 68, Math.round(Math.abs(deg)) + '°', deg > 0 ? '#b45309' : '#6d28d9', 20);
+    if (Math.abs(deg) > 2) s += '<rect x="' + (MOB ? D1C[0] - 70 : D1C[0] + 170) + '" y="' + (MOB ? 440 : 20) + '" width="140" height="56" rx="14" fill="' + (deg > 0 ? '#fffbeb' : '#f5f3ff') + '" stroke="' + (deg > 0 ? '#f59e0b' : '#8b5cf6') + '" stroke-width="2.5"/>'
+      + fTxt(MOB ? D1C[0] : D1C[0] + 240, MOB ? 464 : 44, RAR[deg > 0 ? 'cw' : 'ccw'] + ' ' + RD[deg > 0 ? 'cw' : 'ccw'], deg > 0 ? '#b45309' : '#6d28d9', 13) + fTxt(MOB ? D1C[0] : D1C[0] + 240, MOB ? 488 : 68, Math.round(Math.abs(deg)) + '°', deg > 0 ? '#b45309' : '#6d28d9', 20);
     if (!bdg('dial') && !t.anim) s += rKnob(D1C, 104, deg, 'dk', '#dc2626');
     return s;
   },
@@ -6373,23 +6375,24 @@ Object.assign(AN, {
 
 /* ---------- 도구 2 · 돌린 도형 그리기 (교과서 97~98쪽) ---------- */
 const T2RR = [{ d: 'cw', a: 90 }, { d: 'ccw', a: 90 }];
-const R2AT = [1, 3], R2TRAY = 12.3, R2BOX = [6, .8, 12, 8.2];
+const R2AT = MOB ? [1, 1] : [1, 3], R2TRAY = MOB ? 99 : 12.3, R2BOX = MOB ? [1, 5.6, 9, 12.4] : [6, .8, 12, 8.2];
+const r2InTray = p => MOB ? (p[0] > 6.4 * FC && p[1] < 5.2 * FC) : p[0] > (R2TRAY - .3) * FC;
 function newRDraw() { return { r: 0, place: {}, dp: {}, bad: {}, anim: -1, fb: null, tries: 0 }; }
 const r2Cfg = t => T2RR[Math.min(t.r, T2RR.length - 1)];
 const r2P = () => fAbs('tri', R2AT);
-const r2Tok = i => [(R2TRAY + 1.7) * FC, (2.2 + i * 1.8) * FC];
+const r2Tok = i => MOB ? [(7 + (i % 2) * 1.6) * FC, (1.4 + Math.floor(i / 2) * 1.7 + (i === 2 ? 0 : 0)) * FC] : [(R2TRAY + 1.7) * FC, (2.2 + i * 1.8) * FC];
 const r2Want = t => rotRaw(r2P(), rK(r2Cfg(t).d, r2Cfg(t).a));
 function r2Check(t) { const S = r2P().map((q, i) => t.place[i]), W = r2Want(t); if (S.some(x => !x)) return null;
   const dx = S[0][0] - W[0][0], dy = S[0][1] - W[0][1]; return S.map((s, i) => s[0] - W[i][0] === dx && s[1] - W[i][1] === dy); }
 GBT.rdraw = {
   inner() {
     const t = AN_().rdraw, c = r2Cfg(t), sh = FS.tri, P = r2P(), done = bdg('rdraw');
-    let s = fGrid(R2TRAY * FC, FH, FC);
-    s += '<rect x="' + f1(R2TRAY * FC) + '" y="0" width="' + f1(FW - R2TRAY * FC) + '" height="' + FH + '" fill="#f8fafc"/>';
+    let s = fGrid(MOB ? TW : R2TRAY * FC, TH, FC);
+    s += MOB ? '<rect x="' + 6.4 * FC + '" y="0" width="' + (TW - 6.4 * FC) + '" height="' + 5.2 * FC + '" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>' : '<rect x="' + f1(R2TRAY * FC) + '" y="0" width="' + f1(TW - R2TRAY * FC) + '" height="' + TH + '" fill="#f8fafc"/>';
     s += '<rect x="' + R2BOX[0] * FC + '" y="' + R2BOX[1] * FC + '" width="' + (R2BOX[2] - R2BOX[0]) * FC + '" height="' + (R2BOX[3] - R2BOX[1]) * FC + '" rx="12" fill="rgba(254,243,199,.35)" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="8 6"/>'
       + fTxt((R2BOX[0] + R2BOX[2]) / 2 * FC, R2BOX[1] * FC + 22, '돌린 도형을 여기에 그려요', '#b45309', 14);
-    s += '<rect x="10" y="' + (FH - 46) + '" width="218" height="36" rx="12" fill="' + (c.d === 'cw' ? '#fffbeb' : '#f5f3ff') + '" stroke="' + (c.d === 'cw' ? '#f59e0b' : '#8b5cf6') + '" stroke-width="2"/>'
-      + fTxt(119, FH - 22, RAR[c.d] + ' ' + RD[c.d] + ' ' + c.a + '°', c.d === 'cw' ? '#b45309' : '#6d28d9', 16);
+    s += '<rect x="10" y="' + (TH - 46) + '" width="218" height="36" rx="12" fill="' + (c.d === 'cw' ? '#fffbeb' : '#f5f3ff') + '" stroke="' + (c.d === 'cw' ? '#f59e0b' : '#8b5cf6') + '" stroke-width="2"/>'
+      + fTxt(119, TH - 22, RAR[c.d] + ' ' + RD[c.d] + ' ' + c.a + '°', c.d === 'cw' ? '#b45309' : '#6d28d9', 16);
     s += fPoly(P, FC, { fill: sh.fill, line: sh.line }) + fLabs(P, FC, sh.line);
     const S = P.map((q, i) => t.place[i]);
     if (t.anim >= 0 && S.every(Boolean)) {
@@ -6404,7 +6407,7 @@ GBT.rdraw = {
     S.forEach((q, i) => { if (!q || t.dp[i]) return; const bad = t.bad[i];
       s += '<g class="gbk" data-gh="pk' + i + '"><circle cx="' + f1(q[0] * FC) + '" cy="' + f1(q[1] * FC) + '" r="22" fill="transparent"/><circle cx="' + f1(q[0] * FC) + '" cy="' + f1(q[1] * FC) + '" r="13" fill="' + (bad ? '#dc2626' : '#4338ca') + '"/>'
         + '<text x="' + f1(q[0] * FC) + '" y="' + f1(q[1] * FC + 5) + '" text-anchor="middle" font-size="14" font-weight="900" fill="#fff" pointer-events="none">' + FVN[i] + '</text></g>'; });
-    s += fTxt((R2TRAY + 1.7) * FC, .85 * FC, '꼭짓점 점', '#475569', 15);
+    s += MOB ? fTxt(7.8 * FC, .7 * FC, '꼭짓점 점', '#475569', 14) : fTxt((R2TRAY + 1.7) * FC, .85 * FC, '꼭짓점 점', '#475569', 15);
     P.forEach((q, i) => { if (t.place[i] && !t.dp[i]) return; const p = t.dp[i] || r2Tok(i);
       s += '<g class="gbk" data-gh="pk' + i + '"><circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="24" fill="transparent"/><circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="17" fill="#fff" stroke="#4338ca" stroke-width="3.5"/>'
         + '<text x="' + f1(p[0]) + '" y="' + f1(p[1] + 6) + '" text-anchor="middle" font-size="17" font-weight="900" fill="#4338ca" pointer-events="none">' + FVN[i] + '</text></g>'; });
@@ -6414,8 +6417,8 @@ GBT.rdraw = {
   up(h) {
     const t = AN_().rdraw; if (!h.startsWith('pk')) return;
     const i = +h.slice(2), p = t.dp[i]; t.dp[i] = null; if (!p) return;
-    if (p[0] > (R2TRAY - .3) * FC) delete t.place[i];
-    else { const g = [clampN(Math.round(p[0] / FC), 0, Math.floor(R2TRAY)), clampN(Math.round(p[1] / FC), 0, FH / FC)];
+    if (r2InTray(p)) delete t.place[i];
+    else { const g = [clampN(Math.round(p[0] / FC), 0, Math.floor(Math.min(R2TRAY, TW / FC))), clampN(Math.round(p[1] / FC), 0, TH / FC)];
       if (g[0] < R2BOX[0] || g[0] > R2BOX[2] || g[1] < R2BOX[1] || g[1] > R2BOX[3]) { t.fb = { ok: true, kind: 'hint', msg: '점은 노란 점선 상자 안에 찍어요.' }; gbCtl('rdraw'); return; }
       t.place[i] = g; try { Sound.pop(); } catch (e) {} }
     t.bad = {}; t.anim = -1;
@@ -6457,7 +6460,7 @@ Object.assign(AN, {
 
 /* ---------- 도구 3 · 어떻게 돌렸을까? (교과서 99쪽 4) ---------- */
 const T3RR = [{ sh: 'puzzle', k: 1, want: ['cw90', 'ccw270'] }, { sh: 'needle', k: 2, want: ['cw180', 'ccw180'] }];
-const R3PN = [[1.2, 1.1, 7.8, 8.7], [9.2, 1.1, 15.8, 8.7]];
+const R3PN = MOB ? [[1.2, 1.1, 8.8, 6.6], [1.2, 7.9, 8.8, 13.4]] : [[1.2, 1.1, 7.8, 8.7], [9.2, 1.1, 15.8, 8.7]];
 function r3Place(k, pi) { const pts = FS[k].pts, b = fBB(pts), pn = R3PN[pi], cx = (pn[0] + pn[2]) / 2, cy = (pn[1] + pn[3]) / 2 + .3;
   return fAbs(k, [Math.round(cx - (b.x1 - b.x0) / 2), Math.round(cy - (b.y1 - b.y0) / 2)]); }
 function newRWhich() { return { r: 0, found: {}, R: { on: false, acc: 0 }, shown: 0, q: 0, fb: null }; }
@@ -6465,8 +6468,8 @@ const r3Cfg = t => T3RR[Math.min(t.r, T3RR.length - 1)];
 GBT.rwhich = {
   inner() {
     const t = AN_().rwhich, c = r3Cfg(t), sh = FS[c.sh], P = r3Place(c.sh, 0), B1 = fBB(r3Place(c.sh, 1)), A = fMove(rotK(FS[c.sh].pts, c.k), [B1.x0, B1.y0]), done = bdg('rwhich');
-    let s = fGrid(FW, FH, FC);
-    s += fPanel(R3PN[0], '돌리기 전 · 내 조각', '#0284c7', FC) + fPanel(R3PN[1], '돌린 후', '#7c3aed', FC) + fTxt(8.5 * FC, 5.3 * FC, '➜', '#64748b', 30);
+    let s = fGrid(TW, TH, FC);
+    s += fPanel(R3PN[0], '돌리기 전 · 내 조각', '#0284c7', FC) + fPanel(R3PN[1], '돌린 후', '#7c3aed', FC) + (MOB ? fTxt(5 * FC, 7.55 * FC, '⬇', '#64748b', 26) : fTxt(8.5 * FC, 5.3 * FC, '➜', '#64748b', 30));
     s += fPoly(A, FC, { fill: sh.fill, line: sh.line });
     const deg = t.R.on ? t.R.acc : t.shown, cc = cOf(P);
     s += rPolyAt(P, FC, deg, { fill: sh.fill, line: sh.line });
@@ -6516,7 +6519,7 @@ Object.assign(AN, {
 });
 
 /* ---------- 도구 4 · 돌리기 무늬 공방 (교과서 99쪽 놀이) ---------- */
-const P4N = 6, P4CELL = 64, P4X0 = 128, P4Y0 = 34, P4BC = [200, 262];
+const P4N = 6, P4CELL = MOB ? 52 : 64, P4X0 = MOB ? 26 : 128, P4Y0 = 34, P4BC = MOB ? [200, 280] : [200, 262];
 const TRI = [[0, 0], [1, 0], [0, 1]];
 function tileSvg(k, cx, cy, sz, o) {
   o = o || {}; const h = sz / 2, pts = TRI.map(p => [cx - h + p[0] * sz, cy - h + p[1] * sz]);
@@ -6528,7 +6531,7 @@ const p4Step = t => t.rule ? (t.rule.d === 'cw' ? 1 : -1) * t.rule.a : 0;
 GBT.ptn = {
   inner() {
     const t = AN_().ptn, done = bdg('ptn');
-    let s = fGrid(FW, FH, FC, { bg: '#fffbeb' });
+    let s = fGrid(TW, TH, FC, { bg: '#fffbeb' });
     s += '<rect x="' + (P4X0 - 12) + '" y="' + (P4Y0 - 12) + '" width="' + (P4N * (P4CELL + 6) + 18) + '" height="' + (P4CELL + 24) + '" rx="14" fill="#fff" stroke="#b45309" stroke-width="3"/>';
     for (let i = 0; i < P4N; i++) { const x = P4X0 + i * (P4CELL + 6) + P4CELL / 2, y = P4Y0 + P4CELL / 2;
       if (t.cells[i] != null) s += tileSvg(t.cells[i], x, y, P4CELL - 4);
@@ -6540,9 +6543,9 @@ GBT.ptn = {
       s += '<rect x="' + (P4BC[0] - 70) + '" y="' + (P4BC[1] - 70) + '" width="140" height="140" rx="16" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>' + fTxt(P4BC[0], P4BC[1] + 92, '🛠️ 작업대', '#92400e', 13);
       s += '<g class="gbk" data-gh="mv">' + tileSvg(deg, bx, by, 76, { ink: '#3b82f6' }) + '</g>';
       if (!t.drag) s += rKnob(P4BC, 62, deg, 'rk', '#d97706');
-      s += fTxt(430, 210, '① ⟳ 손잡이로 타일을 돌려요', '#92400e', 15, 'start') + fTxt(430, 240, '② 타일을 끌어 ' + (t.cells.length + 1) + '번 칸에 놓아요', '#92400e', 15, 'start')
-        + fTxt(430, 280, '규칙: ' + RAR[t.rule.d] + ' ' + RD[t.rule.d] + ' ' + t.rule.a + '°씩', '#b45309', 16, 'start');
-    } else if (!t.rule && !done) s += fTxt(FW / 2, 250, '👉 먼저 오른쪽에서 무늬의 규칙을 정해요', '#92400e', 18);
+      s += fTxt(MOB ? 200 : 430, MOB ? 420 : 210, '① ⟳ 손잡이로 타일을 돌려요', '#92400e', 15, MOB ? 'middle' : 'start') + fTxt(MOB ? 200 : 430, MOB ? 448 : 240, '② 타일을 끌어 ' + (t.cells.length + 1) + '번 칸에 놓아요', '#92400e', 15, MOB ? 'middle' : 'start')
+        + fTxt(MOB ? 200 : 430, MOB ? 482 : 280, '규칙: ' + RAR[t.rule.d] + ' ' + RD[t.rule.d] + ' ' + t.rule.a + '°씩', '#b45309', 16, MOB ? 'middle' : 'start');
+    } else if (!t.rule && !done) s += fTxt(TW / 2, 250, (MOB ? '👇 먼저 아래에서 무늬의 규칙을 정해요' : '👉 먼저 오른쪽에서 무늬의 규칙을 정해요'), '#92400e', 18);
     return s;
   },
   down(h, p) { const t = AN_().ptn; if (h === 'rk') rdDown(t.R, P4BC, p); },
@@ -6730,20 +6733,20 @@ function genJ1R() {
   const wrong = pick([0, 1]), say = [right1.slice(), right2.slice()];
   say[wrong][1] = wrong === 0 ? (right1[1] === 90 ? 270 : 90) : 180;
   return { key: 'j1', label: '점프 · 🗣️ 친구 설명 고치기', choice: false, write: false, k: k, kk: kk, say: say, wrong: wrong, fix: wrong === 0 ? right1[1] : right2[1],
-    text: '토리가 조각을 돌린 방법을 설명했어요. <b>틀린 부분</b>을 찾아 누르고, 옳게 고쳐 보세요. 아래 조각의 손잡이를 끌어 직접 돌려 볼 수 있어요.',
+    text: '토리의 설명에서 <b>틀린 부분</b>을 찾아 누르고 옳게 고쳐요. 조각의 ⟳ 손잡이로 직접 돌려 볼 수 있어요.',
     hint: '돌리기 전 조각을 시계 방향과 시계 반대 방향으로 각각 돌려 봐요. 두 각도를 더하면 360°가 돼요.',
     ok: '토리의 설명을 바르게 고쳤어요! 시계 방향으로 ' + right1[1] + '°만큼 돌린 것과 시계 반대 방향으로 ' + right2[1] + '°만큼 돌린 것은 같아요.' };
 }
-const J1C = [170, 170];
+const J1C = MOB ? [200, 150] : [170, 170], J1A = MOB ? [200, 410] : [470, 170];
 GBT.j1r = {
   inner() {
     const p = PARTS.j1, X = jxs(); X.r1 = X.r1 || { R: { on: false, acc: 0 }, shown: 0 }; const R1 = X.r1, sh = FS[p.k];
     const P0 = fNorm(sh.pts), b = fBB(P0), P = P0.map(q => [q[0] - (b.x1 - b.x0) / 2 + J1C[0] / FC, q[1] - (b.y1 - b.y0) / 2 + J1C[1] / FC]);
-    const deg = R1.R.on ? R1.R.acc : R1.shown, A = rotK(sh.pts, p.kk), bA = fBB(A), PA = A.map(q => [q[0] - (bA.x1 - bA.x0) / 2 + 470 / FC, q[1] - (bA.y1 - bA.y0) / 2 + 170 / FC]);
-    let s = fGrid(FW, FH, FC);
-    s += fPanel([1, 1, 7.5, 8], '돌리기 전', '#0284c7', FC) + fPanel([8.5, 1, 15, 8], '돌린 후', '#7c3aed', FC) + fTxt(8 * FC, 4.5 * FC, '➜', '#64748b', 26);
+    const deg = R1.R.on ? R1.R.acc : R1.shown, A = rotK(sh.pts, p.kk), bA = fBB(A), PA = A.map(q => [q[0] - (bA.x1 - bA.x0) / 2 + J1A[0] / FC, q[1] - (bA.y1 - bA.y0) / 2 + J1A[1] / FC]);
+    let s = fGrid(TW, TH, FC);
+    s += MOB ? fPanel([1, .8, 9, 6.6], '돌리기 전', '#0284c7', FC) + fPanel([1, 7.4, 9, 13.2], '돌린 후', '#7c3aed', FC) + fTxt(9.5 * FC, 7.2 * FC, '⬇', '#64748b', 22) : fPanel([1, 1, 7.5, 8], '돌리기 전', '#0284c7', FC) + fPanel([8.5, 1, 15, 8], '돌린 후', '#7c3aed', FC) + fTxt(8 * FC, 4.5 * FC, '➜', '#64748b', 26);
     s += fPoly(PA, FC, { fill: sh.fill, line: sh.line }) + rPolyAt(P, FC, deg, { fill: sh.fill, line: sh.line }) + rArc(J1C, 2.4 * FC, deg, deg > 0 ? '#f59e0b' : '#8b5cf6');
-    if (Math.abs(deg) > 2) s += fTxt(J1C[0], 7.6 * FC, kSay(Math.round(deg / 90)) + '만큼', deg > 0 ? '#b45309' : '#6d28d9', 15);
+    if (Math.abs(deg) > 2) s += fTxt(J1C[0], (MOB ? 6.3 : 7.6) * FC, kSay(Math.round(deg / 90)) + '만큼', deg > 0 ? '#b45309' : '#6d28d9', 15);
     if (!jOK('j1')) s += rKnob(J1C, 2.7 * FC, deg, 'jk', '#0284c7');
     return s;
   },
@@ -6755,12 +6758,12 @@ GBT.j1r = {
 };
 function j1HTML() {
   const p = PARTS.j1, rec = RV('j1'), solved = rec && rec.solved, X = jxs(), fb = state.s1.fb.j1; X.j1 = X.j1 || { pick: null };
-  let h = flSvg('j1r', GBT.j1r.inner());
+  let h = '<div class="j1lay">' + flSvg('j1r', GBT.j1r.inner(), TW, TH) + '<div class="j1side">';
   h += '<div class="j1say">' + avatar('rabbit', 46, 'happy') + '<div class="j1bub">“' + p.say.map((s, i) => '<button class="j1part' + (X.j1.pick === i ? ' on' : '') + (solved && i === p.wrong ? ' fixed' : '') + '" data-an="j1-pk" data-v="' + i + '"' + (solved ? ' disabled' : '') + '>' + RD[s[0]] + '으로 ' + (solved && i === p.wrong ? '<s>' + s[1] + '°</s> <b>' + p.fix + '°</b>' : s[1] + '°') + '만큼</button>').join(' 돌리거나 ') + ' 돌리면 돼.”</div></div>';
   if (!solved && X.j1.pick != null) h += '<div class="row mt-2" style="justify-content:center;align-items:center;gap:8px;flex-wrap:wrap"><b>옳게 고치기: ' + RD[p.say[X.j1.pick][0]] + '으로</b><input class="j1num" id="j1fix" inputmode="numeric" maxlength="3" placeholder="?"><b>°만큼</b>'
     + '<button class="btn btn-green" data-an="j1-sub">✅ 확인</button></div>';
   if (!solved) h += '<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-act="phint" data-k="j1">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>';
-  return h + '<div id="fb-j1">' + (fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), fb.msg) : '') + '</div>';
+  return h + '<div id="fb-j1">' + (fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), fb.msg) : '') + '</div></div></div>';
 }
 Object.assign(AN, {
   'j1-pk': v => { const X = jxs(); X.j1 = X.j1 || {}; X.j1.pick = +v; renderPart('j1'); },
@@ -7148,6 +7151,8 @@ buildS1Sheet = function (c) {
     + '.hero{background:linear-gradient(120deg,#7c2d12 0%,#c2410c 34%,#d97706 66%,#8b5cf6 100%)!important;box-shadow:0 8px 0 #7c2d12,0 16px 30px rgba(194,65,12,.32)!important}\n'
     + '.d1tbl{margin:8px auto 4px;border-collapse:separate;border-spacing:4px;font-weight:900}.d1tbl th{font-size:.8rem;color:#475569;padding:2px 6px;white-space:nowrap}.d1tbl td{width:50px;height:50px;background:#fff;border:2px solid #e2e8f0;border-radius:10px;text-align:center;vertical-align:middle}.d1q{color:#cbd5e1;font-size:1.2rem}\n'
     + '.p4rule{display:flex;flex-direction:column;gap:6px;align-items:center;background:#fffbeb;border:2px solid #fcd34d;border-radius:14px;padding:8px 10px;margin:6px 0}\n'
+    + '.j1lay{display:grid;gap:12px;align-items:center}@media(min-width:900px){.j1lay{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}.j1lay svg.flsvg{max-height:calc(100vh - 330px)!important}}.j1side{display:flex;flex-direction:column;gap:6px;min-width:0}.j1side .j1say{flex-direction:column}\n'
+    + 'html body svg.flsvg.flport{max-height:none!important}\n'
     + '.j1say{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:8px;flex-wrap:wrap}.j1bub{background:#fff;border:3px solid #a78bfa;border-radius:18px;padding:10px 14px;font-weight:900;line-height:2.1;max-width:640px}\n'
     + '.j1part{border:2px dashed #a78bfa;background:#f5f3ff;border-radius:10px;padding:2px 8px;font-weight:900;cursor:pointer;color:#4c1d95}.j1part.on{background:#fde68a;border-color:#d97706;border-style:solid}.j1part.fixed{background:#dcfce7;border-color:#16a34a}\n'
     + '.j2floor{display:grid;grid-template-columns:repeat(4,64px);gap:4px;justify-content:center;padding:10px;margin:8px auto;width:max-content;background:#92400e;border-radius:14px}\n'
