@@ -5830,6 +5830,32 @@ body{background:radial-gradient(circle at 1px 1px,rgba(2,132,199,.15) 1.5px,tran
 @keyframes vkrin{0%{transform:translateX(-12px);opacity:0}100%{transform:none;opacity:1}}
 .vkrn{font-weight:800;color:#475569;white-space:nowrap;font-size:.8rem}.vkrn b{color:#0f766e;font-size:1rem}
 .vkrp{display:inline-block;padding:6px 14px;border-radius:8px;font-weight:900;border:2px solid}.vkrp.m{background:#5eead4;border-color:#0f766e;color:#134e4a;width:120px;text-align:center}.vkrp.c{background:#fde68a;border-color:#b45309;color:#78350f;width:120px;text-align:center}.vkrp small{display:block;font-size:.65rem}
+/* 3D 펼치기 */
+.vk3wrap{width:100%;max-width:900px;margin:0 auto;flex:1 1 560px}.vk3{display:flex;flex-direction:column;gap:6px;border:3px solid #fdba74;border-radius:18px;background:#fffbeb;padding:8px}
+.vk3bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.vk3info{font-weight:900;color:#9a3412;font-size:1.05rem}.vk3info b{font-size:1.3rem;color:#dc2626}
+.vk3btns{display:flex;gap:6px;flex-wrap:wrap}.vk3btns .btn{padding:6px 12px;font-size:.92rem}
+.vk3cv{width:100%;height:min(440px,52vh);min-height:300px;background:radial-gradient(circle at 50% 40%,#fff,#f1f5f9);border-radius:12px;touch-action:none;cursor:grab;display:block}
+.vk3msg{min-height:1.3em;text-align:center;font-weight:900;color:#475569}.vk3msg.bad{color:#dc2626}.vk3msg.ok{color:#16a34a}.vk3tip{text-align:center;color:#64748b;font-weight:700}
+.vk3card{display:inline-flex;align-items:center;justify-content:center;border:2px solid #334155;border-radius:3px}.vk3card small{font-weight:900;font-size:.72rem;background:rgba(255,255,255,.85);border-radius:4px;padding:0 3px}
+.vk3wrap.dzover .vk3{border-color:#16a34a;box-shadow:0 0 0 4px #bbf7d0}
+.vk3lay{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}.vk3src{flex:0 1 260px}.vk3src .t11src{flex-direction:column;align-items:center}
+.vk3all{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
+.vkwlay{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}.vkwlay>.vkzone{flex:0 1 auto}.vkw3{flex:1 1 320px;max-width:460px}.vkw3 .vk3cv{height:min(300px,40vh);min-height:220px}
+.vkwl{position:absolute;transform:translate(-50%,-50%);font-weight:900;font-size:.72rem;color:#0f172a;background:rgba(255,255,255,.9);border-radius:5px;padding:0 3px;pointer-events:none;z-index:2;white-space:nowrap}.vkwl.t{transform:translate(-50%,2px)}.vkwl.l{transform:translate(2px,-50%)}
+.vkmp.done{font-weight:900;color:#15803d;font-size:.85rem;padding:4px 6px}.vk3src .vkmach{min-height:90px}
+.vk3all.short .vk3cv{height:min(290px,44vh)}
+.vk3src.vksrec{flex:0 1 300px;display:flex;flex-direction:column;align-items:center;gap:6px}.vksrec .mxrec{font-size:1.05rem;line-height:2.2}
+.vksrec .mxrec{word-break:keep-all}.vk3src.vksrec{flex-basis:340px}
+.vk3{position:relative}.vk3 .vk3msg{position:absolute;left:18px;right:18px;bottom:34px;min-height:0;pointer-events:none;background:rgba(255,255,255,.9);border-radius:10px;padding:2px 8px;z-index:2}.vk3 .vk3msg:empty{display:none}
+.vk3 .vk3tip{position:absolute;left:0;right:0;bottom:12px;pointer-events:none;font-size:.78rem;opacity:.8}
+.vk3lay:has(.vksrec){flex-wrap:nowrap}.vk3lay:has(.vksrec) .vk3wrap{flex:1 1 auto;min-width:0}.vk3lay .vk3src.vksrec{flex:0 0 300px}
+.vk3lay:has(.vksrec) .vk3wrap{max-width:640px}
+.vk3lay:has(.vksrec) .vk3btns .btn{padding:4px 9px;font-size:.8rem}.vk3lay:has(.vksrec) .vk3info{font-size:.95rem}
+.vkfc{position:relative;display:inline-flex;align-items:center;justify-content:center;border:2px solid #334155;border-radius:3px;box-sizing:border-box;overflow:visible}.vkfc b{font-family:'Jua',sans-serif;font-size:1.15rem;background:#fff;border:2px solid #1e293b;border-radius:50%;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center}.vkfc small{display:none}
+.vkfc i{position:absolute;font-style:normal;font-weight:900;font-size:.7rem;color:#0f172a;white-space:nowrap}.vkfc i.t{left:50%;top:-1.25em;transform:translateX(-50%)}.vkfc i.l{right:100%;top:50%;transform:translateY(-50%);margin-right:3px}
+.vk3src .vkfc,.vkmach .vkfc{margin:14px 6px 2px 34px}
+.vkwn{position:absolute;transform:translate(-50%,-50%);z-index:2;pointer-events:none;font-family:'Jua',sans-serif;font-size:1.1rem;background:#fff;border:2px solid #1e293b;border-radius:50%;width:1.55em;height:1.55em;display:flex;align-items:center;justify-content:center;line-height:1}
+.vkref{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;align-items:flex-end}.vkref .vkfc{margin:16px 6px 2px 36px}
 </style>
 <script>
 /* 6-1 6단원 2차시 · 직육면체의 부피 구하기 */
@@ -8093,54 +8119,242 @@ const VK = (() => {
   }
   /* ⑬ 여섯 면 포장하기(긁어 칠하기): c = { A, q, rec, win } — 모눈 전개도의 칸을 긁어 칠하면 면마다 넓이가 나와요 */
   function wrap(c) {
-    const [a, b, h] = c.A, R = NETR(a, b, h), cells = []; R.forEach(([x, y, w, hh, k], f) => { for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) cells.push({ x: x + i, y: y + j, f, k }); });
+    const [a, b, h] = c.A, R = NETR(a, b, h), cells = [], key = 'wrap' + c.A.join('x'), F3 = [4, 2, 5, 3, 1, 0], NUM = ['②', '③', '④', '⑤', '①', '⑥'];
+    R.forEach(([x, y, w, hh, k], f) => { for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) cells.push({ x: x + i, y: y + j, f, k, i, j }); });
+    /* 전개도 칸 → 상자 겉면의 1 cm × 1 cm 칸 */
+    const sq = q => { const { f, i, j } = q; let P;
+      if (f === 1) { const z = h - 1 - j; P = [[i, 0, z], [i + 1, 0, z], [i + 1, 0, z + 1], [i, 0, z + 1]]; }
+      else if (f === 0) { const y = b - 1 - i, z = h - 1 - j; P = [[0, y, z], [0, y + 1, z], [0, y + 1, z + 1], [0, y, z + 1]]; }
+      else if (f === 2) { const y = i, z = h - 1 - j; P = [[a, y, z], [a, y + 1, z], [a, y + 1, z + 1], [a, y, z + 1]]; }
+      else if (f === 3) { const x = a - 1 - i, z = h - 1 - j; P = [[x, b, z], [x + 1, b, z], [x + 1, b, z + 1], [x, b, z + 1]]; }
+      else if (f === 4) { const y = b - 1 - j; P = [[i, y, h], [i + 1, y, h], [i + 1, y + 1, h], [i, y + 1, h]]; }
+      else { const y = j; P = [[i, y, 0], [i + 1, y, 0], [i + 1, y + 1, 0], [i, y + 1, 0]]; } return P; };
     const full = (d, f) => cells.every((q, i) => q.f !== f || d.on[i]);
     return stage('vkwrap', c, {
-      q: d => d.recOK ? '완성!' : cells.every((q, i) => d.on[i]) ? (c.q2 || '면마다 넓이를 보고 겉넓이를 구해요.') : c.q,
+      q: d => d.recOK ? '완성!' : cells.every((q, i) => d.on[i]) ? (c.q2 || '면마다 모눈 칸 수를 세어 넓이를 구하고, 모두 더해 겉넓이를 구해요.') : c.q,
       init: () => ({ on: {}, rv: {} }),
-      view: d => { const u = netU(a, b, h, 540, 250), all = cells.every((q, i) => d.on[i]);
+      view: d => { const u = netU(a, b, h, 470, 260), all = cells.every((q, i) => d.on[i]);
+        try { const st = VK3D.state(key, c.A); st.num = {}; F3.forEach((v, i) => st.num[v] = NUM[i]); st.decal = fid => { const f = F3.indexOf(fid); return cells.map((q, i) => d.on[i] && q.f === f ? { P: sq(q), col: PCOL[q.k] } : null).filter(Boolean); }; const n = cells.filter((q, i) => d.on[i]).length; st.info = `포장지를 붙인 칸 <b>${n}</b>칸 ${all ? '— 상자를 다 쌌어요! 🎁' : ''}`; const E3 = VK3D.el(key); if (E3 && E3.__vk) E3.__vk.redraw && E3.__vk.redraw(); } catch (e) {}
         const g = cells.map((q, i) => `<button class="vkwc ${d.on[i] ? 'on' : ''}" data-ck="cl" data-v="${i}" style="left:${q.x * u}px;top:${q.y * u}px;width:${u}px;height:${u}px;--fc:${PCOL[q.k]}" ${d.recOK ? 'disabled' : ''}></button>`).join('');
-        const tags = R.map(([x, y, w, hh, k, nm], f) => full(d, f) ? `<span class="vkwt" style="left:${(x + w / 2) * u}px;top:${(y + hh / 2) * u}px">${nm} ✓</span>` : '').join('');
-        const n = cells.filter((q, i) => d.on[i]).length;
-        return `<div class="vklayer"><div class="vkzone big"><div class="vkhnet grid" style="width:${(2 * a + 2 * b) * u}px;height:${(2 * b + h) * u}px">${g}${tags}</div><div class="vkcnt">포장지를 붙인 칸: <b>${n}</b>칸 ${all ? '— 상자를 다 쌌어요! 🎁' : ''}</div></div>
-          <div class="vkside"><div class="vkwbox">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 200, maxH: 130, color: 'cube' })}</div><div class="rxgtip">🖌 모눈을 누른 채로 <b>쭉 긁으면</b> 포장지가 붙어요<br>모눈 한 칸 = 1 cm²</div></div></div>` + (all ? rec(d, c) : ''); },
+        const lens = R.map(([x, y, w, hh], i) => `<span class="vkwn" style="left:${(x + w / 2) * u}px;top:${(y + hh / 2) * u}px">${NUM[i]}</span>`).join('');
+        return `<div class="vk3all"><div class="vkwlay"><div class="vkzone big"><div class="vkhnet grid" style="width:${(2 * a + 2 * b) * u}px;height:${(2 * b + h) * u}px">${g}${lens}</div><div class="rxgtip">🖌 모눈을 누른 채로 <b>쭉 긁으면</b> 포장지가 붙어요 · 모눈 한 칸 = 1 cm²</div></div>
+          <div class="vkw3">${VK3D.html(key, c.A, 'view')}</div></div>${all ? rec(d, c) : ''}</div>`; },
       on: { 'act:cl'(d, v, el, api) { if (d.recOK) return; d.on[v] = !d.on[v]; if (cells.every((q, i) => d.on[i]) && !d.said) { d.said = 1; api.say(true, '여섯 면을 모두 쌌어요! 면마다 모눈이 몇 칸인지 세어 봐요.'); } },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
       _solve(d, on) { cells.forEach((q, i) => { if (!d.on[i]) on('act:cl', String(i), null); }); on('act:mxchk', 'auto', null); } });
   }
   /* ⑭ 세 쌍 × 2 복사기: c = { A, q, rec, win } — 서로 다른 세 면을 끌어 ×2 복사기에 넣어요 */
-  function pairs(c) {
-    const [a, b, h] = c.A, KP = 'vk-p', FACES = [[a, b, 1, '윗면(가로 × 세로)'], [b, h, 2, '옆면(세로 × 높이)'], [a, h, 0, '앞면(가로 × 높이)']];
+  function pairs(c) { /* ×2 복사기로 같은 면 2장 → 3D 상자의 마주 보는 두 면에 붙이기 */
+    const [a, b, h] = c.A, KP = 'vk-p', K2 = 'vk-p2', key = c.key || ('pr' + c.A.join('x')), FACES = [['xy', a, b], ['yz', b, h], ['xz', a, h]], LB = { xy: '가', yz: '나', xz: '다' };
     return stage('vkpair', c, {
-      q: d => d.recOK ? '완성!' : d.in.length === 3 ? (c.q2 || '세 면의 넓이를 더해 2배 하면 겉넓이예요. 빈칸을 채워요.') : c.q,
-      init: () => ({ in: [], rv: {} }),
-      view: d => { const u = Math.min(26, 150 / Math.max(a, b, h));
-        const tile = (w, hh, k, nm, cp) => `<span class="vkpt" style="width:${w * u}px;height:${hh * u}px;background:${PCOL[k]}"><small>${cp ? '복사 ' : ''}${w} × ${hh}</small></span>`;
-        const mach = `<div class="vkmach ckzone" data-dz="${KP}" data-i="0"><div class="vkmh">🖨️ ×2 복사기</div><div class="vkmo">${d.in.map(i => { const [w, hh, k, nm] = FACES[i]; return `<div class="vkmp">${tile(w, hh, k, nm)}${tile(w, hh, k, nm, 1)}<em>${nm.split('(')[0]} 2장</em></div>`; }).join('') || '<small>면 카드를 여기에 끌어 넣어요</small>'}</div></div>`;
-        const src = ckSrc('✋ 서로 다른 세 면을 끌어 복사기에 넣어요', FACES.map((F, i) => d.in.includes(i) ? '' : ckPiece(KP, String(i), `${tile(F[0], F[1], F[2], F[3])}<em class="vkpn">${F[3]}</em>`)).join('') || '<b style="color:#16a34a">세 면을 모두 넣었어요!</b>');
-        return `<div class="vklayer"><div class="vkzone big"><div class="vkfig">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 300, maxH: 210, color: 'cube' })}</div>${mach}</div><div class="vkside">${src}</div></div>` + (d.in.length === 3 ? rec(d, c) : ''); },
-      on: { [KP + ':drop'](d, v, z, el, api) { if (z !== KP || d.in.includes(+v)) return; d.in.push(+v); pop(); api.say(true, `${FACES[+v][3].split('(')[0]}과 마주 보는 면은 넓이가 같아서 2장이 돼요!`); },
-        [KP + ':tap'](d, v, el, api) { MX.dragTip(api); },
+      q: d => d.recOK ? '완성!' : d.st.length === 3 ? (c.q2 || '면의 넓이를 빈칸에 쓰고, 더한 값을 2배 해서 겉넓이를 구해요.') : d.in.length ? '복사기에서 나온 <b>같은 면 2장</b>을 끌어 상자에서 <b>꼭 맞는 면</b>에 붙여요.' : c.q,
+      init: () => { try { VK3D.reset(key); const st = VK3D.state(key, c.A); st.stick = 1; st.knum = LB; } catch (e) {} return { in: [], st: [], rv: {} }; },
+      view: d => { const u = Math.min(22, 120 / Math.max(a, b, h));
+        try { const st = VK3D.state(key, c.A); st.stick = 1; st.pl = d.st.slice(); st.info = `붙인 면 <b>${d.st.length * 2}</b> / 6개`; const E3 = VK3D.el(key); if (E3 && E3.__vk) E3.__vk.redraw(); } catch (e) {}
+        const tile = (k, w, hh, cp) => fcard('vkpt', w, hh, u, VK3D.COL[k], LB[k]);
+        const out = d.in.map(i => { const [k, w, hh] = FACES[i]; return d.st.includes(k) ? `<div class="vkmp done">✅ 면 ${LB[k]} 2장을 붙였어요</div>` : ckPiece(K2, k, `<span class="vkmp">${tile(k, w, hh)}${tile(k, w, hh, 1)}<em>2장</em></span>`); }).join('');
+        const mach = `<div class="vkmach ckzone" data-dz="${KP}" data-i="0"><div class="vkmh">🖨️ ×2 복사기</div><div class="vkmo">${out || '<small>면 카드를 여기에 끌어 넣어요</small>'}</div></div>`;
+        const src = d.st.length === 3 ? `<div class="vkref">${FACES.map(([k, w, hh]) => tile(k, w, hh)).join('')}</div>` : d.in.length < 3 ? ckSrc('✋ 모양이 다른 면 카드를 끌어 복사기에 넣어요', FACES.map(([k, w, hh], i) => d.in.includes(i) ? '' : ckPiece(KP, String(i), tile(k, w, hh))).join('')) : '';
+        return `<div class="vk3all"><div class="vk3lay"><div class="vk3wrap" data-dz="${K2}">${VK3D.html(key, c.A, 'view')}</div>${d.st.length === 3 ? `<div class="vk3src">${src}</div>` : `<div class="vk3src">${src}${mach}</div>`}</div>${d.st.length === 3 ? rec(d, c) : ''}</div>`; },
+      on: { [KP + ':drop'](d, v, z, el, api) { if (z !== KP || d.in.includes(+v)) return; d.in.push(+v); pop(); const [k, w, hh] = FACES[+v]; api.say(true, `면 ${LB[k]}가 2장! 상자에는 이 면과 마주 보는 면, 2개가 있어요.`); },
+        [K2 + ':drop'](d, v, z, el, api) { if (z !== K2 || d.st.includes(v)) return; const E3 = VK3D.el(key), [X, Y] = VK3D.last(); if (!E3 || !E3.__vk || !E3.__vk.drop(v, X, Y)) { api.clear(); return; }
+          d.st.push(v); pop(); if (d.st.length === 3) api.say(true, '여섯 면을 모두 붙였어요! 모양이 다른 면 3개가 2장씩 있어요.'); else api.clear(); },
+        [KP + ':tap'](d, v, el, api) { MX.dragTip(api); }, [K2 + ':tap'](d, v, el, api) { MX.dragTip(api); },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
-      _solve(d, on) { [0, 1, 2].forEach(i => on(KP + ':drop', String(i), KP, null)); on('act:mxchk', 'auto', null); } });
+      _solve(d, on) { d.in = [0, 1, 2]; d.st = FACES.map(x => x[0]); on('act:mxchk', 'auto', null); } });
   }
-  /* ⑮ 옆면 한 장으로 펴기: c = { A, q, rec, win } — 손잡이를 끌면 옆면 4개의 접는 선이 사라지고 큰 직사각형 하나가 돼요 */
+  /* ⑮ 옆면 한 장으로: 미리 자른 3D 상자를 펼치고, 옆면 4개를 문질러 이어 붙이면 큰 직사각형 한 장 */
   function sides(c) {
-    const [a, b, h] = c.A, R = NETR(a, b, h);
+    const [a, b, h] = c.A, key = c.key || ('sd' + c.A.join('x')), BL = '#93c5fd', PK = '#fbcfe8';
+    const prep = () => { const E = VK3D.edges(c.A), keep = [[0, 2], [2, 4], [2, 5], [5, 3], [2, 1]], st = VK3D.state(key, c.A);
+      st.cut = E.map((e, i) => i).filter(i => !keep.some(([p, q]) => E[i].f.includes(p) && E[i].f.includes(q))); st.lock = 1; st.swipe = [2, 3, 4, 5]; st.sw = []; st.merged = 0;
+      st.fcol = { 0: BL, 1: BL, 2: PK, 3: PK, 4: PK, 5: PK }; st.A3 = c.A; st.info = '빨간 점선은 미리 잘라 둔 모서리예요 · 파란 면 2개가 밑면, 분홍 면 4개가 옆면이에요'; return st; };
     return stage('vkside', c, {
-      q: d => d.recOK ? '완성!' : d.s >= 3 ? (c.q2 || '두 밑면과 옆면 한 장의 넓이로 겉넓이를 구해요.') : c.q,
-      init: () => ({ s: 0, rv: {} }),
-      view: d => { const u = netU(a, b, h, 560, 260), done = d.s >= 3, P = 2 * a + 2 * b;
-        const faces = R.map(([x, y, w, hh, k, nm], i) => i < 4 ? '' : `<div class="vkhf on" style="left:${x * u}px;top:${y * u}px;width:${w * u}px;height:${hh * u}px;--fc:${PCOL[1]}"><small>밑면</small><b>${a} × ${b}</b></div>`).join('');
-        const strip = `<div class="vkstrip ${done ? 'one' : ''}" style="left:0;top:${b * u}px;width:${P * u}px;height:${h * u}px">${[b, a, b, a].map((w, i) => `<span style="flex:${w};${i ? `border-left:2px ${done ? 'solid transparent' : 'dashed #334155'}` : ''};opacity:${1}"></span>`).join('')}${done ? `<b class="vkstl">옆면 한 장 · 세로 = 높이 ${h} cm</b>` : ''}</div>`;
-        const brace = done ? `<div class="vkbrace" style="width:${P * u}px;top:${(b + h) * u + b * u + 6}px">↔ 가로 = 밑면의 둘레 (${a} + ${b} + ${a} + ${b})</div>` : '';
-        return `<div class="vklayer"><div class="vkzone big"><div class="vkhnet" style="width:${P * u}px;height:${(2 * b + h) * u + (done ? 30 : 0)}px">${strip}${faces}${brace}</div><div class="vkcnt">${done ? '옆면 4개가 큰 직사각형 한 장이 되었어요!' : '손잡이를 오른쪽으로 끌어 옆면을 한 장으로 펴요'}</div></div>
-          <div class="vkside"><div class="vkwbox">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 170, maxH: 110, color: 'cube' })}</div>${done ? '' : `<div class="vkknob">${knob('s', d.s, 0, 3, { axis: 'x', step: 36, inner: '✋<small>펴기 ➜</small>' })}<span>옆면 펴기</span></div>`}</div></div>${setBtn}` + (done ? rec(d, c) : ''); },
-      on: { 'act:vkset'(d, v, el, api) { if (!v || v === 'end') return; const [k, x] = v.split(':'); d[k] = +x; if (d.s >= 3 && !d.said) { d.said = 1; api.say(true, c.mid || '옆면의 가로는 밑면의 둘레, 세로는 높이예요!'); } },
+      q: d => d.recOK ? '완성!' : d.merge ? (c.q2 || '두 밑면과 옆면 한 장의 넓이로 겉넓이를 구해요.') : d.join ? '<b>자</b>를 끌어 옆면 한 장의 끝에 0을 맞추고 <b>가로와 세로의 길이</b>를 재어 봐요. 자를 톡 누르면 세워져요.' : d.open ? '펼친 전개도에서 <b>분홍색 옆면 4개</b>를 손가락으로 <b>쭉 문질러</b> 한 장으로 이어 붙여요.' : c.q,
+      init: () => { try { VK3D.reset(key); prep(); } catch (e) {} return { open: 0, join: 0, merge: 0, rv: {} }; },
+      view: d => `<div class="vk3all"><div class="vk3lay"><div class="vk3wrap">${VK3D.html(key, c.A)}</div>${d.merge ? `<div class="vk3src vksrec">${rec(d, c)}</div>` : ''}</div></div>${setBtn}`,
+      on: { 'act:vkset'(d, v, el, api) { if (!v || v === 'end') return; const [k] = v.split(':');
+          if (k === 'open' && !d.open) { d.open = 1; api.say(true, '펼쳤어요! 분홍색 옆면 4개가 한 줄로 이어져 있어요. 쭉 문질러 한 장으로 붙여 봐요.'); }
+          if (k === 'join' && !d.join) { d.open = 1; d.join = 1; api.say(true, '옆면 4개가 큰 직사각형 한 장이 되었어요! 이 직사각형의 가로와 세로는 몇 cm일까요?'); }
+          if (k === 'merge' && !d.merge) { d.open = 1; d.merge = 1; api.say(true, c.mid || `옆면 4개가 큰 직사각형 한 장! 가로는 밑면의 둘레, 세로는 높이 ${h} cm예요.`); } },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
-      _solve(d, on) { on('act:vkset', 's:3', null); on('act:mxchk', 'auto', null); } });
+      _solve(d, on) { d.open = 1; d.join = 1; d.merge = 1; try { const st = prep(); st.goal = 1; st.t = 1; st.fired = 1; st.sw = [2, 3, 4, 5]; st.merged = 1; const E = VK3D.edges(c.A); st.meas = []; st.rH = 1; st.rV = 1; st.hDone = 1; } catch (e) {} on('act:mxchk', 'auto', null); } });
   }
-  return { face, fillcmp, layer, shape, fillFront, explode, lift, grow, cube, meter, zeros, rulers, unfold, wrap, pairs, sides, knob, K, SA };
+  /* ⑫' 3D 상자 자르고 펼치기 + 같은 모양 면 카드 놓기: c = { A, key, q, rec, win } (VK3D 사용) */
+  const fcard = (cls, w, hh, u, col, lb) => `<span class="${cls} vkfc" style="width:${w * u}px;height:${hh * u}px;background:${col}"><b>${lb}</b><i class="t">${w} cm</i><i class="l">${hh} cm</i></span>`;
+  function unfold3d(c) {
+    const KC = 'vk3c', key = c.key || 'u3d', [a, b, h] = c.A, CARDS = [['xz', a, h], ['xy', a, b], ['yz', b, h]], LB = { xz: '가', xy: '나', yz: '다' };
+    return stage('vkunf3', c, {
+      q: d => d.recOK ? '완성!' : d.pairs ? (c.q3 || '면의 수와 마주 보는 면의 넓이를 빈칸에 써요.') : d.open ? '<b>모양이 다른 사각형 카드 3장</b>을 끌어 전개도에서 <b>꼭 맞는 면</b> 위에 놓아 봐요.' : c.q,
+      init: () => { try { VK3D.reset(key); VK3D.state(key, c.A).knum = LB; if (c.preset) { const E = VK3D.edges(c.A), keep = [[0, 2], [2, 4], [2, 5], [5, 3], [2, 1]], st = VK3D.state(key, c.A); st.cut = E.map((e, i) => i).filter(i => !keep.some(([p, q]) => E[i].f.includes(p) && E[i].f.includes(q))); st.lock = 1; st.info = '상자를 끌어 돌려 보고, 〔📂 상자 펼치기〕를 눌러 펼쳐요'; } } catch (e) {} return { open: 0, pairs: 0, pl: [], rv: {} }; },
+      view: d => { const u = 24;
+        const src = d.open && !d.pairs ? ckSrc('✋ 사각형 카드를 끌어 전개도의 꼭 맞는 면에 놓아요', CARDS.filter(x => !d.pl.includes(x[0])).map(([k, w, hh]) => ckPiece(KC, k, fcard('vk3card', w, hh, u, VK3D.COL[k], LB[k]))).join('')) : '';
+        return `<div class="vk3all"><div class="vk3lay"><div class="vk3wrap" data-dz="${KC}">${VK3D.html(key, c.A)}</div>${src ? `<div class="vk3src">${src}</div>` : ''}${d.pairs ? `<div class="vk3src vksrec"><div class="vkref">${CARDS.map(([k, w, hh]) => fcard('vk3card', w, hh, 16, VK3D.COL[k], LB[k])).join('')}</div>${rec(d, c)}</div>` : ''}</div></div>${setBtn}`; },
+      on: { 'act:vkset'(d, v, el, api) { if (!v || v === 'end') return; const [k, x] = v.split(':'); if (k === 'open' && !d.open) { d.open = 1; api.say(true, '상자를 펼쳤어요! 이제 모양이 다른 사각형 카드를 꼭 맞는 면에 놓아 봐요.'); } },
+        [KC + ':drop'](d, v, z, el, api) { if (z !== KC || d.pl.includes(v)) return; const E3 = VK3D.el(key), [X, Y] = VK3D.last(); if (!E3 || !E3.__vk) return; if (!E3.__vk.drop(v, X, Y)) { api.clear(); return; }
+          d.pl.push(v); pop(); if (d.pl.length === 3) { d.pairs = 1; api.say(true, '세 쌍 모두 같은 색! 마주 보는 두 면은 모양과 크기가 같아요.'); } else api.clear(); },
+        [KC + ':tap'](d, v, el, api) { MX.dragTip(api); },
+        'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
+      _solve(d, on) { d.open = 1; d.pl = ['xz', 'xy', 'yz']; d.pairs = 1; try { const st = VK3D.state(key, c.A); st.pl = d.pl.slice(); } catch (e) {} on('act:mxchk', 'auto', null); } });
+  }
+  return { unfold3d, face, fillcmp, layer, shape, fillFront, explode, lift, grow, cube, meter, zeros, rulers, unfold, wrap, pairs, sides, knob, K, SA };
+})();
+
+/* =====================================================================
+   📦 VK3D — 직육면체를 360° 돌려 보며 모서리를 직접 잘라 펼치는 3D 시뮬레이션 (외부 라이브러리 없이 캔버스로 그려요)
+   · 끌기 = 시점 회전(펼치기 전·후 모두) · 휠/두 손가락 = 확대 · 5px 이하로 누르면 모서리 자르기(가위)
+   · 앞에서 보이는 모서리만 자를 수 있어요(뒤쪽 모서리 가림 처리) · 정확히 7개를 자르고 남은 5개가 6개 면을 모두 잇는(고리 없음) 경우만 펼칠 수 있어요
+   · 바닥에 닿은 면을 기준으로 남은 모서리를 접는 선 삼아 90°씩 펼치고 다시 접어요
+   ===================================================================== */
+const VK3D = (() => {
+  const V = { add: (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul: (a, k) => [a[0] * k, a[1] * k, a[2] * k], dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+    cross: (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], len: a => Math.hypot(a[0], a[1], a[2]), norm: a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; } };
+  const rot = (p, o, d, ang) => { const v = V.sub(p, o), c = Math.cos(ang), s = Math.sin(ang), k = V.dot(d, v);
+    return V.add(o, V.add(V.add(V.mul(v, c), V.mul(V.cross(d, v), s)), V.mul(d, k * (1 - c)))); };
+  const COL = { xy: '#93c5fd', xz: '#fca5a5', yz: '#86efac' };
+  function build(a, b, c) {
+    const F = [
+      { id: 0, key: 'xy', P: [[0, 0, 0], [0, b, 0], [a, b, 0], [a, 0, 0]], n: [0, 0, -1], w: [a, b] },
+      { id: 1, key: 'xy', P: [[0, 0, c], [a, 0, c], [a, b, c], [0, b, c]], n: [0, 0, 1], w: [a, b] },
+      { id: 2, key: 'xz', P: [[0, 0, 0], [a, 0, 0], [a, 0, c], [0, 0, c]], n: [0, -1, 0], w: [a, c] },
+      { id: 3, key: 'xz', P: [[0, b, 0], [0, b, c], [a, b, c], [a, b, 0]], n: [0, 1, 0], w: [a, c] },
+      { id: 4, key: 'yz', P: [[0, 0, 0], [0, 0, c], [0, b, c], [0, b, 0]], n: [-1, 0, 0], w: [b, c] },
+      { id: 5, key: 'yz', P: [[a, 0, 0], [a, b, 0], [a, b, c], [a, 0, c]], n: [1, 0, 0], w: [b, c] }];
+    const E = [], ek = (p, q) => [p, q].map(x => x.join(',')).sort().join('|');
+    F.forEach(f => f.P.forEach((p, i) => { const q = f.P[(i + 1) % 4], k = ek(p, q); let e = E.find(x => x.k === k); if (!e) { e = { k, p, q, f: [], len: V.len(V.sub(q, p)) }; E.push(e); } e.f.push(f.id); f.e = f.e || []; f.e.push(E.indexOf(e)); }));
+    return { F, E };
+  }
+  const S = window.__VK3D || (window.__VK3D = {});
+  function state(key, A) { if (!S[key]) S[key] = { A, cut: [], t: 0, goal: 0, yaw: -1.05, pitch: .5, dist: 0, pl: [], msg: '', zoom: 1 }; return S[key]; }
+  function mount(el) {
+    if (el.__vk) return; const key = el.dataset.key, A = JSON.parse(el.dataset.a), st = state(key, A), VIEW = el.dataset.mode === 'view', [a, b, c] = A, G = build(a, b, c);
+    const cv = el.querySelector('canvas'), ctx = cv.getContext('2d'), info = el.querySelector('.vk3info'), msgEl = el.querySelector('.vk3msg'), btnU = el.querySelector('[data-k3="unfold"]');
+    let W = 0, H = 0, hover = -1, raf = 0; const ptr = new Map(); let down = null, pinch = 0;
+    el.__vk = { drop: (k, x, y) => drop(k, x, y), st, redraw: () => draw() };
+    /* ---- 펼침 나무(바닥 면 기준) ---- */
+    const uncut = () => G.E.map((e, i) => i).filter(i => !st.cut.includes(i));
+    function tree() { const root = 0, par = { 0: null }, Q = [0], U = uncut(); while (Q.length) { const f = Q.shift(); U.forEach(i => { const e = G.E[i]; if (!e.f.includes(f)) return; const o = e.f[0] === f ? e.f[1] : e.f[0]; if (o in par) return; par[o] = { p: f, e: i }; Q.push(o); }); } return par; }
+    function connected(cuts) { const U = G.E.map((e, i) => i).filter(i => !cuts.includes(i)), seen = { 0: 1 }, Q = [0]; while (Q.length) { const f = Q.shift(); U.forEach(i => { const e = G.E[i]; if (!e.f.includes(f)) return; const o = e.f[0] === f ? e.f[1] : e.f[0]; if (!seen[o]) { seen[o] = 1; Q.push(o); } }); } return Object.keys(seen).length === 6; }
+    function posed() { const par = tree(), T = st.t, ease = T < .5 ? 2 * T * T : 1 - Math.pow(-2 * T + 2, 2) / 2;
+      const chain = f => { const L = []; let x = f; while (par[x]) { const { p, e } = par[x], E = G.E[e], d = V.norm(V.sub(E.q, E.p)), nc = G.F[x].n, np = G.F[p].n, s = V.dot(V.cross(d, nc), np) > 0 ? 1 : -1; L.push({ o: E.p, d, ang: s * Math.PI / 2 * ease }); x = p; } return L; };
+      return G.F.map(f => { const L = st.cut.length === 7 && connected(st.cut) ? chain(f.id) : []; const tr = p => L.reduce((q, r) => rot(q, r.o, r.d, r.ang), p); return { f, P: f.P.map(tr), n: V.sub(tr(V.add(f.P[0], f.n)), tr(f.P[0])) }; }); }
+    /* ---- 카메라 ---- */
+    function cam(Pz) { const cen = Pz.reduce((s, x) => V.add(s, x.P.reduce((q, p) => V.add(q, V.mul(p, .25)), [0, 0, 0])), [0, 0, 0]).map(v => v / 6);
+      const R = Math.max(...Pz.flatMap(x => x.P.map(p => V.len(V.sub(p, cen))))), base = R * 7, dist = base, cp = Math.cos(st.pitch), C = V.add(cen, V.mul([cp * Math.cos(st.yaw), cp * Math.sin(st.yaw), Math.sin(st.pitch)], dist));
+      const f = V.norm(V.sub(cen, C)); let r = V.cross(f, [0, 0, 1]); if (V.len(r) < 1e-4) r = [1, 0, 0]; r = V.norm(r); const u = V.cross(r, f), FL = Math.min(W, H) * .47 * base / R * st.zoom * (st.t >= .999 ? (st.fit || 1) : 1);
+      return { C, pj: p => { const v = V.sub(p, C), z = V.dot(v, f), s = FL / Math.max(.1, z); return [W / 2 + V.dot(v, r) * s, H / 2 - (st.t >= .999 ? 14 : 0) - V.dot(v, u) * s, z]; } }; }
+    /* ---- 그리기 ---- */
+    function draw() { const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1; if (Math.round(r.width * dpr) !== cv.width) { cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); } W = r.width; H = r.height; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      const Pz = posed(), flat = st.t >= .999; let K = cam(Pz);
+      if (flat && st.fitReq) { st.fitReq = 0; st.fit = 1; K = cam(Pz); let mx = 1, my = 1; Pz.forEach(x => x.P.forEach(p => { const q = K.pj(p); mx = Math.max(mx, Math.abs(q[0] - W / 2)); my = Math.max(my, Math.abs(q[1] - H / 2 + 14)); })); st.fit = Math.max(1, Math.min(2.4, W * .44 / mx, H * .37 / my)); K = cam(Pz); }
+      const items = Pz.map(x => { const S2 = x.P.map(K.pj), cen = x.P.reduce((q, p) => V.add(q, V.mul(p, .25)), [0, 0, 0]), front = V.dot(x.n, V.sub(K.C, cen)) > 0; return { x, S2, front, z: S2.reduce((s, p) => s + p[2], 0) / 4 }; }).sort((p, q) => q.z - p.z);
+      el.__last = { items, K };
+      items.forEach(it => { const { x, S2, front } = it, f = x.f, placed = st.pl.includes(f.key);
+        ctx.beginPath(); S2.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath();
+        ctx.fillStyle = front ? ((st.fcol && st.fcol[f.id]) || (placed ? COL[f.key] : '#fef3c7')) : '#e7e5e4'; ctx.fill();
+        if (front && st.decal) { const D = st.decal(f.id) || []; ctx.save(); ctx.clip(); D.forEach(q => { const Q = q.P.map(K.pj); ctx.beginPath(); Q.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fillStyle = q.col; ctx.fill(); ctx.strokeStyle = 'rgba(51,65,85,.35)'; ctx.lineWidth = .8; ctx.stroke(); }); ctx.restore(); }
+        if (!front) { ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(120,113,108,.25)'; ctx.lineWidth = 1; for (let k = -W; k < W * 2; k += 12) { ctx.beginPath(); ctx.moveTo(k, 0); ctx.lineTo(k + H, H); ctx.stroke(); } ctx.restore(); }
+        /* 모서리 */
+        f.e.forEach((ei, j) => { const p = S2[j], q = S2[(j + 1) % 4], isCut = st.cut.includes(ei); if (st.merged && flat && !isCut && st.swipe && G.E[ei].f.every(x => st.swipe.includes(x))) return; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+          if (!flat && st.t === 0) { if (ei === hover && front) { ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8; ctx.setLineDash([]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); }
+            ctx.strokeStyle = isCut ? '#dc2626' : '#334155'; ctx.lineWidth = isCut ? 3.5 : (VIEW ? 2 : 2.4); ctx.setLineDash(isCut ? [8, 6] : []); }
+          else { ctx.strokeStyle = isCut ? '#1e293b' : '#64748b'; ctx.lineWidth = isCut ? 2.6 : 1.8; ctx.setLineDash(isCut ? [] : [7, 5]); }
+          ctx.stroke(); ctx.setLineDash([]);
+          /* 길이 표시: 모서리 안쪽 */
+          if (st.mk && st.mk[ei] && flat) { ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.strokeStyle = st.mk[ei]; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.stroke(); ctx.lineCap = 'butt';
+            const cx = S2.reduce((s, z) => s + z[0], 0) / 4, cy = S2.reduce((s, z) => s + z[1], 0) / 4, mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, n = Math.hypot(mx - cx, my - cy) || 1, inside = st.swipe.includes(f.id) && G.E[ei].f.includes(1), off = inside ? -16 : 16, tx = mx + (mx - cx) / n * off, ty = my + (my - cy) / n * off;
+            ctx.font = '900 ' + Math.round(Math.max(14, Math.min(19, W / 44))) + 'px Pretendard, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,255,255,.95)'; const t = Math.round(G.E[ei].len) + ' cm'; ctx.strokeText(t, tx, ty); ctx.fillStyle = st.mk[ei]; ctx.fillText(t, tx, ty); }
+          if (front && j < 2 && !(st.merged && flat && st.swipe) && !((st.num && st.num[f.id]) || (st.knum && st.pl.includes(f.key)))) { const cx = (S2[0][0] + S2[1][0] + S2[2][0] + S2[3][0]) / 4, cy = (S2[0][1] + S2[1][1] + S2[2][1] + S2[3][1]) / 4, mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, L = Math.hypot(q[0] - p[0], q[1] - p[1]);
+            if (L > 34) { const tx = mx + (cx - mx) * .17, ty = my + (cy - my) * .17; ctx.font = '900 ' + Math.round(Math.max(13, Math.min(18, W / 48))) + 'px Pretendard, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,255,255,.9)'; const t = Math.round(G.E[ei].len) + ' cm'; ctx.strokeText(t, tx, ty); ctx.fillStyle = '#0f172a'; ctx.fillText(t, tx, ty); } } }); });
+      items.forEach(it => { if (!it.front) return; const f = it.x.f, lb = (st.num && st.num[f.id]) || (st.knum && st.pl.includes(f.key) && st.knum[f.key]); if (!lb) return;
+        const cx = it.S2.reduce((s, p) => s + p[0], 0) / 4, cy = it.S2.reduce((s, p) => s + p[1], 0) / 4, A2 = Math.abs(it.S2.reduce((s, p, i) => { const q = it.S2[(i + 1) % 4]; return s + p[0] * q[1] - q[0] * p[1]; }, 0)) / 2; if (A2 < 1400) return; const rr = Math.max(10, Math.min(15, Math.sqrt(A2) / 7));
+        ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = '#1e293b'; ctx.stroke(); ctx.fillStyle = '#1e293b'; ctx.font = '900 ' + Math.round(rr * 1.2) + 'px Pretendard, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(lb, cx, cy + 1); });
+      if (st.merged && flat && st.swipe) { const pts = []; items.forEach(it => { if (st.swipe.includes(it.x.f.id)) it.S2.forEach(p => pts.push([p[0], p[1]])); }); const Hl = hull(pts);
+        if (Hl.length > 2) { ctx.beginPath(); Hl.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 5; ctx.stroke();
+          const cx = Hl.reduce((s, p) => s + p[0], 0) / Hl.length, cy = Hl.reduce((s, p) => s + p[1], 0) / Hl.length, fs = Math.round(Math.max(13, Math.min(17, W / 52)));
+          ctx.font = '900 ' + fs + 'px Pretendard, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          const T = (t, x, y, col) => { ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.strokeText(t, x, y); ctx.fillStyle = col || '#9a3412'; ctx.fillText(t, x, y); };
+          st.box = { x0: Math.min(...Hl.map(p => p[0])), x1: Math.max(...Hl.map(p => p[0])), y0: Math.min(...Hl.map(p => p[1])), y1: Math.max(...Hl.map(p => p[1])) };
+          T('옆면 한 장', cx, cy + (st.rul && st.rul.y > cy - 10 && st.rul.y < cy + 50 && !st.rul.r ? -fs * 1.2 : 0)); if (st.hDone) T('가로 = 밑면의 둘레 · 세로 = 높이', cx, cy + fs * 1.3, '#7c2d12');
+          if (st.rul) drawRuler(); 
+          const ed = Hl.map((p, i) => { const q = Hl[(i + 1) % Hl.length]; return { p, q, L: Math.hypot(q[0] - p[0], q[1] - p[1]) }; }).sort((u, v) => v.L - u.L);
+          const bc = items.filter(it => !st.swipe.includes(it.x.f.id)).map(it => it.S2.reduce((s, p) => [s[0] + p[0] / 4, s[1] + p[1] / 4], [0, 0]));
+          const out = (e, fr, off) => { const x = e.p[0] + (e.q[0] - e.p[0]) * fr, y = e.p[1] + (e.q[1] - e.p[1]) * fr, dx = x - cx, dy = y - cy, n = Math.hypot(dx, dy) || 1; return [x + dx / n * off, y + dy / n * off]; };
+          } }
+      if (VIEW) { info.innerHTML = st.info || '끌어서 돌려 보며 포장지가 붙은 곳을 확인해요'; msgEl.textContent = st.msg || ''; msgEl.className = 'vk3msg ' + (st.msgc || ''); return; }
+      info.innerHTML = st.swipe && flat ? (st.merged ? (st.hDone ? '가로 = <b>밑면의 둘레</b> · 세로 = <b>높이</b>' : `📏 자를 끌어 옆면 한 장의 <b>가로</b>${st.rH ? ' ✅' : ''}와 <b>세로</b>${st.rV ? ' ✅' : ''}를 재요 · 자를 <b>톡</b> 누르면 돌아가요`) : `✋ 분홍색 옆면 4개를 <b>쭉 문질러</b> 이어 붙여요 (${(st.sw || []).length} / 4)`) : st.lock && st.t === 0 ? (st.info || '빨간 점선은 미리 잘라 둔 모서리예요') : st.t > 0 ? (flat ? '펼친 전개도예요 · 끌어서 돌려 보고, <b>정면(2D) 보기</b>로 평면 모양을 확인해요' : '…') : `✂️ 자른 모서리 <b>${st.cut.length}</b> / 7개`;
+      if (btnU) btnU.disabled = !(st.cut.length === 7 && connected(st.cut));  if (btnU) btnU.textContent = st.goal ? '📦 다시 접기' : '📂 상자 펼치기';
+      { const rb = el.querySelector('[data-k3="reset"]'); if (rb) { rb.disabled = st.t > 0; rb.style.display = st.lock ? 'none' : ''; } } msgEl.textContent = st.msg || ''; msgEl.className = 'vk3msg ' + (st.msgc || ''); if (st.lock) { const tp = el.querySelector('.vk3tip'); if (tp) tp.textContent = '🖱 끌기: 돌려 보기 · 휠/두 손가락: 크게 작게'; } }
+    function loop() { raf = 0; const goal = st.goal ? 1 : 0; if (Math.abs(st.t - goal) > .001) { st.t += Math.sign(goal - st.t) * Math.min(Math.abs(goal - st.t), 1 / 90); raf = requestAnimationFrame(loop); }
+      else { st.t = goal; if (goal === 1 && !st.fired) { st.fired = 1; if (st.swipe) { st.yaw = -Math.PI / 2; st.pitch = -1.5699; st.zoom = 1; } st.fitReq = 1; fire('open:1'); } }
+      draw(); }
+    function fire(v) { const b2 = document.querySelector('#toolBody [data-ck="vkset"]'); if (b2) { b2.dataset.v = v; setTimeout(() => b2.click(), 50); } }
+    function hull(P) { P = P.slice().sort((p, q) => p[0] - q[0] || p[1] - q[1]); const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), L = [], U = []; P.forEach(p => { while (L.length > 1 && cr(L[L.length - 2], L[L.length - 1], p) <= 0) L.pop(); L.push(p); }); P.slice().reverse().forEach(p => { while (U.length > 1 && cr(U[U.length - 2], U[U.length - 1], p) <= 0) U.pop(); U.push(p); }); return L.slice(0, -1).concat(U.slice(0, -1)); }
+    function faceAt(X, Y, frontOnly) { if (!el.__last) return null; const r = cv.getBoundingClientRect(), x = X - r.left, y = Y - r.top;
+      return el.__last.items.slice().reverse().find(it => { if (frontOnly && !it.front) return false; let ins = false; const P = it.S2; for (let i = 0, j = 3; i < 4; j = i++) if (((P[i][1] > y) !== (P[j][1] > y)) && x < (P[j][0] - P[i][0]) * (y - P[i][1]) / (P[j][1] - P[i][1]) + P[i][0]) ins = !ins; return ins; }) || null; }
+    function swipeAt(X, Y) { const it = faceAt(X, Y, false); if (!it || !st.swipe.includes(it.x.f.id)) return 0; st.sw = st.sw || []; const id = it.x.f.id; if (!st.sw.includes(id)) { st.sw.push(id); st.fcol = Object.assign({}, st.fcol, { [id]: '#f472b6' }); try { Sound.pop(); } catch (e) {}
+        if (st.sw.length === st.swipe.length) { st.merged = 1; try { Sound.correct(); } catch (e) {} st.meas = []; st.hDone = 0; st.rH = 0; st.rV = 0; st.rul = { x: 16, y: -1, r: 0 }; fire('join:1'); } draw(); } return 1; }
+    function pxcm() { const it = el.__last && el.__last.items.find(i => i.x.f.id === 2); if (!it) return 20; const E = G.E[it.x.f.e[0]], p = it.S2[0], q = it.S2[1]; return Math.hypot(q[0] - p[0], q[1] - p[1]) / E.len; }
+    const RT = 34;
+    function drawRuler() { const R0 = st.rul, B = st.box; if (R0.sn && B) { R0.x = R0.sn === 'v1' ? B.x1 : B.x0; R0.y = R0.sn === 'h1' ? B.y1 : B.y0; } const k = pxcm(), n = Math.ceil(2 * (a + b)) + 1, L = n * k; if (R0.y < 0) R0.y = Math.min(H - RT - 30, (st.box ? st.box.y1 : H / 2) + 24 + (st.box ? 0 : 0)); 
+      ctx.save(); ctx.translate(R0.x, R0.y); if (R0.r) ctx.rotate(Math.PI / 2); if (R0.r) ctx.scale(1, -1);
+      ctx.fillStyle = 'rgba(253,230,138,.93)'; ctx.strokeStyle = '#a16207'; ctx.lineWidth = 2; ctx.beginPath(); ctx.rect(-6, 0, L + 12, RT); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#422006'; ctx.fillStyle = '#422006'; ctx.lineWidth = 1.4; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.font = '800 ' + Math.round(Math.max(10, Math.min(13, k * .5))) + 'px Pretendard, sans-serif';
+      for (let i = 0; i <= n * 10; i++) { const x = i * k / 10, big = i % 10 === 0, mid = i % 5 === 0; if (!big && !mid && k < 30) continue; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, big ? 14 : mid ? 9 : 5); ctx.stroke();
+        if (big) { if (R0.r) { ctx.save(); ctx.translate(x, 22); ctx.scale(1, -1); ctx.rotate(-Math.PI / 2); ctx.textBaseline = 'middle'; ctx.fillText(String(i / 10), 0, 0); ctx.restore(); } else ctx.fillText(String(i / 10), x, 16); } }
+      ctx.restore(); }
+    function rulHit(x, y) { const R0 = st.rul; if (!R0) return 0; const k = pxcm(), L = (Math.ceil(2 * (a + b)) + 1) * k, u = R0.r ? y - R0.y : x - R0.x, v = R0.r ? R0.x - x : y - R0.y; return u > -10 && u < L + 10 && v > -6 && v < RT + 6; }
+    function rulSnap() { const R0 = st.rul, B = st.box; if (!B) return; const d = 18; let ok = 0;
+      if (!R0.r && Math.abs(R0.x - B.x0) < d) { if (Math.abs(R0.y - B.y0) < d) { R0.sn = 'h0'; ok = 1; } else if (Math.abs(R0.y - B.y1) < d) { R0.sn = 'h1'; ok = 1; } if (ok) { st.rH = 1; try { Sound.correct(); } catch (e) {} say('자의 0을 옆면 한 장의 끝에 딱 맞췄어요! 반대쪽 끝의 눈금을 읽어 봐요. 가로는 몇 cm일까요?', 'ok'); } }
+      if (R0.r && Math.abs(R0.y - B.y0) < d) { if (Math.abs(R0.x - B.x0) < d) { R0.sn = 'v0'; ok = 1; } else if (Math.abs(R0.x - B.x1) < d) { R0.sn = 'v1'; ok = 1; } if (ok) { st.rV = 1; try { Sound.correct(); } catch (e) {} say('자를 옆면 한 장의 세로에 딱 맞췄어요! 눈금을 읽어 봐요. 세로는 몇 cm일까요?', 'ok'); } }
+      if (st.rH && st.rV && !st.hDone) { st.hDone = 1; fire('merge:1'); } }
+    const MKC = ['#dc2626', '#2563eb', '#16a34a', '#9333ea'];
+    function measAt(X, Y) { if (!el.__last) return 0; const r = cv.getBoundingClientRect(), x = X - r.left, y = Y - r.top, hPh = st.meas.length >= 4; let hit = null;
+      el.__last.items.forEach(it => { if (!st.swipe.includes(it.x.f.id)) return; it.x.f.e.forEach((ei, j) => { const E = G.E[ei], vert = Math.abs(E.p[2] - E.q[2]) > .5;
+        if (hPh ? !(vert && st.cut.includes(ei)) : !(E.f.includes(1) && !st.meas.includes(ei))) return; const p = it.S2[j], q = it.S2[(j + 1) % 4], dx = q[0] - p[0], dy = q[1] - p[1], L2 = dx * dx + dy * dy || 1, k = Math.max(0, Math.min(1, ((x - p[0]) * dx + (y - p[1]) * dy) / L2)), d = Math.hypot(x - p[0] - k * dx, y - p[1] - k * dy); if (d < 20 && k > .12 && k < .88 && (!hit || d < hit.d)) hit = { ei, d }; }); });
+      if (!hit) return 0;
+      if (!hPh) { st.meas.push(hit.ei); st.mk = Object.assign({}, st.mk, { [hit.ei]: MKC[st.meas.length - 1] }); try { Sound.pop(); } catch (e) {} const L = Math.round(G.E[hit.ei].len);
+        say(st.meas.length < 4 ? `이 부분은 ${L} cm — 같은 색으로 빛나는 밑면의 모서리와 길이가 같아요!` : `옆면의 가로 = ${st.meas.map(i => Math.round(G.E[i].len)).join(' cm + ')} cm → 밑면의 네 모서리를 모두 더한 길이, 밑면의 둘레예요!`, 'ok'); }
+      else if (!st.hDone) { st.hDone = 1; st.hEdge = hit.ei; st.mk = Object.assign({}, st.mk, { [hit.ei]: '#0891b2' }); try { Sound.correct(); } catch (e) {} say(`옆면의 세로 = ${Math.round(G.E[hit.ei].len)} cm → 상자의 높이와 같아요!`, 'ok'); fire('merge:1'); }
+      draw(); return 1; }
+    const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+    function say(m, cls) { st.msg = m; st.msgc = cls || ''; draw(); }
+    /* ---- 모서리 고르기 ---- */
+    function pick(x, y) { if (VIEW || st.lock || st.t > 0 || !el.__last) return -1; let best = -1, bd = 13; el.__last.items.forEach(it => { if (!it.front) return; it.x.f.e.forEach((ei, j) => { const p = it.S2[j], q = it.S2[(j + 1) % 4], dx = q[0] - p[0], dy = q[1] - p[1], L2 = dx * dx + dy * dy || 1, k = Math.max(0, Math.min(1, ((x - p[0]) * dx + (y - p[1]) * dy) / L2)), d = Math.hypot(x - p[0] - k * dx, y - p[1] - k * dy); if (d < bd) { bd = d; best = ei; } }); }); return best; }
+    function cut(ei) { const i = st.cut.indexOf(ei);
+      if (i >= 0) { st.cut.splice(i, 1); try { Sound.pop(); } catch (e) {} return say('잘랐던 모서리를 다시 붙였어요.'); }
+      if (st.cut.length >= 7) return say('직육면체 전개도는 모서리 7개를 잘라요. 다른 곳을 자르려면 자른 모서리를 눌러 다시 붙여요.', 'bad');
+      const nx = st.cut.concat([ei]); if (G.E[ei].f.some(fid => G.F[fid].e.every(k => nx.includes(k)))) { try { Sound.wrong(); } catch (e) {} return say('⚠ 면이 완전히 떨어져 나갑니다! 한 면의 모서리 4개를 모두 자를 수는 없어요.', 'bad'); }
+      if (!connected(nx)) { try { Sound.wrong(); } catch (e) {} return say('⚠ 그 모서리를 자르면 상자가 두 조각으로 떨어져요. 다른 모서리를 골라요.', 'bad'); }
+      st.cut = nx; try { Sound.pop(); } catch (e) {} say(nx.length === 7 ? '7개를 모두 잘랐어요! 〔상자 펼치기〕를 눌러 봐요.' : '', nx.length === 7 ? 'ok' : ''); }
+    /* ---- 카드 놓기(펼친 뒤) ---- */
+    function drop(k, X, Y) { if ((st.t < .999 && !st.stick) || !el.__last) return 0;
+      const hit = faceAt(X, Y, st.t < .999);
+      if (!hit) { say(st.stick ? '상자의 면 위에 놓아요. 상자를 돌려 다른 면이 보이게 할 수도 있어요.' : '카드를 전개도의 면 위에 놓아요.', 'bad'); return 0; }
+      if (hit.x.f.key !== k) { try { Sound.wrong(); } catch (e) {} say('모양과 크기가 달라서 꼭 맞지 않아요. 길이를 비교해 봐요.', 'bad'); return 0; }
+      st.pl.push(k); try { Sound.correct(); } catch (e) {} say(st.stick ? '딱 맞아요! 한 장은 이 면에, 한 장은 마주 보는 면에 붙었어요. 상자를 돌려 확인해 봐요.' : '딱 맞아요! 그 면과 마주 보는 면도 같은 색으로 바뀌었어요. 모양과 크기가 똑같아요.', 'ok'); return 1; }
+    /* ---- 입력 ---- */
+    cv.addEventListener('pointerdown', e => { if (st.swipe && st.t >= .999 && !st.merged && swipeAt(e.clientX, e.clientY)) { cv.setPointerCapture(e.pointerId); down = { sw: 1 }; return; } if (st.rul && st.t >= .999 && st.merged) { const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; if (rulHit(x, y)) { cv.setPointerCapture(e.pointerId); down = { rl: 1, x0: e.clientX, y0: e.clientY, rx: st.rul.x, ry: st.rul.y, mv: 0 }; return; } } cv.setPointerCapture(e.pointerId); ptr.set(e.pointerId, [e.clientX, e.clientY]); if (ptr.size === 2) { const [p, q] = [...ptr.values()]; pinch = Math.hypot(p[0] - q[0], p[1] - q[1]); down = null; return; } down = { x: e.clientX, y: e.clientY, yaw: st.yaw, pitch: st.pitch, mv: 0 }; });
+    cv.addEventListener('pointermove', e => { const r = cv.getBoundingClientRect(); if (ptr.has(e.pointerId)) ptr.set(e.pointerId, [e.clientX, e.clientY]);
+      if (ptr.size === 2) { const [p, q] = [...ptr.values()], d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (pinch) st.zoom = Math.max(.5, Math.min(2.6, st.zoom * d / pinch)); pinch = d; draw(); return; }
+      if (down && down.sw) { if (!st.merged) swipeAt(e.clientX, e.clientY); return; }
+      if (down && down.rl) { const dx = e.clientX - down.x0, dy = e.clientY - down.y0; down.mv = Math.max(down.mv, Math.hypot(dx, dy)); if (down.mv > 5) { st.rul.sn = ''; st.rul.x = down.rx + dx; st.rul.y = down.ry + dy; draw(); } return; }
+      if (down) { const dx = e.clientX - down.x, dy = e.clientY - down.y; down.mv = Math.max(down.mv, Math.hypot(dx, dy)); if (down.mv > 5) { st.yaw = down.yaw - dx * .012; st.pitch = Math.max(-1.55, Math.min(1.55, down.pitch + dy * .012)); hover = -1; cv.style.cursor = 'grabbing'; draw(); return; } }
+      const h = pick(e.clientX - r.left, e.clientY - r.top); if (h !== hover) { hover = h; draw(); } cv.style.cursor = h >= 0 ? `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'26\' font-size=\'26\'>✂️</text></svg>')}") 8 8, crosshair` : 'grab'; });
+    const up = e => { ptr.delete(e.pointerId); if (ptr.size < 2) pinch = 0; if (!down) return; const d0 = down; down = null; if (d0.sw) return; if (d0.rl) { if (d0.mv <= 5) { st.rul.r = st.rul.r ? 0 : 1; st.rul.sn = ''; try { Sound.pop(); } catch (e) {} } rulSnap(); draw(); return; } cv.style.cursor = 'grab'; if (d0.mv <= 5) { const r = cv.getBoundingClientRect(), h = pick(e.clientX - r.left, e.clientY - r.top); if (h >= 0) cut(h); } };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', e => { ptr.delete(e.pointerId); down = null; });
+    cv.addEventListener('wheel', e => { e.preventDefault(); st.zoom = Math.max(.5, Math.min(2.6, st.zoom * (e.deltaY < 0 ? 1.1 : .91))); draw(); }, { passive: false });
+    el.querySelectorAll('[data-k3]').forEach(bt => bt.addEventListener('click', () => { const k = bt.dataset.k3;
+      if (k === 'unfold') { st.goal = st.goal ? 0 : 1; if (st.goal) { say(''); st.pitch = -.75; } else st.pitch = .5; kick(); }
+      if (k === 'flat') { if (st.t > .5) { st.yaw = -Math.PI / 2; st.pitch = -1.5699; st.fitReq = 1; } else { st.yaw = -Math.PI / 2; st.pitch = 0; } st.zoom = 1; draw(); }
+      if (k === 'home') { st.yaw = -1.05; st.pitch = .5; st.zoom = 1; st.fit = 1; draw(); }
+      if (k === 'reset') { st.cut = []; say('자른 모서리를 모두 다시 붙였어요.'); } }));
+    new ResizeObserver(() => { if (st.t >= .999 && st.fit) st.fitReq = 1; draw(); }).observe(cv); draw(); if (st.t !== (st.goal ? 1 : 0)) kick(); }
+  const html = (key, A, mode) => `<div class="vk3 ${mode === 'view' ? 'vk3v' : ''}" data-key="${key}" data-a="${JSON.stringify(A)}" data-mode="${mode || ''}"><div class="vk3bar"><span class="vk3info"></span><span class="vk3btns"><button type="button" class="btn btn-sub" data-k3="flat">🟦 정면(2D) 보기</button><button type="button" class="btn btn-sub" data-k3="home">🎯 시점 초기화</button>${mode === 'view' ? '' : '<button type="button" class="btn btn-sub" data-k3="reset">↩ 다시 자르기</button><button type="button" class="btn btn-primary" data-k3="unfold" disabled>📂 상자 펼치기</button>'}</span></div>
+    <canvas class="vk3cv"></canvas><div class="vk3msg"></div><small class="vk3tip">🖱 끌기: 돌려 보기 · 휠/두 손가락: 크게 작게${mode === 'view' ? '' : ' · 모서리 위에서 ✂️가 보이면 눌러 잘라요'}</small></div>`;
+  new MutationObserver(() => document.querySelectorAll('.vk3:not([data-on])').forEach(el => { el.dataset.on = '1'; mount(el); })).observe(document.documentElement, { childList: true, subtree: true });
+  let LX = 0, LY = 0; document.addEventListener('pointermove', e => { LX = e.clientX; LY = e.clientY; }, true); document.addEventListener('pointerup', e => { LX = e.clientX; LY = e.clientY; }, true);
+  return { edges: A => build(...A).E, html, state, last: () => [LX, LY], el: key => document.querySelector(`.vk3[data-key="${key}"]`), COL, reset: key => { delete S[key]; } };
 })();
 
 /* =====================================================================
@@ -8602,6 +8816,7 @@ const BL = t => `<span class="cbl">${t}</span>`, OR = t => `<span class="cor">${
 const FIG = h => `<div class="center rffig">${h}</div>`;
 
 /* ---------- 보스전 도전 1: 답 쓰기 봉인 3단계 ---------- */
+(() => { const st = document.createElement('style'); st.textContent = '.j1lay{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:center;margin-top:6px}.j1lay .j1fig{display:flex;justify-content:center;align-items:center}.j1lay .j1fig .sv-fig,.j1lay .j1fig svg{max-width:100%}.j1ask{display:flex;flex-direction:column;gap:12px;align-items:center}.j1ask .j1plan{justify-content:center}.j1q{font-size:1.35rem!important;font-weight:900;text-align:center;line-height:1.5}@media (max-width:760px){.j1lay{grid-template-columns:1fr}}'; document.head.appendChild(st); })();
 function setupJ1(cfg) { /* cfg: { title, icon, sub, done, rounds:()=>[{name,q,fig,ans:[...],unit,hints:[...],ok}] } */
   const norm = v => String(v).replace(/\s/g, '').replace(/,/g, '').replace(/퍼센트/g, '%');
   const same = (v, a) => { const x = norm(v), y = norm(a); if (x === y) return true; const nx = parseFloat(x.replace('%', '')), ny = parseFloat(y.replace('%', '')); return /^[\d.]+%?$/.test(x) && /^[\d.]+%?$/.test(y) && x.endsWith('%') === y.endsWith('%') && Math.abs(nx - ny) < 1e-9; };
@@ -8610,13 +8825,12 @@ function setupJ1(cfg) { /* cfg: { title, icon, sub, done, rounds:()=>[{name,q,fi
     const st = state.s1; if (!st.jump || !st.jump.r) st.jump = newJ1();
     const C0 = LC.j1, J = st.jump, done = jOK('j1'), R = J.r[Math.min(J.i, J.r.length - 1)];
     let body = '';
-    if (!done) body = `<div class="ancap" style="font-size:1.1rem">${R.q}</div>${R.fig ? FIG(R.fig) : ''}
-      <div class="row" style="justify-content:center;gap:8px;align-items:center"><input id="j1in" class="gkinp" style="max-width:200px;margin:0;text-align:center;font-size:1.4rem" placeholder="?">${R.unit ? `<b style="font-size:1.2rem">${R.unit}</b>` : ''}</div>
-      <div class="row mt-2" style="justify-content:center">${anBtn('j1-ok', null, '✅ 봉인 풀기', 'btn-green')}${anBtn('j1-hint', null, '💡 힌트 듣기')}<button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
+    if (!done) body = `<div class="j1lay">${R.fig ? `<div class="j1fig">${FIG(R.fig)}</div>` : ''}<div class="j1ask"><div class="j1plan">${J.r.map((x, k) => `<div class="jc ${k < J.i || done ? 'ok' : k === J.i ? 'cur' : ''}">${k < J.i || done ? '✅' : k === J.i ? '👉' : '⬜'} ${x.name}</div>`).join('')}</div><div class="ancap j1q">${R.q}</div>
+      <div class="row" style="justify-content:center;gap:8px;align-items:center"><input id="j1in" class="gkinp" style="max-width:200px;margin:0;text-align:center;font-size:1.5rem" placeholder="?">${R.unit ? `<b style="font-size:1.35rem">${R.unit}</b>` : ''}</div>
+      <div class="row mt-2" style="justify-content:center">${anBtn('j1-ok', null, '✅ 봉인 풀기', 'btn-green')}${anBtn('j1-hint', null, '💡 힌트 듣기')}<button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div></div></div>`;
     $('#s1body').innerHTML = bossHead() + `<div class="card">
       <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${C0.icon}</span><div><h2 class="h2">도전 1 · ${C0.title}</h2><p class="sub" style="margin:3px 0 0">${C0.sub}</p></div></div>
-      <div class="j1plan">${J.r.map((x, k) => `<div class="jc ${k < J.i || done ? 'ok' : k === J.i ? 'cur' : ''}">${k < J.i || done ? '✅' : k === J.i ? '👉' : '⬜'} ${x.name}</div>`).join('')}</div>
-      ${body}${J.hintN >= 0 && !done ? charSay('hint', '💡 ' + R.hints[Math.min(J.hintN, R.hints.length - 1)]) : ''}${J.fb ? charSay(J.fb.ok ? 'ok' : 'no', J.fb.msg) : ''}${done && typeof rpBtn === 'function' ? rpBtn('j1') : ''}</div>
+      ${done ? `<div class="j1plan">${J.r.map(x => `<div class="jc ok">✅ ${x.name}</div>`).join('')}</div>` : ''}${body}${J.hintN >= 0 && !done ? charSay('hint', '💡 ' + R.hints[Math.min(J.hintN, R.hints.length - 1)]) : ''}${J.fb ? charSay(J.fb.ok ? 'ok' : 'no', J.fb.msg) : ''}${done && typeof rpBtn === 'function' ? rpBtn('j1') : ''}</div>
     <div class="card">${qHead(2, VILLAINS.clock.color, `<span class="qtag" style="background:#dbeafe;color:#1d4ed8">도전 2 · ${LC.j2.label}</span>` + PARTS.j2.text)}${vSay('clock', LC.j2.taunt, 44)}<div id="part-j2" class="mt-2"></div></div>
     <div class="card">${qHead(3, VILLAINS.half.color, `<span class="qtag" style="background:#ffe4ea;color:#e11d48">도전 3 · ${LC.j3.label}</span>` + PARTS.j3.text)}${vSay('half', LC.j3.taunt, 44)}<div id="part-j3" class="mt-2"></div></div>
     <div class="next-row"><button class="btn btn-primary btn-lg" data-act="step" data-v="result">${['j1', 'j2', 'j3'].every(jOK) ? '결과 보러 가기 🏆' : '결과 화면 ➜'}</button></div>`;
@@ -11753,7 +11967,7 @@ const JX = (() => {
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
     if (isTyped(C)) {
-      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      h += `<div class="jxrow ${C.stack ? 'jxstack' : ''}">${C.slots.map((lab, i) => `<span class="jxit">${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit && !C.post ? `<small>${C.unit}</small>` : ''}</span>${C.post && C.post[i] ? `<span class="jxlab">${C.post[i]}</span>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
         + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
@@ -11818,7 +12032,7 @@ const JX = (() => {
 (function () { try {
   document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
   document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
-  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+  const st = document.createElement('style'); st.textContent = '.jxit{display:inline-flex;align-items:center;gap:6px}.jxrow.jxstack{flex-direction:column;align-items:flex-start;gap:12px}.jxstack .jxlab{font-size:1.35rem!important;font-weight:900}.jxstack input.jxin{font-size:1.4rem}.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}input.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}input.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
 } catch (e) {} })();
 
 
