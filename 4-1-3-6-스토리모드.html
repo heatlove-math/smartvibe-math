@@ -6987,6 +6987,10 @@ const WN = (() => {
     }
     return r;
   };
+  /* --- 모으기: 단원 마무리 개념 카드 확인 문제(logQ) --- */
+  const fromLog = o => { if (!o || o.set !== 's1' || o.ok || !o.text) return; try { add({ src: o.src || '개념 카드', text: strip(o.text), my: String(o.my == null ? '' : o.my), ans: strip(o.ans || ''), choices: null, ex: strip(o.ex || ''), retry: false, step: ['s1', 'concept'] }); } catch (e) {} };
+  if (typeof logQ === 'function') { const _lq = logQ; logQ = function (o) { const r = _lq.apply(this, arguments); fromLog(o); return r; };
+    setTimeout(() => { try { (state.log || []).forEach(fromLog); } catch (e) {} }, 800); }
   /* --- 모으기: 문제은행 --- */
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-act="drill-pick"]'); if (!t || t.disabled) return;
