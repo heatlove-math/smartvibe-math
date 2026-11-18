@@ -5206,7 +5206,7 @@ const WN = (() => {
         const qt = qtOf(card), extra = p && p.prompt ? ' ' + strip(p.prompt) : '';
         const text = (qt || txtOf(p && p.text) || label).replace(/^도전 \d · [^ ]+ [^ ]+ /, '') + extra;
         const canRetry = !!(p && p.ans && !p.jw && (p.choices || p.write));
-        add({ src: key[0] === 'j' ? '점프 문제' : '기본 문제', img: figOf(card) || figOfHtml(p && p.text), text, my: String(given == null ? '' : given), ans: p && p.ans ? strip(p.ans) : '', choices: canRetry && p.choices ? p.choices.map(strip) : null, ex: p ? strip(p.ok || p.hint || '') : '', retry: canRetry, step: ['s1', key[0] === 'j' ? 'jump' : 'basic'] });
+        const isDraw = !!(p && p.draw); add({ src: key[0] === 'j' ? '점프 문제' : (isDraw ? '기본 문제 · 그리기' : '기본 문제'), img: figOf(card) || figOfHtml(p && p.text), text, my: isDraw ? '(모눈에 직접 그린 도형)' : String(given == null ? '' : given), ans: p && p.ans ? strip(p.ans) : '', choices: canRetry && p.choices ? p.choices.map(strip) : null, ex: p ? strip(p.ok || p.hint || '') : '', retry: canRetry, step: ['s1', key[0] === 'j' ? 'jump' : 'basic'] });
       } catch (e) {}
     }
     return r;
@@ -5238,7 +5238,7 @@ const WN = (() => {
         <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
       <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(그리기·점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -9068,7 +9068,7 @@ window.SV_ARENA={"u": "6-1-4-U", "unit": "4단원 「비와 비율」", "games":
 .svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap{margin:0!important}.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap svg{width:100%!important;height:auto!important}
 .svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbhint{display:none}}
 /* 위로 올린 조작 안내 띠 */
-.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
+.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:auto;max-width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
 /* ===== 말판 레이스(bq race) 공통 업그레이드: 경기장 트랙 · 체크 깃발 · 말 크게 · 차례 빛 ===== */
 .bq-main.race .bq-boardw{position:relative;padding:18px 16px 16px;border-radius:26px;background:radial-gradient(ellipse at 50% 0,#4ade80,#15803d 70%);box-shadow:inset 0 0 0 6px #166534,0 8px 0 #14532d,0 12px 24px rgba(0,0,0,.25)}
@@ -9131,6 +9131,59 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
     document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+/* 위로 올린 안내 띠(.uni-cap) 높이만큼 그림 칸을 줄여 화면 안에 다 들어오게 해요 (데스크톱) */
+(function () {
+  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main').forEach(main => {
+    const cap = main.querySelector(':scope>.uni-cap'); if (!cap) return;
+    const inner = [...main.children].find(e => e !== cap && e.getClientRects().length); if (!inner) return;
+    const avail = main.clientHeight - cap.offsetHeight - 14, h = inner.getBoundingClientRect().height; if (avail < 120 || h <= avail + 1) return;
+    const z = parseFloat(inner.style.zoom) || 1; inner.style.zoom = Math.max(.45, z * avail / h); main.classList.remove('svsl-scrolly'); }); }
+  addEventListener('resize', () => { setTimeout(capFit, 40); setTimeout(capFit, 260); });
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; capFit(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
+/* 결과 화면: 아직 안 한(또는 다시 할) 활동 줄마다 「▶ 하러 가기」 — 누르면 그 단계·그 도구·그 게임으로 바로 가요 (모든 차시 공통) */
+(function () {
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  function target(li) {
+    const body = li.closest('#s1body,#s2body'); if (!body) return null; const tab = body.id === 's1body' ? 's1' : 's2', t = li.textContent;
+    if (tab === 's1') {
+      if (/기본 문제/.test(t)) { const m = t.match(/기본 문제\s*(\d+)/); return { tab, step: 'basic', q: m ? +m[1] - 1 : null }; }
+      if (/점프|보스전|오늘의 문제|도전 \d/.test(t)) { const m = t.match(/(?:보스전|도전)\s*(\d+)/); return { tab, step: 'jump', q: m ? +m[1] - 1 : (/오늘의 문제|점프 1/.test(t) ? 0 : null) }; }
+      const tool = T(() => S1_TOOLS.find(x => t.includes(x[3]))); if (tool || /도구|개념 카드|개념 탐험|배지/.test(t)) return { tab, step: 'concept', tool: tool && tool[0] };
+      return null;
+    }
+    if (/문제은행|드릴|단원 평가/.test(t)) return { tab, step: 'drill' };
+    if (/보드/.test(t)) return { tab, step: 'board' };
+    const g = T(() => LAIR.find(x => t.includes(x.name))); if (g || /소굴|미니게임/.test(t)) return { tab, step: 'game', game: g && g.id };
+    if (/왕중왕/.test(t)) return { tab, step: 'arena' };
+    return null;
+  }
+  function go(G) {
+    T(() => showTab(G.tab));
+    if (G.tool) T(() => { state.s1.tool = G.tool; });
+    T(() => goStep(G.tab, G.step));
+    if (G.step === 'jump' && T(() => state.s1.step) !== 'jump') T(() => goStep('s1', 'basic'));
+    setTimeout(() => {
+      if (G.tool) T(() => { const b = [...document.querySelectorAll('.hub .tool')].find(x => x.dataset.v === G.tool || x.textContent.includes((S1_TOOLS.find(y => y[0] === G.tool) || [])[3])); b && !b.classList.contains('on') && b.click(); });
+      if (G.q != null && (G.step === 'basic' || G.step === 'jump')) T(() => qGo(G.step, G.q));
+      if (G.game) T(() => { const c = document.querySelector('[data-act="lair-pick"][data-v="' + G.game + '"]'); c && c.click(); });
+      T(() => scrollTo({ top: 0, behavior: 'smooth' }));
+    }, 260);
+    T(() => Sound.click());
+  }
+  function add() {
+    document.querySelectorAll('ul.ritems li').forEach(li => {
+      if (li.classList.contains('ok') || li.querySelector('button,.fu-go,.ugo')) return;
+      const G = target(li); if (!G) return;
+      const b = document.createElement('button'); b.className = 'ugo'; b.type = 'button'; b.textContent = li.classList.contains('retry') ? '🔄 다시 하기' : '▶ 하러 가기';
+      b.onclick = e => { e.preventDefault(); e.stopPropagation(); go(G); }; li.appendChild(b);
+    });
+  }
+  const st = document.createElement('style');
+  st.textContent = '.ugo{flex:none;border:0;cursor:pointer;font-weight:900;font-size:.85rem;color:#fff;background:linear-gradient(180deg,#fb923c,#ea580c);border-radius:999px;padding:5px 12px;box-shadow:0 3px 0 #c2410c;margin-left:6px;white-space:nowrap}.ugo:hover{transform:translateY(-1px)}.ritems li.retry .ugo{background:linear-gradient(180deg,#a78bfa,#7c3aed);box-shadow:0 3px 0 #5b21b6}';
+  (document.head || document.documentElement).appendChild(st);
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; add(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
@@ -9351,6 +9404,10 @@ body.um-on #toolBody>.ucwrap,body.um-on #toolBody>.ucwrap+.card{border:0!importa
 .umem small{font-size:1.2rem}.umem b{font-size:2.6rem}.umem em{font-size:1.85rem;max-width:none}.umem i{font-size:1.15rem}}
 @media(min-width:701px) and (max-height:760px){.umem-vil img{width:170px!important;height:170px!important}.umem b{font-size:2.1rem}.umem em{font-size:1.5rem}}
 @media(min-width:701px) and (max-height:760px){.umem-in{row-gap:4px!important}.umem-vil span[role=img]{font-size:130px!important}.umem-vil img{width:150px!important;height:150px!important}.umem-say,.umem-say .umem-vn{font-size:1.15rem}.umem small{font-size:1.05rem}.umem b{font-size:1.9rem}.umem em{font-size:1.4rem}.umem i{font-size:1rem;margin-top:2px}}
+
+/* v95 지도 정거장 이름표가 아래 카드에 가려지지 않게 */
+@media(min-width:701px){.umw{height:128px!important}.umst{z-index:3}.umap{position:relative;z-index:2;padding-bottom:4px}}
+@media(min-width:701px) and (max-height:760px){.umw{height:104px!important}.umi{width:40px!important;height:40px!important;font-size:1.25rem!important}.umt{font-size:.62rem!important;padding:0 5px!important}.umt small{font-size:.6rem!important}}
 /* 왕중왕전 새 무대 */
 .arwrap.uar-on>.stage-head,.arwrap.uar-on>.arstat,.arwrap.uar-on>.arpages,.arwrap.uar-on>.argrid{display:none!important}
 .arwrap.uar-on{padding:0!important;background:#0b0820!important;box-shadow:0 0 0 4px #fbbf24,0 0 0 9px #78350f,0 0 0 11px #fbbf24,0 18px 40px rgba(0,0,0,.45)!important;min-height:calc(100vh - 190px)}
@@ -9524,7 +9581,7 @@ window.UMQ = {
     const sig = cards.map(c => c.dataset.v + (c.classList.contains('on') ? 'O' : '') + (c.classList.contains('got') ? 'G' : '')).join(',');
     let m = body.querySelector('.umap'); if (m && m.dataset.sig === sig) return; if (!m) { m = document.createElement('div'); m.className = 'umap'; hub.before(m); }
     m.dataset.sig = sig; const n = cards.length, got = cards.filter(c => c.classList.contains('got')).length;
-    const W = 1000, H = 100, pts = cards.map((c, i) => [60 + i * ((W - 190) / Math.max(1, n - 1)), i % 2 ? 66 : 34]); pts.push([W - 50, 50]);
+    const W = 1000, H = 100, pts = cards.map((c, i) => [60 + i * ((W - 190) / Math.max(1, n - 1)), i % 2 ? 50 : 26]); pts.push([W - 50, 38]);
     const path = pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' ');
     const doneLen = got ? pts.slice(0, Math.min(n, got) + (got === n ? 1 : 0)).map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' ') : '';
     m.innerHTML = `<div class="umh"><b>🗺️ 단원 모험 지도</b><span>정거장을 눌러 기억 카드를 펼치고, 확인 문제 2개를 맞히면 배지가 박혀요 · <b>${got} / ${n}</b></span></div>
@@ -9541,11 +9598,17 @@ window.UMQ = {
     const f = document.createElement('button'); f.className = 'umem'; let vk = 'dark', vn = '악당', va = ''; try { const ks = Object.keys(VILLAINS), ci = [...document.querySelectorAll('.uchub .uccard')].indexOf(on); vk = ks[(Math.max(0, ci) + Math.max(0, si)) % ks.length]; vn = VILLAINS[vk].name; va = avatar(vk, 260, 'laugh'); } catch (e) {}
     const TAUNT = ['크크크! 이것까지 기억할 수 있을까?', '흐흐, 벌써 다 잊어버렸지?', '이 문제만큼은 절대 못 맞힐걸!', '기억 상자는 내가 잠가 버렸다!'];
     f.innerHTML = `<span class="umem-in"><span class="umem-vil">${va || ic}</span><span class="umem-say"><b class="umem-vn">${vn}</b> ${TAUNT[(Math.max(0, si) + t.length) % TAUNT.length]}</span><small>${ls} · ${t.replace(/^\d+/, '')}</small><b>🤔 기억나니?</b><em>${Q ? Q[0] : '「' + t.replace(/^\d+/, '') + '」'}</em><i>먼저 떠올려 말해 보고, 카드를 눌러 ${vn}의 봉인을 풀어요 👆</i></span>`;
-    main.style.position = 'relative'; main.appendChild(f); f.onclick = () => { seen[key] = 1; f.classList.add('flip'); sl.classList.add('umreveal'); setTimeout(() => f.remove(), 650); try { Sound.flip && Sound.flip(); } catch (e) {} }; }
+    main.style.position = 'relative'; main.appendChild(f); f.onclick = () => { seen[key] = 1; f.classList.add('flip'); sl.classList.add('umreveal'); setTimeout(() => { f.remove(); try { if (typeof ucFit === 'function') ucFit(); } catch (e) {} }, 650); try { Sound.flip && Sound.flip(); } catch (e) {} }; }
   function fitW(sl) { try { if (!sl.isConnected) return; const vis = sl.querySelector('.ucvis'), wn = sl.querySelector('.umwarn'); if (!wn) return; const lim = () => sl.getBoundingClientRect().bottom - 4;
       for (let i = 0; i < 20 && wn.getBoundingClientRect().bottom > lim(); i++) { if (vis) { const z = parseFloat(vis.style.zoom || 1); if (z > .45) { vis.style.zoom = (z * .9).toFixed(2); continue; } } const sm = sl.querySelector('.ucsum'); if (sm) { const z = parseFloat(sm.style.zoom || 1); if (z > .6) { sm.style.zoom = (z * .93).toFixed(2); continue; } } break; } } catch (e) {} }
   function run() { const body = document.getElementById('s1body'); if (!body || !document.querySelector('.uchub')) return; document.body.classList.add('um-on'); map(body); mem(body); }
   try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 20); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {} })();
+
+/* 기억 카드 그림·정리가 칸 크기에 맞게 늘 다시 맞춰지도록 (창 크기·카드 바뀜) */
+(function () { if (window.__ucRO) return; window.__ucRO = 1; let last = '';
+  const chk = () => { try { const sl = document.querySelector('#toolBody .ucslide'); if (!sl || typeof ucFit !== 'function') return; const r = sl.getBoundingClientRect(), k = Math.round(r.width) + 'x' + Math.round(r.height) + (sl.querySelector('.ucst') || {}).textContent;
+    if (k !== last && r.width > 0) { last = k; ucFit(); } } catch (e) {} };
+  setInterval(chk, 700); addEventListener('resize', () => { last = ''; chk(); }); })();
 </script><!--BGUP-END-->
 </body>
 </html>
