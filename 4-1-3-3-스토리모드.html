@@ -10972,5 +10972,113 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
+<!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
+/* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
+.card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}
+.card:has(>.lair)>.vrow .vbub{font-size:1.05rem}
+.card:has(>.lair)>.mt-3:has(>.seg){display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;text-align:center}
+.card:has(>.lair)>.mt-3:has(>.seg)>.seg{margin-top:0!important}
+.card:has(>.lair)>.mt-3:has(>.seg) .seg button{font-size:1rem;padding:.55rem 1.1rem}
+.lair{gap:22px!important;align-items:stretch}
+.lair:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,560px))!important;justify-content:center}
+.lair:has(>:only-child){grid-template-columns:minmax(0,640px)!important;justify-content:center}
+.lair:has(>:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.lair>.lcol{display:flex;flex-direction:column;gap:8px}.lair>.lcol>.lcard{flex:1}
+.lair .lcard{min-height:230px;display:flex!important;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:left}
+.lair .lcard .ln{font-size:1.6rem!important;line-height:1.2}
+.lair .lcard>.row .ls{font-size:.92rem!important}
+.lair .lcard>.ls{font-size:1.02rem!important;line-height:1.65!important;margin-top:12px!important}
+.lair .lcard>.ls:last-child{margin-top:auto!important;padding-top:10px;font-size:1.1rem!important}
+.lair .lcard .vav{width:68px!important;height:68px!important}.lair .lcard>.row img{width:68px;height:68px}
+.card:has(>.lair)>.guiderow{justify-content:center;flex-wrap:wrap}
+@media(max-width:700px){.lair:has(>:nth-child(2):last-child),.lair:has(>:nth-child(3):last-child),.lair:has(>:only-child){grid-template-columns:minmax(0,1fr)!important}.lair .lcard{min-height:0}}
+/* 개념 도구 마무리 화면(svsl-fin): 그림 아래로 쌓여 작아지던 정리·식 칸을 그림 오른쪽으로 → 빈 곳 없이 크게 */
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl),.svsl-tc.svsl-fin .svsl-main>div:has(>:first-child):has(.andone){display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:center;width:100%!important;max-width:none!important}
+.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap{margin:0!important}.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap svg{width:100%!important;height:auto!important}
+.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbhint{display:none}}
+/* 위로 올린 조작 안내 띠 */
+.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
+.svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+(function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
+  function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
+    c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
+  try { new MutationObserver(() => fix()).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 개념 도구: 오른쪽 칸 안에 묻혀 있던 조작 안내(.ancap)를 그림 위쪽 큰 안내 띠로 올려요 */
+(function () { function lift() { document.querySelectorAll('.svsl-tc').forEach(c => { const side = c.querySelector(':scope>.svsl-side'), main = c.querySelector(':scope>.svsl-main'); if (!side || !main) return;
+    const cap = side.querySelector('.ancap'); if (!cap) return; const old = main.querySelector(':scope>.uni-cap'); if (old && old.dataset.t === cap.innerHTML) { cap.remove(); return; } if (old) old.remove();
+    const d = document.createElement('div'); d.className = 'uni-cap'; d.dataset.t = cap.innerHTML; d.innerHTML = cap.innerHTML; cap.remove(); main.prepend(d); clearTimeout(lift.t); lift.t = setTimeout(() => { try { dispatchEvent(new Event('resize')); } catch (e) {} }, 60); }); }
+  try { new MutationObserver(lift).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 오늘의 문제 선택 버튼(가 · 나 · 다 …)을 누르면 그림 속 같은 이름의 도형 둘레가 빛나요 */
+(function () { const NS = 'http://www.w3.org/2000/svg';
+  function glow() { document.querySelectorAll('.sv-pk.on, .sv-pk[class*="on"]').forEach(b => { if (!/\bon/.test(b.className)) return;
+    const lab = b.dataset.o || b.textContent.replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/자리|선택/g, '').trim(); if (!lab) return;
+    let box = b.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('svg'); i++) box = box.parentElement; if (!box) return;
+    box.querySelectorAll('svg').forEach(svg => { const old = svg.querySelector('.uni-glow'); const tx = [...svg.querySelectorAll('text')].find(t => t.textContent.trim() === lab);
+      if (old && old.dataset.l === lab) return; if (old) old.remove(); if (!tx) return; const col = tx.getAttribute('fill');
+      const parts = [...svg.querySelectorAll('rect,polygon,path,circle,ellipse')].filter(e => col && e.getAttribute('stroke') === col); if (!parts.length) return;
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; parts.forEach(e => { const r = e.getBBox(); x0 = Math.min(x0, r.x); y0 = Math.min(y0, r.y); x1 = Math.max(x1, r.x + r.width); y1 = Math.max(y1, r.y + r.height); });
+      const g = document.createElementNS(NS, 'rect'); g.setAttribute('class', 'uni-glow'); g.dataset.l = lab; const p = 6;
+      [['x', x0 - p], ['y', y0 - p], ['width', x1 - x0 + 2 * p], ['height', y1 - y0 + 2 * p], ['rx', 8], ['fill', 'none'], ['stroke', '#facc15'], ['stroke-width', 5]].forEach(([k, v]) => g.setAttribute(k, v));
+      svg.insertBefore(g, svg.firstChild.nextSibling); }); });
+    document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
+  try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+  try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+</script><!--UNI-END-->
+<!--BGUP-START--><style>/* ===== 4-1-3 보드게임 덧입힘 공통 (BGUP) — 규칙은 그대로, 무대·소품·효과만 ===== */
+#boardArea>.tltable.bgup{--s1:#f59e0b;--s2:#fff7ed;--bg1:#4c1d95;--bg2:#1e1b4b;--fl:#7c2d12;padding:62px 18px 14px;border:0;border-radius:26px;overflow:hidden;
+  background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(255,255,255,.18),transparent 70%),linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 84%,var(--fl) 84.2%,color-mix(in srgb,var(--fl) 70%,#000) 100%);
+  box-shadow:0 0 0 6px #fde68a,0 0 0 11px #92400e,0 14px 0 4px #451a03;}
+.bgup .bgu-awn{position:absolute;left:0;right:0;top:0;height:30px;z-index:3;pointer-events:none;background:repeating-linear-gradient(90deg,var(--s1) 0 44px,var(--s2) 44px 88px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.bgup .bgu-awn::after{content:'';position:absolute;left:0;right:0;top:100%;height:16px;background:radial-gradient(circle at 22px 0,var(--s1) 21px,transparent 22px) 0 0/88px 16px repeat-x,radial-gradient(circle at 22px 0,var(--s2) 21px,transparent 22px) 44px 0/88px 16px repeat-x}
+.bgup .bgu-lights{position:absolute;left:3%;right:3%;top:44px;display:flex;justify-content:space-between;z-index:2;pointer-events:none}
+.bgup .bgu-lights i{width:10px;height:10px;border-radius:50%;background:#fde047;box-shadow:0 0 10px 3px rgba(253,224,71,.8);animation:bguBlink 1.6s infinite alternate}
+.bgup .bgu-lights i:nth-child(3n+1){background:#f472b6;box-shadow:0 0 10px 3px rgba(244,114,182,.8);animation-delay:.5s}.bgup .bgu-lights i:nth-child(3n+2){background:#60a5fa;box-shadow:0 0 10px 3px rgba(96,165,250,.8);animation-delay:1s}
+@keyframes bguBlink{0%{opacity:.35}100%{opacity:1}}
+.bgup .bgu-side{position:absolute;bottom:6px;z-index:1;font-size:2.3rem;line-height:1.05;display:flex;flex-direction:column;align-items:center;pointer-events:none;filter:drop-shadow(0 4px 0 rgba(0,0,0,.25))}.bgup .bgu-side.l{left:10px}.bgup .bgu-side.r{right:10px}
+.bgup>*:not(.bgu-awn):not(.bgu-lights):not(.bgu-side){position:relative;z-index:2}
+/* 이름표 */
+.bgup .bq-score{gap:14px;margin:4px 56px 10px}
+.bgup .bq-pl{border:0;border-radius:18px;padding:8px 14px;background:linear-gradient(180deg,#fff,#f1f5f9);box-shadow:0 5px 0 color-mix(in srgb,var(--pc) 70%,#000),inset 0 0 0 3px var(--pc)}
+.bgup .bq-pl .vav,.bgup .bq-pl img,.bgup .bq-pl svg{width:42px!important;height:42px!important}
+.bgup .bq-pl b{font-size:1.05rem!important}.bgup .bq-pl small{font-size:.9rem;font-weight:900}
+.bgup .bq-pl.turn{transform:translateY(-3px);box-shadow:0 5px 0 color-mix(in srgb,var(--pc) 70%,#000),inset 0 0 0 4px var(--pc),0 0 0 5px #fde047,0 0 22px 6px rgba(253,224,71,.6);animation:bguTurn 1.2s ease-in-out infinite alternate}
+@keyframes bguTurn{to{box-shadow:0 5px 0 color-mix(in srgb,var(--pc) 70%,#000),inset 0 0 0 4px var(--pc),0 0 0 5px #fde047,0 0 34px 10px rgba(253,224,71,.85)}}
+/* 간판 */
+.bgup .mttgt{margin:2px 0 10px}.bgup .mttgt span{color:#fde68a;font-size:1rem}
+.bgup .mttgt b{position:relative;font-family:var(--fun);font-weight:400;font-size:1.75rem;color:#fef3c7;background:linear-gradient(180deg,#b45309,#78350f);border:4px solid #451a03;border-radius:14px;padding:6px 26px;box-shadow:0 5px 0 #451a03,inset 0 2px 0 rgba(255,255,255,.25);text-shadow:0 2px 0 #451a03}
+/* 진행자 말풍선 */
+.bgup .blog{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border-radius:16px;padding:8px 14px;margin:12px 48px 0;font-size:1rem;color:#1f2937;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.bgup .blog .bgu-host{font-size:1.7rem;line-height:1;animation:bguBob 1.4s ease-in-out infinite alternate}@keyframes bguBob{to{transform:translateY(-3px) rotate(-6deg)}}
+/* 결과 공개 */
+.bgup .mtrev{gap:14px}.bgup .mtres{border-radius:18px;box-shadow:0 6px 0 rgba(0,0,0,.25);animation:bguFlip .55s ease-out both}.bgup .mtres:nth-child(2){animation-delay:.25s}.bgup .mtres:nth-child(3){animation-delay:.5s}.bgup .mtres:nth-child(4){animation-delay:.75s}
+.bgup .mtres .fun{font-size:1.5rem!important}.bgup .mtres small{font-size:.95rem}
+.bgup .mtres.win{position:relative;animation:bguFlip .55s ease-out both,bguWin 1s .6s ease-in-out infinite alternate}
+.bgup .mtres.win::after{content:var(--wtxt,'🏆 1등!');position:absolute;top:-14px;right:-8px;font-family:var(--fun);font-size:1.3rem;color:#fff;background:#dc2626;border:3px solid #fff;border-radius:12px;padding:2px 12px;transform:rotate(12deg);box-shadow:0 4px 0 #7f1d1d;animation:bguStamp .5s .7s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes bguFlip{0%{transform:perspective(600px) rotateY(90deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes bguWin{to{box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 0 5px #fde047,0 0 28px 8px rgba(253,224,71,.7)}}
+@keyframes bguStamp{0%{transform:scale(3) rotate(-20deg);opacity:0}100%{transform:rotate(12deg) scale(1);opacity:1}}
+.bgup .tlover{border-radius:22px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.bgup .tfin .fun{font-size:1.6rem;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.bgup .center.font-black{color:#fff;font-size:1.15rem;text-shadow:0 2px 0 rgba(0,0,0,.3)}
+@media(max-width:700px){#boardArea>.tltable.bgup{padding:56px 8px 10px}.bgup .bq-score{margin:4px 0 10px}.bgup .blog{margin:10px 0 0}.bgup .bgu-side{display:none}}
+/* 칸 채우기 대결: 풍선 부스 */
+#boardArea>.tltable.bgup-bal{--s1:#ec4899;--s2:#fff;--bg1:#38bdf8;--bg2:#0369a1;--fl:#be185d}
+.bgup-bal .ordc.tfc{border-radius:50% 50% 46% 46%/56% 56% 44% 44%;width:66px;height:78px;border:0;background:radial-gradient(circle at 35% 30%,#fff 0 8%,transparent 9%),radial-gradient(circle at 50% 50%,#f472b6,#db2777);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.3);box-shadow:0 6px 0 #9d174d;position:relative;animation:bguBob 1.6s ease-in-out infinite alternate}
+.bgup-bal .ordc.tfc:nth-child(2){background:radial-gradient(circle at 35% 30%,#fff 0 8%,transparent 9%),radial-gradient(circle,#60a5fa,#2563eb);box-shadow:0 6px 0 #1e3a8a;animation-delay:.4s}
+.bgup-bal .ordc.tfc:nth-child(3){background:radial-gradient(circle at 35% 30%,#fff 0 8%,transparent 9%),radial-gradient(circle,#fbbf24,#d97706);box-shadow:0 6px 0 #92400e;animation-delay:.8s}
+.bgup-bal .ordc.tfc::after{content:'';position:absolute;left:50%;top:100%;width:2px;height:16px;background:rgba(255,255,255,.8)}
+.bgup-bal .ordc.tfc.on{outline:5px solid #fde047;outline-offset:3px}
+.bgup-bal .tfmake>p,.bgup-bal p.center{color:#fff}
+</style><script>/* 4-1-3 보드게임 덧입힘 공통: 판이 다시 그려질 때마다 무대 소품을 붙여요 (규칙·점수는 건드리지 않아요) */
+(function () {
+  function deco() { const T = window.BGUP || {}; const t = document.querySelector('#boardArea>.tltable'); if (!t || t.dataset.bgup) return; t.dataset.bgup = '1'; t.classList.add('bgup', 'bgup-' + T.key);
+    t.insertAdjacentHTML('afterbegin', '<div class="bgu-awn"></div><div class="bgu-lights">' + '<i></i>'.repeat(16) + '</div>' + (T.side ? `<div class="bgu-side l">${T.side[0]}</div><div class="bgu-side r">${T.side[1] || T.side[0]}</div>` : ''));
+    const lg = t.querySelector('.blog'); if (lg && T.host && !lg.querySelector('.bgu-host')) lg.insertAdjacentHTML('afterbegin', `<span class="bgu-host" title="${T.hostName || ''}">${T.host}</span>`);
+    try { T.after && T.after(t, state.s2.au); } catch (e) {} }
+  try { new MutationObserver(deco).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+
+window.BGUP = { key: 'bal', host: '🤡', hostName: '풍선 부스 주인', side: ['🎈<br>🎈<br>🎈', '🎈<br>🎈<br>🎈'] };
+</script><!--BGUP-END-->
 </body>
 </html>
