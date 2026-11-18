@@ -12174,6 +12174,9 @@ body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on
 
 /* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
 body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
+/* 좁은 화면(세로 휴대폰): 문제 글이 한 글자씩 세로로 쌓이지 않게 — 단계 칩은 위로, 문제 글은 한 줄 전체 */
+@media (max-width:700px){body.svsl-on .svsl-tc>.svsl-q{flex-wrap:wrap!important;gap:6px!important}body.svsl-on .svsl-tc>.svsl-q .ancap,body.svsl-on .svsl-tc>.svsl-q .labq{flex:1 1 100%!important;width:100%;font-size:1.05rem!important;padding:6px 12px!important}body.svsl-on .svsl-tc>.svsl-q .t11steps{order:-1!important;margin:0 auto!important;flex-wrap:wrap}}
+@media (max-width:700px){body.svsl-on .sv-j0card .sv-fig,body.svsl-on .sv-j0card .sv-paper{max-width:100%;min-width:0}body.svsl-on .sv-j0card .sv-paper svg{max-width:100%;height:auto}body.svsl-on .sv-j0card .sv-paper [style*="display:flex"]{flex-wrap:wrap}body.svsl-on .sv-j0card .sv-paper .sv-row{flex-wrap:wrap}}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -12471,17 +12474,19 @@ function pgClear(q) { $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl
 function pageCard(q, box, deep) { pgClear(q);
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const cs = getComputedStyle(q), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 8;
-  let H = box.clientHeight - others - pad - 62; if (H < 160) return false;
+  let H = box.clientHeight - others - pad - (B.classList.contains("svsl-land") ? 62 : 96); if (H < 160) return false;
   const part = deep ? q.querySelector(':scope > [id^="part-"]') : null, blocks = [];
-  [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) blocks.push(k); }); else blocks.push(c); });
+  /* 한 쪽보다 큰 덩어리(그림 + 답 칸 등)는 줄이지 않고 안쪽 칸으로 나누어 쪽을 더 만들어요 (휴대폰 세로 화면) */
+  const flat = (c, d) => { if (d < 6 && c.getBoundingClientRect().height + 10 > H) { const K = [...c.children].filter(k => k.offsetParent !== null && k.getBoundingClientRect().height > 4); if (K.length >= 2) { K.forEach(k => flat(k, d + 1)); return; } if (K.length === 1) { flat(K[0], d + 1); return; } } blocks.push(c); };
+  [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) flat(k, 0); }); else flat(c, 0); });
   if (blocks.length < 2) return false;
   const hh = b => b.getBoundingClientRect().height + 10;
   /* 쪽 수가 3쪽을 넘지 않도록 카드를 조금(최대 20%) 줄여 가며 가장 큰 크기를 골라요 */
   const pack = z => { q.style.zoom = z; blocks.forEach(b => { if (b.hasAttribute('data-pgz')) { b.style.zoom = ''; b.removeAttribute('data-pgz'); } });
     blocks.forEach(b => { if (hh(b) > H) { b.style.zoom = Math.max(.42, (H - 10) / (hh(b) - 10)).toFixed(3); b.setAttribute('data-pgz', '1'); } });
-    const P = [[]]; let h = 0; blocks.forEach(b => { const bh = hh(b); if (h + bh > H && P[P.length - 1].length) { P.push([]); h = 0; } P[P.length - 1].push(b); h += bh; }); return P; };
+    const P = [[]]; let h = 0; blocks.forEach(b => { const bh = hh(b); if (h + bh > H && P[P.length - 1].length) { const cur = P[P.length - 1], last = cur[cur.length - 1], carry = last && cur.length > 1 && hh(last) < 60 ? [cur.pop()] : []; P.push(carry); h = carry.reduce((a, x) => a + hh(x), 0); } P[P.length - 1].push(b); h += bh; }); return P; };
   let pages = null, best = null;
-  for (const z of [1, .94, .88, .82]) { const P = pack(z); if (!best || P.length < best.n) best = { n: P.length, z }; if (P.length <= 3) { pages = P; break; } }
+  for (const z of [1, .94, .88, .82]) { const P = pack(z); if (!best || P.length < best.n) best = { n: P.length, z }; if (P.length <= 5) { pages = P; break; } }
   if (!pages) pages = pack(best.z);
   if (pages.length < 2) { pgClear(q); q.style.zoom = 1; return false; }
   const key = SET() + '|' + step() + '|' + (q.id || '') + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 40);
