@@ -5817,7 +5817,8 @@ body{background:radial-gradient(circle at 1px 1px,rgba(2,132,199,.15) 1.5px,tran
 .vkpt{display:inline-flex;align-items:center;justify-content:center;border:2px solid #334155;border-radius:3px}.vkpt small{font-weight:900;font-size:.75rem;background:rgba(255,255,255,.75);border-radius:4px;padding:0 3px}.vkpn{display:block;font-style:normal;font-weight:900;font-size:.8rem;text-align:center;margin-top:2px}
 .vkstrip{position:absolute;display:flex;box-sizing:border-box;border:2.5px solid #334155;background:#fca5a5;transition:background .3s}.vkstrip.one{background:linear-gradient(90deg,#fda4af,#fca5a5);box-shadow:0 0 0 4px #fde68a}.vkstrip span{height:100%;box-sizing:border-box}
 .vkstl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#7f1d1d}
-.vkbrace{position:absolute;left:0;text-align:center;font-weight:900;color:#b91c1c;border-top:3px solid #b91c1c;padding-top:2px}</style>
+.vkbrace{position:absolute;left:0;text-align:center;font-weight:900;color:#b91c1c;border-top:3px solid #b91c1c;padding-top:2px}.vkmtip{font-weight:900;color:#b45309;background:#fff7ed;border:3px dashed #fdba74;border-radius:16px;padding:12px 14px;text-align:center;line-height:1.6;font-size:1.05rem}.vkmtip small{display:block;color:#64748b;font-size:.85rem}
+</style>
 <script>
 /* 6-1 6단원 4차시 · 직육면체의 겉넓이 구하기 */
 window.G56_CFG = { partner: 'ox', villain: 'volumeking', vname: '볼륨 킹',
@@ -7911,6 +7912,15 @@ const VK = (() => {
     const up = () => { if (!D) return; D = null; document.body.classList.remove('vkdragging'); const b = document.querySelector('#toolBody [data-ck="vkset"]'); if (b) { b.dataset.v = 'end'; b.click(); } };
     document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true); })();
 
+  /* 1 m³ 채우기: 상자 그림 안에서 바로 끌기 — 누른 곳의 위치가 곧 값(끝 가까이 가면 100으로 딱 맞춰요) */
+  (() => { if (window.__vkMeter) return; window.__vkMeter = 1; let D = null;
+    const val = (sv, e) => { const pt = sv.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const q = pt.matrixTransform(sv.getScreenCTM().inverse()), ph = +sv.dataset.ph, ox = +sv.dataset.ox, oy = +sv.dataset.oy, L = +sv.dataset.l, dx = +sv.dataset.dx, dy = +sv.dataset.dy;
+      let t = ph === 0 ? (q.x - ox) / L : ph === 1 ? ((q.x - ox - L) * dx + (q.y - oy) * -dy) / (dx * dx + dy * dy) : (oy - q.y) / L; t = Math.max(0, Math.min(1, t)); let v = Math.round(t * 100); if (v >= 94) v = 100; return v; };
+    const send = v => { const b = document.querySelector('#toolBody [data-ck="vkset"]'); if (b) { b.dataset.v = v; b.click(); } };
+    document.addEventListener('pointerdown', e => { const sv = e.target.closest && e.target.closest('#toolBody svg.vkmsvg'); if (!sv || !sv.dataset.k) return; e.preventDefault(); D = { k: sv.dataset.k, id: e.pointerId, v: -1 }; document.body.classList.add('vkdragging'); const v = val(sv, e); D.v = v; send(D.k + ':' + v); }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const sv = document.querySelector('#toolBody svg.vkmsvg'); if (!sv) return; const v = val(sv, e); if (v !== D.v) { D.v = v; send(D.k + ':' + v); } }, { passive: false });
+    const up = () => { if (!D) return; D = null; document.body.classList.remove('vkdragging'); send('end'); };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true); })();
   /* ⑤ 층 나누어 보기: c = { A:[a,b,h], rec, win, q } — 손잡이를 위로 끌면 층이 벌어져 한 층씩 보여요 */
   function explode(c) {
     const [a, b, h] = c.A;
@@ -7975,7 +7985,7 @@ const VK = (() => {
   function meter(c) {
     const PH = [['n', '한 모서리(1 m)에 1 cm 쌓기나무를 줄 세워요', '개'], ['r', '그 줄을 옆으로 늘어놓아 한 층을 채워요', '줄'], ['z', '한 층을 위로 쌓아 1 m³를 가득 채워요', '층']];
     return stage('vkmeter', c, {
-      q: d => d.recOK ? '완성!' : d.ph >= 3 ? (c.q2 || '1 m³ 안에 1 cm³ 쌓기나무가 몇 개 들어가는지 빈칸에 써요.') : `손잡이를 끌어 <b>${PH[d.ph][1]}</b>. (100${PH[d.ph][2]}까지)`,
+      q: d => d.recOK ? '완성!' : d.ph >= 3 ? (c.q2 || '1 m³ 안에 1 cm³ 쌓기나무가 몇 개 들어가는지 빈칸에 써요.') : `상자 안을 누른 채로 끌어 <b>${PH[d.ph][1]}</b>. (100${PH[d.ph][2]}까지)`,
       init: () => ({ n: 0, r: 0, z: 0, ph: 0, rv: {} }),
       view: d => { const W = 300, L = W, K2 = .5, ang = .66, dx = L * K2 * Math.cos(ang), dy = L * K2 * Math.sin(ang), o = [40, 40 + dy], P = (x, y, z) => [o[0] + x * L + y * dx, o[1] + L - z * L - y * dy];
         const pt = q => q.join(','), line = (a, b2, st) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b2[0]}" y2="${b2[1]}" ${st}/>`;
@@ -7987,9 +7997,11 @@ const VK = (() => {
         else if (r > 0) fill = `<polygon points="${[P(0, 0, 0), P(1, 0, 0), P(1, r, 0), P(0, r, 0)].map(pt).join(' ')}" fill="#fde68a" stroke="#d97706"/>`;
         if (d.ph === 0 || (z === 0 && r === 0)) { const k = Math.round(f * 100); for (let i = 0; i < k; i++) { const a2 = P(i / 100, 0, 0), b2 = P((i + 1) / 100, 0, .01 * 3); fill += `<rect x="${a2[0]}" y="${b2[1]}" width="${L / 100}" height="${a2[1] - b2[1]}" fill="${i % 10 === 9 ? '#d97706' : col}"/>`; } }
         const lab = `<text x="${P(.5, 0, 0)[0]}" y="${P(0, 0, 0)[1] + 24}" text-anchor="middle" font-weight="800" font-size="16">1 m = 100 cm</text><text x="${P(1, .5, 0)[0] + 10}" y="${P(1, .5, 0)[1] + 4}" font-weight="800" font-size="16">1 m</text><text x="${P(0, 0, .5)[0] - 8}" y="${P(0, 0, .5)[1]}" text-anchor="end" font-weight="800" font-size="16">1 m</text>`;
-        const svg = `<svg class="vox" viewBox="-30 0 ${W + dx + 110} ${L + dy + 70}" width="${W + dx + 140}" style="max-width:100%;height:auto">${fill}${fr}${lab}</svg>`;
+        let hd = '';
+        if (d.ph < 3) { const hp = d.ph === 0 ? P(f, 0, .03) : d.ph === 1 ? P(1, r, 0) : P(1, .5, z); hd = `<g class="vkmh" pointer-events="none"><circle cx="${hp[0]}" cy="${hp[1]}" r="17" fill="#f59e0b" stroke="#fff" stroke-width="3" opacity=".95"/><text x="${hp[0]}" y="${hp[1] + 6}" text-anchor="middle" font-size="17">✋</text><text x="${hp[0] + (d.ph === 2 ? 26 : 0)}" y="${hp[1] + (d.ph === 2 ? 5 : -24)}" text-anchor="${d.ph === 2 ? 'start' : 'middle'}" font-weight="900" font-size="15" fill="#b45309" paint-order="stroke" stroke="#fff" stroke-width="4">${d.ph === 0 ? '오른쪽으로 →' : d.ph === 1 ? '안쪽으로 ↗' : '위로 ↑'}</text></g>`; }
+        const svg = `<svg class="vox vkmsvg" data-ph="${d.ph}" data-ox="${o[0]}" data-oy="${o[1] + L}" data-l="${L}" data-dx="${dx}" data-dy="${dy}" data-k="${d.ph < 3 ? PH[d.ph][0] : ''}" viewBox="-30 0 ${W + dx + 110} ${L + dy + 70}" width="${W + dx + 140}" style="max-width:100%;height:auto;touch-action:none;cursor:${d.ph < 3 ? 'grab' : 'default'}"><rect x="-30" y="0" width="${W + dx + 110}" height="${L + dy + 70}" fill="transparent"/>${fill}${fr}${lab}${hd}</svg>`;
         const cnt = `<div class="vkcnt">한 줄 <b>${d.n}</b>개 · 한 층 <b>${d.ph >= 1 ? d.r * 100 : 0}</b>개 · 쌓은 층 <b>${d.z}</b>층</div>`;
-        return `<div class="vklayer"><div class="vkzone big ${d.ph >= 3 ? 'done' : ''}"><div class="vkfig">${svg}</div>${cnt}</div><div class="vkside">${d.ph < 3 ? `<div class="vkknob">${knob(PH[d.ph][0], d[PH[d.ph][0]], 0, 100, { axis: d.ph === 2 ? 'y' : 'x', step: 3, inner: `✋<small>${d.ph === 2 ? '위로' : '옆으로'} 끌기</small>` })}<span>${PH[d.ph][1]}</span></div>` : ''}</div></div>${setBtn}` + (d.ph >= 3 ? rec(d, c) : ''); },
+        return `<div class="vklayer"><div class="vkzone big ${d.ph >= 3 ? 'done' : ''}"><div class="vkfig">${svg}</div>${cnt}</div><div class="vkside">${d.ph < 3 ? `<div class="vkmtip">✋ <b>상자 안</b>을 누른 채로<br>${d.ph === 0 ? '오른쪽으로' : d.ph === 1 ? '안쪽(오른쪽 위)으로' : '위로'} 쭉 끌어요<br><small>${PH[d.ph][1]}</small></div>` : ''}</div></div>${setBtn}` + (d.ph >= 3 ? rec(d, c) : ''); },
       on: { 'act:vkset'(d, v, el, api) { if (!v || d.ph >= 3) return; const k = PH[d.ph][0]; if (v === 'end') { if (d[k] === 100) { d.ph++; api.say(true, d.ph === 1 ? '1 m에 1 cm 쌓기나무가 100개! 이제 이 줄을 옆으로 늘어놓아요.' : d.ph === 2 ? '한 층에 100 × 100 = 10000개! 이제 위로 쌓아요.' : (c.mid || '1 m³를 가득 채웠어요!')); } else api.say(false, `100${PH[d.ph][2]}까지 끌어야 1 m가 돼요. (지금 ${d[k]})`, true); return; }
           const [kk, x] = v.split(':'); if (kk === k) d[k] = +x; api.clear(); },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
