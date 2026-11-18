@@ -9351,6 +9351,14 @@ body.um-on #toolBody>.ucwrap,body.um-on #toolBody>.ucwrap+.card{border:0!importa
 .arwrap .arpages{margin-bottom:10px}.arwrap .arpages button{padding:5px 14px!important}
 .arwrap .arcard{min-height:0;padding:12px!important;gap:3px}.arwrap .arcard .aric{font-size:3.4rem!important;margin-top:22px}.arwrap .arcard .arnm{font-size:1.6rem!important;margin-top:8px}.arwrap .arcard .arbtns .btn{font-size:1rem;padding:.5rem 1.2rem}}
 @media(max-width:700px){.arwrap{min-height:0;padding:12px!important}.arwrap .stage-head .sub{display:none}.arwrap .arstat span{flex-direction:row;justify-content:center;gap:6px;padding:4px;font-size:.78rem}.arwrap .arstat b{font-size:1.05rem}.arwrap .arpages button{padding:5px 12px!important;font-size:.9rem}.arwrap .arcard .aric{font-size:3.4rem!important}}
+/* v94 기억 카드 크게·가운데 */
+@media(min-width:701px){.umem{display:flex!important;align-items:center;justify-content:center}
+.umem-in{margin:0 auto;width:min(92%,1000px);column-gap:34px!important;row-gap:10px!important}
+.umem-vil img{width:min(240px,28vh)!important;height:min(240px,28vh)!important}.umem-vil span[role=img]{font-size:min(190px,24vh)!important}
+.umem-say{font-size:1.35rem;padding:8px 18px}.umem-say .umem-vn{font-size:1.35rem}
+.umem small{font-size:1.2rem}.umem b{font-size:2.6rem}.umem em{font-size:1.85rem;max-width:none}.umem i{font-size:1.15rem}}
+@media(min-width:701px) and (max-height:760px){.umem-vil img{width:170px!important;height:170px!important}.umem b{font-size:2.1rem}.umem em{font-size:1.5rem}}
+@media(min-width:701px) and (max-height:760px){.umem-in{row-gap:4px!important}.umem-vil span[role=img]{font-size:130px!important}.umem-vil img{width:150px!important;height:150px!important}.umem-say,.umem-say .umem-vn{font-size:1.15rem}.umem small{font-size:1.05rem}.umem b{font-size:1.9rem}.umem em{font-size:1.4rem}.umem i{font-size:1rem;margin-top:2px}}
 /* 왕중왕전 새 무대 */
 .arwrap.uar-on>.stage-head,.arwrap.uar-on>.arstat,.arwrap.uar-on>.arpages,.arwrap.uar-on>.argrid{display:none!important}
 .arwrap.uar-on{padding:0!important;background:#0b0820!important;box-shadow:0 0 0 4px #fbbf24,0 0 0 9px #78350f,0 0 0 11px #fbbf24,0 18px 40px rgba(0,0,0,.45)!important;min-height:calc(100vh - 190px)}
@@ -9538,7 +9546,7 @@ window.UMQ = {
     if (seen[key] || main.querySelector('.umem')) return; const t = (sl.querySelector('.ucst') || {}).textContent || '', ic = on ? (on.querySelector('.uci') || {}).innerHTML : '⭐', ls = on ? (on.querySelector('.uct') || {}).textContent : '';
     let unit = ''; try { unit = String(CONFIG.LESSON_ID || '').replace(/-U$/, ''); } catch (e) {} const si = [...((w.querySelector('.ucdots') || {}).children || [])].findIndex(x => x.classList.contains('on')), Q = (window.UMQ || {})[unit + '|' + (on ? on.dataset.v : '') + '|' + Math.max(0, si)];
     if (Q && Q[1] && !sl.querySelector('.umwarn')) { const sum = sl.querySelector('.ucsum') || sl; sum.insertAdjacentHTML('beforeend', `<div class="umwarn"><b>⚠️ 조심!</b> ${Q[1]}</div>`); [60, 400, 900, 1400].forEach(t => setTimeout(() => fitW(sl), t)); }
-    const f = document.createElement('button'); f.className = 'umem'; let vk = 'dark', vn = '악당', va = ''; try { const ks = Object.keys(VILLAINS), ci = [...document.querySelectorAll('.uchub .uccard')].indexOf(on); vk = ks[(Math.max(0, ci) + Math.max(0, si)) % ks.length]; vn = VILLAINS[vk].name; va = avatar(vk, 120, 'laugh'); } catch (e) {}
+    const f = document.createElement('button'); f.className = 'umem'; let vk = 'dark', vn = '악당', va = ''; try { const ks = Object.keys(VILLAINS), ci = [...document.querySelectorAll('.uchub .uccard')].indexOf(on); vk = ks[(Math.max(0, ci) + Math.max(0, si)) % ks.length]; vn = VILLAINS[vk].name; va = avatar(vk, 260, 'laugh'); } catch (e) {}
     const TAUNT = ['크크크! 이것까지 기억할 수 있을까?', '흐흐, 벌써 다 잊어버렸지?', '이 문제만큼은 절대 못 맞힐걸!', '기억 상자는 내가 잠가 버렸다!'];
     f.innerHTML = `<span class="umem-in"><span class="umem-vil">${va || ic}</span><span class="umem-say"><b class="umem-vn">${vn}</b> ${TAUNT[(Math.max(0, si) + t.length) % TAUNT.length]}</span><small>${ls} · ${t.replace(/^\d+/, '')}</small><b>🤔 기억나니?</b><em>${Q ? Q[0] : '「' + t.replace(/^\d+/, '') + '」'}</em><i>먼저 떠올려 말해 보고, 카드를 눌러 ${vn}의 봉인을 풀어요 👆</i></span>`;
     main.style.position = 'relative'; main.appendChild(f); f.onclick = () => { seen[key] = 1; f.classList.add('flip'); sl.classList.add('umreveal'); setTimeout(() => f.remove(), 650); try { Sound.flip && Sound.flip(); } catch (e) {} }; }
