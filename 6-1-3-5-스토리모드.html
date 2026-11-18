@@ -8216,9 +8216,18 @@ BANK[3] = [
 ];
 
 mgxKit([
-  Object.assign({ id: 'estg', v: 'tilt', name: '어림하고 소수점 콕', title: `🔭 ${VN}의 레이더 교란`, goal: '75초 · 어림 → 소수점', dur: 75,
-    sub: '나누어지는 수를 <b>나누기 쉬운 가까운 수</b>로 어림해 몫을 짐작하고, 그 값에 맞게 <b>소수점</b>을 찍어요.', desc: '어림한 몫과 가까운 자리에 소수점을', help: '수직선에서 ▼에 가장 가까운 수를 누르면 어림한 몫이 나와요. 그 몫에 가깝게 소수점을 찍어요.' },
-    MGX.est({ items: [['43.2', 8], ['25.2', 6], ['36.4', 4], ['70.2', 6], ['17.6', 8], ['61.2', 9], ['29.4', 3], ['95.4', 9], ['12.84', 4], ['46.8', 9], ['33.6', 8], ['51.6', 6], ['19.5', 5], ['64.4', 7]] })),
+  Object.assign({ id: 'estg', v: 'tilt', name: '어림으로 줄 세우기', title: `🏆 ${VN}의 몫 크기 시상대`, goal: '60초 · 몫이 작은 것부터 줄 세우기', dur: 60, pts: 12 }, {
+    sub: '나눗셈 카드 3장의 몫을 <b>어림</b>해서 <b>작은 것부터</b> 차례로 눌러 시상대에 세워요. 정확히 계산하지 않아도 돼요!', desc: '나누어지는 수를 가까운 수로 어림해요', help: '몫이 가장 작은 카드부터 차례로 눌러요',
+    gen() { const mk = () => { const b = rnd2(2, 9), k = pick([1, 10, 100]), q = rnd2(11, 99) / 10 * k / 10; const A = +(q * b).toFixed(2); return { t: `${A} ÷ ${b}`, q: A / b, e: `약 ${Math.round(A)} ÷ ${b} ≈ ${(Math.round(A) / b).toFixed(1).replace(/\.0$/, '')}` }; };
+      for (let t = 0; t < 99; t++) { const c = [mk(), mk(), mk()]; const s = c.map(x => x.q).sort((x, y) => x - y); if (s[1] / s[0] > 1.8 && s[2] / s[1] > 1.8) return { c: shuffle(c), pk: [], miss: 0 }; }
+      return { c: [{ t: '4.8 ÷ 4', q: 1.2, e: '약 5 ÷ 4' }, { t: '72.6 ÷ 3', q: 24.2, e: '약 73 ÷ 3' }, { t: '19.2 ÷ 6', q: 3.2, e: '약 19 ÷ 6' }], pk: [], miss: 0 }; },
+    view(r) { const pod = [0, 1, 2].map(i => { const k = r.pk[i]; return `<div class="espod p${i}"><span>${i + 1}</span>${k != null ? `<b>${r.c[k].t}</b>` : '<em>?</em>'}</div>`; }).join('');
+      return `<div class="qzq">몫이 <b>가장 작은 카드부터</b> 차례로 눌러 시상대에 세워요</div><div class="espods">${pod}</div>
+      <div class="mgxrow escards">${r.c.map((x, i) => `<button class="mgxb escard" data-an="mgx" data-v="p:${i}" ${r.done || r.pk.includes(i) ? 'disabled' : ''}>🃏 ${x.t}</button>`).join('')}</div>`; },
+    on: { p(r, v, a) { v = +v; if (r.pk.includes(v)) return; r.pk.push(v); a.pop(); if (r.pk.length < 3) return;
+        const ok = r.pk.every((k, i) => i === 0 || r.c[r.pk[i - 1]].q < r.c[k].q), ord = r.c.map((x, i) => i).sort((x, y) => r.c[x].q - r.c[y].q), ex = ord.map(i => `${r.c[i].t} (${r.c[i].e})`).join(' &lt; ');
+        if (ok) return a.end(true, ex); const lg = '몫 크기 순서: ' + r.pk.map(i => r.c[i].t).join(' → '); r.pk = []; if (++r.miss < 2) return a.slip('순서가 달라요. 나누어지는 수를 가까운 자연수로 어림해 몫을 짐작해 봐요.', lg); r.pk = ord; a.end(false, ex, lg); } },
+    auto(r) { return r.c.map((x, i) => i).sort((x, y) => r.c[x].q - r.c[y].q).map(i => 'p:' + i); } }),
   Object.assign({ id: 'scrg', v: 'mixup', name: '고장 난 화면 찾기', title: `🖥️ ${VN}의 관제 화면 조작`, goal: '75초 · 잘못된 몫 모두 찾기', dur: 75,
     sub: `${VN}${jo(VN, '이', '가')} 관제 화면 몇 개의 <b>소수점을 옮겨</b> 놓았어요. 어림해 보고 몫이 잘못된 화면을 <b>모두</b> 눌러요.`, desc: '어림한 값과 크게 다르면 고장!', help: '나누어지는 수를 가까운 자연수로 어림해 몫의 크기를 짐작해요.' },
     MGX.multi({ gen: () => { const P = shuffle([['25.2', 6], ['43.2', 8], ['36.4', 4], ['57.5', 5], ['17.6', 8], ['70.2', 6], ['9.6', 4], ['61.2', 9], ['29.4', 3], ['12.84', 4], ['38.5', 7], ['95.4', 9]]).slice(0, 6), nb = pick([2, 3]);
@@ -8226,7 +8235,7 @@ mgxKit([
       return { q: '어림해 보고 <b>몫이 잘못된 화면을 모두</b> 눌러요', cards, ex: '고장 난 화면: ' + cards.filter(c => c.ok).map(c => `${c.a} ÷ ${c.b}${MGX.J(c.b, '은', '는')} 약 ${Math.round(parseFloat(c.a))} ÷ ${c.b}이므로 몫은 <b>${c.q}</b>`).join(' · '), log: '고장 난 화면 찾기' }; } }))
 ]);
 const GUIDES = {
-  estg: { title: '🔭 어림하고 소수점 콕', color: '#2563eb', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">43.2 ÷ 8 → 약 40 ÷ 8 = 5<br>5 ▢ 4 → <b>5.4</b></div>', txt: '먼저 수직선에서 나누어지는 수에 가장 가까운, 나누어떨어지는 수를 눌러 어림해요. 그다음 어림한 몫에 맞게 숫자 사이를 눌러 소수점을 찍어요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르기보다 정확하게! 실수 없이 이어서 성공하면 점수가 더 커져요.' }] },
+  estg: { title: '🏆 어림으로 줄 세우기', color: '#2563eb', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">19.2 ÷ 6 (약 3) &lt; 72.6 ÷ 3 (약 24)</div>', txt: '카드 3장의 몫을 어림해 작은 것부터 차례로 눌러 시상대에 세워요.' }, { t: '2. 점수', ill: () => '<div class="gsay">맞히면 +12 · 실수하면 −4</div>', txt: '빨리, 정확하게! 연속으로 맞히면 보너스예요.' }] },
   scrg: { title: '🖥️ 고장 난 화면 찾기', color: '#be123c', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">25.2 ÷ 6 = 42 ❌<br>약 24 ÷ 6 = 4이니까 <b>4.2</b>가 맞아요</div>', txt: '화면 6개를 하나씩 어림해 보고 몫이 잘못된 화면을 모두 누른 다음 「다 골랐어요」를 눌러요. 하나라도 빠뜨리거나 잘못 고르면 실패예요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르기보다 정확하게! 실수 없이 이어서 성공하면 점수가 더 커져요.' }] }
 };
 
@@ -8251,6 +8260,7 @@ LC.story = mkStory6({ unitNo: 3, ep: 5, title: '자전거 길 순찰표', place:
   learned: '나누어지는 수를 나누기 쉬운 가까운 수로 어림하면 몫의 크기를 짐작할 수 있어요. 어림한 값과 비교해 몫의 소수점 위치를 확인해요.',
   basicMsg: `${VN}의 함정! 어림으로 몫의 크기를 먼저 짐작해 보자.`, jumpMsg: `${VN}의 방어막 3겹! 레이더 · 소수점 바로잡기 · 몫 분류로 깨뜨리자.` });
 (() => { const st = document.createElement('style'); st.textContent = `.dxrel{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:8px 0;font-weight:900;font-size:1.15rem}.dxrel span{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:6px 12px}`; document.head.appendChild(st); })();
+(() => { const st = document.createElement('style'); st.textContent = `.espods{display:flex;justify-content:center;align-items:flex-end;gap:8px;margin:14px 0}.espod{width:170px;border-radius:12px 12px 0 0;background:linear-gradient(180deg,#fde68a,#f59e0b);border:3px solid #b45309;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px;gap:4px}.espod.p0{height:70px}.espod.p1{height:100px}.espod.p2{height:130px}.espod span{font-family:'Jua',sans-serif;font-size:1.3rem;color:#78350f}.espod b{background:#fff;border-radius:10px;padding:2px 8px;font-size:1.1rem;animation:ngIn .35s cubic-bezier(.3,1.6,.5,1)}.espod em{font-style:normal;color:#92400e;font-weight:900}.escard{font-size:1.3rem!important}@keyframes ngIn{from{transform:translateY(-60px);opacity:0}}`; document.head.appendChild(st); })();
 
 /* 세트 2 공통 (1차시에서 가져옴): 그림 문제 · 문제은행 화면 · 미니게임 머리글 */
 function mkI(text, img, ans, ds, ex, sa) { const q = mk(text, ans, ds, ex); q.img = img; q.mcOnly = !sa; return q; }
@@ -11221,7 +11231,7 @@ const JX = (() => {
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
     if (isTyped(C)) {
-      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      h += `<div class="jxrow ${C.stack ? 'jxstack' : ''}">${C.slots.map((lab, i) => `<span class="jxit">${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit && !C.post ? `<small>${C.unit}</small>` : ''}</span>${C.post && C.post[i] ? `<span class="jxlab">${C.post[i]}</span>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
         + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
@@ -11286,7 +11296,7 @@ const JX = (() => {
 (function () { try {
   document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
   document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
-  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+  const st = document.createElement('style'); st.textContent = '.jxit{display:inline-flex;align-items:center;gap:6px}.jxrow.jxstack{flex-direction:column;align-items:flex-start;gap:12px}.jxstack .jxlab{font-size:1.35rem!important;font-weight:900}.jxstack input.jxin{font-size:1.4rem}.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}input.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}input.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
 } catch (e) {} })();
 
 
@@ -12839,6 +12849,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-height:450px) and (orientation:landscape){body.svsl-on .wrap{overflow-y:auto!important}#s1body,#s2body{padding-bottom:14px!important}.vk3cv{min-height:200px!important;height:62vh!important}body.svsl-on .svsl-tc,body.svsl-on #toolBody>.card,body.svsl-on .svsl-tc>.svsl-main,body.svsl-on .svsl-tc>.svsl-side{height:auto!important;max-height:none!important;overflow:visible!important;zoom:1!important}body.svsl-on .svsl-tc>.svsl-main{min-height:72vh!important;flex:none!important}body.svsl-on .svsl-tc>.svsl-main>div{zoom:1!important}body.svsl-on .svsl-tc{display:block!important}body.svsl-on #s1body,body.svsl-on #s2body,body.svsl-on .sec{height:auto!important;max-height:none!important;overflow:visible!important}.svsl-on .svsl-q{font-size:.92rem}}
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
+@media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -12876,15 +12887,15 @@ window.GFX_T = {
  'dig':['🧺✨','🔙','정답!'],'cart':['🛒🛍️','💸','계산 완료!'],'bus':['🚌🎒','🚏','출발!'],
  'guess':['🐹✨','🕳️','쏙!'],'cargo':['📦🎉','🚧','도착!'],'pump':['⛽📊','💨','딱 맞아!'],'rank':['🥇📮','❌','쾅!'],
  'fake':['🔍🕵️','🎭','잡았다!'],'maze':['🤖⚙️','🧱','도착!'],
- 'barg':['✂️🍫','💥','똑같이!'],'nlg':['📍✨','💨','콕!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
+ 'barg':['✂️🍫','💥','똑같이!'],'nlg':['🧱✨','💥','딱 맞아!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
  'swg':['🔁✨','⚡','변신!'],'cutg':['✂️🎀','📏','딱 맞아!'],'mixg':['🏭✨','💨','변신 완료!'],'trapg':['⚖️✨','📉','검증 완료!'],
  'baseg':['🔷✨','❌','찾았다!'],'sideg':['🖌️🎨','💧','칠하기 완료!'],'edgeg':['📏✨','❌','정답!'],'dialg':['🎛️✨','🔄','딱!'],
  'meetg':['🔗✨','❌','맞닿았다!'],'stripg':['🧩✨','💥','이어 붙이기!'],'buildg':['🔺🏗️','💥','완성!'],'heightg':['📏✨','📐','정확!'],
- 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['📍✨','💨','콕!'],'chaing':['🔗✨','💥','연결!'],
+ 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['🟦✨','💥','출고!'],'chaing':['🔗✨','💥','연결!'],
  'ldivg':['✏️✨','❌','한 자리 완료!'],'gapg':['0️⃣✨','❌','찾았다!'],'pourg':['🧪💧','💦','똑같이!'],'scaleg':['🔢✨','❌','바꾸기 완료!'],
- 'estg':['🔍✨','❌','콕!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
- 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['📍✨','💨','콕!'],'gridg':['🟩✨','❌','칠하기 완료!'],
- 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','콕!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
+ 'estg':['🏆✨','🔄','순서 정확!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
+ 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['🔴🫙','💦','비율 완성!'],'gridg':['🟩✨','❌','칠하기 완료!'],
+ 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','딱 맞는 조각!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
  'piecesg':['📐✨','💥','바로잡았다!'],'cntg':['🔢✨','❌','정답!'],'truthg':['💡✨','❌','모두 찾았다!'],'linkg':['🔗📊','❌','연결!'],
  'trendg':['📈✨','📉','정답!'],'orderg':['🧊✨','💥','주문 완료!'],'pairg':['📦🎁','❌','완성!'],'dimg':['📦✨','💥','상자 완성!'],
  'sortg6':['🚛📦','💥','싣기 완료!'],'cvtg':['🏷️✨','❌','바꾸기 완료!'],'zerog':['0️⃣🏭','💥','출고!']
@@ -12948,15 +12959,15 @@ window.SCN_MAP = {
  train:[['drive','🚂🚃🚃'],['smoke','🚂']], dig:[['into','🃏🧺'],['bounce','🃏']], cart:[['into','🛍️🛒'],['rain','💸']], bus:[['drive','🚌🚌🧑‍🤝‍🧑'],['float','🙋']],
  guess:[['pop','🐹'],['sink','🕳️']], cargo:[['into','📦🎯'],['bounce','🚧']], pump:[['open','⛽📊⭐'],['float','💨']], rank:[['slam','🥇'],['bounce','❌']],
  fake:[['into','🎭🔍'],['float','🎭']], maze:[['drive','🤖⚙️'],['smoke','🤖']],
- barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['pop','📍'],['bounce','📍']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
+ barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['stack','🧱🧱🧱'],['bounce','🧱']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
  swg:[['open','🔁✅✨'],['pop','⚡']], cutg:[['into','🎀🎁'],['bounce','✂️']], mixg:[['drive','🏭📦📦'],['smoke','🏭']], trapg:[['open','⚖️✅⭐'],['bounce','⚖️']],
  baseg:[['pop','🔷'],['bounce','❌']], sideg:[['rain','🎨🖌️'],['sink','💧']], edgeg:[['stack','📏📏📏'],['bounce','📏']], dialg:[['open','🎛️✅✨'],['bounce','🎛️']],
  meetg:[['into','🔗🧩'],['bounce','🔗']], stripg:[['stack','🟥🟦🟩🟨'],['pop','💥']], buildg:[['stack','🔺🔺🏗️'],['bounce','🔺']], heightg:[['open','📏✅⭐'],['bounce','📐']],
- dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['pop','📍'],['bounce','📍']], chaing:[['open','🔗✅✨'],['pop','💥']],
+ dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['stack','🟦▮▮'],['bounce','▮']], chaing:[['open','🔗✅✨'],['pop','💥']],
  ldivg:[['stack','✏️🔢✨'],['bounce','❌']], gapg:[['pop','0️⃣'],['bounce','❌']], pourg:[['rain','💧🧪'],['float','💦']], scaleg:[['open','🔢✅✨'],['bounce','❌']],
- estg:[['pop','🔍'],['bounce','❌']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
- slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['pop','📍'],['bounce','📍']], gridg:[['rain','🟩'],['sink','⬜']],
- labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['pop','🥧'],['bounce','❌']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
+ estg:[['open','🏆🥇🥈🥉'],['bounce','🃏']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
+ slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['rain','🔴'],['bounce','🫙']], gridg:[['rain','🟩'],['sink','⬜']],
+ labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['open','🥧✅✨'],['bounce','🥧']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
  piecesg:[['open','📐✅✨'],['pop','💥']], cntg:[['rain','🔢✨'],['bounce','❌']], truthg:[['rain','💡✨'],['bounce','❌']], linkg:[['into','🔗📊'],['bounce','🔗']],
  trendg:[['open','📈✅✨'],['sink','📉']], orderg:[['stack','🧊🧊🧊'],['pop','💥']], pairg:[['into','📦🎁'],['bounce','❌']], dimg:[['stack','📦📦📦'],['pop','💥']],
  sortg6:[['drive','🚛📦📦'],['smoke','🚛']], cvtg:[['into','🏷️📦'],['bounce','🏷️']], zerog:[['drive','🏭📦📦'],['smoke','🏭']]
@@ -12986,6 +12997,9 @@ window.SCN_MAP = {
     window.vgGood = function () { const p = g0.apply(this, arguments); try { setTimeout(() => good(p), 0); } catch (e) {} return p; }; window.vgGood.__gfx = 1;
     window.vgBad = function (pen) { const r = b0.apply(this, arguments); try { setTimeout(() => bad(pen), 0); } catch (e) {} return r; }; }
   wrap(); document.addEventListener('DOMContentLoaded', wrap);
+  /* vgGood이 없는 예전 엔진: VG의 성공·실수 수가 바뀌면 효과 */
+  let pv = null; setInterval(() => { if (typeof window.vgGood === 'function') return; let V; try { V = VG; } catch (e) { return; } if (!V) return; const cur = [V.hit || 0, V.miss || 0, V.score || 0, V.id];
+    if (pv && pv[3] === cur[3]) { if (cur[0] > pv[0]) good(Math.max(1, cur[2] - pv[2])); else if (cur[1] > pv[1]) bad(Math.max(0, pv[2] - cur[2])); } pv = cur; }, 120);
   try { const s = document.createElement('style'); s.textContent = `
 .gfx{position:fixed;z-index:99998;pointer-events:none;transform:translate(-50%,-50%)}
 .gfx-p{font-size:1.7rem;animation:gfxP .85s cubic-bezier(.2,.8,.3,1) forwards}@keyframes gfxP{0%{transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1.1);opacity:0}}

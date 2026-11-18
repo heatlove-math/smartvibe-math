@@ -8454,18 +8454,25 @@ mgxKit([
   Object.assign({ id: 'labelg', v: 'tilt', name: '이름표 붙이기', title: `🖼️ ${VN}의 이름표 떼기`, goal: '75초 · 눈금 읽고 이름표 붙이기', dur: 75, pts: 14,
     sub: `${VN}${jo(VN, '이', '가')} 띠그래프의 이름표를 모두 떼어 버렸어요. <b>눈금을 읽어</b> 조각마다 알맞은 이름표를 다시 붙여요.`, desc: '띠의 길이가 곧 비율', help: '조각이 시작하는 눈금과 끝나는 눈금의 차가 그 항목의 백분율이에요.' },
     MGX.label({ gen: () => Object.assign(mgP(), { q: '눈금을 읽고, 띠 조각마다 알맞은 이름표를 붙여요' }) })),
-  Object.assign({ id: 'secg', v: 'mixup', name: '원그래프 조각 콕', title: `🥧 ${VN}의 뒤섞인 전시`, goal: '60초 · 그래프 읽고 조각 찾기', dur: 60,
-    sub: '원그래프를 읽고 물음에 알맞은 <b>조각을 직접 눌러요</b>. 몇 배인지, 합하면 얼마인지도 살펴봐요.', desc: '원의 넓이가 곧 비율', help: '조각에 적힌 백분율을 읽고 견주어요. 전체는 100%!' },
-    MGX.seg({ gen: () => { for (let t = 0; t < 60; t++) { const d = mgP(), I = d.items, P = I.map(x => x.p), S = P.slice().sort((a, b) => b - a), Q = [], J = MGX.J;
-        Q.push({ q: '<b>가장 많은</b> 학생이 고른 항목의 조각을 눌러요', ans: P.indexOf(S[0]), ex: `가장 넓은 조각은 ${I[P.indexOf(S[0])].n}(${S[0]}%)${J(S[0] + '%', '이에요', '예요')}.` });
-        Q.push({ q: '<b>두 번째로 많은</b> 학생이 고른 항목의 조각을 눌러요', ans: P.indexOf(S[1]), ex: `${S[0]}% 다음으로 큰 것은 ${I[P.indexOf(S[1])].n}(${S[1]}%)예요.` });
-        I.forEach((x, i) => I.forEach((y, j) => { if (i !== j && x.p === y.p * 2) Q.push({ q: `비율이 <b>${y.n}의 2배</b>인 항목의 조각을 눌러요`, ans: i, ex: `${y.n} ${y.p}% × 2 = ${x.p}% → ${x.n}` }); if (i !== j && x.p + y.p === 50) Q.push({ q: `<b>${y.n}</b>${J(y.n, '과', '와')} 합하면 <b>전체의 절반</b>이 되는 항목의 조각을 눌러요`, ans: i, ex: `${y.n} ${y.p}% + ${x.n} ${x.p}% = 50% (전체의 절반)` }); }));
-        const R = I.map((x, i) => [x, i]).filter(z => z[0].n !== '기타').sort((a, b) => a[0].p - b[0].p); Q.push({ q: '「기타」를 빼고 <b>가장 적은</b> 학생이 고른 항목의 조각을 눌러요', ans: R[0][1], ex: `「기타」를 빼면 가장 좁은 조각은 ${R[0][0].n}(${R[0][0].p}%)예요.` });
-        const k = pick(Q); return Object.assign(d, k, { log: String(k.q).replace(/<[^>]+>/g, '') }); } } }))
+  Object.assign({ id: 'secg', v: 'mixup', name: '원그래프 조각 맞추기', title: `🥧 ${VN}의 흩어진 파이 조각`, goal: '75초 · 크기가 맞는 조각 붙이기', dur: 75, pts: 12 }, {
+    sub: '표의 항목마다 백분율에 맞는 <b>크기의 조각</b>을 골라 원그래프에 차례로 붙여요. 조각에는 숫자가 없어요. 크기로 판단해요!', desc: '25%는 원의 1/4, 50%는 반', help: '지금 붙일 항목의 백분율과 크기가 같은 조각을 눌러요',
+    gen() { const S = pick([[['축구', 40], ['야구', 25], ['농구', 20], ['기타', 15]], [['사과', 35], ['배', 30], ['귤', 20], ['감', 15]], [['버스', 50], ['도보', 25], ['자전거', 15], ['기타', 10]], [['봄', 30], ['여름', 40], ['가을', 20], ['겨울', 10]], [['독서', 45], ['운동', 30], ['게임', 15], ['기타', 10]]]);
+      return { S, i: 0, miss: 0, opts: null }; },
+    view(r) { const C = ['#f97316', '#3b82f6', '#22c55e', '#eab308'], sec = (p0, p1, col, R) => { if (p1 - p0 >= 100) return `<circle r="${R}" fill="${col}" stroke="#fff" stroke-width="2"/>`; const a0 = p0 / 100 * 2 * Math.PI - Math.PI / 2, a1 = p1 / 100 * 2 * Math.PI - Math.PI / 2;
+        return `<path d="M0 0 L${(R * Math.cos(a0)).toFixed(1)} ${(R * Math.sin(a0)).toFixed(1)} A${R} ${R} 0 ${p1 - p0 > 50 ? 1 : 0} 1 ${(R * Math.cos(a1)).toFixed(1)} ${(R * Math.sin(a1)).toFixed(1)} Z" fill="${col}" stroke="#fff" stroke-width="2"/>`; };
+      let acc = 0, pie = `<circle r="100" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>`; r.S.slice(0, r.i).forEach(([n, p], k) => { const m = (acc + p / 2) / 100 * 2 * Math.PI - Math.PI / 2; pie += sec(acc, acc + p, C[k], 100) + `<text x="${(62 * Math.cos(m)).toFixed(1)}" y="${(62 * Math.sin(m) + 5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">${n}</text>`; acc += p; });
+      if (!r.opts && r.i < 4) { const p = r.S[r.i][1], o = new Set([p]); for (const d of shuffle([-15, -10, 10, 15, 20, -20, 25])) { if (o.size >= 3) break; const q = p + d; if (q >= 5 && q <= 60) o.add(q); } r.opts = shuffle([...o]); }
+      const cur = r.S[r.i];
+      return `<div class="qzq">${cur ? `지금 붙일 조각: <span class="mgeq">${cur[0]} ${cur[1]}%</span>` : '원그래프 완성!'}</div><div class="secw"><svg viewBox="-110 -110 220 220" width="230" height="230">${pie}</svg>
+        <table class="sectab">${r.S.map(([n, p], k) => `<tr class="${k === r.i ? 'cur' : k < r.i ? 'ok' : ''}"><td>${n}</td><td>${p}%</td></tr>`).join('')}</table></div>
+        ${cur ? `<div class="mgxrow">${r.opts.map(q => `<button class="mgxb secop" data-an="mgx" data-v="s:${q}" ${r.done ? 'disabled' : ''}><svg viewBox="-60 -60 120 120" width="96" height="96"><circle r="50" fill="none" stroke="#e2e8f0" stroke-dasharray="4 3"/>${sec(0, q, C[r.i], 50)}</svg></button>`).join('')}</div>` : ''}`; },
+    on: { s(r, v, a) { v = +v; const p = r.S[r.i][1], lg = `${r.S[r.i][0]} ${p}%에 ${v}% 크기 조각`; if (v !== p) { if (++r.miss < 3) return a.slip(v > p ? '조각이 너무 커요. 원 전체가 100%예요.' : '조각이 너무 작아요. 25%는 원의 1/4이에요.', lg); return a.end(false, `${r.S[r.i][0]}은 ${p}%: 원 전체의 ${p}/100 크기 조각이에요.`, lg); }
+        r.i++; r.opts = null; a.pop(); if (r.i === 4) a.end(true, '조각 크기 = 백분율! ' + r.S.map(([n, q]) => `${n} ${q}%`).join(' · ')); } },
+    auto(r) { return r.S.map(([n, p]) => 's:' + p); } })
 ]);
 const GUIDES = {
   labelg: { title: '🖼️ 이름표 붙이기', color: '#ea580c', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">눈금 0부터 40까지인 조각<br>→ <b>40%</b>인 이름표를 붙여요</div>', txt: '이름표를 먼저 누르고, 눈금을 읽어 그 백분율만큼인 띠 조각을 눌러 붙여요. 조각의 길이는 끝 눈금에서 시작 눈금을 빼면 알 수 있어요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르기보다 정확하게! 실수 없이 이어서 성공하면 점수가 더 커져요.' }] },
-  secg: { title: '🥧 원그래프 조각 콕', color: '#7c3aed', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">야구 20%의 2배인 항목은?<br>→ <b>40%</b>인 조각을 눌러요</div>', txt: '물음을 읽고 원그래프에서 알맞은 조각을 직접 눌러요. 한 번 누르면 바로 채점되니 백분율을 잘 견주어 보고 눌러요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르기보다 정확하게! 실수 없이 이어서 성공하면 점수가 더 커져요.' }] }
+  secg: { title: '🥧 원그래프 조각 맞추기', color: '#7c3aed', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">축구 40% → 원의 40/100 크기 조각</div>', txt: '표의 항목마다 백분율과 크기가 같은 조각을 골라 원그래프에 차례로 붙여요.' }, { t: '2. 점수', ill: () => '<div class="gsay">맞히면 +12 · 실수하면 −4</div>', txt: '빨리, 정확하게! 연속으로 맞히면 보너스예요.' }] },
 };
 
 LC.story = mkStory6({ unitNo: 5, ep: 1, title: '설문 전시관의 사라진 이름표', place: '설문 전시관', door: '전시관의 입구', icon: '🖼️', board: '그래프 추리판',
@@ -8488,6 +8495,7 @@ LC.story = mkStory6({ unitNo: 5, ep: 1, title: '설문 전시관의 사라진 �
   next: '해냈어! 전시관에 이름표가 다시 붙었어! 다음에는 <b>띠그래프를 직접 그려</b> 보자!', nextShort: '다음 시간에는 띠그래프로 나타내 봐요!',
   learned: '전체에 대한 각 부분의 비율을 띠 모양에 나타낸 그래프를 띠그래프, 원 모양에 나타낸 그래프를 원그래프라고 해요.',
   basicMsg: `${VN}의 함정! 그래프에 적힌 백분율을 바르게 읽어 보자.`, jumpMsg: `${VN}의 방어막 3겹! 전시관 봉인 · 이름표 · 그래프 설명 분류로 깨뜨리자.` });
+(() => { const st = document.createElement('style'); st.textContent = `.secw{display:flex;gap:24px;justify-content:center;align-items:center;margin:8px 0}.sectab{border-collapse:collapse;font-size:1.1rem}.sectab td{border:2px solid #cbd5e1;padding:6px 14px;font-weight:900;text-align:center}.sectab tr.cur td{background:#fef3c7;border-color:#f59e0b}.sectab tr.ok td{background:#dcfce7;color:#166534}.secop{padding:4px!important;background:#fff!important}.secop:hover{transform:scale(1.06)}`; document.head.appendChild(st); })();
 
 /* 세트 2 공통 (1차시에서 가져옴): 그림 문제 · 문제은행 화면 · 미니게임 머리글 */
 function mkI(text, img, ans, ds, ex, sa) { const q = mk(text, ans, ds, ex); q.img = img; q.mcOnly = !sa; return q; }
@@ -11459,7 +11467,7 @@ const JX = (() => {
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
     if (isTyped(C)) {
-      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      h += `<div class="jxrow ${C.stack ? 'jxstack' : ''}">${C.slots.map((lab, i) => `<span class="jxit">${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit && !C.post ? `<small>${C.unit}</small>` : ''}</span>${C.post && C.post[i] ? `<span class="jxlab">${C.post[i]}</span>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
         + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
@@ -11524,7 +11532,7 @@ const JX = (() => {
 (function () { try {
   document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
   document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
-  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+  const st = document.createElement('style'); st.textContent = '.jxit{display:inline-flex;align-items:center;gap:6px}.jxrow.jxstack{flex-direction:column;align-items:flex-start;gap:12px}.jxstack .jxlab{font-size:1.35rem!important;font-weight:900}.jxstack input.jxin{font-size:1.4rem}.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}input.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}input.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
 } catch (e) {} })();
 
 
@@ -13107,6 +13115,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-height:450px) and (orientation:landscape){body.svsl-on .wrap{overflow-y:auto!important}#s1body,#s2body{padding-bottom:14px!important}.vk3cv{min-height:200px!important;height:62vh!important}body.svsl-on .svsl-tc,body.svsl-on #toolBody>.card,body.svsl-on .svsl-tc>.svsl-main,body.svsl-on .svsl-tc>.svsl-side{height:auto!important;max-height:none!important;overflow:visible!important;zoom:1!important}body.svsl-on .svsl-tc>.svsl-main{min-height:72vh!important;flex:none!important}body.svsl-on .svsl-tc>.svsl-main>div{zoom:1!important}body.svsl-on .svsl-tc{display:block!important}body.svsl-on #s1body,body.svsl-on #s2body,body.svsl-on .sec{height:auto!important;max-height:none!important;overflow:visible!important}.svsl-on .svsl-q{font-size:.92rem}}
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
+@media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -13144,15 +13153,15 @@ window.GFX_T = {
  'dig':['🧺✨','🔙','정답!'],'cart':['🛒🛍️','💸','계산 완료!'],'bus':['🚌🎒','🚏','출발!'],
  'guess':['🐹✨','🕳️','쏙!'],'cargo':['📦🎉','🚧','도착!'],'pump':['⛽📊','💨','딱 맞아!'],'rank':['🥇📮','❌','쾅!'],
  'fake':['🔍🕵️','🎭','잡았다!'],'maze':['🤖⚙️','🧱','도착!'],
- 'barg':['✂️🍫','💥','똑같이!'],'nlg':['📍✨','💨','콕!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
+ 'barg':['✂️🍫','💥','똑같이!'],'nlg':['🧱✨','💥','딱 맞아!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
  'swg':['🔁✨','⚡','변신!'],'cutg':['✂️🎀','📏','딱 맞아!'],'mixg':['🏭✨','💨','변신 완료!'],'trapg':['⚖️✨','📉','검증 완료!'],
  'baseg':['🔷✨','❌','찾았다!'],'sideg':['🖌️🎨','💧','칠하기 완료!'],'edgeg':['📏✨','❌','정답!'],'dialg':['🎛️✨','🔄','딱!'],
  'meetg':['🔗✨','❌','맞닿았다!'],'stripg':['🧩✨','💥','이어 붙이기!'],'buildg':['🔺🏗️','💥','완성!'],'heightg':['📏✨','📐','정확!'],
- 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['📍✨','💨','콕!'],'chaing':['🔗✨','💥','연결!'],
+ 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['🟦✨','💥','출고!'],'chaing':['🔗✨','💥','연결!'],
  'ldivg':['✏️✨','❌','한 자리 완료!'],'gapg':['0️⃣✨','❌','찾았다!'],'pourg':['🧪💧','💦','똑같이!'],'scaleg':['🔢✨','❌','바꾸기 완료!'],
- 'estg':['🔍✨','❌','콕!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
- 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['📍✨','💨','콕!'],'gridg':['🟩✨','❌','칠하기 완료!'],
- 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','콕!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
+ 'estg':['🏆✨','🔄','순서 정확!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
+ 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['🔴🫙','💦','비율 완성!'],'gridg':['🟩✨','❌','칠하기 완료!'],
+ 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','딱 맞는 조각!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
  'piecesg':['📐✨','💥','바로잡았다!'],'cntg':['🔢✨','❌','정답!'],'truthg':['💡✨','❌','모두 찾았다!'],'linkg':['🔗📊','❌','연결!'],
  'trendg':['📈✨','📉','정답!'],'orderg':['🧊✨','💥','주문 완료!'],'pairg':['📦🎁','❌','완성!'],'dimg':['📦✨','💥','상자 완성!'],
  'sortg6':['🚛📦','💥','싣기 완료!'],'cvtg':['🏷️✨','❌','바꾸기 완료!'],'zerog':['0️⃣🏭','💥','출고!']
@@ -13216,15 +13225,15 @@ window.SCN_MAP = {
  train:[['drive','🚂🚃🚃'],['smoke','🚂']], dig:[['into','🃏🧺'],['bounce','🃏']], cart:[['into','🛍️🛒'],['rain','💸']], bus:[['drive','🚌🚌🧑‍🤝‍🧑'],['float','🙋']],
  guess:[['pop','🐹'],['sink','🕳️']], cargo:[['into','📦🎯'],['bounce','🚧']], pump:[['open','⛽📊⭐'],['float','💨']], rank:[['slam','🥇'],['bounce','❌']],
  fake:[['into','🎭🔍'],['float','🎭']], maze:[['drive','🤖⚙️'],['smoke','🤖']],
- barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['pop','📍'],['bounce','📍']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
+ barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['stack','🧱🧱🧱'],['bounce','🧱']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
  swg:[['open','🔁✅✨'],['pop','⚡']], cutg:[['into','🎀🎁'],['bounce','✂️']], mixg:[['drive','🏭📦📦'],['smoke','🏭']], trapg:[['open','⚖️✅⭐'],['bounce','⚖️']],
  baseg:[['pop','🔷'],['bounce','❌']], sideg:[['rain','🎨🖌️'],['sink','💧']], edgeg:[['stack','📏📏📏'],['bounce','📏']], dialg:[['open','🎛️✅✨'],['bounce','🎛️']],
  meetg:[['into','🔗🧩'],['bounce','🔗']], stripg:[['stack','🟥🟦🟩🟨'],['pop','💥']], buildg:[['stack','🔺🔺🏗️'],['bounce','🔺']], heightg:[['open','📏✅⭐'],['bounce','📐']],
- dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['pop','📍'],['bounce','📍']], chaing:[['open','🔗✅✨'],['pop','💥']],
+ dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['stack','🟦▮▮'],['bounce','▮']], chaing:[['open','🔗✅✨'],['pop','💥']],
  ldivg:[['stack','✏️🔢✨'],['bounce','❌']], gapg:[['pop','0️⃣'],['bounce','❌']], pourg:[['rain','💧🧪'],['float','💦']], scaleg:[['open','🔢✅✨'],['bounce','❌']],
- estg:[['pop','🔍'],['bounce','❌']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
- slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['pop','📍'],['bounce','📍']], gridg:[['rain','🟩'],['sink','⬜']],
- labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['pop','🥧'],['bounce','❌']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
+ estg:[['open','🏆🥇🥈🥉'],['bounce','🃏']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
+ slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['rain','🔴'],['bounce','🫙']], gridg:[['rain','🟩'],['sink','⬜']],
+ labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['open','🥧✅✨'],['bounce','🥧']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
  piecesg:[['open','📐✅✨'],['pop','💥']], cntg:[['rain','🔢✨'],['bounce','❌']], truthg:[['rain','💡✨'],['bounce','❌']], linkg:[['into','🔗📊'],['bounce','🔗']],
  trendg:[['open','📈✅✨'],['sink','📉']], orderg:[['stack','🧊🧊🧊'],['pop','💥']], pairg:[['into','📦🎁'],['bounce','❌']], dimg:[['stack','📦📦📦'],['pop','💥']],
  sortg6:[['drive','🚛📦📦'],['smoke','🚛']], cvtg:[['into','🏷️📦'],['bounce','🏷️']], zerog:[['drive','🏭📦📦'],['smoke','🏭']]
@@ -13254,6 +13263,9 @@ window.SCN_MAP = {
     window.vgGood = function () { const p = g0.apply(this, arguments); try { setTimeout(() => good(p), 0); } catch (e) {} return p; }; window.vgGood.__gfx = 1;
     window.vgBad = function (pen) { const r = b0.apply(this, arguments); try { setTimeout(() => bad(pen), 0); } catch (e) {} return r; }; }
   wrap(); document.addEventListener('DOMContentLoaded', wrap);
+  /* vgGood이 없는 예전 엔진: VG의 성공·실수 수가 바뀌면 효과 */
+  let pv = null; setInterval(() => { if (typeof window.vgGood === 'function') return; let V; try { V = VG; } catch (e) { return; } if (!V) return; const cur = [V.hit || 0, V.miss || 0, V.score || 0, V.id];
+    if (pv && pv[3] === cur[3]) { if (cur[0] > pv[0]) good(Math.max(1, cur[2] - pv[2])); else if (cur[1] > pv[1]) bad(Math.max(0, pv[2] - cur[2])); } pv = cur; }, 120);
   try { const s = document.createElement('style'); s.textContent = `
 .gfx{position:fixed;z-index:99998;pointer-events:none;transform:translate(-50%,-50%)}
 .gfx-p{font-size:1.7rem;animation:gfxP .85s cubic-bezier(.2,.8,.3,1) forwards}@keyframes gfxP{0%{transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1.1);opacity:0}}
