@@ -9270,5 +9270,53 @@ window.SCN_MAP = {
 .gfx-sno{animation:gfxShake .5s}@keyframes gfxShake{15%{transform:translateX(-9px)}30%{transform:translateX(8px);box-shadow:0 0 0 6px #f87171}45%{transform:translateX(-6px)}60%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
 @media (prefers-reduced-motion:reduce){.gfx{display:none}}`; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
+<!--BGUP-START--><style>/* 단원 마무리 개념 복습: 밤하늘 모험 · 지도 · 기억 카드 */
+body.um-on[data-svst="concept"] .wrap,body.um-on #s1body:has(>.uchub){background:radial-gradient(ellipse at 20% 0,#312e81,#0f172a 70%);}
+body.um-on #s1body:has(>.uchub){border-radius:22px;padding:10px 12px!important;position:relative}
+body.um-on #s1body:has(>.uchub)::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:22px;background:radial-gradient(1.5px 1.5px at 10% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 30% 70%,#fde68a,transparent),radial-gradient(1px 1px at 55% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 75% 15%,#fff,transparent),radial-gradient(1px 1px at 90% 60%,#c7d2fe,transparent),radial-gradient(1.5px 1.5px at 45% 90%,#fff,transparent);opacity:.8}
+body.um-on #badgeWrap,body.um-on .uchub,body.um-on.svsl-on[data-svst=concept] #s1body>.uchub,body.um-on.svsl-on[data-svst=concept] #s1body>#badgeWrap{display:none!important}
+.umap{position:relative;z-index:1;margin-bottom:8px}
+.umh{display:flex;align-items:center;gap:12px;color:#e0e7ff;font-size:.9rem;font-weight:800;flex-wrap:wrap}.umh>b{font-family:var(--fun,Jua),sans-serif;font-size:1.15rem;color:#fde68a}.umh span b{color:#fde047}
+.umw{position:relative;height:96px;margin:2px 8px 0}.umw svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.umroad{fill:none;stroke:#78350f;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;opacity:.9}.umdash{fill:none;stroke:#fde68a;stroke-width:3;stroke-dasharray:10 9;opacity:.7}
+.umlit{fill:none;stroke:#facc15;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px #fde047)}
+.umst{position:absolute;transform:translate(-50%,-28px);display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;cursor:pointer;padding:0;width:120px}
+.umi{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;font-size:1.5rem;background:#fff;box-shadow:0 0 0 4px var(--cc),0 5px 0 4px rgba(0,0,0,.35);transition:transform .2s}
+.umi img{width:34px;height:34px}.umst:hover .umi{transform:scale(1.1)}
+.umt{font-size:.7rem;background:rgba(15,23,42,.65);border-radius:8px;padding:1px 6px;font-weight:900;color:#fff;text-align:center;line-height:1.2;text-shadow:0 1px 2px #000;word-break:keep-all}.umt small{display:block;color:#fde68a;font-size:.68rem}
+.umst.on .umi{transform:scale(1.18);box-shadow:0 0 0 5px #fde047,0 0 24px 8px rgba(253,224,71,.7),0 5px 0 4px rgba(0,0,0,.35);animation:umPulse 1.2s ease-in-out infinite alternate}@keyframes umPulse{to{box-shadow:0 0 0 5px #fde047,0 0 34px 12px rgba(253,224,71,.9),0 5px 0 4px rgba(0,0,0,.35)}}
+.umst.got .umi{background:radial-gradient(circle,#fef9c3,#facc15);box-shadow:0 0 0 4px #b45309,0 5px 0 4px rgba(0,0,0,.35)}
+.umchest{position:absolute;transform:translate(-50%,-50%);font-size:2.6rem;filter:drop-shadow(0 4px 0 rgba(0,0,0,.4))}.umchest.open{animation:umPulse 1s infinite alternate;filter:drop-shadow(0 0 16px #a5f3fc)}
+body.um-on #toolBody>.ucwrap,body.um-on #toolBody>.ucwrap+.card{border:0!important;border-radius:22px!important;box-shadow:0 0 0 4px var(--cc,#6366f1),0 0 30px rgba(129,140,248,.45)!important}
+.umem{position:absolute;inset:6px;z-index:30;border:0;border-radius:20px;cursor:pointer;background:linear-gradient(135deg,#4338ca,#7c3aed 55%,#db2777);box-shadow:inset 0 0 0 4px rgba(255,255,255,.35),0 10px 30px rgba(0,0,0,.35);perspective:900px;animation:umIn .45s cubic-bezier(.3,1.4,.5,1)}
+.umem::before{content:'';position:absolute;inset:12px;border-radius:14px;border:2px dashed rgba(255,255,255,.45);background:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 12px,transparent 12px 24px)}
+.umem-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;color:#fff;text-align:center;padding:0 24px}.umem-ic{font-size:3rem;line-height:1;animation:umFloat 1.6s ease-in-out infinite alternate}.umem-ic img{width:64px;height:64px}@keyframes umFloat{to{transform:translateY(-8px)}}
+.umem small{font-weight:900;color:#e0e7ff;font-size:1rem}.umem b{font-family:var(--fun,Jua),sans-serif;font-size:2.2rem;color:#fde047;text-shadow:0 3px 0 rgba(0,0,0,.25)}.umem em{font-style:normal;font-weight:900;font-size:1.5rem}.umem i{font-style:normal;font-weight:800;opacity:.9;font-size:1rem;margin-top:6px;animation:umBlink 1.2s infinite alternate}@keyframes umBlink{to{opacity:.5}}
+.umem.flip{animation:umFlip .6s ease-in forwards}@keyframes umFlip{0%{transform:perspective(900px) rotateY(0)}100%{transform:perspective(900px) rotateY(90deg);opacity:.2}}@keyframes umIn{from{transform:scale(.85);opacity:0}}
+.ucslide.umreveal{animation:umRev .6s .3s cubic-bezier(.3,1.3,.5,1) both}@keyframes umRev{0%{transform:perspective(900px) rotateY(-90deg);opacity:0}100%{transform:none;opacity:1}}
+@media(max-width:700px){*:has(>.umem){min-height:300px!important}.umem b{font-size:1.7rem}.umem em{font-size:1.2rem}.umst.on .umi{transform:none}.umw{height:auto;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:8px 0}.umw svg,.umchest{display:none}.umst{position:static;transform:none;width:30%}}
+</style><script>/* ===== 단원 마무리 · 개념 복습 새 디자인: 단원 모험 지도 + 뒤집는 기억 카드 ===== */
+(function () { if (window.__UMAP) return; window.__UMAP = 1; const seen = {};
+  function map(body) { const hub = body.querySelector('.uchub'); if (!hub) return; const cards = [...hub.querySelectorAll('.uccard')]; if (!cards.length) return;
+    const sig = cards.map(c => c.dataset.v + (c.classList.contains('on') ? 'O' : '') + (c.classList.contains('got') ? 'G' : '')).join(',');
+    let m = body.querySelector('.umap'); if (m && m.dataset.sig === sig) return; if (!m) { m = document.createElement('div'); m.className = 'umap'; hub.before(m); }
+    m.dataset.sig = sig; const n = cards.length, got = cards.filter(c => c.classList.contains('got')).length;
+    const W = 1000, H = 100, pts = cards.map((c, i) => [60 + i * ((W - 190) / Math.max(1, n - 1)), i % 2 ? 66 : 34]); pts.push([W - 50, 50]);
+    const path = pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' ');
+    const doneLen = got ? pts.slice(0, Math.min(n, got) + (got === n ? 1 : 0)).map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' ') : '';
+    m.innerHTML = `<div class="umh"><b>🗺️ 단원 모험 지도</b><span>정거장을 눌러 기억 카드를 펼치고, 확인 문제 2개를 맞히면 배지가 박혀요 · <b>${got} / ${n}</b></span></div>
+      <div class="umw"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="${path}" class="umroad"/><path d="${path}" class="umdash"/>${doneLen ? `<path d="${doneLen}" class="umlit"/>` : ''}</svg>
+      ${cards.map((c, i) => { const ic = (c.querySelector('.uci') || {}).innerHTML || '⭐', t = (c.querySelector('.uct') || {}).textContent || '', s = (c.querySelector('.ucs') || {}).textContent || '';
+        return `<button class="umst ${c.classList.contains('on') ? 'on' : ''} ${c.classList.contains('got') ? 'got' : ''}" style="left:${pts[i][0] / W * 100}%;top:${pts[i][1] / H * 100}%;--cc:${c.style.getPropertyValue('--cc')}" data-umv="${c.dataset.v}"><span class="umi">${c.classList.contains('got') ? '🏅' : ic}</span><span class="umt"><small>${s}</small>${t}</span></button>`; }).join('')}
+      <span class="umchest ${got === n ? 'open' : ''}" style="left:${(W - 60) / W * 100}%;top:50%">${got === n ? '💎' : '🎁'}</span></div>`;
+    m.querySelectorAll('[data-umv]').forEach(b => b.onclick = () => { const c = hub.querySelector(`.uccard[data-v="${b.dataset.umv}"]`); c && c.click(); }); }
+  function mem(body) { const w = body.querySelector('#toolBody>.ucwrap'); if (!w) return; const main = w.querySelector('.svsl-main') || w, sl = main.querySelector('.ucslide'); if (!sl) return;
+    const on = body.querySelector('.uchub .uccard.on'), key = (on ? on.dataset.v : '') + '|' + ((sl.querySelector('.ucst') || {}).textContent || '');
+    if (seen[key] || main.querySelector('.umem')) return; const t = (sl.querySelector('.ucst') || {}).textContent || '', ic = on ? (on.querySelector('.uci') || {}).innerHTML : '⭐', ls = on ? (on.querySelector('.uct') || {}).textContent : '';
+    const f = document.createElement('button'); f.className = 'umem'; f.innerHTML = `<span class="umem-in"><span class="umem-ic">${ic}</span><small>${ls}</small><b>🤔 기억나니?</b><em>「${t.replace(/^\d+/, '')}」</em><i>잠깐 떠올려 보고, 카드를 눌러 뒤집어 확인해요 👆</i></span>`;
+    main.style.position = 'relative'; main.appendChild(f); f.onclick = () => { seen[key] = 1; f.classList.add('flip'); sl.classList.add('umreveal'); setTimeout(() => f.remove(), 650); try { Sound.flip && Sound.flip(); } catch (e) {} }; }
+  function run() { const body = document.getElementById('s1body'); if (!body || !document.querySelector('.uchub')) return; document.body.classList.add('um-on'); map(body); mem(body); }
+  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 20); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {} })();
+</script><!--BGUP-END-->
 </body>
 </html>
