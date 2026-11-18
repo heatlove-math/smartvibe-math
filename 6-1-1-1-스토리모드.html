@@ -7314,15 +7314,19 @@ mgxKit([
         if (left < r.b) { const n = r.n; r.cut = false; r.give = 0; return a.slip(`${left === tot ? `조각이 ${left}개뿐이라` : `조각이 ${left}개 남았는데`} ${r.b}명에게 한 조각씩 줄 수 없어요. 막대 1개를 몇 조각으로 자를지 다시 정해 봐요.`, `${r.a} ÷ ${r.b}: 막대를 ${n}조각씩 자름`); }
         r.give++; a.pop(); if (tot - r.give * r.b === 0) a.end(true, `${r.a} ÷ ${r.b} → 한 사람 몫은 1/${r.n}이 ${r.give}개 → ${r.give}/${r.n}${r.n !== r.b ? ` = ${r.a}/${r.b}` : ''}${r.a > r.b ? ` = ${mstr(r.a, r.b)}` : ''}`); } },
     auto(r) { return Array(r.b - 1).fill('m:1').concat(['cut'], Array(r.a).fill('give')); } },
-  { id: 'nlg', v: 'mixup', name: '몫을 수직선에 콕', title: `📍 ${VN}의 사라진 눈금`, goal: '60초 · 몫의 자리 찾기', dur: 60, pts: 10,
-    sub: '나눗셈의 몫이 수직선의 어디에 있는지 <b>눈금을 눌러</b> 찾아요. 몫이 1보다 클 때도 있어요!', desc: '0과 1 사이가 몇 칸으로 나뉘어 있는지 먼저 살펴봐요.', help: '수직선의 눈금을 눌러 몫의 자리를 찾아요',
-    gen() { for (let t = 0; t < 99; t++) { const b = rnd2(2, 6), a = rnd2(1, Math.min(2 * b - 1, 11)); if (a !== b && gcd(a, b) === 1) return { a, b, U: a > b ? pick([2, 3]) : pick([1, 2]), miss: 0, hit: -1, bad: -1 }; } return { a: 3, b: 4, U: 1, miss: 0, hit: -1, bad: -1 }; },
-    view(r) { const N = r.U * r.b; return `<div class="qzq"><span class="mgeq">${r.a} ÷ ${r.b}</span> 의 몫은 수직선의 어디일까요? 눈금을 눌러요.</div>
-      <div class="mgnl">${Array.from({ length: N + 1 }, (_, k) => `<button class="mgtk ${k % r.b === 0 ? 'big' : ''} ${k === r.hit ? 'hit' : k === r.bad ? 'bad' : ''}" data-an="mgx" data-v="t:${k}" style="left:${(k / N * 100).toFixed(2)}%"><i></i>${k % r.b === 0 ? `<b>${k / r.b}</b>` : ''}</button>`).join('')}</div>`; },
-    on: { t(r, k, a) { k = +k; const ex = `${r.a} ÷ ${r.b} = ${r.a}/${r.b}${r.a > r.b ? ` = ${mstr(r.a, r.b)}` : ''} · 1을 ${r.b}칸으로 나눈 눈금에서 ${r.a}칸째예요.`, lg = `${r.a} ÷ ${r.b}의 몫을 ${k}/${r.b}${k % r.b === 0 ? `(= ${k / r.b})` : ''}로 봄`;
-        if (k === r.a) { r.hit = k; r.bad = -1; return a.end(true, ex); } r.bad = k;
-        if (++r.miss < 2) return a.slip('0과 1 사이가 몇 칸으로 나뉘어 있는지 세어 보고 다시 눌러요.', lg); r.hit = r.a; a.end(false, ex, lg); } },
-    auto(r) { return ['t:' + r.a]; } }
+  { id: 'nlg', v: 'mixup', name: '1/○ 조각 쌓기', title: `🧱 ${VN}의 몫 조각 탑`, goal: '60초 · 몫만큼 조각 쌓기', dur: 60, pts: 12,
+    sub: '나눗셈 ○ ÷ □의 몫은 <b>1/□가 ○개</b>예요. <b>1/□ 조각</b>을 눌러 몫만큼 수직 띠에 쌓아요!', desc: '몫 = 1/□가 ○개', help: '1/□ 조각을 몫만큼 쌓고 「다 쌓았어요」를 눌러요',
+    gen() { for (let t = 0; t < 99; t++) { const b = rnd2(2, 6), a = rnd2(1, Math.min(2 * b - 1, 11)); if (a !== b && gcd(a, b) === 1) return { a, b, n: 0, miss: 0 }; } return { a: 3, b: 4, n: 0, miss: 0 }; },
+    view(r) { const U = Math.max(1, Math.ceil(r.a / r.b)), W = 560, u = W / U;
+      const seg = Array.from({ length: r.n }, (_, i) => `<span class="ngp" style="left:${i * u / r.b}px;width:${u / r.b}px;animation-delay:${i === r.n - 1 ? 0 : 0}s"><small>1/${r.b}</small></span>`).join('');
+      const tk = Array.from({ length: U * r.b + 1 }, (_, k) => `<i class="${k % r.b ? '' : 'big'}" style="left:${k * u / r.b}px">${k % r.b ? '' : `<b>${k / r.b}</b>`}</i>`).join('');
+      return `<div class="qzq"><span class="mgeq">${r.a} ÷ ${r.b}</span>의 몫만큼 <b>1/${r.b} 조각</b>을 쌓아요 <span class="mgxcnt">쌓은 조각 <b>${r.n}</b>개</span></div>
+      <div class="ngw" style="width:${W}px"><div class="ngbar">${seg}</div><div class="ngtk">${tk}</div></div>
+      <div class="mgxrow"><button class="mgxb ngadd" data-an="mgx" data-v="add:1" ${r.done ? 'disabled' : ''}>➕ 1/${r.b} 조각</button><button class="mgxb" data-an="mgx" data-v="add:-1" ${r.done || !r.n ? 'disabled' : ''}>➖ 빼기</button><button class="mgxb ok" data-an="mgx" data-v="ok:1" ${r.done ? 'disabled' : ''}>✅ 다 쌓았어요</button></div>`; },
+    on: { add(r, v, a) { r.n = Math.max(0, Math.min(2 * r.b + 2, r.n + +v)); a.pop(); },
+      ok(r, v, a) { const ex = `${r.a} ÷ ${r.b} = 1/${r.b}이 ${r.a}개 = <b>${r.a}/${r.b}</b>${r.a > r.b ? ` = ${mstr(r.a, r.b)}` : ''}`;
+        if (r.n === r.a) return a.end(true, ex); if (++r.miss < 2) return a.slip(r.n > r.a ? '조각이 너무 많아요. 몫은 1/□가 몇 개인지 다시 생각해요.' : '조각이 모자라요. 나누어지는 수만큼 쌓아요.', `${r.a}÷${r.b}에 1/${r.b} 조각 ${r.n}개`); r.n = r.a; a.end(false, ex, `${r.a}÷${r.b}에 1/${r.b} 조각 ${r.n}개`); } },
+    auto(r) { return Array(r.a).fill('add:1').concat(['ok:1']); } }
 ]);
 (() => { const st = document.createElement('style'); st.textContent = `.mgstage .qzq,.mgxstage .qzq{font-size:1.32rem}.mgeq{display:inline-block;font-family:'Jua',sans-serif;font-size:1.7rem;background:#fff7ed;border:2px solid #fdba74;border-radius:12px;padding:0 10px;margin:0 4px;color:#9a3412}
 .mgbars{display:flex;flex-direction:column;gap:7px;max-width:720px;margin:12px auto}.mgbars.many{gap:5px}.mgbars.many .mgbar{height:40px}.mgbar{display:flex;height:54px;border:3px solid #0e7490;border-radius:10px;overflow:hidden;background:#a5f3fc}.mgbar i{flex:1;border-right:2.5px solid #0e7490}.mgbar i:last-child{border-right:0}.mgbar i.out{background:repeating-linear-gradient(45deg,#e2e8f0 0 6px,#f8fafc 6px 12px)}
@@ -7335,7 +7339,7 @@ mgxKit([
 /* ---------- 게임 방법 ---------- */
 const GUIDES = {
   barg: { title: '✂️ 막대 똑같이 자르기', color: '#ea580c', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">막대 1개를 몇 조각으로?<br>✂ 자르고 → 🤲 한 조각씩 나누어 주기</div>', txt: '막대 1개를 몇 조각으로 자를지 − ＋ 단추로 정하고 자른 다음, 한 조각씩 나누어 주어요. 조각이 남으면 다시 잘라야 해요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르지 말고, 남김없이 나눌 수 있게 잘라요.' }] },
-  nlg: { title: '📍 몫을 수직선에 콕', color: '#0d9488', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">0과 1 사이는 몇 칸?<br>몫이 있는 <b>눈금</b>을 콕!</div>', txt: '0과 1 사이가 몇 칸으로 나뉘어 있는지 보고, 몫이 있는 눈금을 눌러요. 몫이 1보다 크면 1을 지나서 가요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+10</b> (3번 이어서 성공하면 +14)<br>실수하면 −4</div>', txt: '한 판에 두 번까지 눌러 볼 수 있어요.' }] }
+  nlg: { title: '🧱 1/○ 조각 쌓기', color: '#0d9488', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">3 ÷ 4 → 1/4 조각을 3개!</div>', txt: '○ ÷ □의 몫은 1/□가 ○개예요. 1/□ 조각을 몫만큼 쌓고 「다 쌓았어요」를 눌러요.' }, { t: '2. 점수', ill: () => '<div class="gsay">맞히면 +12 · 실수하면 −4</div>', txt: '빨리, 정확하게! 연속으로 맞히면 보너스예요.' }] },
 };
 
 /* ---------- 스토리 ---------- */
@@ -7359,6 +7363,8 @@ LC.story = mkStory6({ unitNo: 1, ep: 1, title: '크리스털 나눔 광장의 �
   next: '해냈어! 슬기가 돌아왔어. 다음 EP.2에서는 <b>(분수)÷(자연수)</b>를 알아보러 가자!', nextShort: '다음 시간에는 (분수)÷(자연수)를 알아봐요!',
   learned: '(자연수)÷(자연수)의 몫을 분수(가분수·대분수)로 나타내는 방법을 익혔어요.',
   basicMsg: `${VN}의 뒤집기 함정! 분자·분모가 뒤집히지 않았는지, 나머지로 쓰지 않았는지 살펴보자.`, jumpMsg: `${VN}의 방어막 3겹! 에너지 분배 · 몫의 크기 · 바른 계산 찾기로 깨뜨리자.` });
+(() => { const st = document.createElement('style'); st.textContent = `.ngw{position:relative;margin:26px auto 8px;max-width:100%}.ngbar{position:relative;height:64px;background:#f1f5f9;border:3px solid #0f766e;border-radius:10px;overflow:hidden}.ngp{position:absolute;top:0;bottom:0;background:linear-gradient(180deg,#5eead4,#14b8a6);border-right:3px solid #0f766e;display:flex;align-items:center;justify-content:center;animation:ngIn .35s cubic-bezier(.3,1.6,.5,1)}.ngp small{font-weight:900;color:#134e4a}@keyframes ngIn{from{transform:translateY(-60px);opacity:0}}
+.ngtk{position:relative;height:30px}.ngtk i{position:absolute;top:0;width:2px;height:10px;background:#334155;font-style:normal}.ngtk i.big{height:16px;width:3px}.ngtk i b{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-family:'Jua',sans-serif;font-size:1.2rem}.ngadd{font-size:1.2rem!important}`; document.head.appendChild(st); })();
 
 /* 세트 2 공통 (1차시에서 가져옴): 그림 문제 · 문제은행 화면 · 미니게임 머리글 */
 function mkI(text, img, ans, ds, ex, sa) { const q = mk(text, ans, ds, ex); q.img = img; q.mcOnly = !sa; return q; }
@@ -10224,7 +10230,7 @@ const JX = (() => {
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
     if (isTyped(C)) {
-      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      h += `<div class="jxrow ${C.stack ? 'jxstack' : ''}">${C.slots.map((lab, i) => `<span class="jxit">${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit && !C.post ? `<small>${C.unit}</small>` : ''}</span>${C.post && C.post[i] ? `<span class="jxlab">${C.post[i]}</span>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
         + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
@@ -10289,7 +10295,7 @@ const JX = (() => {
 (function () { try {
   document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
   document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
-  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+  const st = document.createElement('style'); st.textContent = '.jxit{display:inline-flex;align-items:center;gap:6px}.jxrow.jxstack{flex-direction:column;align-items:flex-start;gap:12px}.jxstack .jxlab{font-size:1.35rem!important;font-weight:900}.jxstack input.jxin{font-size:1.4rem}.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}input.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}input.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
 } catch (e) {} })();
 
 
@@ -11798,6 +11804,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-height:450px) and (orientation:landscape){body.svsl-on .wrap{overflow-y:auto!important}#s1body,#s2body{padding-bottom:14px!important}.vk3cv{min-height:200px!important;height:62vh!important}body.svsl-on .svsl-tc,body.svsl-on #toolBody>.card,body.svsl-on .svsl-tc>.svsl-main,body.svsl-on .svsl-tc>.svsl-side{height:auto!important;max-height:none!important;overflow:visible!important;zoom:1!important}body.svsl-on .svsl-tc>.svsl-main{min-height:72vh!important;flex:none!important}body.svsl-on .svsl-tc>.svsl-main>div{zoom:1!important}body.svsl-on .svsl-tc{display:block!important}body.svsl-on #s1body,body.svsl-on #s2body,body.svsl-on .sec{height:auto!important;max-height:none!important;overflow:visible!important}.svsl-on .svsl-q{font-size:.92rem}}
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
+@media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -11835,15 +11842,15 @@ window.GFX_T = {
  'dig':['🧺✨','🔙','정답!'],'cart':['🛒🛍️','💸','계산 완료!'],'bus':['🚌🎒','🚏','출발!'],
  'guess':['🐹✨','🕳️','쏙!'],'cargo':['📦🎉','🚧','도착!'],'pump':['⛽📊','💨','딱 맞아!'],'rank':['🥇📮','❌','쾅!'],
  'fake':['🔍🕵️','🎭','잡았다!'],'maze':['🤖⚙️','🧱','도착!'],
- 'barg':['✂️🍫','💥','똑같이!'],'nlg':['📍✨','💨','콕!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
+ 'barg':['✂️🍫','💥','똑같이!'],'nlg':['🧱✨','💥','딱 맞아!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
  'swg':['🔁✨','⚡','변신!'],'cutg':['✂️🎀','📏','딱 맞아!'],'mixg':['🏭✨','💨','변신 완료!'],'trapg':['⚖️✨','📉','검증 완료!'],
  'baseg':['🔷✨','❌','찾았다!'],'sideg':['🖌️🎨','💧','칠하기 완료!'],'edgeg':['📏✨','❌','정답!'],'dialg':['🎛️✨','🔄','딱!'],
  'meetg':['🔗✨','❌','맞닿았다!'],'stripg':['🧩✨','💥','이어 붙이기!'],'buildg':['🔺🏗️','💥','완성!'],'heightg':['📏✨','📐','정확!'],
- 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['📍✨','💨','콕!'],'chaing':['🔗✨','💥','연결!'],
+ 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['🟦✨','💥','출고!'],'chaing':['🔗✨','💥','연결!'],
  'ldivg':['✏️✨','❌','한 자리 완료!'],'gapg':['0️⃣✨','❌','찾았다!'],'pourg':['🧪💧','💦','똑같이!'],'scaleg':['🔢✨','❌','바꾸기 완료!'],
- 'estg':['🔍✨','❌','콕!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
- 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['📍✨','💨','콕!'],'gridg':['🟩✨','❌','칠하기 완료!'],
- 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','콕!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
+ 'estg':['🏆✨','🔄','순서 정확!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
+ 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['🔴🫙','💦','비율 완성!'],'gridg':['🟩✨','❌','칠하기 완료!'],
+ 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','딱 맞는 조각!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
  'piecesg':['📐✨','💥','바로잡았다!'],'cntg':['🔢✨','❌','정답!'],'truthg':['💡✨','❌','모두 찾았다!'],'linkg':['🔗📊','❌','연결!'],
  'trendg':['📈✨','📉','정답!'],'orderg':['🧊✨','💥','주문 완료!'],'pairg':['📦🎁','❌','완성!'],'dimg':['📦✨','💥','상자 완성!'],
  'sortg6':['🚛📦','💥','싣기 완료!'],'cvtg':['🏷️✨','❌','바꾸기 완료!'],'zerog':['0️⃣🏭','💥','출고!']
@@ -11907,15 +11914,15 @@ window.SCN_MAP = {
  train:[['drive','🚂🚃🚃'],['smoke','🚂']], dig:[['into','🃏🧺'],['bounce','🃏']], cart:[['into','🛍️🛒'],['rain','💸']], bus:[['drive','🚌🚌🧑‍🤝‍🧑'],['float','🙋']],
  guess:[['pop','🐹'],['sink','🕳️']], cargo:[['into','📦🎯'],['bounce','🚧']], pump:[['open','⛽📊⭐'],['float','💨']], rank:[['slam','🥇'],['bounce','❌']],
  fake:[['into','🎭🔍'],['float','🎭']], maze:[['drive','🤖⚙️'],['smoke','🤖']],
- barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['pop','📍'],['bounce','📍']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
+ barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['stack','🧱🧱🧱'],['bounce','🧱']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
  swg:[['open','🔁✅✨'],['pop','⚡']], cutg:[['into','🎀🎁'],['bounce','✂️']], mixg:[['drive','🏭📦📦'],['smoke','🏭']], trapg:[['open','⚖️✅⭐'],['bounce','⚖️']],
  baseg:[['pop','🔷'],['bounce','❌']], sideg:[['rain','🎨🖌️'],['sink','💧']], edgeg:[['stack','📏📏📏'],['bounce','📏']], dialg:[['open','🎛️✅✨'],['bounce','🎛️']],
  meetg:[['into','🔗🧩'],['bounce','🔗']], stripg:[['stack','🟥🟦🟩🟨'],['pop','💥']], buildg:[['stack','🔺🔺🏗️'],['bounce','🔺']], heightg:[['open','📏✅⭐'],['bounce','📐']],
- dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['pop','📍'],['bounce','📍']], chaing:[['open','🔗✅✨'],['pop','💥']],
+ dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['stack','🟦▮▮'],['bounce','▮']], chaing:[['open','🔗✅✨'],['pop','💥']],
  ldivg:[['stack','✏️🔢✨'],['bounce','❌']], gapg:[['pop','0️⃣'],['bounce','❌']], pourg:[['rain','💧🧪'],['float','💦']], scaleg:[['open','🔢✅✨'],['bounce','❌']],
- estg:[['pop','🔍'],['bounce','❌']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
- slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['pop','📍'],['bounce','📍']], gridg:[['rain','🟩'],['sink','⬜']],
- labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['pop','🥧'],['bounce','❌']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
+ estg:[['open','🏆🥇🥈🥉'],['bounce','🃏']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
+ slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['rain','🔴'],['bounce','🫙']], gridg:[['rain','🟩'],['sink','⬜']],
+ labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['open','🥧✅✨'],['bounce','🥧']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
  piecesg:[['open','📐✅✨'],['pop','💥']], cntg:[['rain','🔢✨'],['bounce','❌']], truthg:[['rain','💡✨'],['bounce','❌']], linkg:[['into','🔗📊'],['bounce','🔗']],
  trendg:[['open','📈✅✨'],['sink','📉']], orderg:[['stack','🧊🧊🧊'],['pop','💥']], pairg:[['into','📦🎁'],['bounce','❌']], dimg:[['stack','📦📦📦'],['pop','💥']],
  sortg6:[['drive','🚛📦📦'],['smoke','🚛']], cvtg:[['into','🏷️📦'],['bounce','🏷️']], zerog:[['drive','🏭📦📦'],['smoke','🏭']]
@@ -11945,6 +11952,9 @@ window.SCN_MAP = {
     window.vgGood = function () { const p = g0.apply(this, arguments); try { setTimeout(() => good(p), 0); } catch (e) {} return p; }; window.vgGood.__gfx = 1;
     window.vgBad = function (pen) { const r = b0.apply(this, arguments); try { setTimeout(() => bad(pen), 0); } catch (e) {} return r; }; }
   wrap(); document.addEventListener('DOMContentLoaded', wrap);
+  /* vgGood이 없는 예전 엔진: VG의 성공·실수 수가 바뀌면 효과 */
+  let pv = null; setInterval(() => { if (typeof window.vgGood === 'function') return; let V; try { V = VG; } catch (e) { return; } if (!V) return; const cur = [V.hit || 0, V.miss || 0, V.score || 0, V.id];
+    if (pv && pv[3] === cur[3]) { if (cur[0] > pv[0]) good(Math.max(1, cur[2] - pv[2])); else if (cur[1] > pv[1]) bad(Math.max(0, pv[2] - cur[2])); } pv = cur; }, 120);
   try { const s = document.createElement('style'); s.textContent = `
 .gfx{position:fixed;z-index:99998;pointer-events:none;transform:translate(-50%,-50%)}
 .gfx-p{font-size:1.7rem;animation:gfxP .85s cubic-bezier(.2,.8,.3,1) forwards}@keyframes gfxP{0%{transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1.1);opacity:0}}
