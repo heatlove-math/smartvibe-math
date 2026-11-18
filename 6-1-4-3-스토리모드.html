@@ -8223,10 +8223,16 @@ BANK[3] = [
 ];
 
 mgxKit([
-  Object.assign({ id: 'rateg', v: 'tilt', name: '비율 눈금 콕', title: `📏 ${VN}의 지워진 계기판`, goal: '60초 · 비율의 자리 찾기', dur: 60,
-    sub: '비를 보고 <b>비율</b>을 구해 계기판 수직선의 알맞은 눈금을 눌러요.', desc: '(비교하는 양) ÷ (기준량)', help: '비율은 기준량을 1로 볼 때의 크기예요. 작은 눈금 한 칸은 0.05!' },
-    MGX.nline({ gen: () => { const [a, b] = pick([[1, 2], [1, 4], [3, 4], [2, 5], [3, 5], [7, 10], [9, 20], [3, 20], [4, 5], [1, 5], [13, 20], [3, 10], [17, 20], [1, 10], [11, 20]]), q = +(a / b).toFixed(6), t = pick([`${a} : ${b}`, `${b}에 대한 ${a}의 비`, `${a} 대 ${b}`, `${a}의 ${b}에 대한 비`]);
-      return { q: `<b>${t}</b>의 비율을 수직선에서 찾아 눌러요`, lo: 0, hi: 1, step: 0.05, lab: [0, 0.5, 1], ans: q, hint: '작은 눈금 한 칸은 0.05예요', ex: `(비율) = (비교하는 양) ÷ (기준량) = ${a} ÷ ${b} = ${MGX.fr(a, b)} = <b>${q}</b>`, log: `${t}의 비율` }; } })),
+  Object.assign({ id: 'rateg', v: 'tilt', name: '비율 구슬 채우기', title: `🫙 ${VN}의 구슬 병`, goal: '60초 · 비율에 맞게 구슬 채우기', dur: 60, pts: 12 }, {
+    sub: '병 하나에 구슬이 <b>기준량</b>만큼 들어가요. <b>빨간 구슬</b>(비교하는 양)을 눌러 넣어 병의 비율이 목표 비율이 되게 만들어요!', desc: '비율 = 비교하는 양 ÷ 기준량', help: '빨간 구슬을 넣고 빼서 목표 비율을 맞춰요',
+    gen() { const [N, k, f] = pick([[10, 6, '0.6'], [10, 3, '0.3'], [5, 2, '2/5'], [5, 4, '0.8'], [20, 5, '1/4'], [20, 15, '0.75'], [4, 1, '0.25'], [10, 7, '7/10'], [8, 6, '3/4'], [20, 8, '0.4'], [5, 3, '3/5'], [10, 5, '1/2'], [20, 12, '0.6']]); return { N, k, f, n: 0, miss: 0 }; },
+    view(r) { return `<div class="qzq">목표 비율 <span class="mgeq">${r.f}</span> · 기준량 <b>${r.N}</b>개 <span class="mgxcnt">빨간 구슬 <b>${r.n}</b>개</span></div>
+      <div class="rjar"><div class="rjin" style="grid-template-columns:repeat(${r.N > 10 ? 10 : r.N > 5 ? 5 : r.N},1fr)">${Array.from({ length: r.N }, (_, i) => `<span class="${i < r.n ? 'on' : ''}"></span>`).join('')}</div><small>병 하나 = 구슬 ${r.N}개 (기준량)</small></div>
+      <div class="mgxrow"><button class="mgxb rjadd" data-an="mgx" data-v="m:1" ${r.done ? 'disabled' : ''}>🔴 넣기</button><button class="mgxb" data-an="mgx" data-v="m:-1" ${r.done || !r.n ? 'disabled' : ''}>⚪ 빼기</button><button class="mgxb ok" data-an="mgx" data-v="ok:1" ${r.done ? 'disabled' : ''}>✅ 완성!</button></div>`; },
+    on: { m(r, v, a) { r.n = Math.max(0, Math.min(r.N, r.n + +v)); a.pop(); },
+      ok(r, v, a) { const ex = `비율 ${r.f} = ${r.k} ÷ ${r.N} → 빨간 구슬 <b>${r.k}</b>개`; if (r.n === r.k) return a.end(true, ex); const lg = `비율 ${r.f}, 기준량 ${r.N}에 빨간 구슬 ${r.n}개`;
+        if (++r.miss < 2) return a.slip(`빨간 구슬 ${r.n}개면 비율은 ${r.n}/${r.N}이에요. 목표 비율과 같은지 비교해 봐요.`, lg); r.n = r.k; a.end(false, ex, lg); } },
+    auto(r) { return Array(r.k).fill('m:1').concat(['ok:1']); } }),
   Object.assign({ id: 'raceg', v: 'mixup', name: '비율로 겨루기', title: `🏁 ${VN}의 경주 조작`, goal: '90초 · 비율 구해 견주기', dur: 90, pts: 14,
     sub: '두 대상의 <b>비율을 각각 구해</b> 숫자판으로 쓰고, 어느 쪽이 더 빠른지 · 붐비는지 · 진한지 골라요.', desc: '기준량이 다르면 비율로 비교', help: '걸린 시간에 대한 거리의 비율, 넓이에 대한 인구의 비율, 주스 양에 대한 원액 양의 비율을 구해 견주어요.' },
     MGX.chain({ max: 5, gen: () => { const T = pick([0, 0, 1, 2]);
@@ -8238,7 +8244,7 @@ mgxKit([
       return { q: '두 주스의 <b>주스 양에 대한 원액 양의 비율</b>을 소수로 구해요', html: `🧃 가 주스: 주스 ${j1} mL에 원액 ${w1} mL → ${w1} ÷ ${j1} = {0}<span class="ln2"></span>🥤 나 주스: 주스 ${j2} mL에 원액 ${w2} mL → ${w2} ÷ ${j2} = {1}`, ans: [v1, v2], pick: { q: '어느 주스가 더 진할까요?', opts: ['🧃 가 주스', '🥤 나 주스'], ans: v1 > v2 ? 0 : 1 }, ex: `가 ${v1}, 나 ${v2} → 주스 양에 대한 원액 양의 비율이 큰 <b>${v1 > v2 ? '가' : '나'} 주스</b>가 더 진해요.`, log: '진하기 비교' }; } }))
 ]);
 const GUIDES = {
-  rateg: { title: '📏 비율 눈금 콕', color: '#0891b2', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">3 : 4 → 3 ÷ 4 = 3/4 = <b>0.75</b></div>', txt: '비교하는 양을 기준량으로 나누어 비율을 구하고, 수직선에서 그 눈금을 눌러요. 작은 눈금 한 칸은 0.05예요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르기보다 정확하게! 실수 없이 이어서 성공하면 점수가 더 커져요.' }] },
+  rateg: { title: '🫙 비율 구슬 채우기', color: '#0891b2', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">비율 0.6, 기준량 10 → 빨간 구슬 6개</div>', txt: '병에 든 구슬 수가 기준량이에요. 빨간 구슬(비교하는 양)을 넣어 목표 비율을 맞춰요.' }, { t: '2. 점수', ill: () => '<div class="gsay">맞히면 +12 · 실수하면 −4</div>', txt: '빨리, 정확하게! 연속으로 맞히면 보너스예요.' }] },
   raceg: { title: '🏁 비율로 겨루기', color: '#ea580c', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">가: 240 ÷ 3 = 80 · 나: 350 ÷ 5 = 70<br>→ <b>가 자동차</b>가 더 빨라요</div>', txt: '두 빈칸에 비율을 숫자판으로 쓰고 「확인」을 눌러요. 둘 다 맞으면 어느 쪽이 더 빠른지(붐비는지, 진한지) 골라요.' }, { t: '2. 점수', ill: () => '<div class="gsay">한 판 해결 <b>+12</b> (3번 이어서 성공하면 +16)<br>실수하면 −4</div>', txt: '서두르기보다 정확하게! 실수 없이 이어서 성공하면 점수가 더 커져요.' }] }
 };
 
@@ -8262,6 +8268,7 @@ LC.story = mkStory6({ unitNo: 4, ep: 3, title: '주스 공장의 포도 음료',
   next: '해냈어! 주스 공장이 다시 돌아가! 다음에는 <b>백분율</b>을 알아보자!', nextShort: '다음 시간에는 백분율을 알아봐요!',
   learned: '기준량에 대한 비교하는 양의 크기를 비율이라고 해요. 비율 = 비교하는 양 ÷ 기준량이고 분수나 소수로 나타내요. 걸린 시간에 대한 거리, 넓이에 대한 인구, 음료 양에 대한 원액 양처럼 생활 속 여러 곳에 비율이 쓰여요.',
   basicMsg: `${VN}의 함정! 기준량으로 나누었는지 살펴보자.`, jumpMsg: `${VN}의 방어막 3겹! 주스 봉인 · 계기판 · 비율 분류로 깨뜨리자.` });
+(() => { const st = document.createElement('style'); st.textContent = `.rjar{display:flex;flex-direction:column;align-items:center;gap:6px;margin:12px 0}.rjin{display:grid;gap:8px;padding:16px 14px 12px;border:5px solid #64748b;border-top-width:12px;border-radius:14px 14px 30px 30px;background:linear-gradient(180deg,rgba(224,242,254,.6),rgba(186,230,253,.8))}.rjin span{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#e2e8f0);border:2px solid #94a3b8}.rjin span.on{background:radial-gradient(circle at 35% 30%,#fecaca,#dc2626);border-color:#991b1b;animation:ngIn3 .3s cubic-bezier(.3,1.6,.5,1)}.rjar small{font-weight:900;color:#475569}.rjadd{font-size:1.2rem!important}@keyframes ngIn3{from{transform:translateY(-40px) scale(.5)}}`; document.head.appendChild(st); })();
 
 /* 세트 2 공통 (1차시에서 가져옴): 그림 문제 · 문제은행 화면 · 미니게임 머리글 */
 function mkI(text, img, ans, ds, ex, sa) { const q = mk(text, ans, ds, ex); q.img = img; q.mcOnly = !sa; return q; }
@@ -11250,7 +11257,7 @@ const JX = (() => {
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
     if (isTyped(C)) {
-      h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit ? `<small>${C.unit}</small>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      h += `<div class="jxrow ${C.stack ? 'jxstack' : ''}">${C.slots.map((lab, i) => `<span class="jxit">${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit && !C.post ? `<small>${C.unit}</small>` : ''}</span>${C.post && C.post[i] ? `<span class="jxlab">${C.post[i]}</span>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
         + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
@@ -11315,7 +11322,7 @@ const JX = (() => {
 (function () { try {
   document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
   document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
-  const st = document.createElement('style'); st.textContent = '.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+  const st = document.createElement('style'); st.textContent = '.jxit{display:inline-flex;align-items:center;gap:6px}.jxrow.jxstack{flex-direction:column;align-items:flex-start;gap:12px}.jxstack .jxlab{font-size:1.35rem!important;font-weight:900}.jxstack input.jxin{font-size:1.4rem}.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}input.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}input.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
 } catch (e) {} })();
 
 
@@ -12887,6 +12894,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-height:450px) and (orientation:landscape){body.svsl-on .wrap{overflow-y:auto!important}#s1body,#s2body{padding-bottom:14px!important}.vk3cv{min-height:200px!important;height:62vh!important}body.svsl-on .svsl-tc,body.svsl-on #toolBody>.card,body.svsl-on .svsl-tc>.svsl-main,body.svsl-on .svsl-tc>.svsl-side{height:auto!important;max-height:none!important;overflow:visible!important;zoom:1!important}body.svsl-on .svsl-tc>.svsl-main{min-height:72vh!important;flex:none!important}body.svsl-on .svsl-tc>.svsl-main>div{zoom:1!important}body.svsl-on .svsl-tc{display:block!important}body.svsl-on #s1body,body.svsl-on #s2body,body.svsl-on .sec{height:auto!important;max-height:none!important;overflow:visible!important}.svsl-on .svsl-q{font-size:.92rem}}
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
+@media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -12924,15 +12932,15 @@ window.GFX_T = {
  'dig':['🧺✨','🔙','정답!'],'cart':['🛒🛍️','💸','계산 완료!'],'bus':['🚌🎒','🚏','출발!'],
  'guess':['🐹✨','🕳️','쏙!'],'cargo':['📦🎉','🚧','도착!'],'pump':['⛽📊','💨','딱 맞아!'],'rank':['🥇📮','❌','쾅!'],
  'fake':['🔍🕵️','🎭','잡았다!'],'maze':['🤖⚙️','🧱','도착!'],
- 'barg':['✂️🍫','💥','똑같이!'],'nlg':['📍✨','💨','콕!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
+ 'barg':['✂️🍫','💥','똑같이!'],'nlg':['🧱✨','💥','딱 맞아!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
  'swg':['🔁✨','⚡','변신!'],'cutg':['✂️🎀','📏','딱 맞아!'],'mixg':['🏭✨','💨','변신 완료!'],'trapg':['⚖️✨','📉','검증 완료!'],
  'baseg':['🔷✨','❌','찾았다!'],'sideg':['🖌️🎨','💧','칠하기 완료!'],'edgeg':['📏✨','❌','정답!'],'dialg':['🎛️✨','🔄','딱!'],
  'meetg':['🔗✨','❌','맞닿았다!'],'stripg':['🧩✨','💥','이어 붙이기!'],'buildg':['🔺🏗️','💥','완성!'],'heightg':['📏✨','📐','정확!'],
- 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['📍✨','💨','콕!'],'chaing':['🔗✨','💥','연결!'],
+ 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['🟦✨','💥','출고!'],'chaing':['🔗✨','💥','연결!'],
  'ldivg':['✏️✨','❌','한 자리 완료!'],'gapg':['0️⃣✨','❌','찾았다!'],'pourg':['🧪💧','💦','똑같이!'],'scaleg':['🔢✨','❌','바꾸기 완료!'],
- 'estg':['🔍✨','❌','콕!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
- 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['📍✨','💨','콕!'],'gridg':['🟩✨','❌','칠하기 완료!'],
- 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','콕!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
+ 'estg':['🏆✨','🔄','순서 정확!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
+ 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['🔴🫙','💦','비율 완성!'],'gridg':['🟩✨','❌','칠하기 완료!'],
+ 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','딱 맞는 조각!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
  'piecesg':['📐✨','💥','바로잡았다!'],'cntg':['🔢✨','❌','정답!'],'truthg':['💡✨','❌','모두 찾았다!'],'linkg':['🔗📊','❌','연결!'],
  'trendg':['📈✨','📉','정답!'],'orderg':['🧊✨','💥','주문 완료!'],'pairg':['📦🎁','❌','완성!'],'dimg':['📦✨','💥','상자 완성!'],
  'sortg6':['🚛📦','💥','싣기 완료!'],'cvtg':['🏷️✨','❌','바꾸기 완료!'],'zerog':['0️⃣🏭','💥','출고!']
@@ -12996,15 +13004,15 @@ window.SCN_MAP = {
  train:[['drive','🚂🚃🚃'],['smoke','🚂']], dig:[['into','🃏🧺'],['bounce','🃏']], cart:[['into','🛍️🛒'],['rain','💸']], bus:[['drive','🚌🚌🧑‍🤝‍🧑'],['float','🙋']],
  guess:[['pop','🐹'],['sink','🕳️']], cargo:[['into','📦🎯'],['bounce','🚧']], pump:[['open','⛽📊⭐'],['float','💨']], rank:[['slam','🥇'],['bounce','❌']],
  fake:[['into','🎭🔍'],['float','🎭']], maze:[['drive','🤖⚙️'],['smoke','🤖']],
- barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['pop','📍'],['bounce','📍']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
+ barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['stack','🧱🧱🧱'],['bounce','🧱']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
  swg:[['open','🔁✅✨'],['pop','⚡']], cutg:[['into','🎀🎁'],['bounce','✂️']], mixg:[['drive','🏭📦📦'],['smoke','🏭']], trapg:[['open','⚖️✅⭐'],['bounce','⚖️']],
  baseg:[['pop','🔷'],['bounce','❌']], sideg:[['rain','🎨🖌️'],['sink','💧']], edgeg:[['stack','📏📏📏'],['bounce','📏']], dialg:[['open','🎛️✅✨'],['bounce','🎛️']],
  meetg:[['into','🔗🧩'],['bounce','🔗']], stripg:[['stack','🟥🟦🟩🟨'],['pop','💥']], buildg:[['stack','🔺🔺🏗️'],['bounce','🔺']], heightg:[['open','📏✅⭐'],['bounce','📐']],
- dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['pop','📍'],['bounce','📍']], chaing:[['open','🔗✅✨'],['pop','💥']],
+ dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['stack','🟦▮▮'],['bounce','▮']], chaing:[['open','🔗✅✨'],['pop','💥']],
  ldivg:[['stack','✏️🔢✨'],['bounce','❌']], gapg:[['pop','0️⃣'],['bounce','❌']], pourg:[['rain','💧🧪'],['float','💦']], scaleg:[['open','🔢✅✨'],['bounce','❌']],
- estg:[['pop','🔍'],['bounce','❌']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
- slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['pop','📍'],['bounce','📍']], gridg:[['rain','🟩'],['sink','⬜']],
- labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['pop','🥧'],['bounce','❌']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
+ estg:[['open','🏆🥇🥈🥉'],['bounce','🃏']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
+ slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['rain','🔴'],['bounce','🫙']], gridg:[['rain','🟩'],['sink','⬜']],
+ labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['open','🥧✅✨'],['bounce','🥧']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
  piecesg:[['open','📐✅✨'],['pop','💥']], cntg:[['rain','🔢✨'],['bounce','❌']], truthg:[['rain','💡✨'],['bounce','❌']], linkg:[['into','🔗📊'],['bounce','🔗']],
  trendg:[['open','📈✅✨'],['sink','📉']], orderg:[['stack','🧊🧊🧊'],['pop','💥']], pairg:[['into','📦🎁'],['bounce','❌']], dimg:[['stack','📦📦📦'],['pop','💥']],
  sortg6:[['drive','🚛📦📦'],['smoke','🚛']], cvtg:[['into','🏷️📦'],['bounce','🏷️']], zerog:[['drive','🏭📦📦'],['smoke','🏭']]
@@ -13034,6 +13042,9 @@ window.SCN_MAP = {
     window.vgGood = function () { const p = g0.apply(this, arguments); try { setTimeout(() => good(p), 0); } catch (e) {} return p; }; window.vgGood.__gfx = 1;
     window.vgBad = function (pen) { const r = b0.apply(this, arguments); try { setTimeout(() => bad(pen), 0); } catch (e) {} return r; }; }
   wrap(); document.addEventListener('DOMContentLoaded', wrap);
+  /* vgGood이 없는 예전 엔진: VG의 성공·실수 수가 바뀌면 효과 */
+  let pv = null; setInterval(() => { if (typeof window.vgGood === 'function') return; let V; try { V = VG; } catch (e) { return; } if (!V) return; const cur = [V.hit || 0, V.miss || 0, V.score || 0, V.id];
+    if (pv && pv[3] === cur[3]) { if (cur[0] > pv[0]) good(Math.max(1, cur[2] - pv[2])); else if (cur[1] > pv[1]) bad(Math.max(0, pv[2] - cur[2])); } pv = cur; }, 120);
   try { const s = document.createElement('style'); s.textContent = `
 .gfx{position:fixed;z-index:99998;pointer-events:none;transform:translate(-50%,-50%)}
 .gfx-p{font-size:1.7rem;animation:gfxP .85s cubic-bezier(.2,.8,.3,1) forwards}@keyframes gfxP{0%{transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1.1);opacity:0}}

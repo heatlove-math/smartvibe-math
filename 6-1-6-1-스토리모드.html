@@ -13578,6 +13578,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-height:450px) and (orientation:landscape){body.svsl-on .wrap{overflow-y:auto!important}#s1body,#s2body{padding-bottom:14px!important}.vk3cv{min-height:200px!important;height:62vh!important}body.svsl-on .svsl-tc,body.svsl-on #toolBody>.card,body.svsl-on .svsl-tc>.svsl-main,body.svsl-on .svsl-tc>.svsl-side{height:auto!important;max-height:none!important;overflow:visible!important;zoom:1!important}body.svsl-on .svsl-tc>.svsl-main{min-height:72vh!important;flex:none!important}body.svsl-on .svsl-tc>.svsl-main>div{zoom:1!important}body.svsl-on .svsl-tc{display:block!important}body.svsl-on #s1body,body.svsl-on #s2body,body.svsl-on .sec{height:auto!important;max-height:none!important;overflow:visible!important}.svsl-on .svsl-q{font-size:.92rem}}
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
+@media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -13615,15 +13616,15 @@ window.GFX_T = {
  'dig':['🧺✨','🔙','정답!'],'cart':['🛒🛍️','💸','계산 완료!'],'bus':['🚌🎒','🚏','출발!'],
  'guess':['🐹✨','🕳️','쏙!'],'cargo':['📦🎉','🚧','도착!'],'pump':['⛽📊','💨','딱 맞아!'],'rank':['🥇📮','❌','쾅!'],
  'fake':['🔍🕵️','🎭','잡았다!'],'maze':['🤖⚙️','🧱','도착!'],
- 'barg':['✂️🍫','💥','똑같이!'],'nlg':['📍✨','💨','콕!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
+ 'barg':['✂️🍫','💥','똑같이!'],'nlg':['🧱✨','💥','딱 맞아!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
  'swg':['🔁✨','⚡','변신!'],'cutg':['✂️🎀','📏','딱 맞아!'],'mixg':['🏭✨','💨','변신 완료!'],'trapg':['⚖️✨','📉','검증 완료!'],
  'baseg':['🔷✨','❌','찾았다!'],'sideg':['🖌️🎨','💧','칠하기 완료!'],'edgeg':['📏✨','❌','정답!'],'dialg':['🎛️✨','🔄','딱!'],
  'meetg':['🔗✨','❌','맞닿았다!'],'stripg':['🧩✨','💥','이어 붙이기!'],'buildg':['🔺🏗️','💥','완성!'],'heightg':['📏✨','📐','정확!'],
- 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['📍✨','💨','콕!'],'chaing':['🔗✨','💥','연결!'],
+ 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['🟦✨','💥','출고!'],'chaing':['🔗✨','💥','연결!'],
  'ldivg':['✏️✨','❌','한 자리 완료!'],'gapg':['0️⃣✨','❌','찾았다!'],'pourg':['🧪💧','💦','똑같이!'],'scaleg':['🔢✨','❌','바꾸기 완료!'],
- 'estg':['🔍✨','❌','콕!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
- 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['📍✨','💨','콕!'],'gridg':['🟩✨','❌','칠하기 완료!'],
- 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','콕!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
+ 'estg':['🏆✨','🔄','순서 정확!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
+ 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['🔴🫙','💦','비율 완성!'],'gridg':['🟩✨','❌','칠하기 완료!'],
+ 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','딱 맞는 조각!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
  'piecesg':['📐✨','💥','바로잡았다!'],'cntg':['🔢✨','❌','정답!'],'truthg':['💡✨','❌','모두 찾았다!'],'linkg':['🔗📊','❌','연결!'],
  'trendg':['📈✨','📉','정답!'],'orderg':['🧊✨','💥','주문 완료!'],'pairg':['📦🎁','❌','완성!'],'dimg':['📦✨','💥','상자 완성!'],
  'sortg6':['🚛📦','💥','싣기 완료!'],'cvtg':['🏷️✨','❌','바꾸기 완료!'],'zerog':['0️⃣🏭','💥','출고!']
@@ -13687,15 +13688,15 @@ window.SCN_MAP = {
  train:[['drive','🚂🚃🚃'],['smoke','🚂']], dig:[['into','🃏🧺'],['bounce','🃏']], cart:[['into','🛍️🛒'],['rain','💸']], bus:[['drive','🚌🚌🧑‍🤝‍🧑'],['float','🙋']],
  guess:[['pop','🐹'],['sink','🕳️']], cargo:[['into','📦🎯'],['bounce','🚧']], pump:[['open','⛽📊⭐'],['float','💨']], rank:[['slam','🥇'],['bounce','❌']],
  fake:[['into','🎭🔍'],['float','🎭']], maze:[['drive','🤖⚙️'],['smoke','🤖']],
- barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['pop','📍'],['bounce','📍']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
+ barg:[['stack','🍫🍫🍫'],['pop','💥']], nlg:[['stack','🧱🧱🧱'],['bounce','🧱']], spg:[['rain','🍕'],['pop','💥']], jumpg:[['hop','🐸🟩'],['sink','🐸']],
  swg:[['open','🔁✅✨'],['pop','⚡']], cutg:[['into','🎀🎁'],['bounce','✂️']], mixg:[['drive','🏭📦📦'],['smoke','🏭']], trapg:[['open','⚖️✅⭐'],['bounce','⚖️']],
  baseg:[['pop','🔷'],['bounce','❌']], sideg:[['rain','🎨🖌️'],['sink','💧']], edgeg:[['stack','📏📏📏'],['bounce','📏']], dialg:[['open','🎛️✅✨'],['bounce','🎛️']],
  meetg:[['into','🔗🧩'],['bounce','🔗']], stripg:[['stack','🟥🟦🟩🟨'],['pop','💥']], buildg:[['stack','🔺🔺🏗️'],['bounce','🔺']], heightg:[['open','📏✅⭐'],['bounce','📐']],
- dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['pop','📍'],['bounce','📍']], chaing:[['open','🔗✅✨'],['pop','💥']],
+ dealg:[['into','🎁🧺'],['bounce','🎁']], shiftg:[['pop','⬅️'],['bounce','🔴']], nlineg:[['stack','🟦▮▮'],['bounce','▮']], chaing:[['open','🔗✅✨'],['pop','💥']],
  ldivg:[['stack','✏️🔢✨'],['bounce','❌']], gapg:[['pop','0️⃣'],['bounce','❌']], pourg:[['rain','💧🧪'],['float','💦']], scaleg:[['open','🔢✅✨'],['bounce','❌']],
- estg:[['pop','🔍'],['bounce','❌']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
- slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['pop','📍'],['bounce','📍']], gridg:[['rain','🟩'],['sink','⬜']],
- labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['pop','🥧'],['bounce','❌']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
+ estg:[['open','🏆🥇🥈🥉'],['bounce','🃏']], scrg:[['open','🖥️✅🔧'],['siren','💥']], stackg:[['stack','📊📊📊'],['pop','💥']], samerg:[['into','🃏🗂️'],['bounce','🃏']],
+ slotg:[['into','🔤🗂️'],['bounce','🔤']], raceg:[['drive','🏁🏃‍♂️'],['smoke','🏃‍♂️']], rateg:[['rain','🔴'],['bounce','🫙']], gridg:[['rain','🟩'],['sink','⬜']],
+ labelg:[['into','🏷️📊'],['bounce','🏷️']], secg:[['open','🥧✅✨'],['bounce','🥧']], pctg:[['stack','📋✅✨'],['bounce','❌']], pietickg:[['open','🥧✅✨'],['bounce','✏️']],
  piecesg:[['open','📐✅✨'],['pop','💥']], cntg:[['rain','🔢✨'],['bounce','❌']], truthg:[['rain','💡✨'],['bounce','❌']], linkg:[['into','🔗📊'],['bounce','🔗']],
  trendg:[['open','📈✅✨'],['sink','📉']], orderg:[['stack','🧊🧊🧊'],['pop','💥']], pairg:[['into','📦🎁'],['bounce','❌']], dimg:[['stack','📦📦📦'],['pop','💥']],
  sortg6:[['drive','🚛📦📦'],['smoke','🚛']], cvtg:[['into','🏷️📦'],['bounce','🏷️']], zerog:[['drive','🏭📦📦'],['smoke','🏭']]
@@ -13725,6 +13726,9 @@ window.SCN_MAP = {
     window.vgGood = function () { const p = g0.apply(this, arguments); try { setTimeout(() => good(p), 0); } catch (e) {} return p; }; window.vgGood.__gfx = 1;
     window.vgBad = function (pen) { const r = b0.apply(this, arguments); try { setTimeout(() => bad(pen), 0); } catch (e) {} return r; }; }
   wrap(); document.addEventListener('DOMContentLoaded', wrap);
+  /* vgGood이 없는 예전 엔진: VG의 성공·실수 수가 바뀌면 효과 */
+  let pv = null; setInterval(() => { if (typeof window.vgGood === 'function') return; let V; try { V = VG; } catch (e) { return; } if (!V) return; const cur = [V.hit || 0, V.miss || 0, V.score || 0, V.id];
+    if (pv && pv[3] === cur[3]) { if (cur[0] > pv[0]) good(Math.max(1, cur[2] - pv[2])); else if (cur[1] > pv[1]) bad(Math.max(0, pv[2] - cur[2])); } pv = cur; }, 120);
   try { const s = document.createElement('style'); s.textContent = `
 .gfx{position:fixed;z-index:99998;pointer-events:none;transform:translate(-50%,-50%)}
 .gfx-p{font-size:1.7rem;animation:gfxP .85s cubic-bezier(.2,.8,.3,1) forwards}@keyframes gfxP{0%{transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1.1);opacity:0}}
