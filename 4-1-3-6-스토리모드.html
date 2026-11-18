@@ -10969,6 +10969,68 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
     document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+</script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
+window.GFX_T = {
+ 'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
+ 'stones':['🪨🐸','💦','폴짝!'],'snake':['🍎🐍','💫','꿀꺽!'],'quick':['🤠⚡','💨','빠르다!'],'bubble':['🫧✨','💧','펑!'],
+ 'croc':['🐊🦷','😵','덥석!'],'memo':['🃏✨','🔄','짝 완성!'],'cannon':['💣☁️','💨','명중!'],'tatk':['📐⏱️','⌛','정확!'],
+ 'sortg':['📦✅','🚫','분류 완료!'],'makeg':['🛠️✨','🔧','주문 완료!'],'fang':['🪭✨','💨','활짝!'],'diffg':['🏁🏎️','🛑','통과!'],
+ 'missg':['🔺✨','❓','찾았다!'],'roofg':['🏠🔨','🧱','지붕 완성!'],'canq':['🟦✨','❌','찾았다!'],'gardg':['🌷🌼','🥀','꽃밭 완성!'],
+ 'race':['🛒🔥','💨','앞으로!'],'slide':['🪜⭐','⬇️','한 계단!'],'tile':['🧱🏗️','💥','탑 완성!'],'deliv':['🎈🚚','🎈','배달 완료!'],
+ 'gate':['🚪✨','🚫','통과!'],'aim':['🎯✨','💨','PERFECT!'],'vault':['🪙💎','🚨','금고 열림!'],'train':['🚂💨','🛑','도착!'],
+ 'dig':['🧺✨','🔙','정답!'],'cart':['🛒🛍️','💸','계산 완료!'],'bus':['🚌🎒','🚏','출발!'],
+ 'guess':['🐹✨','🕳️','쏙!'],'cargo':['📦🎉','🚧','도착!'],'pump':['⛽📊','💨','딱 맞아!'],'rank':['🥇📮','❌','쾅!'],
+ 'fake':['🔍🕵️','🎭','잡았다!'],'maze':['🤖⚙️','🧱','도착!'],
+ 'barg':['✂️🍫','💥','똑같이!'],'nlg':['📍✨','💨','콕!'],'spg':['🍕✨','💥','쪼개기!'],'jumpg':['🐸⭐','💦','점프!'],
+ 'swg':['🔁✨','⚡','변신!'],'cutg':['✂️🎀','📏','딱 맞아!'],'mixg':['🏭✨','💨','변신 완료!'],'trapg':['⚖️✨','📉','검증 완료!'],
+ 'baseg':['🔷✨','❌','찾았다!'],'sideg':['🖌️🎨','💧','칠하기 완료!'],'edgeg':['📏✨','❌','정답!'],'dialg':['🎛️✨','🔄','딱!'],
+ 'meetg':['🔗✨','❌','맞닿았다!'],'stripg':['🧩✨','💥','이어 붙이기!'],'buildg':['🔺🏗️','💥','완성!'],'heightg':['📏✨','📐','정확!'],
+ 'dealg':['🎁✨','❌','나눔 완료!'],'shiftg':['⬅️✨','💥','쏙!'],'nlineg':['📍✨','💨','콕!'],'chaing':['🔗✨','💥','연결!'],
+ 'ldivg':['✏️✨','❌','한 자리 완료!'],'gapg':['0️⃣✨','❌','찾았다!'],'pourg':['🧪💧','💦','똑같이!'],'scaleg':['🔢✨','❌','바꾸기 완료!'],
+ 'estg':['🔍✨','❌','콕!'],'scrg':['🖥️🔧','💥','고쳤다!'],'stackg':['📊✨','💥','이어 놓기!'],'samerg':['🃏✨','❌','같은 관계!'],
+ 'slotg':['🔤✨','❌','딱!'],'raceg':['🏁✨','🛑','승리!'],'rateg':['📍✨','💨','콕!'],'gridg':['🟩✨','❌','칠하기 완료!'],
+ 'labelg':['🏷️✨','❌','붙였다!'],'secg':['🥧✨','❌','콕!'],'pctg':['📋✨','❌','완성!'],'pietickg':['🥧✏️','❌','그리기 완료!'],
+ 'piecesg':['📐✨','💥','바로잡았다!'],'cntg':['🔢✨','❌','정답!'],'truthg':['💡✨','❌','모두 찾았다!'],'linkg':['🔗📊','❌','연결!'],
+ 'trendg':['📈✨','📉','정답!'],'orderg':['🧊✨','💥','주문 완료!'],'pairg':['📦🎁','❌','완성!'],'dimg':['📦✨','💥','상자 완성!'],
+ 'sortg6':['🚛📦','💥','싣기 완료!'],'cvtg':['🏷️✨','❌','바꾸기 완료!'],'zerog':['0️⃣🏭','💥','출고!']
+};
+
+/* ===== 공통 게임 효과(GFX): 모든 미니게임의 성공·실패 순간에 터짐 · 점수 날아가기 · 도장 · 콤보 · 흔들림 ===== */
+(function () { if (window.__GFX) return; window.__GFX = 1;
+  let LP = null; const rec = e => { LP = { x: e.clientX, y: e.clientY, t: Date.now() }; }; document.addEventListener('pointerdown', rec, true); document.addEventListener('pointerup', rec, true);
+  const T = () => { let id = null, lid = ''; try { id = VG.id; } catch (e) {} try { lid = CONFIG.LESSON_ID || ''; } catch (e) {} if (!id) return ['⭐✨', '💥', '좋아!']; const k = id === 'sortg' && /^6-/.test(lid) ? 'sortg6' : id; return (window.GFX_T || {})[k] || ['⭐✨', '💥', '좋아!']; };
+  const stage = () => document.querySelector('#s2body .gamecard') || document.querySelector('#s2body .card');
+  const where = () => { const s = stage(); if (!s) return null; const r = s.getBoundingClientRect(); if (LP && Date.now() - LP.t < 2500 && LP.x > r.left && LP.x < r.right && LP.y > r.top && LP.y < r.bottom) return [LP.x, LP.y]; return [r.left + r.width / 2, r.top + Math.min(r.height / 2, 300)]; };
+  const em = s => Array.from(s.matchAll(/\p{Extended_Pictographic}(️|⃣)*(‍\p{Extended_Pictographic}️?)*|\d️⃣/gu)).map(m => m[0]);
+  function el(cls, html, x, y) { const d = document.createElement('div'); d.className = 'gfx ' + cls; d.innerHTML = html; d.style.left = x + 'px'; d.style.top = y + 'px'; document.body.appendChild(d); return d; }
+  function burst(x, y, list, n) { for (let i = 0; i < n; i++) { const a = Math.PI * 2 * i / n + Math.random() * .4, r = 70 + Math.random() * 60, d = el('gfx-p', list[i % list.length], x, y);
+      d.style.setProperty('--dx', Math.cos(a) * r + 'px'); d.style.setProperty('--dy', Math.sin(a) * r - 30 + 'px'); d.style.setProperty('--r', (Math.random() * 360 - 180) + 'deg'); setTimeout(() => d.remove(), 900); } }
+  function fly(x, y, html) { const sc = document.getElementById('vgSc'); const d = el('gfx-fly', html, x, y); if (!sc) { setTimeout(() => d.remove(), 800); return; }
+    const r = sc.getBoundingClientRect(), tx = r.left + r.width / 2, ty = r.top + r.height / 2; d.animate([{ transform: 'translate(-50%,-50%) scale(1)', offset: 0 }, { transform: `translate(calc(-50% + ${(tx - x) * .45}px), calc(-50% + ${(ty - y) * .45 - 90}px)) scale(1.35)`, offset: .45 }, { transform: `translate(calc(-50% + ${tx - x}px), calc(-50% + ${ty - y}px)) scale(.5)`, offset: 1 }], { duration: 750, easing: 'cubic-bezier(.4,0,.6,1)' });
+    setTimeout(() => { d.remove(); const h = sc.closest('div') || sc; h.classList.remove('gfx-bump'); void h.offsetWidth; h.classList.add('gfx-bump'); }, 740); }
+  function flash(cls) { const s = stage(); if (!s) return; s.classList.remove('gfx-sok', 'gfx-sno'); void s.offsetWidth; s.classList.add(cls); setTimeout(() => s.classList.remove(cls), 650); }
+  function good(p) { const w = where(); if (!w) return; const t = T(), L = em(t[0]); burst(w[0], w[1], L.concat(['✨', '⭐']), 12);
+    const st = el('gfx-stamp', t[2], w[0], w[1] - 46); setTimeout(() => st.remove(), 1000); fly(w[0], w[1], `<b>${L[0] || '⭐'}</b><i>+${p}</i>`); flash('gfx-sok');
+    let cb = 0; try { cb = VG.combo; } catch (e) {} if (cb >= 3) { const s = stage(), r = s.getBoundingClientRect(), c = el('gfx-combo', `🔥 ${cb} 콤보!`, r.left + r.width / 2, r.top + r.height * .42); setTimeout(() => c.remove(), 1100); } }
+  function bad(pen) { const w = where(); if (!w) return; const t = T(), L = em(t[1]); const b = el('gfx-no', L[0] || '💥', w[0], w[1]); setTimeout(() => b.remove(), 800);
+    if (pen) { const m = el('gfx-minus', '−' + pen, w[0] + 28, w[1] - 10); setTimeout(() => m.remove(), 900); } flash('gfx-sno'); }
+  function wrap() { if (typeof window.vgGood !== 'function' || window.vgGood.__gfx) return; const g0 = window.vgGood, b0 = window.vgBad;
+    window.vgGood = function () { const p = g0.apply(this, arguments); try { setTimeout(() => good(p), 0); } catch (e) {} return p; }; window.vgGood.__gfx = 1;
+    window.vgBad = function (pen) { const r = b0.apply(this, arguments); try { setTimeout(() => bad(pen), 0); } catch (e) {} return r; }; }
+  wrap(); document.addEventListener('DOMContentLoaded', wrap);
+  try { const s = document.createElement('style'); s.textContent = `
+.gfx{position:fixed;z-index:99998;pointer-events:none;transform:translate(-50%,-50%)}
+.gfx-p{font-size:1.7rem;animation:gfxP .85s cubic-bezier(.2,.8,.3,1) forwards}@keyframes gfxP{0%{transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1.1);opacity:0}}
+.gfx-stamp{font-family:var(--fun,Jua),sans-serif;font-size:2rem;color:#fff;background:linear-gradient(180deg,#22c55e,#15803d);border:4px solid #fff;border-radius:16px;padding:2px 16px;white-space:nowrap;box-shadow:0 5px 0 #14532d,0 0 24px rgba(34,197,94,.6);animation:gfxStamp .95s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes gfxStamp{0%{transform:translate(-50%,-50%) scale(2.6) rotate(-12deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1) rotate(-6deg);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-80%) scale(1) rotate(-6deg);opacity:0}}
+.gfx-fly{display:flex;align-items:center;gap:2px;font-size:1.8rem;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}.gfx-fly i{font-style:normal;font-family:var(--fun,Jua),sans-serif;font-size:1.4rem;color:#facc15;-webkit-text-stroke:1.5px #92400e}
+.gfx-bump{animation:gfxBump .45s cubic-bezier(.3,1.8,.5,1)}@keyframes gfxBump{40%{transform:scale(1.35)}}
+.gfx-combo{font-family:var(--fun,Jua),sans-serif;font-size:2.4rem;color:#fff;-webkit-text-stroke:2px #b91c1c;text-shadow:0 0 18px #f97316;white-space:nowrap;animation:gfxCombo 1.1s ease-out forwards}@keyframes gfxCombo{0%{transform:translate(-50%,-50%) scale(.3)}20%{transform:translate(-50%,-50%) scale(1.25)}35%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-120%) scale(1);opacity:0}}
+.gfx-no{font-size:3rem;animation:gfxNo .75s ease-out forwards}@keyframes gfxNo{0%{transform:translate(-50%,-50%) scale(.4)}25%{transform:translate(-50%,-50%) scale(1.3) rotate(-12deg)}45%{transform:translate(-50%,-50%) rotate(12deg)}65%{transform:translate(-50%,-50%) rotate(-6deg)}100%{transform:translate(-50%,-10%) rotate(0);opacity:0}}
+.gfx-minus{font-family:var(--fun,Jua),sans-serif;font-size:1.6rem;color:#dc2626;-webkit-text-stroke:1px #fff;animation:gfxMin .9s ease-in forwards}@keyframes gfxMin{to{transform:translate(-50%,40px);opacity:0}}
+.gfx-sok{animation:gfxOk .6s ease-out}@keyframes gfxOk{30%{box-shadow:0 0 0 6px #4ade80,0 0 40px 10px rgba(74,222,128,.55)}}
+.gfx-sno{animation:gfxShake .5s}@keyframes gfxShake{15%{transform:translateX(-9px)}30%{transform:translateX(8px);box-shadow:0 0 0 6px #f87171}45%{transform:translateX(-6px)}60%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
+@media (prefers-reduced-motion:reduce){.gfx{display:none}}`; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
 <!--BGUP-START--><style>/* ===== 4-1-3 보드게임 덧입힘 공통 (BGUP) — 규칙은 그대로, 무대·소품·효과만 ===== */
 #boardArea>.tltable.bgup{--s1:#f59e0b;--s2:#fff7ed;--bg1:#4c1d95;--bg2:#1e1b4b;--fl:#7c2d12;padding:62px 18px 14px;border:0;border-radius:26px;overflow:hidden;
