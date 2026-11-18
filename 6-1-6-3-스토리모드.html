@@ -7189,7 +7189,7 @@ const MX = (() => {
   const J = (n, a, b) => n + (hasB(n) ? a : b);
   /* ---------- 직접 쓰는 칸 ---------- */
   const inp = (key, d, o) => { o = o || {}; const v = (d.rv || {})[key] || '', bad = (d.bad || []).includes(String(key)), ok = (d.good || []).includes(String(key)) || d.recOK;
-    return ok && v !== '' ? `<b class="mxok">${esc(v)}</b>` : `<input class="mxin ${bad ? 'bad' : ''}" data-i="${key}" value="${esc(v)}" style="width:${o.w || 64}px" inputmode="${o.text ? 'text' : 'decimal'}" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸">`; };
+    return ok && v !== '' ? `<b class="mxok">${esc(v)}</b>` : `<input class="mxin ${bad ? 'bad' : ''}" data-i="${key}" value="${esc(v)}" style="width:${o.w || Math.max(64, 26 + 16 * Math.max(String(v).length, ...[].concat(o.a == null ? [] : o.a).map(x => String(x).replace(/[^0-9.\/]/g, '').length)))}px" inputmode="${o.text ? 'text' : 'decimal'}" autocomplete="off" oninput="this.style.width=Math.max(parseFloat(this.style.width)||64,26+16*this.value.length)+'px'" placeholder="?" aria-label="답 쓰는 칸">`; };
   const grab = d => { d.rv = d.rv || {}; document.querySelectorAll('#toolBody .mxin').forEach(e => { d.rv[e.dataset.i] = e.value; }); };
   const recHTML = (d, R, key) => { let i = -1; return `<div class="mxrec">${R.map(x => typeof x === 'string' ? x : (i++, inp((key || '') + i, d, x))).join('')}</div>`; };
   const recBtn = (d, hint) => d.recOK ? '' : ckRow(ckBtn('mxchk', '✔ 확인', 'btn-green') + (hint ? ckBtn('mxhint', '💡 힌트', 'btn-sub') : ''));
@@ -7618,7 +7618,7 @@ const MX = (() => {
   }
 
   try { const s = document.createElement('style'); s.textContent = `
-.mxin{height:46px;min-width:92px;box-sizing:border-box;border:3px solid #94a3b8;border-radius:12px;text-align:center;font-size:1.3rem;font-weight:900;font-family:inherit;letter-spacing:0;color:#0f172a;background:#fff;margin:2px 4px;padding:0 6px;vertical-align:middle}
+.mxin{height:46px;min-width:92px;max-width:100%;box-sizing:border-box;border:3px solid #94a3b8;border-radius:12px;text-align:center;font-size:1.3rem;font-weight:900;font-family:inherit;letter-spacing:0;color:#0f172a;background:#fff;margin:2px 4px;padding:0 6px;vertical-align:middle}
 .mxin:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px #bfdbfe}.mxin.bad{border-color:#dc2626;background:#fef2f2}
 .mxok{display:inline-block;min-width:36px;text-align:center;color:#15803d;background:#dcfce7;border-radius:10px;padding:2px 8px;font-size:1.25rem}
 .mxrec{background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:10px 14px;margin:10px auto 0;font-size:1.25rem;font-weight:800;line-height:2.3;text-align:center;max-width:860px}.mxrec.sm{font-size:1.05rem;padding:4px 8px;line-height:1.9;margin-top:6px}
