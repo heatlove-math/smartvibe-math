@@ -2768,7 +2768,7 @@ function podiumHTML(list) {
 }
 
 /* =====================================================================
-   악당 소굴 · 미니게임 3종 (4차시 · 억과 조)
+   악당 소굴 · 미니게임 2종 (4차시 · 억과 조)
      ① 뒤죽이의 억·조 자릿수 테트리스 : 떨어지는 수 블록을 알맞은 단위 칸(조·억·만·일)에 쏙! (75초)
      ② 다크몽의 우주 탐사 예산 타이쿤   : 예산 요청서의 금액을 지폐 버튼으로 정확히 결제 (75초)
      ③ 삐딱이의 0-카운터 레이저 슈팅     : 운석에 든 0의 개수를 입력해 레이저로 격추 (60초)
@@ -2800,7 +2800,7 @@ function renderLairHub() {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">세 악당이 억과 조의 세계를 어지럽혀 놓았어요. 미니게임 3종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 억과 조의 세계를 어지럽혀 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
     ${vSay('dark', '하하하! 내 부하들을 모두 이길 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -3530,7 +3530,7 @@ function computeResult(k) {
   const d = st.drill, g = st.game, bOver = !!st.bgOver, bBest = st.bgBest || 0;
   const items = [
     { label: '문제은행 드릴', state: d.rounds ? 'ok' : 'todo', note: d.rounds ? `${d.rounds}회 · 최고 ${d.best}점` : '미도전', pt: Math.round(d.best * 0.4), max: 40 },
-    { label: '악당 소굴 (미니게임 3종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
+    { label: '악당 소굴 (미니게임 2종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
     { label: '보드 게임 · 각도기 레이스 (컴퓨터와 대결)', state: bOver ? (bBest === 100 ? 'ok' : 'retry') : 'todo', note: bOver ? (bBest === 100 ? '승리!' : '아쉬운 결과 · 최고 ' + bBest + '점') : '미완료', pt: bOver ? Math.round(bBest * 0.3) : 0, max: 30 }
   ];
   const wrong = [...d.wrongAll, ...g.wrongAll.slice(0, 10), ...(st.bgWrong || [])];
@@ -4138,7 +4138,7 @@ const CHAPTERS = [
   { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 6개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '삐딱이의 함정',     sub: '기본 문제 4개 · 억과 조 읽고 쓰기',        go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '다크몽 보스전',     sub: '방어막 3겹 · 실생활 큰 수 문제 3개',        go: ['s1', 'jump'] },
-  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 3종 · 수호석 경매전', go: ['s2', 'drill'] },
+  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 2종 · 수호석 경매전', go: ['s2', 'drill'] },
   { n: 5, v: 'dark',  icon: '🌌', title: '최종 결전',         sub: '13층 조의 문을 열어라',                    go: ['s2', 'result'] }
 ];
 const STEP_CH = { 's1:concept': 1, 's1:basic': 2, 's1:jump': 3, 's1:result': 3, 's2:drill': 4, 's2:game': 4, 's2:board': 4, 's2:result': 5 };
@@ -4375,7 +4375,7 @@ const Story = {
     if (step === 'game') {
       const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair;
       const vk = LAIR_VK[id] || 'dark';
-      return { v: vk, m: '악당 소굴! 미니게임 3종(수 테트리스·예산 타이쿤·0 레이저 슈팅)을 모두 클리어하자.' };
+      return { v: vk, m: '악당 소굴! 미니게임 2종(수 테트리스·예산 타이쿤·0 레이저 슈팅)을 모두 클리어하자.' };
     }
     if (step === 'board') {
       const au = (state.s2 || {}).au;
@@ -4518,7 +4518,7 @@ const Story = {
       if (p.dark) { t = '👑 ENDING — 13층 조의 문 개방!'; d = '삐딱이·뒤죽이·시간도둑·반쪽이를 모두 물리치고 억과 조의 수호석을 완성했어요. 1억부터 1조까지, 네 자리씩 끊어 읽는 법을 모두 되찾았습니다!'; }
       else {
         t = '👑 다크몽 HP ' + p.darkHp;
-        d = `부하 격파 ${p.downs}/4 (삐딱이·뒤죽이·시간도둑·반쪽이) · 문제은행 ${p.drill ? '완료' : '미완료'} · 소굴 미니게임 ${[p.lair.tilt, p.lair.mixup, p.lair.dark].filter(Boolean).length}/3 · 보드 게임 ${p.board ? '완료' : '미완료'}. 남은 활동을 끝내면 최종 결전이 열려요.`;
+        d = `부하 격파 ${p.downs}/4 (삐딱이·뒤죽이·시간도둑·반쪽이) · 문제은행 ${p.drill ? '완료' : '미완료'} · 소굴 미니게임 ${[p.lair.tilt, p.lair.mixup, p.lair.dark].filter(Boolean).length - 1}/2 · 보드 게임 ${p.board ? '완료' : '미완료'}. 남은 활동을 끝내면 최종 결전이 열려요.`;
       }
     }
     card.insertAdjacentHTML('beforeend', `<div class="stepi"><div class="et">${t}</div><div class="ed">${d}</div>
@@ -6261,7 +6261,7 @@ renderLairHub = function () {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">세 악당이 각도기 눈금을 어지럽혀 놓았어요. 미니게임 3종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 각도기 눈금을 어지럽혀 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
     ${vSay('dark', '하하하! 내 부하들의 각도 함정을 모두 이길 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -6277,7 +6277,7 @@ renderLairHub = function () {
 
 
 /* =====================================================================
-   세트 2 · 문제은행(각도기 그림) · 미니게임 3종 · 보드게임 「각도기 레이스」
+   세트 2 · 문제은행(각도기 그림) · 미니게임 2종 · 보드게임 「각도기 레이스」
    ===================================================================== */
 const pfI = (d, m, o) => `<div class="afw">${protFig(d, m, o)}</div>`;
 const dq = (d, extra) => degOpts(d, extra);
@@ -6320,7 +6320,7 @@ GATES.length = 0;
 GATES.push([1, '⭐ 쉬움', '각도 읽기·1°·직각 90°', '🌱', 'linear-gradient(135deg,#45e09b,#17b877)'], [2, '⭐⭐ 보통', '눈금 고르기·잘못 고치기', '🌊', 'linear-gradient(135deg,#52c0ff,#2f7cf5)'], [3, '⭐⭐⭐ 도전', '도·칸 바꾸기·시계 각도', '🌋', 'linear-gradient(135deg,#ffa53d,#ff5a76)']);
 
 /* =====================================================================
-   악당 소굴 · 미니게임 3종
+   악당 소굴 · 미니게임 2종
      ① 삐딱이의 구름 속 대포   : 명령한 각도로 포신을 끌어 맞추고 발사! (60초)
      ② 뒤죽이의 눈금 판정 스피드 : 안쪽? 바깥쪽? 바른 각도를 재빨리 터치 (60초)
      ③ 다크몽의 각도기 타임어택  : 각도기를 끌어 대고 각도를 써요 (75초)
@@ -6599,7 +6599,7 @@ CHAPTERS.push(
   { n: 1, v: 'half', icon: '1️⃣', title: '1도의 비밀', sub: '개념 도구 4개 · 1°와 각도기', go: ['s1', 'concept'] },
   { n: 2, v: 'tilt', icon: '✏️', title: '삐딱이의 함정', sub: '기본 문제 4개 · 각도 읽기', go: ['s1', 'basic'] },
   { n: 3, v: 'dark', icon: '👑', title: '다크몽 보스전', sub: '방어막 3겹 · 오르막길·측정 대회·탐정', go: ['s1', 'jump'] },
-  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴', sub: '문제은행 · 미니게임 3종 · 각도기 레이스', go: ['s2', 'drill'] },
+  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴', sub: '문제은행 · 미니게임 2종 · 각도기 레이스', go: ['s2', 'drill'] },
   { n: 5, v: 'dark', icon: '⛰️', title: '최종 결전', sub: '오르막길의 문을 열어라', go: ['s2', 'result'] });
 _repl(ST_TOOLV, TOOL_VK);
 _repl(ST_TOOLM, {
@@ -6698,7 +6698,7 @@ Story.stepV = function () {
     return { v: 'dark', m: '오르막길 탐험 보고서를 작성해 선생님께 제출하자.' };
   }
   if (step === 'drill') return { v: 'clock', m: '시간도둑의 각도 문제은행! 관문을 하나 통과하면 봉인이 풀려요.' };
-  if (step === 'game') { const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair; return { v: LAIR_VK[id] || 'dark', m: '악당 소굴! 미니게임 3종(구름 속 대포·눈금 판정·각도기 타임어택)을 모두 클리어하자.' }; }
+  if (step === 'game') { const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair; return { v: LAIR_VK[id] || 'dark', m: '악당 소굴! 미니게임 2종(구름 속 대포·눈금 판정·각도기 타임어택)을 모두 클리어하자.' }; }
   if (step === 'board') return { v: 'half', m: '반쪽이의 각도기 레이스! 레이더 눈금을 정확히 읽어 잠수함 3척을 찾자.' };
   return { v: 'dark', m: '부하 넷을 모두 물리치면 다크몽의 봉인이 풀려요!' };
 };
@@ -10530,7 +10530,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 /* 위로 올린 조작 안내 띠 */
 .svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
-</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '두 가지 · 2종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
     c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
@@ -10556,5 +10556,6 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
+<!--BGUP-START--><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["judge"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><!--BGUP-END-->
 </body>
 </html>

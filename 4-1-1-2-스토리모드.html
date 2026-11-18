@@ -2572,7 +2572,7 @@ function podiumHTML(list) {
 }
 
 /* =====================================================================
-   악당 소굴 · 미니게임 3종 (3차시 전용)
+   악당 소굴 · 미니게임 2종 (3차시 전용)
      ① 삐딱이 자릿값 다트   : 읽은 말 ↔ 같은 수 찾기 (40초, 0을 훔친 함정 카드 피하기)
      ② 뒤죽이 10배 엘리베이터 : 뒤섞인 수 4장을 작은 수부터 차례로 (45초)
      ③ 자릿값 방어전      : 캔버스 아케이드 — 변조 카드 요격 + 금고(랙) 채우기 (60초)
@@ -2600,7 +2600,7 @@ function renderLairHub() {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">세 악당이 큰 수를 뒤섞어 놓았어요. 미니게임 3종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 큰 수를 뒤섞어 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
     ${vSay('dark', '하하하! 내 부하들을 모두 이길 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -3188,7 +3188,7 @@ function computeResult(k) {
   const d = st.drill, g = st.game, bOver = !!st.bgOver, bBest = st.bgBest || 0;
   const items = [
     { label: '문제은행 드릴', state: d.rounds ? 'ok' : 'todo', note: d.rounds ? `${d.rounds}회 · 최고 ${d.best}점` : '미도전', pt: Math.round(d.best * 0.4), max: 40 },
-    { label: '악당 소굴 (미니게임 3종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
+    { label: '악당 소굴 (미니게임 2종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
     { label: '보드 게임 (컴퓨터와 대결)', state: bOver ? (bBest === 100 ? 'ok' : 'retry') : 'todo', note: bOver ? (bBest === 100 ? '승리!' : '아쉬운 결과 · 최고 ' + bBest + '점') : '미완료', pt: bOver ? Math.round(bBest * 0.3) : 0, max: 30 }
   ];
   const wrong = [...d.wrongAll, ...g.wrongAll.slice(0, 10), ...(st.bgWrong || [])];
@@ -4018,7 +4018,7 @@ const Story = {
     if (step === 'game') {
       const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair;
       const vk = (id === 'tilt' || id === 'mixup' || id === 'dark') ? id : 'dark';
-      return { v: vk, m: '악당 소굴! 미니게임 3종(자릿값 다트·10배 엘리베이터·자릿값 방어전)을 모두 클리어하자.' };
+      return { v: vk, m: '악당 소굴! 미니게임 2종(자릿값 다트·10배 엘리베이터·자릿값 방어전)을 모두 클리어하자.' };
     }
     if (step === 'board') {
       const s2 = state.s2 || {}, g = s2.bgame || 'race', on = !!(s2.board || s2.rack || s2.exch);
@@ -4163,7 +4163,7 @@ const Story = {
       if (p.dark) { t = '👑 ENDING — 11층 천만의 문 개방!'; d = '삐딱이·뒤죽이·시간도둑·반쪽이를 모두 물리치고 영(0)의 잠금 장치를 풀었어요. 만·십만·백만·천만의 10배 규칙을 모두 되찾았습니다!'; }
       else {
         t = '👑 다크몽 HP ' + p.darkHp;
-        d = `부하 격파 ${p.downs}/4 (삐딱이·뒤죽이·시간도둑·반쪽이) · 문제은행 ${p.drill ? '완료' : '미완료'} · 소굴 미니게임 ${[p.lair.tilt, p.lair.mixup, p.lair.dark].filter(Boolean).length}/3 · 보드 게임 ${p.board ? '완료' : '미완료'}. 남은 활동을 끝내면 최종 결전이 열려요.`;
+        d = `부하 격파 ${p.downs}/4 (삐딱이·뒤죽이·시간도둑·반쪽이) · 문제은행 ${p.drill ? '완료' : '미완료'} · 소굴 미니게임 ${[p.lair.tilt, p.lair.mixup, p.lair.dark].filter(Boolean).length - 1}/2 · 보드 게임 ${p.board ? '완료' : '미완료'}. 남은 활동을 끝내면 최종 결전이 열려요.`;
       }
     }
     card.insertAdjacentHTML('beforeend', `<div class="stepi"><div class="et">${t}</div><div class="ed">${d}</div>
@@ -5411,7 +5411,7 @@ button.rkslot:hover{transform:translateY(-4px)}
 <script>
 /* 보드게임 업그레이드 · 한 문제씩 보기 · 그림 게임 방법 */
 /* =====================================================================
-   3차시 업그레이드 · 미니게임 3종 화면 다시 그리기 · 은하 보드 레이스 판 · 그림 게임 방법
+   3차시 업그레이드 · 미니게임 2종 화면 다시 그리기 · 은하 보드 레이스 판 · 그림 게임 방법
      ① 삐딱이 체포 작전 → 밤거리 수배 전단 & 용의자 줄 세우기
      ② 뒤죽이 수직선 공사 → 공사장 철골 수직선 & 나무 상자
      ③ 다크몽 그림자 숫자 → 그림자 성 · 방어막 10칸 · 주문 두루마리
@@ -10266,7 +10266,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 /* 위로 올린 조작 안내 띠 */
 .svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
-</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '두 가지 · 2종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
     c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
@@ -10292,5 +10292,6 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
+<!--BGUP-START--><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["dark"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><!--BGUP-END-->
 </body>
 </html>

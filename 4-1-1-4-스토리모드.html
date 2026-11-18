@@ -2710,7 +2710,7 @@ function podiumHTML(list) {
 }
 
 /* =====================================================================
-   악당 소굴 · 미니게임 3종 (6차시 · 뛰어 세기와 규칙)
+   악당 소굴 · 미니게임 2종 (6차시 · 뛰어 세기와 규칙)
      ① 삐딱이의 뛰어 세기 징검다리 : 규칙에 맞는 다음 돌을 골라 개구리가 건너요 (60초)
      ② 뒤죽이의 뛰어 세기 스네이크 : 규칙상 다음 수만 먹는 뱀 게임 (75초)
      ③ 다크몽의 규칙 빙고         : 배열표 규칙으로 불린 수의 자리를 찾아 빙고 (75초)
@@ -2741,7 +2741,7 @@ function renderLairHub() {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">세 악당이 13층 규칙의 계단을 멈춰 세웠어요. 미니게임 3종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고 <b>CH.5 최종 결전</b>이 열려요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 13층 규칙의 계단을 멈춰 세웠어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고 <b>CH.5 최종 결전</b>이 열려요.</p></div></div>
     ${vSay('dark', '하하하! 규칙을 순식간에 찾아낼 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -3251,7 +3251,7 @@ function computeResult(k) {
   const d = st.drill, g = st.game, bOver = !!st.bgOver, bBest = st.bgBest || 0;
   const items = [
     { label: '문제은행 드릴', state: d.rounds ? 'ok' : 'todo', note: d.rounds ? `${d.rounds}회 · 최고 ${d.best}점` : '미도전', pt: Math.round(d.best * 0.4), max: 40 },
-    { label: '악당 소굴 (미니게임 3종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
+    { label: '악당 소굴 (미니게임 2종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
     { label: '보드 게임 · 규칙 큐브 (컴퓨터와 대결)', state: bOver ? (bBest === 100 ? 'ok' : 'retry') : 'todo', note: bOver ? (bBest === 100 ? '승리!' : '아쉬운 결과 · 최고 ' + bBest + '점') : '미완료', pt: bOver ? Math.round(bBest * 0.3) : 0, max: 30 }
   ];
   const wrong = [...d.wrongAll, ...g.wrongAll.slice(0, 10), ...(st.bgWrong || [])];
@@ -3848,7 +3848,7 @@ const CHAPTERS = [
   { n: 1, v: 'clock', icon: '🛗', title: '멈춘 규칙의 계단', sub: '개념 도구 4개 · 뛰어 세기와 큰 수의 규칙', go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '삐딱이의 함정',     sub: '기본 문제 4개 · 얼마씩·빈칸·10배·거꾸로', go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '다크몽 규칙 시험',  sub: '시험 3개 · 실생활 뛰어 세기 문제',       go: ['s1', 'jump'] },
-  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 3종 · 규칙 큐브',     go: ['s2', 'drill'] },
+  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 2종 · 규칙 큐브',     go: ['s2', 'drill'] },
   { n: 5, v: 'dark',  icon: '🌌', title: '최종 결전',         sub: '13층 규칙의 계단을 다시 움직여라',        go: ['s2', 'result'] }
 ];
 const STEP_CH = { 's1:concept': 1, 's1:basic': 2, 's1:jump': 3, 's1:result': 3, 's2:drill': 4, 's2:game': 4, 's2:board': 4, 's2:result': 5 };
@@ -4083,7 +4083,7 @@ const Story = {
     if (step === 'drill') return { v: 'half', m: '반쪽이의 문제은행! 관문을 하나 통과하면 규칙 탐정의 봉인이 풀려요.' };
     if (step === 'game') {
       const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair;
-      return { v: LAIR_VK[id] || 'dark', m: '악당 소굴! 미니게임 3종(징검다리·스네이크·규칙 빙고)을 모두 클리어하자.' };
+      return { v: LAIR_VK[id] || 'dark', m: '악당 소굴! 미니게임 2종(징검다리·스네이크·규칙 빙고)을 모두 클리어하자.' };
     }
     if (step === 'board') return { v: 'clock', m: '시간도둑의 규칙 큐브! 뛰어 세기 줄과 10배 묶음으로 손 타일을 모두 내려놓자.' };
     return { v: 'dark', m: '부하 넷을 모두 물리치면 다크몽의 봉인이 풀려요!' };
@@ -9540,7 +9540,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 /* 위로 올린 조작 안내 띠 */
 .svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
-</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '두 가지 · 2종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
     c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
@@ -9566,5 +9566,6 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
+<!--BGUP-START--><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["bingo"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><!--BGUP-END-->
 </body>
 </html>
