@@ -13512,5 +13512,58 @@ html.svarena body{padding-top:62px!important}
 <!--MOB-START--><style>@media (max-width:900px){html body button#scratchFab#scratchFab{font-size:0!important;line-height:0!important;letter-spacing:0!important;color:transparent!important;width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border-radius:50%!important;right:8px!important;display:flex!important;align-items:center;justify-content:center;opacity:.92;overflow:hidden;white-space:nowrap}
 html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;line-height:1;color:#fff}}
 </style><!--MOB-END-->
+<!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
+/* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
+.card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}
+.card:has(>.lair)>.vrow .vbub{font-size:1.05rem}
+.card:has(>.lair)>.mt-3:has(>.seg){display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;text-align:center}
+.card:has(>.lair)>.mt-3:has(>.seg)>.seg{margin-top:0!important}
+.card:has(>.lair)>.mt-3:has(>.seg) .seg button{font-size:1rem;padding:.55rem 1.1rem}
+.lair{gap:22px!important;align-items:stretch}
+.lair:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,560px))!important;justify-content:center}
+.lair:has(>:only-child){grid-template-columns:minmax(0,640px)!important;justify-content:center}
+.lair:has(>:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.lair>.lcol{display:flex;flex-direction:column;gap:8px}.lair>.lcol>.lcard{flex:1}
+.lair .lcard{min-height:230px;display:flex!important;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:left}
+.lair .lcard .ln{font-size:1.6rem!important;line-height:1.2}
+.lair .lcard>.row .ls{font-size:.92rem!important}
+.lair .lcard>.ls{font-size:1.02rem!important;line-height:1.65!important;margin-top:12px!important}
+.lair .lcard>.ls:last-child{margin-top:auto!important;padding-top:10px;font-size:1.1rem!important}
+.lair .lcard .vav{width:68px!important;height:68px!important}.lair .lcard>.row img{width:68px;height:68px}
+.card:has(>.lair)>.guiderow{justify-content:center;flex-wrap:wrap}
+@media(max-width:700px){.lair:has(>:nth-child(2):last-child),.lair:has(>:nth-child(3):last-child),.lair:has(>:only-child){grid-template-columns:minmax(0,1fr)!important}.lair .lcard{min-height:0}}
+/* 개념 도구 마무리 화면(svsl-fin): 그림 아래로 쌓여 작아지던 정리·식 칸을 그림 오른쪽으로 → 빈 곳 없이 크게 */
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl),.svsl-tc.svsl-fin .svsl-main>div:has(>:first-child):has(.andone){display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:center;width:100%!important;max-width:none!important}
+.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap{margin:0!important}.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap svg{width:100%!important;height:auto!important}
+.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbhint{display:none}}
+/* 위로 올린 조작 안내 띠 */
+.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
+.svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+(function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
+  function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
+    c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
+  try { new MutationObserver(() => fix()).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 개념 도구: 오른쪽 칸 안에 묻혀 있던 조작 안내(.ancap)를 그림 위쪽 큰 안내 띠로 올려요 */
+(function () { function lift() { document.querySelectorAll('.svsl-tc').forEach(c => { const side = c.querySelector(':scope>.svsl-side'), main = c.querySelector(':scope>.svsl-main'); if (!side || !main) return;
+    const cap = side.querySelector('.ancap'); if (!cap) return; const old = main.querySelector(':scope>.uni-cap'); if (old && old.dataset.t === cap.innerHTML) { cap.remove(); return; } if (old) old.remove();
+    const d = document.createElement('div'); d.className = 'uni-cap'; d.dataset.t = cap.innerHTML; d.innerHTML = cap.innerHTML; cap.remove(); main.prepend(d); clearTimeout(lift.t); lift.t = setTimeout(() => { try { dispatchEvent(new Event('resize')); } catch (e) {} }, 60); }); }
+  try { new MutationObserver(lift).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 오늘의 문제 선택 버튼(가 · 나 · 다 …)을 누르면 그림 속 같은 이름의 도형 둘레가 빛나요 */
+(function () { const NS = 'http://www.w3.org/2000/svg';
+  function glow() { document.querySelectorAll('.sv-pk.on, .sv-pk[class*="on"]').forEach(b => { if (!/\bon/.test(b.className)) return;
+    const lab = b.dataset.o || b.textContent.replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/자리|선택/g, '').trim(); if (!lab) return;
+    let box = b.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('svg'); i++) box = box.parentElement; if (!box) return;
+    box.querySelectorAll('svg').forEach(svg => { const old = svg.querySelector('.uni-glow'); const tx = [...svg.querySelectorAll('text')].find(t => t.textContent.trim() === lab);
+      if (old && old.dataset.l === lab) return; if (old) old.remove(); if (!tx) return; const col = tx.getAttribute('fill');
+      const parts = [...svg.querySelectorAll('rect,polygon,path,circle,ellipse')].filter(e => col && e.getAttribute('stroke') === col); if (!parts.length) return;
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; parts.forEach(e => { const r = e.getBBox(); x0 = Math.min(x0, r.x); y0 = Math.min(y0, r.y); x1 = Math.max(x1, r.x + r.width); y1 = Math.max(y1, r.y + r.height); });
+      const g = document.createElementNS(NS, 'rect'); g.setAttribute('class', 'uni-glow'); g.dataset.l = lab; const p = 6;
+      [['x', x0 - p], ['y', y0 - p], ['width', x1 - x0 + 2 * p], ['height', y1 - y0 + 2 * p], ['rx', 8], ['fill', 'none'], ['stroke', '#facc15'], ['stroke-width', 5]].forEach(([k, v]) => g.setAttribute(k, v));
+      svg.insertBefore(g, svg.firstChild.nextSibling); }); });
+    document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
+  try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+  try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+</script><!--UNI-END-->
 </body>
 </html>
