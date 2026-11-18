@@ -8752,13 +8752,13 @@ mgxKit([
     gen() { for (let t = 0; t < 99; t++) { const q = [rnd2(2, 6), rnd2(2, 6), rnd2(2, 6)], V = vol3(q), cards = shuffle(q.concat([rnd2(2, 9), rnd2(2, 9), rnd2(7, 9)])); return { V, q, cards, s: [null, null, null], used: [] }; } },
     view(r) { const cur = r.s.map((x, i) => x == null ? null : r.cards[x]), done = cur.every(x => x != null), v = done ? cur[0] * cur[1] * cur[2] : 0;
       return `<div class="qzq">📋 주문: 부피 <span class="mgeq">${r.V} cm³</span> 인 상자를 만들어 주세요!</div>
-        <div class="mgdim"><div class="mgdfig">${done ? VOX.box(cur[0], cur[1], cur[2], { lab: true, maxW: 260, maxH: 190, color: v === r.V ? 'green' : 'red' }) : VOX.box(3, 2, 2, { maxW: 220, maxH: 150, ghost: true, hid: false })}</div>
+        <div class="mgdim"><div class="mgdfig ${r.sh === 1 ? 'fly' : ''}">${r.sh === 1 ? '<span class="mgdrone">🚁</span>' : ''}${done ? VOX.box(cur[0], cur[1], cur[2], { lab: true, maxW: 260, maxH: 190, color: v === r.V ? 'green' : 'red' }) : VOX.box(3, 2, 2, { maxW: 220, maxH: 150, ghost: true, hid: false })}</div>
           <div class="mgslots">${['가로', '세로', '높이'].map((nm, i) => `<button class="mgslot ${cur[i] != null ? 'on' : ''}" data-an="mgx" data-v="clr:${i}">${nm}<b>${cur[i] != null ? cur[i] + ' cm' : '?'}</b></button>`).join('<span class="mgx">×</span>')}<span class="mgx">=</span><b class="mgvv">${done ? v + ' cm³' : '? cm³'}</b></div></div>
         <div class="mgxrow">${r.cards.map((c, i) => `<button class="mgxb mgcard" data-an="mgx" data-v="card:${i}" ${r.s.includes(i) || r.done ? 'disabled' : ''}>${c}</button>`).join('')}<button class="mgxb go" data-an="mgx" data-v="ship" ${done && !r.done ? '' : 'disabled'}>📦 발송!</button></div>`; },
     on: { card(r, i, a) { i = +i; const k = r.s.indexOf(null); if (k < 0 || r.s.includes(i)) return; r.s[k] = i; a.pop(); },
       clr(r, i) { if (!r.done) r.s[+i] = null; },
       ship(r, v, a) { const cur = r.s.map(x => r.cards[x]); if (cur.some(x => x == null)) return; const vv = cur[0] * cur[1] * cur[2];
-        if (vv === r.V) return a.end(true, `${cur[0]} × ${cur[1]} × ${cur[2]} = ${r.V} → 주문한 ${r.V} cm³ 상자 완성!`); r.s = [null, null, null]; a.slip(`${cur.join(' × ')} = ${vv} cm³예요. 주문은 ${r.V} cm³! 다시 골라 봐요.`, `${r.V} cm³ 주문에 ${cur.join('×')}=${vv}`); } },
+        if (vv === r.V) { r.sh = 1; } if (vv === r.V) return a.end(true, `${cur[0]} × ${cur[1]} × ${cur[2]} = ${r.V} → 주문한 ${r.V} cm³ 상자 완성!`); r.s = [null, null, null]; a.slip(`${cur.join(' × ')} = ${vv} cm³예요. 주문은 ${r.V} cm³! 다시 골라 봐요.`, `${r.V} cm³ 주문에 ${cur.join('×')}=${vv}`); } },
     auto(r) { const ix = []; r.q.forEach(x => { const i = r.cards.findIndex((c, j) => c === x && !ix.includes(j)); ix.push(i); }); return ix.map(i => 'card:' + i).concat(['ship']); } },
   { id: 'sortg', v: 'mixup', name: '부피 순서대로 싣기', title: `🚁 ${VN}의 뒤죽박죽 택배`, goal: '75초 · 작은 상자부터 싣기', dur: 75, pts: 12,
     sub: '드론에는 <b>부피가 작은 상자부터</b> 차례로 실어야 해요. 상자의 가로·세로·높이를 보고 부피를 구해 작은 것부터 눌러요.', desc: '(가로) × (세로) × (높이)로 부피를 구해 비교해요', help: '부피가 작은 상자부터 차례로 눌러 드론에 실어요',
@@ -8778,6 +8778,7 @@ mgxKit([
 .mgpair{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:820px;margin:8px auto}.mgpair.four{grid-template-columns:repeat(4,minmax(0,1fr));max-width:900px}
 .mgpc{background:#fff;border:3px solid #cbd5e1;border-radius:16px;padding:8px 4px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-height:120px;justify-content:center}.mgpc:hover:not(:disabled){border-color:#f59e0b}
 .mgpc.got{border-color:#22c55e;background:#f0fdf4;cursor:default}.mgpc small{font-weight:900;color:#15803d;font-size:1rem}`; document.head.appendChild(st); })();
+(() => { const st = document.createElement('style'); st.textContent = `.mgdfig{position:relative}.mgdfig.fly svg{animation:mgdfly 1.4s ease-in forwards}.mgdrone{position:absolute;left:50%;top:-10px;font-size:2.4rem;transform:translateX(-50%);animation:mgdfly 1.4s ease-in forwards;z-index:2}@keyframes mgdfly{0%{transform:translate(0,0)}25%{transform:translate(0,-18px)}100%{transform:translate(60vw,-260px) scale(.5);opacity:0}}`; document.head.appendChild(st); })();
 const GUIDES = {
   dimg: { title: '🃏 치수 카드로 상자 만들기', color: '#ea580c', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">주문 <b>60 cm³</b><br>5 × 4 × 3 = 60 ⭕ · 6 × 5 × 2 = 60 ⭕</div>', txt: '수 카드를 누르면 가로 → 세로 → 높이 칸에 차례로 들어가요. 칸을 누르면 카드가 빠져요. 곱이 주문한 부피와 같으면 📦 발송!' }, { t: '2. 점수', ill: () => '<div class="gsay">주문대로 발송 = 점수 ⬆<br>부피가 다르면 실수</div>', txt: '세 수를 곱한 값이 주문한 부피가 되도록 골라요. 방법이 여러 가지일 수 있어요.' }] },
   sortg: { title: '🚁 부피 순서대로 싣기', color: '#7c3aed', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">2×3×4 = 24 → 5×2×3 = 30 → 4×4×3 = 48<br>작은 것부터 차례로!</div>', txt: '상자마다 가로·세로·높이를 곱해 부피를 구하고, 가장 작은 상자부터 차례로 눌러요.' }, { t: '2. 점수', ill: () => '<div class="gsay">4개를 순서대로 실으면 점수 ⬆<br>순서가 틀리면 실수</div>', txt: '길이 하나만 보고 고르면 틀리기 쉬워요. 꼭 세 길이를 곱해 봐요.' }] }
@@ -12706,6 +12707,7 @@ body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 @media (max-width:700px){body.svsl-on .sv-j0card .sv-fig,body.svsl-on .sv-j0card .sv-paper{max-width:100%;min-width:0}body.svsl-on .sv-j0card .sv-paper svg{max-width:100%;height:auto}body.svsl-on .sv-j0card .sv-paper [style*="display:flex"]{flex-wrap:wrap}body.svsl-on .sv-j0card .sv-paper .sv-row{flex-wrap:wrap}}
 body.svsl-on .sv-heroboard.svsl-scrolly{overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.svsl-on .sv-heroboard.svsl-scrolly::after{content:'⬇ 위로 밀어 더 보기';position:sticky;bottom:0;align-self:center;display:block;margin:6px auto 0;width:max-content;font-weight:900;font-size:.85rem;color:#fff;background:rgba(109,40,217,.85);border-radius:999px;padding:3px 12px;pointer-events:none}
+body.svsl-on .drimg:empty{display:none}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -13046,6 +13048,10 @@ function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.
   if (!land && z < .86) { q.style.zoom = 1; if (pageCard(q, box, true)) return; }
   q.style.zoom = z.toFixed(3);
   for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > JMIN; i++) { z = Math.max(JMIN, z * .97); q.style.zoom = z.toFixed(3); }
+  /* 아래에 빈 곳이 남으면 넘치기 직전까지 조금씩 키워요 */
+  { const fitsNow = () => { if (box.scrollHeight > box.clientHeight + 1 || q.scrollWidth > q.clientWidth + 2) return false; const bb = box.getBoundingClientRect(), kids = [...box.children].filter(c => c.offsetParent !== null); return Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) <= bb.bottom - 2; };
+    /* 줌을 바꾸면 카드 안 글 줄바꿈도 바뀌어서, 처음 어림한 크기보다 크게 들어갈 수 있어요 → 넘치지 않는 가장 큰 크기를 찾아요 */
+    if (fitsNow()) { let lo = z, hi = JMAX; for (let i = 0; i < 9; i++) { const m = (lo + hi) / 2; q.style.zoom = m.toFixed(3); if (fitsNow()) lo = m; else hi = m; } z = lo; q.style.zoom = z.toFixed(3); } }
   if (box.scrollHeight > box.clientHeight + 1) { q.style.zoom = 1; if (pageCard(q, box, false)) { box.classList.remove('svsl-qscroll'); return; } q.style.zoom = z.toFixed(3); box.classList.add('svsl-qscroll'); } }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
@@ -13059,7 +13065,7 @@ function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-lan
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
   else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
   /* 그림 문제(가로 화면): [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸 전체를 써요 */
-  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig && qt ? qt.querySelector(':scope > .rffig, :scope > .dxfig') : null; let qF = q.querySelector(':scope > .svsl-qF');
+  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig ? ((qt && qt.querySelector(':scope > .rffig, :scope > .dxfig')) || q.querySelector(':scope > .drimg > .rffig, :scope > .drimg > .dxfig, :scope > .svsl-qF > .rffig')) : null; let qF = q.querySelector(':scope > .svsl-qF');
     if (FG) { if (!qF) { qF = document.createElement('div'); qF.className = 'svsl-qF'; q.insertBefore(qF, q.firstChild); } qF.innerHTML = ''; qF.appendChild(FG); }
     else if (qF && (!hasFig || !qF.firstElementChild)) { const f = qF.firstElementChild; if (f && qt) { f.style.zoom = ''; qt.appendChild(f); } qF.remove(); qF = null; }
     q.classList.toggle('svsl-qfL', !!qF); }

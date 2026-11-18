@@ -12705,6 +12705,7 @@ body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 @media (max-width:700px){body.svsl-on .sv-j0card .sv-fig,body.svsl-on .sv-j0card .sv-paper{max-width:100%;min-width:0}body.svsl-on .sv-j0card .sv-paper svg{max-width:100%;height:auto}body.svsl-on .sv-j0card .sv-paper [style*="display:flex"]{flex-wrap:wrap}body.svsl-on .sv-j0card .sv-paper .sv-row{flex-wrap:wrap}}
 body.svsl-on .sv-heroboard.svsl-scrolly{overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.svsl-on .sv-heroboard.svsl-scrolly::after{content:'⬇ 위로 밀어 더 보기';position:sticky;bottom:0;align-self:center;display:block;margin:6px auto 0;width:max-content;font-weight:900;font-size:.85rem;color:#fff;background:rgba(109,40,217,.85);border-radius:999px;padding:3px 12px;pointer-events:none}
+body.svsl-on .drimg:empty{display:none}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -13045,6 +13046,10 @@ function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.
   if (!land && z < .86) { q.style.zoom = 1; if (pageCard(q, box, true)) return; }
   q.style.zoom = z.toFixed(3);
   for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > JMIN; i++) { z = Math.max(JMIN, z * .97); q.style.zoom = z.toFixed(3); }
+  /* 아래에 빈 곳이 남으면 넘치기 직전까지 조금씩 키워요 */
+  { const fitsNow = () => { if (box.scrollHeight > box.clientHeight + 1 || q.scrollWidth > q.clientWidth + 2) return false; const bb = box.getBoundingClientRect(), kids = [...box.children].filter(c => c.offsetParent !== null); return Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) <= bb.bottom - 2; };
+    /* 줌을 바꾸면 카드 안 글 줄바꿈도 바뀌어서, 처음 어림한 크기보다 크게 들어갈 수 있어요 → 넘치지 않는 가장 큰 크기를 찾아요 */
+    if (fitsNow()) { let lo = z, hi = JMAX; for (let i = 0; i < 9; i++) { const m = (lo + hi) / 2; q.style.zoom = m.toFixed(3); if (fitsNow()) lo = m; else hi = m; } z = lo; q.style.zoom = z.toFixed(3); } }
   if (box.scrollHeight > box.clientHeight + 1) { q.style.zoom = 1; if (pageCard(q, box, false)) { box.classList.remove('svsl-qscroll'); return; } q.style.zoom = z.toFixed(3); box.classList.add('svsl-qscroll'); } }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
@@ -13058,7 +13063,7 @@ function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-lan
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
   else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
   /* 그림 문제(가로 화면): [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸 전체를 써요 */
-  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig && qt ? qt.querySelector(':scope > .rffig, :scope > .dxfig') : null; let qF = q.querySelector(':scope > .svsl-qF');
+  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig ? ((qt && qt.querySelector(':scope > .rffig, :scope > .dxfig')) || q.querySelector(':scope > .drimg > .rffig, :scope > .drimg > .dxfig, :scope > .svsl-qF > .rffig')) : null; let qF = q.querySelector(':scope > .svsl-qF');
     if (FG) { if (!qF) { qF = document.createElement('div'); qF.className = 'svsl-qF'; q.insertBefore(qF, q.firstChild); } qF.innerHTML = ''; qF.appendChild(FG); }
     else if (qF && (!hasFig || !qF.firstElementChild)) { const f = qF.firstElementChild; if (f && qt) { f.style.zoom = ''; qt.appendChild(f); } qF.remove(); qF = null; }
     q.classList.toggle('svsl-qfL', !!qF); }
