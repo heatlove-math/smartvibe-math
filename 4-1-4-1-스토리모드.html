@@ -11544,5 +11544,91 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
+<!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
+/* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
+.card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}
+.card:has(>.lair)>.vrow .vbub{font-size:1.05rem}
+.card:has(>.lair)>.mt-3:has(>.seg){display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;text-align:center}
+.card:has(>.lair)>.mt-3:has(>.seg)>.seg{margin-top:0!important}
+.card:has(>.lair)>.mt-3:has(>.seg) .seg button{font-size:1rem;padding:.55rem 1.1rem}
+.lair{gap:22px!important;align-items:stretch}
+.lair:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,560px))!important;justify-content:center}
+.lair:has(>:only-child){grid-template-columns:minmax(0,640px)!important;justify-content:center}
+.lair:has(>:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.lair>.lcol{display:flex;flex-direction:column;gap:8px}.lair>.lcol>.lcard{flex:1}
+.lair .lcard{min-height:230px;display:flex!important;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:left}
+.lair .lcard .ln{font-size:1.6rem!important;line-height:1.2}
+.lair .lcard>.row .ls{font-size:.92rem!important}
+.lair .lcard>.ls{font-size:1.02rem!important;line-height:1.65!important;margin-top:12px!important}
+.lair .lcard>.ls:last-child{margin-top:auto!important;padding-top:10px;font-size:1.1rem!important}
+.lair .lcard .vav{width:68px!important;height:68px!important}.lair .lcard>.row img{width:68px;height:68px}
+.card:has(>.lair)>.guiderow{justify-content:center;flex-wrap:wrap}
+@media(max-width:700px){.lair:has(>:nth-child(2):last-child),.lair:has(>:nth-child(3):last-child),.lair:has(>:only-child){grid-template-columns:minmax(0,1fr)!important}.lair .lcard{min-height:0}}
+/* 개념 도구 마무리 화면(svsl-fin): 그림 아래로 쌓여 작아지던 정리·식 칸을 그림 오른쪽으로 → 빈 곳 없이 크게 */
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl),.svsl-tc.svsl-fin .svsl-main>div:has(>:first-child):has(.andone){display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:center;width:100%!important;max-width:none!important}
+.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap{margin:0!important}.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap svg{width:100%!important;height:auto!important}
+.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbhint{display:none}}
+/* 위로 올린 조작 안내 띠 */
+.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
+.svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+(function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
+  function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
+    c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
+  try { new MutationObserver(() => fix()).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 개념 도구: 오른쪽 칸 안에 묻혀 있던 조작 안내(.ancap)를 그림 위쪽 큰 안내 띠로 올려요 */
+(function () { function lift() { document.querySelectorAll('.svsl-tc').forEach(c => { const side = c.querySelector(':scope>.svsl-side'), main = c.querySelector(':scope>.svsl-main'); if (!side || !main) return;
+    const cap = side.querySelector('.ancap'); if (!cap) return; const old = main.querySelector(':scope>.uni-cap'); if (old && old.dataset.t === cap.innerHTML) { cap.remove(); return; } if (old) old.remove();
+    const d = document.createElement('div'); d.className = 'uni-cap'; d.dataset.t = cap.innerHTML; d.innerHTML = cap.innerHTML; cap.remove(); main.prepend(d); clearTimeout(lift.t); lift.t = setTimeout(() => { try { dispatchEvent(new Event('resize')); } catch (e) {} }, 60); }); }
+  try { new MutationObserver(lift).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 오늘의 문제 선택 버튼(가 · 나 · 다 …)을 누르면 그림 속 같은 이름의 도형 둘레가 빛나요 */
+(function () { const NS = 'http://www.w3.org/2000/svg';
+  function glow() { document.querySelectorAll('.sv-pk.on, .sv-pk[class*="on"]').forEach(b => { if (!/\bon/.test(b.className)) return;
+    const lab = b.dataset.o || b.textContent.replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/자리|선택/g, '').trim(); if (!lab) return;
+    let box = b.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('svg'); i++) box = box.parentElement; if (!box) return;
+    box.querySelectorAll('svg').forEach(svg => { const old = svg.querySelector('.uni-glow'); const tx = [...svg.querySelectorAll('text')].find(t => t.textContent.trim() === lab);
+      if (old && old.dataset.l === lab) return; if (old) old.remove(); if (!tx) return; const col = tx.getAttribute('fill');
+      const parts = [...svg.querySelectorAll('rect,polygon,path,circle,ellipse')].filter(e => col && e.getAttribute('stroke') === col); if (!parts.length) return;
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; parts.forEach(e => { const r = e.getBBox(); x0 = Math.min(x0, r.x); y0 = Math.min(y0, r.y); x1 = Math.max(x1, r.x + r.width); y1 = Math.max(y1, r.y + r.height); });
+      const g = document.createElementNS(NS, 'rect'); g.setAttribute('class', 'uni-glow'); g.dataset.l = lab; const p = 6;
+      [['x', x0 - p], ['y', y0 - p], ['width', x1 - x0 + 2 * p], ['height', y1 - y0 + 2 * p], ['rx', 8], ['fill', 'none'], ['stroke', '#facc15'], ['stroke-width', 5]].forEach(([k, v]) => g.setAttribute(k, v));
+      svg.insertBefore(g, svg.firstChild.nextSibling); }); });
+    document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
+  try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+  try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+</script><!--UNI-END-->
+<!--BGUP-START--><script>/* 4-1-3 보드게임 덧입힘 공통: 판이 다시 그려질 때마다 무대 소품을 붙여요 (규칙·점수는 건드리지 않아요) */
+(function () {
+  function deco() { const T = window.BGUP || {}; const t = document.querySelector('#boardArea>.tltable'); if (!t || t.dataset.bgup) return; t.dataset.bgup = '1'; t.classList.add('bgup', 'bgup-' + T.key);
+    t.insertAdjacentHTML('afterbegin', '<div class="bgu-awn"></div><div class="bgu-lights">' + '<i></i>'.repeat(16) + '</div>' + (T.side ? `<div class="bgu-side l">${T.side[0]}</div><div class="bgu-side r">${T.side[1] || T.side[0]}</div>` : ''));
+    const lg = t.querySelector('.blog'); if (lg && T.host && !lg.querySelector('.bgu-host')) lg.insertAdjacentHTML('afterbegin', `<span class="bgu-host" title="${T.hostName || ''}">${T.host}</span>`);
+    try { T.after && T.after(t, state.s2.au); } catch (e) {} }
+  try { new MutationObserver(deco).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+
+/* 4-1-4-1 모눈 발자국: 화살표 시작점·점·끝점을 모눈 교차점에 맞춰요 (도형 안의 가장 가까운 모눈 점 = 대응점) */
+(function () { if (typeof GBT === 'undefined' || !GBT.arrow || GBT.arrow.__grid) return;
+  const g = p => [Math.round(p[0] / SLC) * SLC, Math.round(p[1] / SLC) * SLC], A = GBT.arrow;
+  const ends = t => { const sh = SL_SHAPES.dodu, a = g(slCen(sh.pts, t.from[0], t.from[1], SLC)); return [a, [a[0] + (t.to[0] - t.from[0]) * SLC, a[1] + (t.to[1] - t.from[1]) * SLC]]; };
+  A.__grid = 1;
+  A.inner = function () { const t = AN_().arrow, sh = SL_SHAPES.dodu; let s = gbGrid();
+    s += slPoly(sh.pts, t.from[0], t.from[1], SLC, { fill: '#f1f5f9', line: '#94a3b8', dash: '6 4', sw: 2.5 });
+    s += slPoly(sh.pts, t.to[0], t.to[1], SLC, { fill: sh.fill, line: sh.line, sw: 3 });
+    s += slLab(sh.pts, t.from[0], t.from[1], SLC, '가', '#64748b', [sh.pts, t.to[0], t.to[1]]);
+    s += slLab(sh.pts, t.to[0], t.to[1], SLC, '나', sh.line, [sh.pts, t.from[0], t.from[1]]);
+    const [a, b] = ends(t), hd = t.head || a;
+    s += '<circle cx="' + f1(a[0]) + '" cy="' + f1(a[1]) + '" r="5" fill="#64748b"/>' + '<circle cx="' + f1(b[0]) + '" cy="' + f1(b[1]) + '" r="5" fill="' + sh.line + '"/>';
+    if (t.reached) s += slArrow(a, b, '#16a34a', true); else s += slArrow(a, hd, '#ea580c', true);
+    if (!t.reached && !bdg('arrow')) s += knob(hd, 'ah', '#ea580c', '');
+    const d = SL_DIR[t.dir]; for (let k = 1; k <= t.n; k++) { const q = [a[0] + d[0] * SLC * k, a[1] + d[1] * SLC * k]; s += '<circle cx="' + f1(q[0]) + '" cy="' + f1(q[1]) + '" r="3.5" fill="#94a3b8"/>'; }
+    return s; };
+  A.drag = function (h, p) { const t = AN_().arrow; if (h !== 'ah' || t.reached) return; const [a] = ends(t);
+    const cx = clampN(Math.round(p[0] / SLC) * SLC, 0, GBW), cy = clampN(Math.round(p[1] / SLC) * SLC, 0, GBH), dx = cx - a[0], dy = cy - a[1];
+    t.head = Math.abs(dx) >= Math.abs(dy) ? [a[0] + dx, a[1]] : [a[0], a[1] + dy]; };
+  A.up = function (h) { const t = AN_().arrow; if (h !== 'ah' || t.reached || !t.head) return; const [, b] = ends(t);
+    if (dist(t.head, b) < SLC * 0.7) { t.reached = true; t.q = true; t.fb = { ok: true, msg: '화살표가 <b>가</b>에서 <b>나</b>까지 이어졌어요! 이제 방향과 거리를 읽어 봐요.' }; try { Sound.correct(); } catch (e) {} }
+    else t.fb = { ok: false, kind: 'hint', msg: '화살표 끝을 <b>나</b> 도형의 같은 자리(대응점)까지 끌어요. 한 방향으로만 움직여요.' };
+    renderArrow(); };
+  try { renderArrow && document.querySelector('.gbwrap') && renderArrow(); } catch (e) {} })();
+</script><!--BGUP-END-->
 </body>
 </html>
