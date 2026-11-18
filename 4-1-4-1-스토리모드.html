@@ -2768,7 +2768,7 @@ function podiumHTML(list) {
 }
 
 /* =====================================================================
-   악당 소굴 · 미니게임 3종 (4차시 · 억과 조)
+   악당 소굴 · 미니게임 2종 (4차시 · 억과 조)
      ① 뒤죽이의 억·조 자릿수 테트리스 : 떨어지는 수 블록을 알맞은 단위 칸(조·억·만·일)에 쏙! (75초)
      ② 다크몽의 우주 탐사 예산 타이쿤   : 예산 요청서의 금액을 지폐 버튼으로 정확히 결제 (75초)
      ③ 삐딱이의 0-카운터 레이저 슈팅     : 운석에 든 0의 개수를 입력해 레이저로 격추 (60초)
@@ -2800,7 +2800,7 @@ function renderLairHub() {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">세 악당이 억과 조의 세계를 어지럽혀 놓았어요. 미니게임 3종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 억과 조의 세계를 어지럽혀 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
     ${vSay('dark', '하하하! 내 부하들을 모두 이길 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -3530,7 +3530,7 @@ function computeResult(k) {
   const d = st.drill, g = st.game, bOver = !!st.bgOver, bBest = st.bgBest || 0;
   const items = [
     { label: '문제은행 드릴', state: d.rounds ? 'ok' : 'todo', note: d.rounds ? `${d.rounds}회 · 최고 ${d.best}점` : '미도전', pt: Math.round(d.best * 0.4), max: 40 },
-    { label: '악당 소굴 (미니게임 3종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
+    { label: '악당 소굴 (미니게임 2종)', state: g.plays ? 'ok' : 'todo', note: g.plays ? `${g.plays}회 · 최고 ${g.best}점` : '미도전', pt: Math.round(g.best * 0.3), max: 30 },
     { label: '보드 게임 · 밀기 예측 레이스 (컴퓨터와 대결)', state: bOver ? (bBest === 100 ? 'ok' : 'retry') : 'todo', note: bOver ? (bBest === 100 ? '승리!' : '아쉬운 결과 · 최고 ' + bBest + '점') : '미완료', pt: bOver ? Math.round(bBest * 0.3) : 0, max: 30 }
   ];
   const wrong = [...d.wrongAll, ...g.wrongAll.slice(0, 10), ...(st.bgWrong || [])];
@@ -4138,7 +4138,7 @@ const CHAPTERS = [
   { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 6개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '삐딱이의 함정',     sub: '기본 문제 4개 · 억과 조 읽고 쓰기',        go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '다크몽 보스전',     sub: '방어막 3겹 · 실생활 큰 수 문제 3개',        go: ['s1', 'jump'] },
-  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 3종 · 수호석 경매전', go: ['s2', 'drill'] },
+  { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 2종 · 수호석 경매전', go: ['s2', 'drill'] },
   { n: 5, v: 'dark',  icon: '🌌', title: '최종 결전',         sub: '13층 조의 문을 열어라',                    go: ['s2', 'result'] }
 ];
 const STEP_CH = { 's1:concept': 1, 's1:basic': 2, 's1:jump': 3, 's1:result': 3, 's2:drill': 4, 's2:game': 4, 's2:board': 4, 's2:result': 5 };
@@ -4375,7 +4375,7 @@ const Story = {
     if (step === 'game') {
       const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair;
       const vk = LAIR_VK[id] || 'dark';
-      return { v: vk, m: '악당 소굴! 미니게임 3종(수 테트리스·예산 타이쿤·0 레이저 슈팅)을 모두 클리어하자.' };
+      return { v: vk, m: '악당 소굴! 미니게임 2종(수 테트리스·예산 타이쿤·0 레이저 슈팅)을 모두 클리어하자.' };
     }
     if (step === 'board') {
       const au = (state.s2 || {}).au;
@@ -4518,7 +4518,7 @@ const Story = {
       if (p.dark) { t = '👑 ENDING — 13층 조의 문 개방!'; d = '삐딱이·뒤죽이·시간도둑·반쪽이를 모두 물리치고 억과 조의 수호석을 완성했어요. 1억부터 1조까지, 네 자리씩 끊어 읽는 법을 모두 되찾았습니다!'; }
       else {
         t = '👑 다크몽 HP ' + p.darkHp;
-        d = `부하 격파 ${p.downs}/4 (삐딱이·뒤죽이·시간도둑·반쪽이) · 문제은행 ${p.drill ? '완료' : '미완료'} · 소굴 미니게임 ${[p.lair.tilt, p.lair.mixup, p.lair.dark].filter(Boolean).length}/3 · 보드 게임 ${p.board ? '완료' : '미완료'}. 남은 활동을 끝내면 최종 결전이 열려요.`;
+        d = `부하 격파 ${p.downs}/4 (삐딱이·뒤죽이·시간도둑·반쪽이) · 문제은행 ${p.drill ? '완료' : '미완료'} · 소굴 미니게임 ${[p.lair.tilt, p.lair.mixup, p.lair.dark].filter(Boolean).length - 1}/2 · 보드 게임 ${p.board ? '완료' : '미완료'}. 남은 활동을 끝내면 최종 결전이 열려요.`;
       }
     }
     card.insertAdjacentHTML('beforeend', `<div class="stepi"><div class="et">${t}</div><div class="ed">${d}</div>
@@ -5882,7 +5882,7 @@ renderLairHub = function () {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">세 악당이 무대의 짐과 인형을 어지럽혀 놓았어요. 미니게임 3종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 무대의 짐과 인형을 어지럽혀 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
     ${vSay('dark', '하하하! 내 부하들의 밀기 함정을 모두 이길 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -6811,7 +6811,7 @@ ESSAY.push(
 
 
 /* =====================================================================
-   악당 소굴 · 미니게임 3종
+   악당 소굴 · 미니게임 2종
    ===================================================================== */
 LAIR.length = 0;
 LAIR.push(
@@ -7448,7 +7448,7 @@ CHAPTERS.push(
   { n: 1, v: 'mixup', icon: '🎭', title: '그림자 극장', sub: '개념 도구 4개 · 밀기와 방향·거리', go: ['s1', 'concept'] },
   { n: 2, v: 'tilt', icon: '✏️', title: '삐딱이의 함정', sub: '기본 문제 4개 · 밀기 판별', go: ['s1', 'basic'] },
   { n: 3, v: 'dark', icon: '👑', title: '다크몽 보스전', sub: '방어막 3겹 · 세트 설치·기록 대회·실수 찾기', go: ['s1', 'jump'] },
-  { n: 4, v: 'clock', icon: '🎮', title: '악당 소굴', sub: '문제은행 · 미니게임 3종 · 밀기 예측 레이스', go: ['s2', 'drill'] },
+  { n: 4, v: 'clock', icon: '🎮', title: '악당 소굴', sub: '문제은행 · 미니게임 2종 · 밀기 예측 레이스', go: ['s2', 'drill'] },
   { n: 5, v: 'dark', icon: '🎬', title: '최종 결전', sub: '공연의 막을 올려라', go: ['s2', 'result'] });
 _repl(ST_TOOLV, TOOL_VK);
 _repl(ST_TOOLM, {
@@ -7551,7 +7551,7 @@ Story.stepV = function () {
     return { v: 'dark', m: '그림자 극장 탐험 보고서를 작성해 선생님께 제출하자.' };
   }
   if (step === 'drill') return { v: 'clock', m: '시간도둑의 밀기 문제은행! 관문을 하나 통과하면 봉인이 풀려요.' };
-  if (step === 'game') { const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair; return { v: LAIR_VK[id] || 'dark', m: '악당 소굴! 미니게임 3종(창고 컨베이어·자리 예측·짐 옮기기)을 모두 클리어하자.' }; }
+  if (step === 'game') { const gm = ((state.s2 || {}).game || {}), id = gm.phase === 'setup' ? null : gm.lair; return { v: LAIR_VK[id] || 'dark', m: '악당 소굴! 미니게임 2종(창고 컨베이어·자리 예측·짐 옮기기)을 모두 클리어하자.' }; }
   if (step === 'board') return { v: 'mixup', m: '뒤죽이의 밀기 예측 레이스! 몇 번 밀면 되는지 읽어 내면 이겨요.' };
   return { v: 'dark', m: '부하 넷을 모두 물리치면 다크몽의 봉인이 풀려요!' };
 };
@@ -11571,7 +11571,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 /* 위로 올린 조작 안내 띠 */
 .svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
-</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
+</style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '두 가지 · 2종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
     c.querySelectorAll('.stage-head .sub, .stage-head .h2').forEach(e => { const h = e.innerHTML, t = h.replace(/(세|두|네) 가지 교란 마법/g, W[n] + ' 가지 교란 마법').replace(/미니게임 \d종/g, '미니게임 ' + n + '종'); if (t !== h) e.innerHTML = t; }); }); }
@@ -11597,7 +11597,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
-<!--BGUP-START--><script>/* 4-1-3 보드게임 덧입힘 공통: 판이 다시 그려질 때마다 무대 소품을 붙여요 (규칙·점수는 건드리지 않아요) */
+<!--BGUP-START--><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["conv"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><script>/* 4-1-3 보드게임 덧입힘 공통: 판이 다시 그려질 때마다 무대 소품을 붙여요 (규칙·점수는 건드리지 않아요) */
 (function () {
   function deco() { const T = window.BGUP || {}; const t = document.querySelector('#boardArea>.tltable'); if (!t || t.dataset.bgup) return; t.dataset.bgup = '1'; t.classList.add('bgup', 'bgup-' + T.key);
     t.insertAdjacentHTML('afterbegin', '<div class="bgu-awn"></div><div class="bgu-lights">' + '<i></i>'.repeat(16) + '</div>' + (T.side ? `<div class="bgu-side l">${T.side[0]}</div><div class="bgu-side r">${T.side[1] || T.side[0]}</div>` : ''));
@@ -11629,6 +11629,26 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
     else t.fb = { ok: false, kind: 'hint', msg: '화살표 끝을 <b>나</b> 도형의 같은 자리(대응점)까지 끌어요. 한 방향으로만 움직여요.' };
     renderArrow(); };
   try { renderArrow && document.querySelector('.gbwrap') && renderArrow(); } catch (e) {} })();
+/* 짐 옮기기 퍼즐: 끄는 동안 짐이 손을 따라 미끄러지는 모습(유령 짐 + 길) · 놓으면 짐이 쭉 미끄러져 도착 */
+(function () { if (typeof CG === 'undefined' || typeof GBT === 'undefined' || !GBT.cargo || GBT.cargo.__fx) return; GBT.cargo.__fx = 1;
+  const C = GBT.cargo, pts = () => SL_SHAPES.box.pts;
+  C.inner = function () { const P = pts(); let s = slGridSVG(CGCOL * CGC, CGROW * CGC, CGC);
+    s += '<rect x="0" y="0" width="' + (CGCOL * CGC) + '" height="' + CGC + '" fill="#f1f5f9"/>' + gbText(CGCOL * CGC / 2, CGC - 9, '🚚 짐 옮기기 · 모눈 한 칸 = 1cm', '#64748b', 14);
+    CG.walls.forEach(w => { s += '<rect x="' + (w[0] * CGC) + '" y="' + (w[1] * CGC) + '" width="' + CGC + '" height="' + CGC + '" fill="#94a3b8"/>' + gbText(w[0] * CGC + CGC / 2, w[1] * CGC + CGC / 2 + 6, '🧱', '#fff', 15); });
+    s += slPoly(P, CG.goal[0], CG.goal[1], CGC, { fill: 'rgba(34,197,94,.18)', line: '#16a34a', sw: 3, dash: '7 4' }) + slLab(P, CG.goal[0], CG.goal[1], CGC, '🎯', '#15803d');
+    const g = CG.ghost; if (g && !CG.done && (g[0] !== CG.box[0] || g[1] !== CG.box[1])) { const mv = slDirOf(CG.box, g), ok = mv && CG.canSlide(CG.box, mv.dir, mv.n), col = ok ? '#2563eb' : '#dc2626';
+      const w = slW(P), h = slH(P), a = [(CG.box[0] + w / 2) * CGC, (CG.box[1] + h / 2) * CGC], b = [(g[0] + w / 2) * CGC, (g[1] + h / 2) * CGC];
+      s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="' + col + '" stroke-width="5" stroke-dasharray="10 7" stroke-linecap="round" opacity=".8"/>';
+      s += slPoly(P, g[0], g[1], CGC, { fill: ok ? 'rgba(254,215,170,.75)' : 'rgba(254,202,202,.75)', line: col, sw: 3, dash: '6 4' });
+      if (mv) s += gbText(b[0], b[1] + 7, (ok ? '' : '🚧 ') + mv.n + 'cm', col, 20); }
+    s += '<g class="cg-box">' + slPoly(P, CG.box[0], CG.box[1], CGC, { fill: '#fed7aa', line: '#c2410c', sw: 3 }) + slLab(P, CG.box[0], CG.box[1], CGC, '📦', '#7c2d12');
+    if (!CG.done) s += slKnob(P, CG.box, CGC, 'cg', '#c2410c', ''); return s + '</g>'; };
+  const slide0 = CG.slide.bind(CG); CG.slide = function (cell) { const from = CG.box.slice(); slide0(cell); const to = CG.box;
+    if (from[0] === to[0] && from[1] === to[1]) return; const gEl = document.querySelector('#cargoStage .cg-box'), svg = gEl && gEl.ownerSVGElement; if (!gEl) return;
+    const dx = (from[0] - to[0]) * CGC, dy = (from[1] - to[1]) * CGC, n = Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1]);
+    gEl.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; gEl.getBoundingClientRect();
+    gEl.style.transition = 'transform ' + Math.min(.9, .18 + n * .07) + 's cubic-bezier(.25,.8,.35,1.1)'; gEl.style.transform = 'none'; };
+  try { const s = document.createElement('style'); s.textContent = '#cargoStage .cg-box{transform-box:view-box}'; document.head.appendChild(s); } catch (e) {} })();
 </script><!--BGUP-END-->
 </body>
 </html>
