@@ -5802,7 +5802,22 @@ body{background:radial-gradient(circle at 1px 1px,rgba(2,132,199,.15) 1.5px,tran
 .vkrul{display:inline-block;padding:4px 10px;border-radius:10px;font-weight:900}.vkrul.m{background:#ccfbf1;color:#0f766e}.vkrul.c{background:#fef3c7;color:#92400e}
 
 .vkzlp{display:inline-block;cursor:grab;touch-action:none}.vkzlast{font-style:normal;color:#ea580c;background:#ffedd5;border:3px dashed #ea580c;border-radius:12px;padding:0 6px;animation:vkzw 1.2s infinite}@keyframes vkzw{50%{transform:translateY(-4px)}}
-.vkzbinw{display:flex;flex-direction:column;align-items:center;gap:4px;margin:8px 0}.vkzbin{display:inline-flex;align-items:center;gap:8px;min-width:240px;min-height:64px;justify-content:center;border:3px dashed #94a3b8;border-radius:16px;background:#f8fafc;font-weight:900;font-size:1.2rem}.vkzbin b{font-family:'Jua',sans-serif;font-size:1.8rem;color:#ea580c;letter-spacing:2px}.vkzbin.dzover{background:#fee2e2;border-color:#ef4444}.vkzbinw small{font-weight:800;color:#64748b}</style>
+.vkzbinw{display:flex;flex-direction:column;align-items:center;gap:4px;margin:8px 0}.vkzbin{display:inline-flex;align-items:center;gap:8px;min-width:240px;min-height:64px;justify-content:center;border:3px dashed #94a3b8;border-radius:16px;background:#f8fafc;font-weight:900;font-size:1.2rem}.vkzbin b{font-family:'Jua',sans-serif;font-size:1.8rem;color:#ea580c;letter-spacing:2px}.vkzbin.dzover{background:#fee2e2;border-color:#ef4444}.vkzbinw small{font-weight:800;color:#64748b}
+/* 겉넓이 */
+.vkunfo{position:relative;display:flex;align-items:center;justify-content:center;min-height:260px}.vkunfo>div{transition:opacity .2s,transform .2s}.vkunfn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vkhnet{position:relative;margin:6px auto}.vkhf{position:absolute;box-sizing:border-box;border:2px dashed #475569;background:var(--fc);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;color:#1e293b;transition:background .2s}
+.vkhf small{font-size:.8rem}.vkhf b{font-size:.9rem;color:#15803d}.vkhf.ckzone.dzover{outline:4px solid #f59e0b;z-index:2}
+.vkfcard{display:inline-flex;align-items:center;justify-content:center;border:2px solid #334155;border-radius:4px;font-weight:900;font-size:.85rem;color:#1e293b}
+.vkwc{position:absolute;box-sizing:border-box;border:1px solid rgba(71,85,105,.35);background:#fff;padding:0;margin:0;touch-action:none;cursor:crosshair}.vkwc.on{background:var(--fc)}
+.vkwt{position:absolute;transform:translate(-50%,-50%);background:rgba(255,255,255,.9);border-radius:8px;padding:1px 6px;font-weight:900;font-size:.78rem;text-align:center;pointer-events:none;line-height:1.2}.vkwt b{display:block;font-size:1rem;color:#0f766e}
+.vkwbox{display:flex;justify-content:center}
+.vkmach{margin-top:8px;border:4px solid #64748b;border-radius:16px;background:linear-gradient(#f1f5f9,#e2e8f0);padding:6px 10px;min-height:110px;width:100%;box-sizing:border-box}.vkmach.dzover{border-color:#f59e0b;background:#fef3c7}
+.vkmh{font-family:'Jua',sans-serif;font-size:1.2rem;color:#334155;text-align:center}.vkmo{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;align-items:flex-end}.vkmp{display:flex;flex-direction:column;align-items:center;gap:3px}.vkmp em{font-style:normal;font-weight:900;font-size:.85rem}.vkmp .vkpt+.vkpt{margin-top:-4px;animation:vkcopy .5s ease-out}
+@keyframes vkcopy{0%{transform:translateY(-14px);opacity:0}100%{transform:none;opacity:1}}
+.vkpt{display:inline-flex;align-items:center;justify-content:center;border:2px solid #334155;border-radius:3px}.vkpt small{font-weight:900;font-size:.75rem;background:rgba(255,255,255,.75);border-radius:4px;padding:0 3px}.vkpn{display:block;font-style:normal;font-weight:900;font-size:.8rem;text-align:center;margin-top:2px}
+.vkstrip{position:absolute;display:flex;box-sizing:border-box;border:2.5px solid #334155;background:#fca5a5;transition:background .3s}.vkstrip.one{background:linear-gradient(90deg,#fda4af,#fca5a5);box-shadow:0 0 0 4px #fde68a}.vkstrip span{height:100%;box-sizing:border-box}
+.vkstl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#7f1d1d}
+.vkbrace{position:absolute;left:0;text-align:center;font-weight:900;color:#b91c1c;border-top:3px solid #b91c1c;padding-top:2px}</style>
 <script>
 /* 6-1 6단원 1차시 · 1 cm³ 알아보기 */
 window.G56_CFG = { partner: 'ox', villain: 'volumeking', vname: '볼륨 킹',
@@ -8013,7 +8028,83 @@ const VK = (() => {
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
       _solve(d, on) { [0, 1, 2].forEach(i => { on(KR + ':drop', 'm', KR, { dataset: { i: String(i) } }); on(KR + ':drop', 'c', KR, { dataset: { i: String(i) } }); }); on('act:mxchk', 'auto', null); } });
   }
-  return { face, fillcmp, layer, shape, fillFront, explode, lift, grow, cube, meter, zeros, rulers, knob, K };
+  /* ===================== 겉넓이 (4차시) ===================== */
+  /* 전개도를 HTML로: 면 [옆 b | 앞 a | 옆 b | 뒤 a], 앞의 위·아래에 윗면·아랫면 — 면 번호 0 옆L 1 앞 2 옆R 3 뒤 4 위 5 아래 */
+  const NETR = (a, b, c) => [[0, b, b, c, 2, '옆면'], [b, b, a, c, 0, '앞면'], [b + a, b, b, c, 2, '옆면'], [2 * b + a, b, a, c, 0, '뒷면'], [b, 0, a, b, 1, '윗면'], [b, b + c, a, b, 1, '아랫면']];
+  const PCOL = ['#fca5a5', '#93c5fd', '#86efac'], PSOFT = ['#fee2e2', '#dbeafe', '#dcfce7'];
+  const netU = (a, b, c, W, H) => Math.max(14, Math.min(40, (W || 460) / (2 * a + 2 * b), (H || 300) / (2 * b + c)));
+  const fA = (A, k) => k === 0 ? A[0] * A[2] : k === 1 ? A[0] * A[1] : A[1] * A[2];
+  const SA = A => 2 * (A[0] * A[1] + A[1] * A[2] + A[0] * A[2]);
+  /* ⑫ 상자 펼치기 + 평행한 면 짝 찾기: c = { A, q, rec, win } */
+  function unfold(c) {
+    const [a, b, h] = c.A, KF = 'vk-f', R = NETR(a, b, h), MATE = { 4: 5, 1: 3, 0: 2 };
+    return stage('vkunf', c, {
+      q: d => d.recOK ? '완성!' : d.u < 4 ? c.q : Object.keys(MATE).every(k => d.m[k]) ? (c.q2 || '면의 수와 평행한 면의 특징을 빈칸에 써요.') : '<b>색칠된 면 카드</b>를 끌어 상자에서 그 면과 <b>평행한 면</b>(마주 보는 면)에 겹쳐 봐요.',
+      init: () => ({ u: 0, m: {}, rv: {} }),
+      view: d => { const u = netU(a, b, h, 520, 240);
+        let fig;
+        if (d.u < 4) { const t = d.u / 4; fig = `<div class="vkunfo"><div style="opacity:${1 - t};transform:scale(${1 - t * .3})">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 360, maxH: 260, color: 'cube' })}</div>${d.u ? `<div class="vkunfn" style="opacity:${t}">${VOX.net(a, b, h, { maxW: 420, maxH: 280 })}</div>` : ''}</div>`; }
+        else fig = `<div class="vkhnet" style="width:${(2 * a + 2 * b) * u}px;height:${(2 * b + h) * u}px">${R.map(([x, y, w, hh, k, nm], i) => { const src = +Object.keys(MATE).find(q => MATE[q] === i), done = MATE[i] != null ? true : d.m[src];
+            return `<div class="vkhf ${MATE[i] == null ? 'ckzone' : ''} ${done ? 'on' : ''}" ${MATE[i] == null ? `data-dz="${KF}" data-i="${i}"` : ''} style="left:${x * u}px;top:${y * u}px;width:${w * u}px;height:${hh * u}px;--fc:${done ? PCOL[k] : '#fef9c3'}"><small>${nm}</small>${done && MATE[i] == null ? '<b>✓ 같아요</b>' : ''}</div>`; }).join('')}</div>`;
+        const src = d.u >= 4 ? ckSrc('✋ 색칠된 면 카드를 끌어 평행한 면에 겹쳐요', Object.keys(MATE).filter(k => !d.m[k]).map(k => { const [, , w, hh, kk, nm] = R[k]; return ckPiece(KF, k, `<span class="vkfcard" style="width:${w * u * .8}px;height:${hh * u * .8}px;background:${PCOL[kk]}">${nm}</span>`); }).join('') || '<b style="color:#16a34a">세 쌍을 모두 찾았어요!</b>') : '';
+        return `<div class="vklayer"><div class="vkzone big"><div class="vkfig">${fig}</div><div class="vkcnt">${d.u < 4 ? '손잡이를 오른쪽으로 끌어 상자를 펼쳐 봐요' : '상자를 펼친 전개도예요'}</div></div>
+          <div class="vkside">${d.u < 4 ? `<div class="vkknob">${knob('u', d.u, 0, 4, { axis: 'x', step: 32, inner: '✋<small>펼치기 ➜</small>' })}<span>상자 펼치기</span></div>` : src}</div></div>${setBtn}` + (Object.keys(MATE).every(k => d.m[k]) ? rec(d, c) : ''); },
+      on: { 'act:vkset'(d, v, el, api) { if (!v || v === 'end') return; const [k, x] = v.split(':'); d[k] = +x; if (d.u >= 4 && !d.said) { d.said = 1; api.say(true, '상자를 펼쳤어요! 면이 몇 개인가요? 마주 보는 면끼리 짝을 찾아봐요.'); } },
+        [KF + ':drop'](d, v, z, el, api) { if (z !== KF) return; const i = +el.dataset.i; if (MATE[v] !== i) { const [, , w, hh] = R[v], [, , w2, h2] = R[i]; api.say(false, w * hh === w2 * h2 ? '넓이는 같지만 그 면은 마주 보는 면이 아니에요. 상자를 접었을 때 마주 보는 면을 찾아봐요.' : '크기가 달라서 꼭 겹치지 않아요. 마주 보는 면을 찾아봐요.', true); return; } d.m[v] = 1; pop(); api.clear(); },
+        [KF + ':tap'](d, v, el, api) { MX.dragTip(api); },
+        'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
+      _solve(d, on) { on('act:vkset', 'u:4', null); Object.keys(MATE).forEach(k => on(KF + ':drop', k, KF, { dataset: { i: String(MATE[k]) } })); on('act:mxchk', 'auto', null); } });
+  }
+  /* ⑬ 여섯 면 포장하기(긁어 칠하기): c = { A, q, rec, win } — 모눈 전개도의 칸을 긁어 칠하면 면마다 넓이가 나와요 */
+  function wrap(c) {
+    const [a, b, h] = c.A, R = NETR(a, b, h), cells = []; R.forEach(([x, y, w, hh, k], f) => { for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) cells.push({ x: x + i, y: y + j, f, k }); });
+    const full = (d, f) => cells.every((q, i) => q.f !== f || d.on[i]);
+    return stage('vkwrap', c, {
+      q: d => d.recOK ? '완성!' : cells.every((q, i) => d.on[i]) ? (c.q2 || '면마다 넓이를 보고 겉넓이를 구해요.') : c.q,
+      init: () => ({ on: {}, rv: {} }),
+      view: d => { const u = netU(a, b, h, 540, 250), all = cells.every((q, i) => d.on[i]);
+        const g = cells.map((q, i) => `<button class="vkwc ${d.on[i] ? 'on' : ''}" data-ck="cl" data-v="${i}" style="left:${q.x * u}px;top:${q.y * u}px;width:${u}px;height:${u}px;--fc:${PCOL[q.k]}" ${d.recOK ? 'disabled' : ''}></button>`).join('');
+        const tags = R.map(([x, y, w, hh, k, nm], f) => full(d, f) ? `<span class="vkwt" style="left:${(x + w / 2) * u}px;top:${(y + hh / 2) * u}px">${nm} ✓</span>` : '').join('');
+        const n = cells.filter((q, i) => d.on[i]).length;
+        return `<div class="vklayer"><div class="vkzone big"><div class="vkhnet grid" style="width:${(2 * a + 2 * b) * u}px;height:${(2 * b + h) * u}px">${g}${tags}</div><div class="vkcnt">포장지를 붙인 칸: <b>${n}</b>칸 ${all ? '— 상자를 다 쌌어요! 🎁' : ''}</div></div>
+          <div class="vkside"><div class="vkwbox">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 200, maxH: 130, color: 'cube' })}</div><div class="rxgtip">🖌 모눈을 누른 채로 <b>쭉 긁으면</b> 포장지가 붙어요<br>모눈 한 칸 = 1 cm²</div></div></div>` + (all ? rec(d, c) : ''); },
+      on: { 'act:cl'(d, v, el, api) { if (d.recOK) return; d.on[v] = !d.on[v]; if (cells.every((q, i) => d.on[i]) && !d.said) { d.said = 1; api.say(true, '여섯 면을 모두 쌌어요! 면마다 모눈이 몇 칸인지 세어 봐요.'); } },
+        'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
+      _solve(d, on) { cells.forEach((q, i) => { if (!d.on[i]) on('act:cl', String(i), null); }); on('act:mxchk', 'auto', null); } });
+  }
+  /* ⑭ 세 쌍 × 2 복사기: c = { A, q, rec, win } — 서로 다른 세 면을 끌어 ×2 복사기에 넣어요 */
+  function pairs(c) {
+    const [a, b, h] = c.A, KP = 'vk-p', FACES = [[a, b, 1, '윗면(가로 × 세로)'], [b, h, 2, '옆면(세로 × 높이)'], [a, h, 0, '앞면(가로 × 높이)']];
+    return stage('vkpair', c, {
+      q: d => d.recOK ? '완성!' : d.in.length === 3 ? (c.q2 || '세 면의 넓이를 더해 2배 하면 겉넓이예요. 빈칸을 채워요.') : c.q,
+      init: () => ({ in: [], rv: {} }),
+      view: d => { const u = Math.min(26, 150 / Math.max(a, b, h));
+        const tile = (w, hh, k, nm, cp) => `<span class="vkpt" style="width:${w * u}px;height:${hh * u}px;background:${PCOL[k]}"><small>${cp ? '복사 ' : ''}${w} × ${hh}</small></span>`;
+        const mach = `<div class="vkmach ckzone" data-dz="${KP}" data-i="0"><div class="vkmh">🖨️ ×2 복사기</div><div class="vkmo">${d.in.map(i => { const [w, hh, k, nm] = FACES[i]; return `<div class="vkmp">${tile(w, hh, k, nm)}${tile(w, hh, k, nm, 1)}<em>${nm.split('(')[0]} 2장</em></div>`; }).join('') || '<small>면 카드를 여기에 끌어 넣어요</small>'}</div></div>`;
+        const src = ckSrc('✋ 서로 다른 세 면을 끌어 복사기에 넣어요', FACES.map((F, i) => d.in.includes(i) ? '' : ckPiece(KP, String(i), `${tile(F[0], F[1], F[2], F[3])}<em class="vkpn">${F[3]}</em>`)).join('') || '<b style="color:#16a34a">세 면을 모두 넣었어요!</b>');
+        return `<div class="vklayer"><div class="vkzone big"><div class="vkfig">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 300, maxH: 210, color: 'cube' })}</div>${mach}</div><div class="vkside">${src}</div></div>` + (d.in.length === 3 ? rec(d, c) : ''); },
+      on: { [KP + ':drop'](d, v, z, el, api) { if (z !== KP || d.in.includes(+v)) return; d.in.push(+v); pop(); api.say(true, `${FACES[+v][3].split('(')[0]}과 마주 보는 면은 넓이가 같아서 2장이 돼요!`); },
+        [KP + ':tap'](d, v, el, api) { MX.dragTip(api); },
+        'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
+      _solve(d, on) { [0, 1, 2].forEach(i => on(KP + ':drop', String(i), KP, null)); on('act:mxchk', 'auto', null); } });
+  }
+  /* ⑮ 옆면 한 장으로 펴기: c = { A, q, rec, win } — 손잡이를 끌면 옆면 4개의 접는 선이 사라지고 큰 직사각형 하나가 돼요 */
+  function sides(c) {
+    const [a, b, h] = c.A, R = NETR(a, b, h);
+    return stage('vkside', c, {
+      q: d => d.recOK ? '완성!' : d.s >= 3 ? (c.q2 || '두 밑면과 옆면 한 장의 넓이로 겉넓이를 구해요.') : c.q,
+      init: () => ({ s: 0, rv: {} }),
+      view: d => { const u = netU(a, b, h, 560, 260), done = d.s >= 3, P = 2 * a + 2 * b;
+        const faces = R.map(([x, y, w, hh, k, nm], i) => i < 4 ? '' : `<div class="vkhf on" style="left:${x * u}px;top:${y * u}px;width:${w * u}px;height:${hh * u}px;--fc:${PCOL[1]}"><small>밑면</small><b>${a} × ${b}</b></div>`).join('');
+        const strip = `<div class="vkstrip ${done ? 'one' : ''}" style="left:0;top:${b * u}px;width:${P * u}px;height:${h * u}px">${[b, a, b, a].map((w, i) => `<span style="flex:${w};${i ? `border-left:2px ${done ? 'solid transparent' : 'dashed #334155'}` : ''};opacity:${1}"></span>`).join('')}${done ? `<b class="vkstl">옆면 한 장 · 세로 = 높이 ${h} cm</b>` : ''}</div>`;
+        const brace = done ? `<div class="vkbrace" style="width:${P * u}px;top:${(b + h) * u + b * u + 6}px">↔ 가로 = 밑면의 둘레 (${a} + ${b} + ${a} + ${b})</div>` : '';
+        return `<div class="vklayer"><div class="vkzone big"><div class="vkhnet" style="width:${P * u}px;height:${(2 * b + h) * u + (done ? 30 : 0)}px">${strip}${faces}${brace}</div><div class="vkcnt">${done ? '옆면 4개가 큰 직사각형 한 장이 되었어요!' : '손잡이를 오른쪽으로 끌어 옆면을 한 장으로 펴요'}</div></div>
+          <div class="vkside"><div class="vkwbox">${VOX.box(a, b, h, { lab: { a: a + ' cm', b: b + ' cm', c: h + ' cm' }, maxW: 170, maxH: 110, color: 'cube' })}</div>${done ? '' : `<div class="vkknob">${knob('s', d.s, 0, 3, { axis: 'x', step: 36, inner: '✋<small>펴기 ➜</small>' })}<span>옆면 펴기</span></div>`}</div></div>${setBtn}` + (done ? rec(d, c) : ''); },
+      on: { 'act:vkset'(d, v, el, api) { if (!v || v === 'end') return; const [k, x] = v.split(':'); d[k] = +x; if (d.s >= 3 && !d.said) { d.said = 1; api.say(true, c.mid || '옆면의 가로는 밑면의 둘레, 세로는 높이예요!'); } },
+        'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
+      _solve(d, on) { on('act:vkset', 's:3', null); on('act:mxchk', 'auto', null); } });
+  }
+  return { face, fillcmp, layer, shape, fillFront, explode, lift, grow, cube, meter, zeros, rulers, unfold, wrap, pairs, sides, knob, K, SA };
 })();
 
 /* =====================================================================
