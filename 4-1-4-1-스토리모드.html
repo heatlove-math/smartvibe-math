@@ -933,7 +933,7 @@
         <span class="chip">제작: SmartVibe</span>
         <h1><span class="sv">SmartVibe</span> | 십이지 수학탐험대</h1>
         <div class="lesson">4학년 1학기 · 4단원 평면도형의 이동 · 1차시 <b>밀기 (도형을 밀어 볼까요)</b> · 🗡️ 스토리 모드 EP.1 「그림자 극장」</div>
-        <div class="parade" id="paradeTop" aria-hidden="true">🐭🐮🐯🐰🐲🐍🐴🐑🐵🐔🐶🐷</div>
+        <div class="parade" id="paradeTop" aria-hidden="true">📦🐮🐯🐰🐲🐍🐴🐑🐵🐔🐶🐷</div>
         <div class="villainrow" id="hdrVillains"></div>
       </div>
       <div class="tools">
@@ -972,7 +972,7 @@
   </main>
 
   <footer>
-    <div class="parade" id="paradeFoot">🐭🐮🐯🐰🐲🐍🐴🐑🐵🐔🐶🐷</div>
+    <div class="parade" id="paradeFoot">📦🐮🐯🐰🐲🐍🐴🐑🐵🐔🐶🐷</div>
     <div class="fun" style="font-size:1.1rem">Powered by SmartVibe | 제작: SmartVibe</div>
     <div>SmartVibe · 십이지 수학탐험대 © 2026</div>
   </footer>
@@ -1068,7 +1068,7 @@ const CONFIG = {
 };
 
 /* ---------------------------------------------------------------------
-   🐭 캐릭터 설정 — 캐릭터마다 폴더 하나에 표정·동작 그림을 넣어요.
+   📦 캐릭터 설정 — 캐릭터마다 폴더 하나에 표정·동작 그림을 넣어요.
    예) ./assets/characters/sheep/idle.png, happy.png, wow.png …
    파일 이름(16가지): idle 기본 · happy 기쁨 · wow 놀람 · think 고민 · determined 고집 · wink 윙크 · shy 부끄러움 · sad 아쉬움
                      wait 대기 · jump 점프 · run 달리기 · measure 측정하기 · calc 계산하기 · study 공부 · celebrate 축하하기 · cheer 힘내요
@@ -1076,7 +1076,7 @@ const CONFIG = {
    --------------------------------------------------------------------- */
 const CHAR_DIR = './assets/characters/';
 const CHARS = {
-  rat:     { name: '자람이', area: '수와 연산',   emoji: '🐭', color: '#ff8a1f' },
+  rat:     { name: '자람이', area: '수와 연산',   emoji: '📦', color: '#ff8a1f' },
   ox:      { name: '우직이', area: '측정과 단위', emoji: '🐮', color: '#b7712b' },
   tiger:   { name: '호랑이', area: '',            emoji: '🐯', color: '#f59f00' },
   rabbit:  { name: '토리',   area: '규칙성과 패턴', emoji: '🐰', color: '#f06595' },
@@ -1192,7 +1192,7 @@ function poseAltSrc(key, pose) {
 }
 /* 그림 한 장만 둔 경우를 위한 평면 파일 폴백
    ./assets/characters/jalami.png (자람이) · ./assets/characters/bbitdagi.png (삐딱이)
-   폴더형 그림(idle.png 등)이 모두 없으면 이 파일을 찾고, 그래도 없으면 이모지(🐭 / 😈)로 대체돼요. */
+   폴더형 그림(idle.png 등)이 모두 없으면 이 파일을 찾고, 그래도 없으면 이모지(📦 / 😈)로 대체돼요. */
 const FLAT_SRC = {
   rat:   CHAR_DIR + 'jalami.png',
   tilt:  CHAR_DIR + 'bbitdagi.png',
@@ -5882,7 +5882,7 @@ renderLairHub = function () {
   $('#s2body').innerHTML = `<div class="card">
     <div class="stage-head"><span class="ti" style="background:${VILLAINS.dark.bg}">${avatar('dark', 46, 'idle')}</span>
       <div><span class="stchap">CHAPTER 4-2</span><h2 class="h2">악당 소굴 · 어느 악당과 겨룰까요?</h2>
-      <p class="sub" style="margin:3px 0 0">두 악당이 무대의 짐과 인형을 어지럽혀 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
+      <p class="sub" style="margin:3px 0 0">두 악당이 무대의 짐과 소품을 어지럽혀 놓았어요. 미니게임 2종을 <b>모두 한 번씩</b> 클리어하면 CH.4가 완성되고, 다크몽과의 <b>CH.5 최종 결전</b>이 열려요. 가장 높은 점수가 결과에 반영돼요.</p></div></div>
     ${vSay('dark', '하하하! 내 부하들의 밀기 함정을 모두 이길 수 있겠나?')}
     ${lairModeHTML()}
     <div class="lair mt-3">${LAIR.map(Lx => {
@@ -5955,7 +5955,7 @@ const SL_DAR = { right: '➡', left: '⬅', up: '⬆', down: '⬇' };
 const slBack = d => ({ right: 'left', left: 'right', up: 'down', down: 'up' }[d]);
 const slSay = (d, n) => SL_DNM[d] + '으로 ' + n + 'cm';
 const SL_SHAPES = {
-  dodu:  { nm: '두더지 두두', pts: [[0, 1], [1, 0], [3, 0], [4, 1], [4, 3], [0, 3]], fill: '#fde68a', line: '#b45309' },
+  dodu:  { nm: '소품 상자', pts: [[0, 1], [1, 0], [3, 0], [4, 1], [4, 3], [0, 3]], fill: '#fde68a', line: '#b45309' },
   tri:   { nm: '삼각형 ㄱㄴㄷ', pts: [[0, 0], [0, 3], [4, 3]], fill: '#bfdbfe', line: '#1d4ed8' },
   key:   { nm: 'ㄱ자 조각', pts: [[0, 0], [3, 0], [3, 1], [1, 1], [1, 3], [0, 3]], fill: '#bbf7d0', line: '#15803d' },
   flag:  { nm: '깃발 조각', pts: [[0, 0], [3, 1], [0, 3]], fill: '#fecdd3', line: '#be123c' },
@@ -6075,13 +6075,13 @@ const mgSvg = (tool, inner, W, H) => '<div class="gbwrap"><svg class="gb" id="gb
    ===================================================================== */
 S1_TOOLS.length = 0;
 S1_TOOLS.push(
-  ['push',  'mixup', '도구 1', '그림자 인형 밀기', '네 방향으로 밀기'],
+  ['push',  'mixup', '도구 1', '무대 소품 밀기', '네 방향으로 밀기'],
   ['arrow', 'tilt',  '도구 2', '모눈 발자국',      '방향과 거리 읽기'],
   ['draw',  'half',  '도구 3', '밀어 그리기',      '지시대로 옮겨 그리기'],
   ['fit',   'clock', '도구 4', '무대 세트 끼우기', '밀기로 할 수 없는 일']);
 BADGES.length = 0;
 BADGES.push(
-  ['push',  '도구 1 · 그림자 인형 밀기 (뒤죽이 봉인)', '🎭'],
+  ['push',  '도구 1 · 무대 소품 밀기 (뒤죽이 봉인)', '🎭'],
   ['arrow', '도구 2 · 모눈 발자국 (삐딱이 봉인)', '👣'],
   ['draw',  '도구 3 · 밀어 그리기 (반쪽이 봉인)', '✏️'],
   ['fit',   '도구 4 · 무대 세트 끼우기 (시간도둑 봉인)', '🧩']);
@@ -6129,7 +6129,7 @@ const slDirOf = (home, pos) => {
   return { dir: dr > 0 ? 'down' : 'up', n: Math.abs(dr) };
 };
 
-/* ---------- 도구 1 · 그림자 인형 밀기 ---------- */
+/* ---------- 도구 1 · 무대 소품 밀기 ---------- */
 GBT.push = {
   inner() {
     const t = AN_().push, sh = SL_SHAPES.dodu;
@@ -6156,7 +6156,7 @@ GBT.push = {
     t.done[mv.dir] = mv.n;
     try { Sound.coin(); } catch (e) {}
     const left = SL_DKEYS.filter(d => !t.done[d]);
-    t.fb = { ok: true, msg: SL_DAR[mv.dir] + ' <b>' + slSay(mv.dir, mv.n) + '</b> 밀었어요. 두두의 <b>위치</b>는 바뀌었지만 모양과 크기는 그대로예요!'
+    t.fb = { ok: true, msg: SL_DAR[mv.dir] + ' <b>' + slSay(mv.dir, mv.n) + '</b> 밀었어요. 소품 상자의 <b>위치</b>는 바뀌었지만 모양과 크기는 그대로예요!'
       + (left.length ? ' 남은 방향: ' + left.map(d => SL_DNM[d]).join('·') : '') };
     if (!left.length && !t.q) { t.q = 'q1'; t.fb = { ok: true, msg: '네 방향으로 모두 밀어 봤어요! 그럼 밀기를 하면 무엇이 바뀔까요?' }; }
     if (first) renderPush(); else gbCtl('push');
@@ -6165,7 +6165,7 @@ GBT.push = {
     const t = AN_().push;
     if (bdg('push')) return '<div class="andone">🎖 뒤죽이 봉인 완료! 도형을 밀면 <b>위치만 바뀌고 모양과 크기는 변하지 않아요.</b> 밀기 전 도형과 밀기 후 도형은 꼭 겹쳐져요.</div>' + rpToolBtn('push');
     const mv = slDirOf(t.home, t.pos);
-    let h = '<div class="ancap">🤔 <b>예상</b>해 보기: 두두를 밀면 무엇이 바뀔까요? 초록 손잡이를 끌어 <b>네 방향</b>으로 모두 밀어 보고 확인해요. '
+    let h = '<div class="ancap">🤔 <b>예상</b>해 보기: 소품 상자를 밀면 무엇이 바뀔까요? 초록 손잡이를 끌어 <b>네 방향</b>으로 모두 밀어 보고 확인해요. '
       + '<span class="anpill">' + SL_DKEYS.filter(d => t.done[d]).length + '/4 방향</span></div>';
     h += '<div class="anmis">' + SL_DKEYS.map(d => '<span class="' + (t.done[d] ? 'ok' : '') + '">' + (t.done[d] ? '✅' : '⬜') + ' ' + SL_DAR[d] + ' ' + SL_DNM[d] + (t.done[d] ? ' ' + t.done[d] + 'cm' : '') + '</span>').join('') + '</div>';
     h += '<div class="row mt-1" style="justify-content:center">' + anBtn('sl1-cmp', null, t.cmp ? '🔍 겹쳐 보기 끄기' : '🔍 밀기 전과 겹쳐 보기', 'btn-sub', !mv)
@@ -6176,8 +6176,8 @@ GBT.push = {
 };
 function renderPush() {
   const t = AN_().push, done = bdg('push'), n = SL_DKEYS.filter(d => t.done[d]).length;
-  $('#toolBody').innerHTML = toolBody('mixup', '도구 1', '🎭 그림자 인형 밀기', '뒤죽이가 무대 바닥 레일을 흔들어 두더지 인형 <b>두두</b>를 엉뚱한 자리로 보냈어요. 두두를 <b>네 방향으로 직접 밀어 보고</b>, 무엇이 바뀌고 무엇이 그대로인지 확인해요.',
-    [[n >= 2, '두 방향으로 밀어 보기'], [n >= 4, '네 방향 모두 밀어 보기'], [done, '밀기로 바뀌는 것 말하기']], 'push', '바닥을 흔들어 두두를 아무 데나 보내 버렸지!');
+  $('#toolBody').innerHTML = toolBody('mixup', '도구 1', '🎭 무대 소품 밀기', '뒤죽이가 무대 바닥 레일을 흔들어 <b>소품 상자</b>를 엉뚱한 자리로 보냈어요. 소품 상자를 <b>네 방향으로 직접 밀어 보고</b>, 무엇이 바뀌고 무엇이 그대로인지 확인해요.',
+    [[n >= 2, '두 방향으로 밀어 보기'], [n >= 4, '네 방향 모두 밀어 보기'], [done, '밀기로 바뀌는 것 말하기']], 'push', '바닥을 흔들어 소품 상자를 아무 데나 보내 버렸지!');
 }
 Object.assign(AN, {
   'sl1-cmp': () => { const t = AN_().push; t.cmp = !t.cmp; gbPaint('push'); gbCtl('push'); },
@@ -6241,7 +6241,7 @@ GBT.arrow = {
 };
 function renderArrow() {
   const t = AN_().arrow, done = bdg('arrow');
-  $('#toolBody').innerHTML = toolBody('tilt', '도구 2', '👣 모눈 발자국', '삐딱이가 두두의 발자국을 지웠어요. <b>가</b>에서 <b>나</b>로 화살표를 이어 보고, 모눈 칸을 세어 <b>어느 쪽으로 몇 cm</b> 밀었는지 말해요. (모눈 한 칸 = 1cm)',
+  $('#toolBody').innerHTML = toolBody('tilt', '도구 2', '👣 모눈 발자국', '삐딱이가 소품 상자가 지나간 자국을 지웠어요. <b>가</b>에서 <b>나</b>로 화살표를 이어 보고, 모눈 칸을 세어 <b>어느 쪽으로 몇 cm</b> 밀었는지 말해요. (모눈 한 칸 = 1cm)',
     [[t.log.length >= 1 || done, '첫 번째 발자국 읽기'], [t.log.length >= 2 || done, '두 번째 발자국 읽기'], [done, '세 번째 발자국 읽기']], 'arrow', '발자국을 지워 버렸으니 어디로 갔는지 모르겠지? 큭큭!');
 }
 Object.assign(AN, {
@@ -6412,7 +6412,7 @@ S1_ITEMS.push(
   { id: 'b3', label: '기본 문제 3 · 모눈 칸 수와 cm', keys: ['b3'], max: 12 },
   { id: 'b4', label: '기본 문제 4 · 밀기한 것 찾기', keys: ['b4'], max: 12 },
   { id: 'j1', label: '보스전 1 · 무대 세트 3개 설치', keys: ['j1'], max: 22 },
-  { id: 'j2', label: '보스전 2 · 인형 이동 기록 대회', keys: ['j2'], max: 15 },
+  { id: 'j2', label: '보스전 2 · 소품 이동 기록 대회', keys: ['j2'], max: 15 },
   { id: 'j3', label: '보스전 3 · 친구 실수 찾기', keys: ['j3'], max: 15 });
 
 genParts = function () {
@@ -6470,13 +6470,13 @@ renderS1Basic = function () {
 
 /* ---------------- 점프 (CH.3 다크몽 보스전) ---------------- */
 J_NAMES.length = 0;
-J_NAMES.push('도전 1 · 무대 세트 설치', '도전 2 · 인형 이동 기록 대회', '도전 3 · 친구 실수 찾기');
+J_NAMES.push('도전 1 · 무대 세트 설치', '도전 2 · 소품 이동 기록 대회', '도전 3 · 친구 실수 찾기');
 BOSS_LINES.length = 0;
 BOSS_LINES.push(
   '하하하! 공연 시작 전에 무대 세트를 모두 흩어 놓았다. 밀기 하나로 되돌릴 수 있겠나?',
   '제법이군… 하지만 내 방어막은 아직 두 겹 남았다!',
   '크윽, 방어막이 깨지고 있어…!',
-  '이번엔 내가 물러나지. 하지만 두두의 그림자는 아직 내 손에 있다!');
+  '이번엔 내가 물러나지. 하지만 소품 상자의 그림자는 아직 내 손에 있다!');
 
 const SL_J1NM = ['🎭 무대 막', '🪑 관객 의자', '💡 조명 상자'];
 const SL_J1SH = ['key', 'box', 'house'];
@@ -6525,8 +6525,8 @@ renderS1Jump = function () {
     + (J.hintN >= 0 && !done ? charSay('hint', '💡 ' + ['설계도의 방향을 먼저 보고, 그 방향으로만 끌어요.', '모눈 칸을 하나씩 세면서 밀어요. 한 칸이 1cm예요.', '세트의 꼭짓점 하나를 정해 몇 칸 움직였는지 세어 보면 쉬워요.'][J.hintN % 3]) : '')
     + (J.fb ? charSay(J.fb.ok ? 'ok' : 'no', J.fb.msg) : '')
     + (done ? rpBtn('j1') : '') + '</div>'
-    + '<div class="card">' + qHead(2, VILLAINS.clock.color, '<span class="qtag" style="background:#dbeafe;color:#1d4ed8">도전 2 · 인형 이동 기록 대회</span>' + PARTS.j2.text)
-    + vSay('clock', '세 인형이 모두 움직였어! 어느 인형이 가장 멀리 갔는지 알 수 있겠어?', 44) + '<div id="part-j2" class="mt-2"></div></div>'
+    + '<div class="card">' + qHead(2, VILLAINS.clock.color, '<span class="qtag" style="background:#dbeafe;color:#1d4ed8">도전 2 · 소품 이동 기록 대회</span>' + PARTS.j2.text)
+    + vSay('clock', '세 소품이 모두 움직였어! 어느 소품이 가장 멀리 갔는지 알 수 있겠어?', 44) + '<div id="part-j2" class="mt-2"></div></div>'
     + '<div class="card">' + qHead(3, VILLAINS.half.color, '<span class="qtag" style="background:#ffe4ea;color:#e11d48">도전 3 · 친구 실수 찾기</span>' + PARTS.j3.text)
     + vSay('half', '친구들이 모두 “밀었다”고 하는데, 정말 그럴까? 히히!', 44) + '<div id="part-j3" class="mt-2"></div></div>'
     + '<div class="next-row"><button class="btn btn-primary btn-lg" data-act="step" data-v="result">' + (['j1', 'j2', 'j3'].every(jOK) ? '결과 보러 가기 🏆' : '결과 화면 ➜') + '</button></div>';
@@ -6562,8 +6562,8 @@ Object.assign(AN, {
 });
 AN_QUIET.add('j1-sub');
 
-/* ---- 도전 2 · 인형 이동 기록 대회 ---- */
-const SL_DOLL = ['🐭 두더지 두두', '🐰 토끼 토토', '🐻 곰 구구'];
+/* ---- 도전 2 · 소품 이동 기록 대회 ---- */
+const SL_DOLL = ['📦 소품 상자', '🌳 나무 소품', '⭐ 별 소품'];
 function newJ2P() {
   const ds = shuffle(SL_DKEYS).slice(0, 3), ns = shuffle([2, 3, 4, 5, 6, 7]).slice(0, 3);
   const items = [0, 1, 2].map(i => {
@@ -6572,10 +6572,10 @@ function newJ2P() {
     return M;
   });
   const far = items.slice().sort((a, b) => b.n - a.n)[0];
-  return { key: 'j2', label: '점프 · 🏁 인형 이동 기록 대회', choice: false, write: false, items: items, far: far.nm, ans: far.nm,
-    text: '공연이 끝나고 인형 셋이 모두 자리를 옮겼어요. 각각 <b>어느 쪽으로 몇 cm</b> 밀었는지 기록하고, <b>가장 멀리 간 인형</b>을 찾아요. (모눈 한 칸 = 1cm)',
-    hint: '가로로 간 인형과 세로로 간 인형도 밀기한 거리(cm)끼리 비교할 수 있어요. 방향이 달라도 칸 수를 세면 돼요.',
-    ok: '세 인형의 기록을 모두 바르게 쓰고 가장 멀리 간 인형까지 찾았어요! 밀기는 <b>방향</b>과 <b>거리</b> 두 가지로 말해요.' };
+  return { key: 'j2', label: '점프 · 🏁 소품 이동 기록 대회', choice: false, write: false, items: items, far: far.nm, ans: far.nm,
+    text: '공연이 끝나고 소품 셋이 모두 자리를 옮겼어요. 각각 <b>어느 쪽으로 몇 cm</b> 밀었는지 기록하고, <b>가장 멀리 간 소품</b>을 찾아요. (모눈 한 칸 = 1cm)',
+    hint: '가로로 간 소품과 세로로 간 소품도 밀기한 거리(cm)끼리 비교할 수 있어요. 방향이 달라도 칸 수를 세면 돼요.',
+    ok: '세 소품의 기록을 모두 바르게 쓰고 가장 멀리 간 소품까지 찾았어요! 밀기는 <b>방향</b>과 <b>거리</b> 두 가지로 말해요.' };
 }
 j2HTML = function () {
   const p = PARTS.j2, st = state.s1, rec = RV('j2'), solved = rec && rec.solved, X = jxs(), fb = st.fb.j2;
@@ -6586,7 +6586,7 @@ j2HTML = function () {
   h += '<div class="afw">' + p.items.map(it => '<div class="slcard"><div class="slcap">' + it.nm + '</div>'
     + slPlanFig(it, { l1: '전', l2: '후' }) + '</div>').join('') + '</div>';
   if (!solved && C.stage === 'rec' && cur) h += '<div class="font-black center mt-2">' + cur.nm + '은(는) 어느 쪽으로 몇 cm 밀었을까요?</div>' + qBtns('slj2-r', slOpts(cur.dir, cur.n));
-  if (!solved && C.stage === 'pick') h += '<div class="font-black center mt-2">🏁 가장 멀리 간 인형은 누구일까요?</div>' + qBtns('slj2-p', p.items.map(it => it.nm));
+  if (!solved && C.stage === 'pick') h += '<div class="font-black center mt-2">🏁 가장 멀리 간 소품은 누구일까요?</div>' + qBtns('slj2-p', p.items.map(it => it.nm));
   if (!solved) h += '<div class="row mt-2"><button class="btn btn-sub" data-act="phint" data-k="j2">💡 힌트 듣기</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>';
   return h + '<div id="fb-j2">' + (fb ? charSay(fb.kind || (fb.ok ? 'ok' : 'no'), fb.msg) : '') + '</div>';
 };
@@ -6597,8 +6597,8 @@ Object.assign(AN, {
     touch('s1');
     if (v === slSay(it.dir, it.n)) {
       C.log[C.i] = slSay(it.dir, it.n); C.i++; try { Sound.correct(); } catch (e) {}
-      if (C.i >= p.items.length) { C.stage = 'pick'; state.s1.fb.j2 = { ok: true, msg: '기록 완성! 이제 가장 멀리 간 인형을 찾아봐요.' }; }
-      else state.s1.fb.j2 = { ok: true, msg: it.nm + ' 기록 완료! 다음 인형을 기록해요.' };
+      if (C.i >= p.items.length) { C.stage = 'pick'; state.s1.fb.j2 = { ok: true, msg: '기록 완성! 이제 가장 멀리 간 소품을 찾아봐요.' }; }
+      else state.s1.fb.j2 = { ok: true, msg: it.nm + ' 기록 완료! 다음 소품을 기록해요.' };
       renderPart('j2'); return;
     }
     finishPart('j2', false, it.nm + ' ' + v, it.nm + '의 꼭짓점이 움직인 칸을 다시 세어 봐요.');
@@ -6773,7 +6773,7 @@ BANK[3] = [
   () => mkI('같은 도형을 계속 밀어서 만든 무늬의 특징으로 알맞은 것은 무엇일까요?', '', '도형이 놓인 방향이 모두 같아요',
     ['도형이 갈수록 커져요', '도형의 모양이 하나씩 달라져요', '도형이 놓인 방향이 번갈아 바뀌어요'], '밀기는 방향을 바꾸지 않으므로 무늬의 모든 도형이 같은 방향으로 놓여요.'),
   () => { const n = rnd(3, 6), m = rnd(1, 2);
-    return mkI('두더지가 오른쪽으로 ' + n + 'cm 밀려 간 뒤, 왼쪽으로 ' + m + 'cm 밀려 왔어요. 처음 자리에서 오른쪽으로 몇 cm 떨어진 곳에 있을까요?', '',
+    return mkI('소품 상자가 오른쪽으로 ' + n + 'cm 밀려 간 뒤, 왼쪽으로 ' + m + 'cm 밀려 왔어요. 처음 자리에서 오른쪽으로 몇 cm 떨어진 곳에 있을까요?', '',
       (n - m) + 'cm', [(n + m) + 'cm', n + 'cm', m + 'cm'], n + ' − ' + m + ' = ' + (n - m) + 'cm예요.', true); },
   () => { const M = slPlan('house', 2, 5, { cols: 12, cell: 20 });
     return mkI('그림을 보고 밀기한 방향과 거리를 구하세요. (모눈 한 칸 = 1cm)',
@@ -6817,8 +6817,8 @@ LAIR.length = 0;
 LAIR.push(
   { id: 'conv', v: 'tilt', name: '창고 컨베이어', goal: '60초 · 명령대로 밀기!', dur: 60,
     sub: '명령이 <b>"➡ 오른쪽 3cm"</b>처럼 와요. 상자를 끌어 <b>그 방향으로 그만큼</b> 정확히 밀어요!' },
-  { id: 'guess', v: 'clock', name: '두더지 자리 예측', goal: '60초 · 도착 칸을 먼저 예측!', dur: 60,
-    sub: '두두를 밀기 전에 <b>도착할 칸</b>을 미리 눌러요. 머릿속으로 모눈 칸을 세어 예측해요!' },
+  { id: 'guess', v: 'clock', name: '소품 자리 예측', goal: '60초 · 도착 칸을 먼저 예측!', dur: 60,
+    sub: '소품 상자를 밀기 전에 <b>도착할 칸</b>을 미리 눌러요. 머릿속으로 모눈 칸을 세어 예측해요!' },
   { id: 'cargo', v: 'dark', name: '짐 옮기기 퍼즐', goal: '75초 · 장애물을 피해 목표까지', dur: 75,
     sub: '장애물이 가로막고 있어요. <b>두세 번 밀기</b>로 경로를 나누어 짐을 목표 칸까지 옮겨요!' });
 Object.keys(LAIR_VK).forEach(k => delete LAIR_VK[k]);
@@ -6884,7 +6884,7 @@ function renderConv() {
     + vgFoot('conv', '정확히 밀면 +12 (3연속부터 +16) · 틀리면 −4') + '</div>';
 }
 
-/* ② 두더지 자리 예측 */
+/* ② 소품 자리 예측 */
 const GS = {
   dir: 'right', n: 3, home: [4, 7], show: null, fb: '',
   reset() { this.fb = ''; this.show = null; this.round(); },
@@ -6911,9 +6911,9 @@ function guessSVG() {
   const sh = SL_SHAPES.dodu, w = slW(sh.pts), h = slH(sh.pts);
   let s = slGridSVG(MGCOL * MGC, MGROW * MGC, MGC);
   s += '<rect x="0" y="0" width="' + (MGCOL * MGC) + '" height="' + MGC + '" fill="#f1f5f9"/>'
-    + gbText(MGCOL * MGC / 2, MGC - 6, '🕳 두더지 밭 · 모눈 한 칸 = 1cm', '#64748b', 13);
+    + gbText(MGCOL * MGC / 2, MGC - 6, '🎭 무대 바닥 · 모눈 한 칸 = 1cm', '#64748b', 13);
   s += slPoly(sh.pts, GS.home[0], GS.home[1], MGC, { fill: sh.fill, line: sh.line, sw: 3 });
-  s += slLab(sh.pts, GS.home[0], GS.home[1], MGC, '🐭', '#7c2d12');
+  s += slLab(sh.pts, GS.home[0], GS.home[1], MGC, '📦', '#7c2d12');
   s += '<circle cx="' + (GS.home[0] * MGC) + '" cy="' + (GS.home[1] * MGC) + '" r="5" fill="#b45309"/>';
   if (GS.show) {
     const t = GS.target();
@@ -6926,10 +6926,10 @@ function guessSVG() {
   return s;
 }
 function renderGuess() {
-  $('#s2body').innerHTML = '<div class="card mgcard gamecard mg-guess">' + vgHead('guess', '🔮 두더지 자리 예측', '밀기 전에 도착할 칸을 미리 눌러요!')
-    + '<div class="mgcmd">예측 · 두두를 <b>' + SL_DAR[GS.dir] + ' ' + slSay(GS.dir, GS.n) + '</b> 밀면 어디에 나타날까요?</div>'
+  $('#s2body').innerHTML = '<div class="card mgcard gamecard mg-guess">' + vgHead('guess', '🔮 소품 자리 예측', '밀기 전에 도착할 칸을 미리 눌러요!')
+    + '<div class="mgcmd">예측 · 소품 상자를 <b>' + SL_DAR[GS.dir] + ' ' + slSay(GS.dir, GS.n) + '</b> 밀면 어디에 나타날까요?</div>'
     + '<div id="guessStage" style="position:relative">' + mgSvg('guess', guessSVG(), MGCOL * MGC, MGROW * MGC) + '</div>'
-    + '<div class="gbhint">👆 두두의 <b>왼쪽 위 점(갈색 점)</b>이 도착할 칸을 눌러요</div>'
+    + '<div class="gbhint">👆 소품 상자의 <b>왼쪽 위 점(갈색 점)</b>이 도착할 칸을 눌러요</div>'
     + (GS.fb ? '<div class="mgfb">' + GS.fb + '</div>' : '')
     + vgFoot('guess', '정확히 예측 +14 (3연속부터 +18) · 틀리면 −5') + '</div>';
 }
@@ -7413,11 +7413,11 @@ Object.assign(GUIDES, {
       practice: { q: '➡ 오른쪽 4cm 명령이에요. 상자를 몇 칸 밀어야 할까요?', opts: ['3칸', '4칸', '5칸'], ans: 1, ex: '모눈 한 칸이 1cm이므로 4cm는 4칸이에요.' } },
     { t: '3. 점수', ill: () => '<div class="brules"><ul><li>정확히 밀면 <b>+12점</b> (3연속부터 +16점)</li><li>방향이나 거리가 틀리면 <b>−4점</b></li><li>60초 동안 최대한 많이!</li></ul></div>',
       txt: '한 번에 한 방향으로만 밀 수 있어요. 손을 떼면 바로 판정돼요.' }] },
-  guess: { title: '🔮 두더지 자리 예측', color: '#1d4ed8', slides: [
-    { t: '1. 이렇게 해요', ill: () => '<div class="gsay">🔮 예측: 두두를 <b>⬇ 아래쪽 3cm</b> 밀면?<br><small>도착할 칸을 미리 눌러요!</small></div>',
-      txt: '두두를 실제로 밀기 전에 <b>도착할 칸</b>을 머릿속으로 세어 예측해요.' },
+  guess: { title: '🔮 소품 자리 예측', color: '#1d4ed8', slides: [
+    { t: '1. 이렇게 해요', ill: () => '<div class="gsay">🔮 예측: 소품 상자를 <b>⬇ 아래쪽 3cm</b> 밀면?<br><small>도착할 칸을 미리 눌러요!</small></div>',
+      txt: '소품 상자를 실제로 밀기 전에 <b>도착할 칸</b>을 머릿속으로 세어 예측해요.' },
     { t: '2. 어느 점을 볼까?', ill: () => gdFig({ shape: 'dodu', dir: 'down', n: 3, from: [2, 1], cell: 24, cols: 9, rows: 6 }),
-      txt: '두두의 <b>왼쪽 위 점</b>이 기준이에요. 그 점이 몇 칸 움직이는지 세어 그 칸을 눌러요.',
+      txt: '소품 상자의 <b>왼쪽 위 점</b>이 기준이에요. 그 점이 몇 칸 움직이는지 세어 그 칸을 눌러요.',
       practice: { q: '왼쪽 위 점이 오른쪽으로 2cm 밀리면 가로 칸 수는 어떻게 될까요?', opts: ['2 늘어나요', '2 줄어들어요', '그대로예요'], ans: 0, ex: '오른쪽으로 2칸 밀리면 가로 칸 수가 2 늘어나요.' } },
     { t: '3. 점수', ill: () => '<div class="brules"><ul><li>정확히 예측하면 <b>+14점</b> (3연속부터 +18점)</li><li>틀리면 <b>−5점</b>, 바른 자리를 보여 줘요</li></ul></div>',
       txt: '틀려도 괜찮아요. 바른 자리와 화살표를 보고 다시 도전해요.' }] },
@@ -7452,8 +7452,8 @@ CHAPTERS.push(
   { n: 5, v: 'dark', icon: '🎬', title: '최종 결전', sub: '공연의 막을 올려라', go: ['s2', 'result'] });
 _repl(ST_TOOLV, TOOL_VK);
 _repl(ST_TOOLM, {
-  push: '뒤죽이가 무대 바닥을 흔들어 두두를 엉뚱한 자리로 보냈어! 네 방향으로 밀어 보며 무엇이 바뀌는지 알아내자.',
-  arrow: '삐딱이가 두두의 발자국을 지웠어. 화살표를 이어 어느 쪽으로 몇 cm 밀었는지 읽어내자!',
+  push: '뒤죽이가 무대 바닥을 흔들어 소품 상자를 엉뚱한 자리로 보냈어! 네 방향으로 밀어 보며 무엇이 바뀌는지 알아내자.',
+  arrow: '삐딱이가 소품 상자가 지나간 자국을 지웠어. 화살표를 이어 어느 쪽으로 몇 cm 밀었는지 읽어내자!',
   draw: '반쪽이가 무대 그림의 반쪽만 남겼어. 지시대로 밀어 그려서 그림을 완성하자.',
   fit: '시간도둑이 무대 세트를 흩어 놨어! 조각을 밀어 틀을 채우고, 밀기로 안 되는 일도 알아내자.'
 });
@@ -7472,16 +7472,16 @@ _repl(V_HIT, {
   dark: ['크윽… 무대가 제자리를 찾아간다!', '설계도대로 밀어 놓다니…!', '이럴 수가, 공연이 시작되려 해!']
 });
 _repl(BEATS, {
-  prologue: { cap: 'PROLOGUE · 4단원 EP.1', ttl: '그림자 극장의 두두', v: 'mixup', pose: 'happy', lines: [
-    { w: 'narr', t: '탐험대는 각도의 숲을 지나 <b>그림자 극장</b>에 닿았다. 오늘 공연은 두더지 인형 두두의 이야기 「두두의 소원」! 그런데 막이 오르기 직전, 무대가 흔들렸다.' },
-    { w: 'mixup', p: 'happy', t: '히히! 무대 바닥 레일을 흔들어 두두를 엉뚱한 자리로 보내 버렸지. 모양까지 바뀌었을걸?' },
-    { w: 'tilt', p: 'happy', t: '큭큭! 나는 두두의 <b>발자국</b>을 싹 지웠어. 어디로 갔는지 아무도 모를 거야!' },
+  prologue: { cap: 'PROLOGUE · 4단원 EP.1', ttl: '흔들린 그림자 극장', v: 'mixup', pose: 'happy', lines: [
+    { w: 'narr', t: '탐험대는 각도의 숲을 지나 <b>그림자 극장</b>에 닿았다. 오늘 공연은 그림자 연극 「별을 찾는 숲」! 그런데 막이 오르기 직전, 무대가 흔들렸다.' },
+    { w: 'mixup', p: 'happy', t: '히히! 무대 바닥 레일을 흔들어 소품 상자를 엉뚱한 자리로 보내 버렸지. 모양까지 바뀌었을걸?' },
+    { w: 'tilt', p: 'happy', t: '큭큭! 나는 소품 상자가 지나간 <b>자국</b>을 싹 지웠어. 어디로 갔는지 아무도 모를 거야!' },
     { w: 'narr', t: '반쪽이는 무대 그림의 반쪽만 남기고, 시간도둑은 무대 세트를 흩어 놓았다. 다크몽은 무대 뒤에서 웃고 있다.' },
     { w: 'guide', p: 'determined', t: '걱정 마! 도형을 <b>밀면 위치만 바뀌고 모양은 그대로</b>야. 모눈 위에서 <b>어느 쪽으로 몇 cm</b> 밀었는지 읽어 무대를 되돌리자!' }],
     btns: [{ t: '🎭 무대로 출동', act: 'go', to: ['s1', 'concept'] }, { t: '😈 악당 5종 보기', c: 'btn-sub', act: 'scene', to: 'villains' }] },
   villains: { cap: 'CHARACTER', ttl: '무대를 노리는 악당 5종', cards: true, btns: [{ t: '스토리로 돌아가기', act: 'scene', to: 'prologue' }, { t: '닫기', c: 'btn-sub', act: 'close' }] },
   ch1: { cap: 'CHAPTER 1 CLEAR', ttl: '밀기의 비밀을 찾았다!', v: 'mixup', pose: 'angry', lines: [
-    { w: 'narr', t: '두두를 네 방향으로 밀어 보니 <b>위치만</b> 바뀌고 모양과 크기는 그대로였다. 발자국을 화살표로 이어 <b>방향과 거리</b>도 읽어 냈다!' },
+    { w: 'narr', t: '소품 상자를 네 방향으로 밀어 보니 <b>위치만</b> 바뀌고 모양과 크기는 그대로였다. 발자국을 화살표로 이어 <b>방향과 거리</b>도 읽어 냈다!' },
     { w: 'mixup', p: 'angry', t: '말도 안 돼! 밀어도 포개면 꼭 겹친다고?!' },
     { w: 'guide', p: 'happy', t: '그럼! 이제 삐딱이가 붙인 거짓 자막을 떼러 가자!' }],
     btns: [{ t: '✏️ CH.2 삐딱이의 함정으로 ➜', act: 'go', to: ['s1', 'basic'] }, { t: '더 탐험하기', c: 'btn-sub', act: 'close' }] },
@@ -7491,12 +7491,12 @@ _repl(BEATS, {
     { w: 'dark', p: 'idle', t: '좋다. 내가 흩어 놓은 무대 세트를 밀기로 되돌려 보시지!' }],
     btns: [{ t: '👑 CH.3 다크몽 보스전으로 ➜', act: 'go', to: ['s1', 'jump'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] },
   ch3: { cap: 'BOSS SHIELD BREAK', ttl: '다크몽 방어막 3겹 파괴!', v: 'dark', pose: 'attack', lines: [
-    { w: 'dark', p: 'attack', t: '크윽! 세트를 설계도대로 밀고, 인형 기록을 비교하고, 친구들의 실수까지 찾아내다니…!' },
+    { w: 'dark', p: 'attack', t: '크윽! 세트를 설계도대로 밀고, 소품 기록을 비교하고, 친구들의 실수까지 찾아내다니…!' },
     { w: 'narr', t: '무대가 제자리를 찾았다. 하지만 다크몽은 극장 지하 소굴로 몸을 숨겼다.' },
     { w: 'guide', p: 'cheer', t: '세트 2의 <b>악당 소굴</b>로 가자! 부하들을 모두 물리치면 다크몽이 다시 나타날 거야!' }],
     btns: [{ t: '🎮 CH.4 악당 소굴로 ➜', act: 'go', to: ['s2', 'drill'] }, { t: '보고서 보기', c: 'btn-sub', act: 'go', to: ['s1', 'result'] }] },
   'v-clock': { cap: 'VILLAIN DOWN', ttl: '시간도둑 격파!', v: 'clock', pose: 'attack', lines: [
-    { w: 'clock', p: 'attack', t: '두두가 도착할 자리를 미리 다 예측해 버렸어…! 째깍, 도망가야지!' },
+    { w: 'clock', p: 'attack', t: '소품 상자가 도착할 자리를 미리 다 예측해 버렸어…! 째깍, 도망가야지!' },
     { w: 'guide', p: 'happy', t: '칸을 세어 예측하면 밀기 결과를 미리 알 수 있어! 다음 악당도 물리치자.' }],
     btns: [{ t: '😈 악당 소굴로 ➜', act: 'go', to: ['s2', 'game'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] },
   'v-tilt': { cap: 'VILLAIN DOWN', ttl: '삐딱이 격파!', v: 'tilt', pose: 'attack', lines: [
@@ -7519,8 +7519,8 @@ _repl(BEATS, {
     btns: [{ t: '🎬 CH.5 최종 결전으로 ➜', act: 'go', to: ['s2', 'result'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] },
   final: { cap: 'ENDING · 4단원 EP.1', ttl: '막이 올랐다 — 밀기를 손에 넣었다!', v: 'dark', pose: 'attack', lines: [
     { w: 'dark', p: 'attack', t: '크윽…! 위치만 바뀌고 모양은 그대로… 오른쪽으로 몇 cm… 이제 무대를 마음대로 흔들 수 없겠군!' },
-    { w: 'narr', t: '두두가 제자리로 돌아오고, 「두두의 소원」 공연이 시작되었다. 객석에서 박수가 터져 나온다.' },
-    { w: 'narr', t: '그런데 무대 뒤 스크린에 비친 두두의 그림자는… <b>좌우가 뒤바뀐 채</b> 남아 있었다!' },
+    { w: 'narr', t: '소품들이 제자리로 돌아오고, 그림자 연극 공연이 시작되었다. 객석에서 박수가 터져 나온다.' },
+    { w: 'narr', t: '공연을 마치고 학교로 돌아온 탐험대. 그런데 복도에서 본 교실 유리문의 안내 스티커가… <b>좌우가 뒤바뀐 채</b> 보였다!' },
     { w: 'guide', p: 'celebrate', t: '해냈어! 그런데 저 그림자는 밀기로는 설명할 수 없어. 다음 2차시에서 <b>뒤집기</b>를 만나러 가자!' }],
     btns: [{ t: '💎 보석함 보기', act: 'gem' }, { t: '📤 선생님께 제출', c: 'btn-sub', act: 'submit' }, { t: '닫기', c: 'btn-sub', act: 'close' }] }
 });
@@ -7547,7 +7547,7 @@ Story.stepV = function () {
   if (tab === 's1') {
     if (step === 'concept') { const tk = st.tool || 'push'; return { v: ST_TOOLV[tk] || 'mixup', m: ST_TOOLM[tk] || '' }; }
     if (step === 'basic') return { v: 'tilt', m: '삐딱이가 붙인 거짓 자막 “밀면 모양도 커진다!” 4문제로 반박하자!' };
-    if (step === 'jump') return { v: 'dark', m: '다크몽의 방어막 3겹! 무대 세트 설치·인형 기록 대회·친구 실수 찾기로 깨뜨리자.' };
+    if (step === 'jump') return { v: 'dark', m: '다크몽의 방어막 3겹! 무대 세트 설치·소품 기록 대회·친구 실수 찾기로 깨뜨리자.' };
     return { v: 'dark', m: '그림자 극장 탐험 보고서를 작성해 선생님께 제출하자.' };
   }
   if (step === 'drill') return { v: 'clock', m: '시간도둑의 밀기 문제은행! 관문을 하나 통과하면 봉인이 풀려요.' };
@@ -7621,9 +7621,9 @@ buildS1Sheet = function (c) {
       + '<div class="p-ans2">밀기: ' + bl('w3') + '으로 ' + bl('w3') + 'cm</div>', '🎬 설계');
     keys.push([no, slSay(d7, n7) + ' — 모든 꼭짓점을 같은 방향으로 같은 칸 수만큼 옮겨 그려요.']);
     const a = rnd(3, 6), b2 = rnd(2, 5);
-    h += pQ(++no, '인형 두두는 오른쪽으로 ' + a + 'cm, 토토는 아래쪽으로 ' + b2 + 'cm 밀렸어요. 어느 인형이 더 멀리 갔는지 쓰고, 방향이 달라도 비교할 수 있는 까닭을 설명해 보세요.',
+    h += pQ(++no, '소품 상자는 오른쪽으로 ' + a + 'cm, 나무 소품은 아래쪽으로 ' + b2 + 'cm 밀렸어요. 어느 소품이 더 멀리 갔는지 쓰고, 방향이 달라도 비교할 수 있는 까닭을 설명해 보세요.',
       '<div class="p-work">까닭</div>', '🏁 기록');
-    keys.push([no, (a > b2 ? '두두' : '토토') + ' — 방향이 달라도 밀기한 거리(cm, 칸 수)를 비교하면 알 수 있어요.']);
+    keys.push([no, (a > b2 ? '소품 상자' : '나무 소품') + ' — 방향이 달라도 밀기한 거리(cm, 칸 수)를 비교하면 알 수 있어요.']);
     h += pQ(++no, '조각을 밀어서는 빈 곳에 맞출 수 없었어요. 그 까닭을 쓰고, 어떻게 하면 맞출 수 있을지 설명해 보세요.',
       '<div class="p-work tall">설명</div>', '🧩 실수 찾기');
     keys.push([no, '밀기는 위치만 바꾸고 놓인 방향은 바꾸지 못하기 때문이에요.']);
@@ -7679,7 +7679,7 @@ function pcard(label, o = {}) {
   o = Object.assign({}, o, { cls: (o.cls || '') + lc });
   return `<${tag} class="gpc ${o.cls || ''}" style="${o.style || ''}" ${o.act ? `data-act="${o.act}" data-v="${o.v}"` : ''}>${o.corner === false ? '' : `<span class="ci tl">${o.ci || '◆'}</span><span class="ci br">${o.ci || '◆'}</span>`}<span class="cv">${label}</span>${o.extra || ''}</${tag}>`;
 }
-const pback = (o = {}) => `<div class="gpc back ${o.cls || ''}" style="${o.style || ''}"><span class="bk">${o.icon || '🐭'}</span></div>`;
+const pback = (o = {}) => `<div class="gpc back ${o.cls || ''}" style="${o.style || ''}"><span class="bk">${o.icon || '📦'}</span></div>`;
 function pileHTML(n, o = {}) {
   return `<${o.act ? 'button' : 'div'} class="pile ${o.cls || ''}" ${o.act ? `data-act="${o.act}"` : ''} aria-label="더미">${pback({ cls: 'p3' })}${pback({ cls: 'p2' })}${pback({ cls: 'p1' })}<span class="pcnt">${n}장</span>${o.label ? `<span class="plab">${o.label}</span>` : ''}</${o.act ? 'button' : 'div'}>`;
 }
@@ -8151,7 +8151,7 @@ const WN = (() => {
         const qt = qtOf(card), extra = p && p.prompt ? ' ' + strip(p.prompt) : '';
         const text = (qt || txtOf(p && p.text) || label).replace(/^도전 \d · [^ ]+ [^ ]+ /, '') + extra;
         const canRetry = !!(p && p.ans && !p.jw && (p.choices || p.write));
-        add({ src: key[0] === 'j' ? '점프 문제' : '기본 문제', img: figOf(card) || figOfHtml(p && p.text), text, my: String(given == null ? '' : given), ans: p && p.ans ? strip(p.ans) : '', choices: canRetry && p.choices ? p.choices.map(strip) : null, ex: p ? strip(p.ok || p.hint || '') : '', retry: canRetry, step: ['s1', key[0] === 'j' ? 'jump' : 'basic'] });
+        const isDraw = !!(p && p.draw); add({ src: key[0] === 'j' ? '점프 문제' : (isDraw ? '기본 문제 · 그리기' : '기본 문제'), img: figOf(card) || figOfHtml(p && p.text), text, my: isDraw ? '(모눈에 직접 그린 도형)' : String(given == null ? '' : given), ans: p && p.ans ? strip(p.ans) : '', choices: canRetry && p.choices ? p.choices.map(strip) : null, ex: p ? strip(p.ok || p.hint || '') : '', retry: canRetry, step: ['s1', key[0] === 'j' ? 'jump' : 'basic'] });
       } catch (e) {}
     }
     return r;
@@ -8183,7 +8183,7 @@ const WN = (() => {
         <div class="wnq2">${i + 1}. ${esc(e.text)}</div>${e.img ? `<div class="wnimg sm">${e.img}</div>` : ''}${e.my ? `<div class="wnmy">✏️ 내가 고른 답: <b>${esc(e.my)}</b></div>` : ''}</div></label>`).join('')}</div>
       <div class="wnbtns"><button class="btn btn-primary btn-lg" data-wn="run" ${rp.length ? '' : 'disabled'}>✏️ 화면에서 다시 풀기 (${rp.length}개)</button><button class="btn btn-green btn-lg" data-wn="print" ${picked.length ? '' : 'disabled'}>🖨 고른 문제 인쇄</button></div>
       <label class="wnkey"><input type="checkbox" id="wnKey" checked> 인쇄할 때 정답·풀이 쪽을 따로 넣기</label>
-      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
+      ${picked.length > rp.length ? `<p class="wnnote" style="color:#b45309;font-weight:800">고른 ${picked.length}개 중 ${picked.length - rp.length}개(그리기·점프 문제·게임 기록)는 화면에서 다시 풀 수 없어 인쇄로 풀어요.</p>` : ''}<p class="wnnote">💾 이 기기에 학번별로 저장돼요. 🎮 게임 기록과 점프 문제는 인쇄해서 풀거나, 그 단계로 가서 다시 도전해요.</p>`
       : `<div class="wnempty">🎉 아직 틀린 문제가 없어요!<br><small>문제를 풀다 틀리면 여기에 자동으로 모여요.</small></div>`}</div>`;
   }
   function paintRun() {
@@ -8307,7 +8307,7 @@ const CLS = (() => {
     };
   }
   /* ---------- 👩‍🏫 내 반 설정 (교사용) ---------- */
-  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
+  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['4단원 2차시 · 평면도형 뒤집기', '4-1-4-2-스토리모드.html'], ['4단원 3차시 · 평면도형 돌리기', '4-1-4-3-스토리모드.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
   const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
   function linkFor(file, url, cls) { const q = new URLSearchParams(); if (url) q.set('webhook', url); if (cls) q.set('class', cls); return base() + encodeURI(file) + '?' + q.toString(); }
   function ov() { let o = document.getElementById('clsOv'); if (!o) { o = document.createElement('div'); o.id = 'clsOv'; o.className = 'wnov hidden'; document.body.appendChild(o); o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }); } return o; }
@@ -9947,15 +9947,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   };
 })();
 
-/* 4-1 미니게임 「두더지 자리 예측」 → 「두더지 옮기기」
-   방향만 알면 맞히는 보기 고르기가 아니라, 학생이 두두를 직접 끌어 정확한 칸에 놓아요.
+/* 4-1 미니게임 「소품 자리 예측」 → 「소품 옮기기」
+   방향만 알면 맞히는 보기 고르기가 아니라, 학생이 소품 상자를 직접 끌어 정확한 칸에 놓아요.
    · 1단계: 한 방향 밀기 (⬆ 위쪽으로 5cm)   · 2단계: 두 방향 밀기 (➡ 오른쪽 4cm, 그다음 ⬆ 위쪽 2cm)
    · ★ 꼭짓점을 기준으로 칸을 세도록 돕고, 판정 뒤에는 정답 자리와 칸 수를 숫자로 보여 줘요. */
 (function () {
   if (typeof GS === 'undefined') return;
   const S = () => SL_SHAPES.dodu, W = () => slW(S().pts), H = () => slH(S().pts);
   const ok = p => p[0] >= 0 && p[1] >= 1 && p[0] + W() <= MGCOL && p[1] + H() <= MGROW;
-  const REF = [1, 0];                                       /* ★ 기준 꼭짓점 (두두의 왼쪽 귀 끝) */
+  const REF = [1, 0];                                       /* ★ 기준 꼭짓점 (소품 상자의 왼쪽 위 모서리) */
   const lv = () => Math.min(2, 1 + Math.floor(VG.hit / 3));
   GS.round = function () {
     for (let t = 0; t < 500; t++) {
@@ -9975,7 +9975,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const mx = this.pos[0] - this.home[0], my = this.pos[1] - this.home[1], how = [mx ? `${mx > 0 ? '오른쪽' : '왼쪽'}으로 ${Math.abs(mx)}칸` : '', my ? `${my > 0 ? '아래쪽' : '위쪽'}으로 ${Math.abs(my)}칸` : ''].filter(Boolean).join(', ') || '그대로';
     this.show = { good };
     if (good) { const p = vgGood(14, [3, 18]); this.fb = `✅ 정확해요! ${this.say()} → 딱 그 자리! +${p}`; try { Sound.coin(); } catch (e) {} vgPop('#guessStage', '+' + p, true); }
-    else { vgBad(5, `두더지 옮기기: ${this.say()}인데 ${how} 옮김`); this.fb = `❌ 내가 옮긴 것: <b>${how}</b> · 명령: <b>${this.steps.map(([d, n]) => `${SL_DNM[d]}으로 ${n}칸`).join(', ')}</b>. 초록 점선이 정답 자리예요. ★ 꼭짓점에서 한 칸씩 세어 봐요. (−5)`; try { Sound.wrong(); } catch (e) {} vgPop('#guessStage', '−5', false); }
+    else { vgBad(5, `소품 옮기기: ${this.say()}인데 ${how} 옮김`); this.fb = `❌ 내가 옮긴 것: <b>${how}</b> · 명령: <b>${this.steps.map(([d, n]) => `${SL_DNM[d]}으로 ${n}칸`).join(', ')}</b>. 초록 점선이 정답 자리예요. ★ 꼭짓점에서 한 칸씩 세어 봐요. (−5)`; try { Sound.wrong(); } catch (e) {} vgPop('#guessStage', '−5', false); }
     vgHud(); renderGuess();
     setTimeout(() => { if (onGame('guess')) { GS.fb = ''; GS.round(); } }, good ? 1600 : 3200);
   };
@@ -9983,12 +9983,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   GBT.guess = {
     inner() {
       const sh = S(); let s = slGridSVG(MGCOL * MGC, MGROW * MGC, MGC);
-      s += '<rect x="0" y="0" width="' + (MGCOL * MGC) + '" height="' + MGC + '" fill="#f1f5f9"/>' + gbText(MGCOL * MGC / 2, MGC - 6, '🕳 두더지 밭 · 모눈 한 칸 = 1cm', '#64748b', 13);
+      s += '<rect x="0" y="0" width="' + (MGCOL * MGC) + '" height="' + MGC + '" fill="#f1f5f9"/>' + gbText(MGCOL * MGC / 2, MGC - 6, '🎭 무대 바닥 · 모눈 한 칸 = 1cm', '#64748b', 13);
       s += slPoly(sh.pts, GS.home[0], GS.home[1], MGC, { fill: 'rgba(148,163,184,.15)', line: '#94a3b8', dash: '6 4', sw: 2.5 }) + star(GS.home, '#94a3b8');
       if (GS.show) {
         const t = GS.tg; s += slPoly(sh.pts, t[0], t[1], MGC, { fill: 'rgba(22,163,74,.18)', line: '#16a34a', dash: GS.show.good ? '' : '7 5', sw: 3 });
       }
-      s += slPoly(sh.pts, GS.pos[0], GS.pos[1], MGC, { fill: sh.fill, line: sh.line, sw: 3 }) + slLab(sh.pts, GS.pos[0], GS.pos[1], MGC, '🐭', '#7c2d12') + star(GS.pos, '#ea580c');
+      s += slPoly(sh.pts, GS.pos[0], GS.pos[1], MGC, { fill: sh.fill, line: sh.line, sw: 3 }) + slLab(sh.pts, GS.pos[0], GS.pos[1], MGC, '📦', '#7c2d12') + star(GS.pos, '#ea580c');
       if (GS.show) { let c = GS.home.slice();                /* 정답 경로를 ★에서 한 칸씩 숫자로 (도형 위에 표시) */
         GS.steps.forEach(([d, n]) => { for (let i = 1; i <= n; i++) { const a = c; c = [c[0] + SL_DIR[d][0], c[1] + SL_DIR[d][1]]; const x0 = (a[0] + REF[0]) * MGC, y0 = (a[1] + REF[1]) * MGC, x = (c[0] + REF[0]) * MGC, y = (c[1] + REF[1]) * MGC;
           s += `<line x1="${x0}" y1="${y0}" x2="${x}" y2="${y}" stroke="#16a34a" stroke-width="4"/><circle cx="${x}" cy="${y}" r="10" fill="#facc15" stroke="#a16207" stroke-width="2"/>` + gbText(x, y + 4, i, '#713f12', 12); } }); }
@@ -10000,7 +10000,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   };
   window.guessSVG = () => GBT.guess.inner();
   window.renderGuess = function () {
-    $('#s2body').innerHTML = '<div class="card mgcard gamecard mg-guess">' + vgHead('guess', '🐭 두더지 옮기기', '명령대로 밀면 두두가 어디에 갈지 생각해서, 두두를 <b>직접 끌어 그 자리에</b> 놓아요!')
+    $('#s2body').innerHTML = '<div class="card mgcard gamecard mg-guess">' + vgHead('guess', '📦 소품 옮기기', '명령대로 밀면 소품 상자가 어디에 갈지 생각해서, 소품 상자를 <b>직접 끌어 그 자리에</b> 놓아요!')
       + `<div class="mgcmd">명령 · <b>${GS.say()}</b> 밀기 ${GS.steps.length > 1 ? '<span class="anpill">2단계</span>' : ''}</div>`
       + '<div id="guessStage" style="position:relative">' + mgSvg('guess', GBT.guess.inner(), MGCOL * MGC, MGROW * MGC) + '</div>'
       + `<div class="row" style="justify-content:center;gap:8px;margin-top:8px"><button class="btn btn-green btn-lg" data-an="mg2" data-v="ok" ${GS.show ? 'disabled' : ''}>📍 여기에 놓기</button><button class="btn btn-sub" data-an="mg2" data-v="back" ${GS.show ? 'disabled' : ''}>↺ 처음 자리로</button></div>`
@@ -10010,9 +10010,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   };
   AN.mg2 = v => { if (!onGame('guess') || GS.show) return; if (v === 'back') { GS.pos = GS.home.slice(); gbPaint('guess'); return; } GS.judge(); };
   try {
-    const L = LAIR.find(x => x.id === 'guess'); if (L) Object.assign(L, { name: '두더지 옮기기', goal: '60초 · 직접 끌어 놓기', sub: '명령(예: <b>⬆ 위쪽으로 5cm</b>)대로 밀면 두두가 어디에 갈지 생각해서, 두두를 <b>직접 끌어 정확한 칸</b>에 놓아요. 잘하면 두 방향 밀기 단계로!' });
-    GUIDES.guess = { title: '🐭 두더지 옮기기', color: '#2563eb', slides: [
-      { t: '1. ★에서 세기', ill: () => '<div class="gsay">명령: <b>⬆ 위쪽으로 3cm</b><br>★ 꼭짓점에서 위로 모눈 3칸 → 그 자리에 두두를 놓아요</div>', txt: '모눈 한 칸은 1cm예요. 도형의 한 꼭짓점(★)을 정해 칸을 세면 정확해요.' },
+    const L = LAIR.find(x => x.id === 'guess'); if (L) Object.assign(L, { name: '소품 옮기기', goal: '60초 · 직접 끌어 놓기', sub: '명령(예: <b>⬆ 위쪽으로 5cm</b>)대로 밀면 소품 상자가 어디에 갈지 생각해서, 소품 상자를 <b>직접 끌어 정확한 칸</b>에 놓아요. 잘하면 두 방향 밀기 단계로!' });
+    GUIDES.guess = { title: '📦 소품 옮기기', color: '#2563eb', slides: [
+      { t: '1. ★에서 세기', ill: () => '<div class="gsay">명령: <b>⬆ 위쪽으로 3cm</b><br>★ 꼭짓점에서 위로 모눈 3칸 → 그 자리에 소품 상자를 놓아요</div>', txt: '모눈 한 칸은 1cm예요. 도형의 한 꼭짓점(★)을 정해 칸을 세면 정확해요.' },
       { t: '2. 두 방향 밀기', ill: () => '<div class="gsay">➡ 오른쪽 4cm, 그다음 ⬆ 위쪽 2cm<br>→ 오른쪽으로 4칸 센 뒤, 거기서 위로 2칸!</div>', txt: '밀기를 두 번 해도 모양과 방향은 그대로예요.',
         practice: { q: '★가 출발 자리에서 오른쪽으로 3칸, 아래로 2칸 갔어요. 어떤 밀기를 했나요?', opts: ['오른쪽 3cm, 아래쪽 2cm', '오른쪽 2cm, 아래쪽 3cm', '왼쪽 3cm, 위쪽 2cm'], ans: 0, ex: '★가 움직인 칸 수가 민 거리예요.' } }] };
   } catch (e) {}
@@ -10026,7 +10026,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function () {
   const A = k => { try { return AN_()[k] || {}; } catch (e) { return {}; } };
   const RV = {
-    'sl1-q': () => ({ v: '위치', s: '두두를 여러 방향으로 밀어 보니 <b>위치만</b> 바뀌고, 모양·크기·변의 수는 그대로였어요.' }),
+    'sl1-q': () => ({ v: '위치', s: '소품 상자를 여러 방향으로 밀어 보니 <b>위치만</b> 바뀌고, 모양·크기·변의 수는 그대로였어요.' }),
     'sl2-q': () => { const t = A('arrow'); const v = slSay(t.dir, t.n); return { v, s: `가에서 나로 그은 화살표를 따라 모눈 칸을 세어 보면 <b>${v}</b>예요.` }; },
     'sl4-q': () => ({ v: '밀기는 방향을 바꿀 수 없어서', s: '조각 다는 돌려야 들어가는 모양이에요. 밀기는 <b>방향을 바꿀 수 없어서</b> 밀기만으로는 맞출 수 없어요.' }),
     'bd-p': () => { const t = A('build'); return { v: t.d.rows[dsMaxI(t.d)][0], s: '표의 수만큼 막대를 직접 세워 보면, 수가 클수록 막대가 길어요. 이제 막대를 세워 봐요.', b: '막대 세우러 가기' }; },
@@ -10160,7 +10160,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 
 window.SV_FM = {
- push: { name: '그림자 인형 밀기', t: '바뀌는 것과 그대로인 것', rows: [
+ push: { name: '무대 소품 밀기', t: '바뀌는 것과 그대로인 것', rows: [
   [FMP.push(4, 0), '오른쪽으로 4cm 밀기 → 바뀌는 것: {?}', '위치', ['위치', '모양', '크기']],
   [FMP.push(0, 2), '아래쪽으로 2cm 밀기 → 모양과 크기: {?}', '그대로', ['그대로', '바뀜']]],
   rule: ['밀기를 하면 모양과 크기는 그대로이고 {?}만 바뀌어요.', '위치', ['위치', '방향', '모양']], sum: '밀기 전 도형과 밀기 후 도형을 포개면 꼭 겹쳐져요.' },
@@ -11573,7 +11573,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 .svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap{margin:0!important}.svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbwrap svg{width:100%!important;height:auto!important}
 .svsl-tc.svsl-fin .svsl-main>div:has(>.gbwrap):has(>.gbctl)>.gbhint{display:none}}
 /* 위로 올린 조작 안내 띠 */
-.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
+.svsl-main>.uni-cap{display:block!important;white-space:normal!important;word-break:keep-all;width:auto;max-width:100%;box-sizing:border-box;zoom:1!important;order:-1;flex:none;align-self:stretch;margin:0 0 10px;padding:10px 18px;border-radius:16px;background:linear-gradient(90deg,#eef2ff,#fdf4ff);border:3px solid #c7d2fe;font-weight:900;font-size:clamp(1rem,1.2vw,1.25rem);line-height:1.5;color:#1e1b4b;text-align:center;box-shadow:0 4px 0 #c7d2fe}
 .svsl-main>.uni-cap *{display:inline!important}.svsl-main>.uni-cap .anpill{display:inline-flex!important;margin-left:6px}.svsl-main>.uni-cap .frc{display:inline-flex!important}
 /* ===== 말판 레이스(bq race) 공통 업그레이드: 경기장 트랙 · 체크 깃발 · 말 크게 · 차례 빛 ===== */
 .bq-main.race .bq-boardw{position:relative;padding:18px 16px 16px;border-radius:26px;background:radial-gradient(ellipse at 50% 0,#4ade80,#15803d 70%);box-shadow:inset 0 0 0 6px #166534,0 8px 0 #14532d,0 12px 24px rgba(0,0,0,.25)}
@@ -11636,6 +11636,59 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
     document.querySelectorAll('.uni-glow').forEach(g => { const svg = g.ownerSVGElement; let box = svg && svg.parentElement; for (let i = 0; i < 5 && box && !box.querySelector('.sv-pk'); i++) box = box.parentElement; if (box && !box.querySelector('.sv-pk[class*="on"]')) g.remove(); }); }
   try { new MutationObserver(() => { clearTimeout(glow.t); glow.t = setTimeout(glow, 30); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
+/* 위로 올린 안내 띠(.uni-cap) 높이만큼 그림 칸을 줄여 화면 안에 다 들어오게 해요 (데스크톱) */
+(function () {
+  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main').forEach(main => {
+    const cap = main.querySelector(':scope>.uni-cap'); if (!cap) return;
+    const inner = [...main.children].find(e => e !== cap && e.getClientRects().length); if (!inner) return;
+    const avail = main.clientHeight - cap.offsetHeight - 14, h = inner.getBoundingClientRect().height; if (avail < 120 || h <= avail + 1) return;
+    const z = parseFloat(inner.style.zoom) || 1; inner.style.zoom = Math.max(.45, z * avail / h); main.classList.remove('svsl-scrolly'); }); }
+  addEventListener('resize', () => { setTimeout(capFit, 40); setTimeout(capFit, 260); });
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; capFit(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
+/* 결과 화면: 아직 안 한(또는 다시 할) 활동 줄마다 「▶ 하러 가기」 — 누르면 그 단계·그 도구·그 게임으로 바로 가요 (모든 차시 공통) */
+(function () {
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  function target(li) {
+    const body = li.closest('#s1body,#s2body'); if (!body) return null; const tab = body.id === 's1body' ? 's1' : 's2', t = li.textContent;
+    if (tab === 's1') {
+      if (/기본 문제/.test(t)) { const m = t.match(/기본 문제\s*(\d+)/); return { tab, step: 'basic', q: m ? +m[1] - 1 : null }; }
+      if (/점프|보스전|오늘의 문제|도전 \d/.test(t)) { const m = t.match(/(?:보스전|도전)\s*(\d+)/); return { tab, step: 'jump', q: m ? +m[1] - 1 : (/오늘의 문제|점프 1/.test(t) ? 0 : null) }; }
+      const tool = T(() => S1_TOOLS.find(x => t.includes(x[3]))); if (tool || /도구|개념 카드|개념 탐험|배지/.test(t)) return { tab, step: 'concept', tool: tool && tool[0] };
+      return null;
+    }
+    if (/문제은행|드릴|단원 평가/.test(t)) return { tab, step: 'drill' };
+    if (/보드/.test(t)) return { tab, step: 'board' };
+    const g = T(() => LAIR.find(x => t.includes(x.name))); if (g || /소굴|미니게임/.test(t)) return { tab, step: 'game', game: g && g.id };
+    if (/왕중왕/.test(t)) return { tab, step: 'arena' };
+    return null;
+  }
+  function go(G) {
+    T(() => showTab(G.tab));
+    if (G.tool) T(() => { state.s1.tool = G.tool; });
+    T(() => goStep(G.tab, G.step));
+    if (G.step === 'jump' && T(() => state.s1.step) !== 'jump') T(() => goStep('s1', 'basic'));
+    setTimeout(() => {
+      if (G.tool) T(() => { const b = [...document.querySelectorAll('.hub .tool')].find(x => x.dataset.v === G.tool || x.textContent.includes((S1_TOOLS.find(y => y[0] === G.tool) || [])[3])); b && !b.classList.contains('on') && b.click(); });
+      if (G.q != null && (G.step === 'basic' || G.step === 'jump')) T(() => qGo(G.step, G.q));
+      if (G.game) T(() => { const c = document.querySelector('[data-act="lair-pick"][data-v="' + G.game + '"]'); c && c.click(); });
+      T(() => scrollTo({ top: 0, behavior: 'smooth' }));
+    }, 260);
+    T(() => Sound.click());
+  }
+  function add() {
+    document.querySelectorAll('ul.ritems li').forEach(li => {
+      if (li.classList.contains('ok') || li.querySelector('button,.fu-go,.ugo')) return;
+      const G = target(li); if (!G) return;
+      const b = document.createElement('button'); b.className = 'ugo'; b.type = 'button'; b.textContent = li.classList.contains('retry') ? '🔄 다시 하기' : '▶ 하러 가기';
+      b.onclick = e => { e.preventDefault(); e.stopPropagation(); go(G); }; li.appendChild(b);
+    });
+  }
+  const st = document.createElement('style');
+  st.textContent = '.ugo{flex:none;border:0;cursor:pointer;font-weight:900;font-size:.85rem;color:#fff;background:linear-gradient(180deg,#fb923c,#ea580c);border-radius:999px;padding:5px 12px;box-shadow:0 3px 0 #c2410c;margin-left:6px;white-space:nowrap}.ugo:hover{transform:translateY(-1px)}.ritems li.retry .ugo{background:linear-gradient(180deg,#a78bfa,#7c3aed);box-shadow:0 3px 0 #5b21b6}';
+  (document.head || document.documentElement).appendChild(st);
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; add(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
