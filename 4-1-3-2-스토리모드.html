@@ -9123,6 +9123,43 @@ body.dg-active [data-dz]{outline:3px dashed rgba(59,130,246,.35);outline-offset:
 .foldbox svg{width:min(100%,360px)!important;height:auto!important}
 .gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
 .ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
+
+/* v46: 표는 머리칸까지 모든 칸에 선 */
+.cktable th{border:2px solid #94a3b8;background:#e0e7ff;font-weight:900;padding:6px 12px;text-align:center}.cktable td{border-color:#94a3b8}
+/* ✋ M4 · 4학년 직접 조작 키트 — 그림이 칸을 가득, 오른쪽은 좁은 값 칸 */
+body.svsl-on .svsl-tc .svsl-main>div:has(>.m4p){align-self:stretch;flex:1 1 100%;width:100%!important;max-width:none!important;min-width:0;min-height:0;align-items:stretch!important;gap:0}
+body.svsl-land .svsl-tc .svsl-main>div:has(>.m4p)>.m4p{flex:1 1 auto;min-height:0}
+.m4p{--m4z:1;display:flex;gap:14px;align-items:stretch;width:100%;box-sizing:border-box}
+body.svsl-land .m4p{height:100%}
+.m4fig{flex:2.1 1 0;min-width:0;min-height:0;height:clamp(300px,56vh,680px);position:relative;box-sizing:border-box;border:3px dashed #f59e0b;border-radius:18px;background:#fffbeb;padding:6px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.m4p.wide .m4fig{flex:3 1 0}
+body.svsl-land .m4fig{height:auto;align-self:stretch}
+.m4p.done .m4fig{border-style:solid;border-color:#22c55e;background:#f0fdf4}
+.m4fig>svg{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;font-family:inherit;font-weight:900}
+.m4info{flex:1 1 0;min-width:0;min-height:0;max-width:380px;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:8px;overflow:hidden}
+.m4info>*{zoom:var(--m4z)}
+.m4info .mxrec,.m4info .row.mt-2{margin:0}
+body.svsl-port .m4p{flex-direction:column}body.svsl-port .m4fig{flex:none;height:clamp(260px,44vh,620px)}body.svsl-port .m4info{flex:none;max-width:none}
+@media(max-width:760px){.m4p{flex-direction:column}.m4fig{flex:none;height:clamp(240px,44vh,500px)}.m4info{flex:none;max-width:none}}
+/* 잡는 곳 */
+.m4h{cursor:grab;touch-action:none}.m4drag .m4h,.m4drag{cursor:grabbing!important}
+.m4hit{fill:#fff;fill-opacity:.001;stroke:none}
+.m4h:hover .m4hit{fill:#fde68a;fill-opacity:.28}
+.m4hand circle{fill:#fff7ed;stroke:#f97316;stroke-width:3.5}.m4hand path{fill:none;stroke:#f97316;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.m4hand .m4hi{font-size:19px}.m4hand .m4hl{font-size:17px;fill:#c2410c;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.m4hand.pulse circle{animation:m4pulse 1.3s ease-in-out infinite}.m4drag .m4hand.pulse circle{animation:none}
+@keyframes m4pulse{0%,100%{stroke-width:3.5}50%{stroke-width:7}}
+/* 오른쪽 값 칸 */
+.m4vol{background:#eff6ff;border:3px solid #93c5fd;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.m4vh{font-weight:900;color:#1d4ed8;font-size:1.05rem}
+.m4vr{display:flex;align-items:baseline;gap:8px;font-weight:900;color:#1e293b;font-size:1rem}.m4vr span{flex:1;min-width:0}.m4vr b{font-size:1.35rem;color:#0f172a}.m4vr em{font-style:normal;color:#64748b;font-size:.9rem}
+.m4vr.big b{font-size:2rem;color:#ea580c}.m4vr.ok b{color:#16a34a}.m4vr.bad b{color:#dc2626}
+.m4vol small{color:#475569;font-weight:800;font-size:.88rem;line-height:1.45;word-break:keep-all}
+.m4eq{background:#fff;border:3px solid #fcd34d;border-radius:16px;padding:10px 12px;font-weight:900;font-size:1.15rem;text-align:center;color:#1e293b;line-height:1.6;word-break:keep-all}.m4eq b{color:#ea580c}.m4eq.ok{border-color:#86efac;background:#f0fdf4}
+/* SVG 글자 */
+.m4fig svg text{font-family:inherit}
+.m4fig .tl{font-size:20px;fill:#334155}.m4fig .tb{font-size:26px;fill:#0f172a}.m4fig .ts{font-size:15px;fill:#64748b}.m4fig .tr{fill:#dc2626}.m4fig .tg{fill:#16a34a}.m4fig .to{fill:#ea580c}.m4fig .tw{fill:#fff}
+.m4fig .pop{animation:m4pop .35s ease}@keyframes m4pop{from{opacity:.2;transform:scale(.92)}to{opacity:1;transform:none}}
 </style>
 <script>
 /* =====================================================================
@@ -9214,7 +9251,7 @@ const CK = (() => {
     if (s.i < n && !s.d) { const g = t.stages[s.i]; s.d = g.init ? g.init() : {}; }
     const steps = `<div class="t11steps">${t.stages.map((g, j) => `<span class="${(done && s.i >= n) || j < s.i ? 'ok' : j === s.i ? 'cur' : ''}">${(done && s.i >= n) || j < s.i ? '✅' : j === s.i ? '👉' : '⬜'} ${g.t}</span>`).join('')}</div>`;
     let body = '';
-    if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
+    if (s.i >= n) body = `<div class="andone">${typeof svSumHTML === 'function' ? svSumHTML('봉인 해제!', t.summary, t.name) : '🎖 봉인 해제! ' + t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
     else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
       body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
         + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 다시 조작해 보기</button><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : (s.i > 0 || done ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 이 활동 처음부터</button></div>` : '')); }
@@ -9350,6 +9387,69 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
+
+/* =====================================================================
+   ✋ M4 · 4학년 직접 조작 키트 (2026-11-19)
+   · 그림(SVG)이 도구 칸을 가득 채우고, 오른쪽 좁은 칸에 지금 값·기록을 보여요.
+   · 그림 속 물건(.m4h)을 잡고 끌면 그 방향으로 값이 바뀌어요 — 단추·키패드·정답 카드 없이.
+     .m4h: data-k(값 이름) data-v(지금 값) data-min data-max data-dx data-dy(끄는 방향) data-per(값 1만큼의 SVG 길이)
+     값이 바뀔 때마다 숨은 [data-ck=m4set]에 'k:값', 손을 떼면 'k:end'를 보내요 → stage.on['act:m4set'](d, 'k:값')
+   · 패드·폰: pointer capture 를 body 에 걸어 다시 그려져도 끊기지 않아요.
+   ===================================================================== */
+/* 받침에 따라 조사 고르기 (없는 차시용) */
+if (typeof jo === 'undefined') window.jo = (w, a, b) => { const c = String(w).replace(/<[^>]+>/g, '').trim().slice(-1), n = c.charCodeAt(0); if (n >= 0xAC00 && n <= 0xD7A3) return (n - 0xAC00) % 28 ? a : b; return '0136781'.includes(c) || /[LMN]/i.test(c) ? a : b; };
+const M4 = (() => {
+  if (!window.__m4Pull) { window.__m4Pull = 1; let D = null;
+    const send = v => { const b = document.querySelector('#toolBody [data-ck="m4set"]'); if (b) { b.dataset.v = v; b.click(); } };
+    document.addEventListener('pointerdown', e => { if (D || (e.button != null && e.button > 0)) return; const h = e.target.closest && e.target.closest('#toolBody .m4h'); if (!h) return; const sv = h.closest('svg'); if (!sv) return; e.preventDefault();
+      let s = 1; try { const r = sv.getBoundingClientRect(), vb = sv.viewBox.baseVal; if (vb && vb.width) s = Math.min(r.width / vb.width, r.height / vb.height) || 1; } catch (er) {}
+      D = { k: h.dataset.k, v0: +h.dataset.v, v: +h.dataset.v, min: +h.dataset.min, max: +h.dataset.max, ux: +h.dataset.dx || 0, uy: +h.dataset.dy || 0, per: Math.max(4, (+h.dataset.per || 40) * s), x: e.clientX, y: e.clientY, id: e.pointerId };
+      try { document.body.setPointerCapture(e.pointerId); } catch (er) {} document.body.classList.add('m4drag'); try { Sound.click(); } catch (er) {} }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const dx = e.clientX - D.x, dy = e.clientY - D.y;
+      const v = Math.max(D.min, Math.min(D.max, D.v0 + Math.round((dx * D.ux + dy * D.uy) / D.per))); if (v !== D.v) { D.v = v; send(D.k + ':' + v); try { Sound.pop(); } catch (er) {} } }, { passive: false });
+    const up = e => { if (!D || (e && e.pointerId != null && e.pointerId !== D.id)) return; try { document.body.releasePointerCapture(D.id); } catch (er) {} const k = D.k; D = null; document.body.classList.remove('m4drag'); send(k + ':end'); };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+    /* 오른쪽 칸 글자: 칸 높이에 맞춰 키우거나 줄여요 (단계마다 한 번 정하고 고정) */
+    const ZC = {}; const fit = () => { document.querySelectorAll('#toolBody .m4p').forEach(r => { const info = r.querySelector('.m4info'); if (!info || !info.children.length) return;
+      let key = ''; try { const k = state.s1.tool; key = [k, CK.S(k).i, r.dataset.ph || 0, innerWidth, innerHeight].join(':'); } catch (er) {}
+      const set = z => r.style.setProperty('--m4z', z.toFixed(2)), over = () => info.scrollHeight > info.clientHeight + 2;
+      let z = ZC[key]; if (z == null) { z = 1; set(z); if (innerWidth > 760) { for (let i = 0; i < 10 && !over() && info.scrollHeight < info.clientHeight * .7; i++) { z *= 1.07; set(z); } for (let i = 0; i < 14 && z > .6 && over(); i++) { z *= .94; set(z); } } if (key) ZC[key] = z; } else set(z); }); };
+    try { new MutationObserver(() => { clearTimeout(fit.t); fit.t = setTimeout(fit, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} addEventListener('resize', () => { for (const k in ZC) delete ZC[k]; fit(); }); }
+  const setBtn = '<button data-ck="m4set" data-v="" hidden></button>';
+  /* 칸 배치: [그림 | 오른쪽 좁은 칸] — 그림이 칸을 가득 채워요 */
+  const box = (fig, info, o = {}) => `<div class="m4p ${o.done ? 'done' : ''} ${o.wide ? 'wide' : ''}" data-svnofit="1" data-ph="${o.ph || 0}"><div class="m4fig">${fig}</div>${info ? `<div class="m4info">${info}</div>` : ''}${setBtn}</div>`;
+  const svg = (w, h, inner, cls) => `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" class="${cls || ''}">${inner}</svg>`;
+  /* 잡는 곳: 투명한 큰 사각형(손가락 크기 이상) + 보이는 손 표시 */
+  const grip = (k, v, min, max, dir, per, rects, hand) => `<g class="m4h" data-k="${k}" data-v="${v}" data-min="${min}" data-max="${max}" data-dx="${dir[0]}" data-dy="${dir[1]}" data-per="${per}">${rects.map(r => `<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" rx="${r[4] || 6}" class="m4hit"/>`).join('')}${hand || ''}</g>`;
+  /* 손 표시: 동그라미 + 끄는 방향 화살 + 짧은 말 */
+  const hand = (x, y, dir, lab, o = {}) => { const ang = Math.atan2(dir[1], dir[0]) * 180 / Math.PI, r = o.r || 18;
+    return `<g class="m4hand ${o.pulse === false ? '' : 'pulse'}" transform="translate(${x},${y})"><g transform="rotate(${ang.toFixed(1)})"><path d="M${r + 5},0h16m-7,-7l7,7l-7,7"/>${o.two ? `<path d="M${-r - 5},0h-16m7,-7l-7,7l7,7"/>` : ''}</g><circle r="${r}"/><text y="7" text-anchor="middle" class="m4hi">✋</text>${lab ? `<text x="${o.lx || 0}" y="${o.ly != null ? o.ly : r + 22}" text-anchor="${o.anc || 'middle'}" class="m4hl">${lab}</text>` : ''}</g>`; };
+  /* 오른쪽 칸 줄: [[이름, 값, 단위, 크게?]] */
+  const rows = (title, R, note) => `<div class="m4vol">${title ? `<div class="m4vh">${title}</div>` : ''}${R.map(r => `<div class="m4vr ${r[3] ? 'big' : ''} ${r[4] || ''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2] || ''}</em></div>`).join('')}${note ? `<small>${note}</small>` : ''}</div>`;
+  const eq = (h, cls) => `<div class="m4eq ${cls || ''}">${h}</div>`;
+  const F = n => Number(n).toLocaleString();
+  const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" class="${o.c || ''}" text-anchor="${o.a || 'middle'}" ${o.fs ? `font-size="${o.fs}"` : ''} ${o.fill ? `fill="${o.fill}"` : ''} ${o.w ? `font-weight="${o.w}"` : ''}>${s}</text>`;
+  const R = (x, y, w, h, fill, o = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx != null ? o.rx : 4}" fill="${fill}" ${o.st ? `stroke="${o.st}" stroke-width="${o.sw || 2}"` : ''} ${o.c ? `class="${o.c}"` : ''} ${o.op != null ? `opacity="${o.op}"` : ''} ${o.da ? `stroke-dasharray="${o.da}"` : ''}/>`;
+  const L = (x1, y1, x2, y2, st, sw, o = {}) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${st}" stroke-width="${sw || 2}" ${o.da ? `stroke-dasharray="${o.da}"` : ''} stroke-linecap="round"/>`;
+  /* 수 모형: 백(판) · 십(막대) · 일(낱개) — 크기 u (일 모형 한 변) */
+  const flat = (x, y, u, col) => { let s = R(x, y, u * 10, u * 10, col || '#fcd34d', { st: '#b45309', sw: 1.6, rx: 2 }); for (let i = 1; i < 10; i++) s += L(x + i * u, y, x + i * u, y + u * 10, '#d97706', .7) + L(x, y + i * u, x + u * 10, y + i * u, '#d97706', .7); return s; };
+  const rod = (x, y, u, col, vert) => { let s = vert ? R(x, y, u, u * 10, col || '#93c5fd', { st: '#1d4ed8', sw: 1.4, rx: 2 }) : R(x, y, u * 10, u, col || '#93c5fd', { st: '#1d4ed8', sw: 1.4, rx: 2 }); for (let i = 1; i < 10; i++) s += vert ? L(x, y + i * u, x + u, y + i * u, '#3b82f6', .7) : L(x + i * u, y, x + i * u, y + u, '#3b82f6', .7); return s; };
+  const one = (x, y, u, col) => R(x, y, u, u, col || '#f9a8d4', { st: '#be185d', sw: 1.2, rx: 2 });
+  return { box, svg, grip, hand, rows, eq, F, T, R, L, flat, rod, one, setBtn };
+})();
+
 
 /* =====================================================================
    🧗 JX · 보스전 도전 2·3을 조작형 사고력 문제로 (보기 고르기 대신 직접 만들기)
@@ -9363,9 +9463,15 @@ const JX = (() => {
   const say = f => f ? charSay(f.ok ? 'ok' : (f.hint ? 'hint' : 'no'), f.msg) : '';
   const card = (k, v, t) => `<span class="t11piece ${S(k).pick === String(v) ? 'jxpick' : ''}" data-dg="jx-c" data-v="${k}|${v}"><b>${t != null ? t : v}</b></span>`;
   const jxSel = k => { const s = S(k), n = (D[k].slots || []).length; if (s.sel != null && s.slots[s.sel] == null) return s.sel; for (let i = 0; i < n; i++) if (s.slots[i] == null) return i; return -1; };
+  const isTyped = C => !!C && C.type === 'slots' && (C.typed === true || (C.typed !== false && (C.cards || []).length > 0 && C.cards.every(v => typeof v === 'number')));
   function view(k) {
     const C = D[k], s = S(k), done = solved(k); let h = '';
-    if (C.type === 'slots') {
+    if (isTyped(C)) {
+      h += `<div class="jxrow ${C.stack ? 'jxstack' : ''}">${C.slots.map((lab, i) => `<span class="jxit">${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot jxtyp"><input class="jxin" data-jxin="${k}|${i}" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="답 쓰는 칸" value="${s.slots[i] != null ? s.slots[i] : ''}" ${done ? 'disabled' : ''}>${C.unit && !C.post ? `<small>${C.unit}</small>` : ''}</span>${C.post && C.post[i] ? `<span class="jxlab">${C.post[i]}</span>` : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
+      if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
+      if (!done) h += `<div class="t11src"><span class="t11lab">✏️ 빈칸에 알맞은 수를 직접 써요</span></div>`
+        + `<div class="row mt-2" style="justify-content:center"><button class="btn btn-green" data-jx="ok" data-v="${k}">✅ 다 썼어요</button><button class="btn btn-sub" data-jx="hint" data-v="${k}">💡 힌트</button><button class="btn btn-sub" data-act="scratch-toggle">📝 연습장</button></div>`;
+    } else if (C.type === 'slots') {
       h += `<div class="jxrow">${C.slots.map((lab, i) => `${lab ? `<span class="jxlab">${lab}</span>` : ''}<span class="jxslot ${s.slots[i] != null ? 'full' : ''} ${!done && s.slots[i] == null && jxSel(k) === i ? 'jxsel' : ''}" data-dz="jx-s" data-i="${k}|${i}" data-jxsel="${k}|${i}" ${s.slots[i] != null && !done ? `data-jxclr="${k}|${i}" title="눌러서 비우기"` : ''}>${s.slots[i] != null ? (C.show ? C.show(s.slots[i]) : s.slots[i]) : ''}</span>`).join('')}${C.tail ? `<span class="jxlab">${C.tail(Array.from({ length: C.slots.length }, (_, i) => s.slots[i]))}</span>` : ''}</div>`;
       if (C.need > 1) h += `<div class="jxsol">찾은 것 ${s.sol.length}/${C.need}: ${s.sol.map(x => `<b>${x}</b>`).join(' · ') || '아직 없어요'}</div>`;
       if (!done) h += `<div class="t11src"><span class="t11lab">✋ 카드를 끌거나 눌러서 빈칸에 놓아요 · 숫자 키로도 쓸 수 있어요 · 채운 칸을 누르면 비워져요</span>${C.cards.map(v => card(k, v, C.show ? C.show(v) : v)).join('')}</div>`
@@ -9405,7 +9511,7 @@ const JX = (() => {
   document.addEventListener('click', e => { const z = e.target.closest('[data-jxsel]'); if (z && !z.dataset.jxclr) { const [k, i] = z.dataset.jxsel.split('|'); if (D[k] && !solved(k)) { S(k).sel = +i; paint(k); } return; }
     const b = e.target.closest('.jxbins [data-dz="jx-b"]'); if (b) { const [k, i] = (b.dataset.i || '').split('|'), s = D[k] && S(k); if (s && s.pick != null && !solved(k)) { const val = isNaN(+s.pick) ? s.pick : +s.pick; s.bins[val] = +i; s.pick = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); } } });
   document.addEventListener('keydown', e => { if (!/^[0-9]$/.test(e.key) || e.target.closest && e.target.closest('input,textarea')) return;
-    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
+    for (const k of Object.keys(D)) { const C = D[k], el = document.getElementById('part-' + k); if (!el || !el.offsetParent || C.type !== 'slots' || isTyped(C) || solved(k)) continue; const s = S(k), i = jxSel(k); if (i < 0) continue;
       const c = C.cards.find(v => String(v) === e.key); if (c == null) continue; s.slots[i] = isNaN(+c) ? c : +c; s.sel = null; s.fb = null; try { Sound.pop(); } catch (x) {} paint(k); e.preventDefault(); return; } });
   document.addEventListener('click', e => { const c = e.target.closest('[data-jxclr]'); if (c) { const [k, i] = c.dataset.jxclr.split('|'); delete S(k).slots[+i]; paint(k); return; }
     const b = e.target.closest('[data-jx]'); if (!b) return; const k = b.dataset.v, a = b.dataset.jx, s = S(k); touch('s1');
@@ -9422,94 +9528,140 @@ const JX = (() => {
   return { set, paint };
 })();
 
+/* 직접 쓰는 빈칸: 쓴 값을 그대로 기억해요 (다시 그리지 않음) */
+(function () { try {
+  document.addEventListener('input', e => { const t = e.target; if (!t || !t.dataset || t.dataset.jxin == null) return; const [k, i] = t.dataset.jxin.split('|'); try { const st = (state.s1.jx2 = state.s1.jx2 || {}); const s = st[k] || (st[k] = { slots: [], sol: [], bins: {}, fb: null, n: 0 }); const v = (window.svHalf ? window.svHalf(t.value) : t.value).trim().replace(/,/g, ''); if (v === '') delete s.slots[+i]; else s.slots[+i] = isNaN(+v) ? v : +v; s.fb = null; } catch (x) {} });
+  document.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target || !e.target.dataset || e.target.dataset.jxin == null) return; const k = e.target.dataset.jxin.split('|')[0], b = document.querySelector('#part-' + k + ' [data-jx="ok"]'); if (b) { e.preventDefault(); b.click(); } });
+  const st = document.createElement('style'); st.textContent = '.jxit{display:inline-flex;align-items:center;gap:6px}.jxrow.jxstack{flex-direction:column;align-items:flex-start;gap:12px}.jxstack .jxlab{font-size:1.35rem!important;font-weight:900}.jxstack input.jxin{font-size:1.4rem}.jxslot.jxtyp{padding:0;border:0;background:none;min-width:0;display:inline-flex;align-items:center;gap:4px}input.jxin{width:96px;font:inherit;font-weight:900;font-size:1.25rem;text-align:center;padding:8px 6px;border-radius:12px;border:3px solid #a5b4fc;background:#fff;color:#1e1b4b}input.jxin:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 4px #c7d2fe}.jxslot.jxtyp small{font-weight:900}'; document.head.appendChild(st);
+} catch (e) {} })();
 
-/* 4-1-3-2 (세 자리 수)×(몇십몇) — 개념 도구 3가지 + 보스전 도전 2·3 (조작형) */
+
+/* 4-1-3-2 (세 자리 수)×(몇십몇) — 블록 판을 직접 가르고·옮기고·칠하며 (M4 직접 조작) + 보스전 도전 2·3 */
 (function () {
-  const F = n => Number(n).toLocaleString();
-  /* ① 곱하는 수 가르기: 213개씩 18줄 묶음 판에 가르는 선을 그어 10줄 + 8줄로 나누기 */
-  const split = (t, kind, a, b, say) => { const T = Math.floor(b / 10) * 10, O = b % 10;
-    return { _ty: 'split', _o: { a, b }, t, kind,
-      q: d => d.cut == null ? `블록 <b>${a}개씩 ${b}줄</b>이에요. 줄 사이의 ✂️ 를 눌러 묶음 판을 <b>계산하기 쉬운 두 부분</b>으로 갈라 보세요. (한 부분은 <b>몇십 줄</b>이 되게!)` : '완성!',
-      init: () => ({ cut: null, tries: 0 }),
-      view: d => { const cols = Array.from({ length: b }, (_, i) => { const top = d.cut != null && i < d.cut, bot = d.cut != null && i >= d.cut;
-          return `<div style="flex:1 1 26px;min-width:11px;max-width:26px;height:150px;border-radius:5px;overflow:hidden;background:${top ? '#93c5fd' : bot ? '#fda4af' : '#e2e8f0'};display:flex;align-items:center;justify-content:center"><span style="writing-mode:vertical-rl;font-size:min(.72rem,2.6vw);font-weight:900;color:#334155">${a}</span></div>`
-            + (i < b - 1 ? `<button data-ck="cut" data-v="${i + 1}" title="여기서 가르기" style="flex:0 1 14px;min-width:7px;height:150px;border:0;padding:0;border-radius:4px;background:${d.cut === i + 1 ? '#f59e0b' : 'transparent'};cursor:pointer;font-size:.7rem;color:#94a3b8">${d.cut === i + 1 ? '' : '✂'}</button>` : ''); }).join('');
-        const top = d.cut, bot = d.cut == null ? null : b - d.cut;
-        return `<div style="display:flex;justify-content:center"><div style="display:flex;align-items:center;padding:8px;border:3px solid #1e293b;border-radius:10px;background:#fff;overflow-x:auto;max-width:100%;width:min(720px,100%);box-sizing:border-box">${cols}</div></div><div class="text-xs font-black muted center mt-1">블록 ${a}개씩 ${b}줄 (한 줄 = ${a}개)</div>
-          ${d.cut == null ? '<div class="ckzone mt-2">✂️ 줄 사이를 눌러 갈라요</div>' : `<div class="ckgrid2 mt-2"><div class="ckzone" style="border-color:#3b82f6;background:#eff6ff">🟦 왼쪽 ${top}줄<br><b>${a} × ${top} = ${F(a * top)}</b></div><div class="ckzone" style="border-color:#f43f5e;background:#fff1f2">🟥 오른쪽 ${bot}줄<br><b>${a} × ${bot} = ${F(a * bot)}</b></div></div>
-            <div class="ckbig" style="font-size:1.1rem">${F(a * top)} + ${F(a * bot)} = <b>${F(a * b)}</b></div>`}`; },
-      on: { 'act:cut'(d, v, el, api) { d.cut = +v; d.tries++; try { Sound.pop(); } catch (e) {}
-        const top = d.cut, bot = b - d.cut;
-        if ((top === T && bot === O) || (top === O && bot === T)) api.win(say());
-        else api.say(false, `${top}줄과 ${bot}줄로 갈랐어요. 둘을 더하면 ${b}줄이 맞지만, <b>${a} × ${top}</b>은 바로 계산하기 어려워요. 한 부분을 <b>${T}줄</b>(몇십 줄)이 되게 갈라 보세요.`, true); } } }; };
-  /* ② 세로셈 자리 맞추기: 두 줄의 곱을 알맞은 자리에 놓기 */
-  const colw = (t, kind, a, b, say) => { const T = Math.floor(b / 10), O = b % 10, p1 = a * O, p2 = a * T, P = a * b, L = String(P).length + 1;
-    const cells = Array.from({ length: L }, (_, i) => L - 1 - i), CKN2 = ['일', '십', '백', '천', '만', '십만'];
-    const put = (s, k) => { const S = String(s); return j => { const i = k + S.length - 1 - j; return i >= 0 && i < S.length && j >= k ? S[i] : ''; }; };
-    return { _ty: 'colw', _o: { a, b }, t, kind,
-      q: d => d.r1 == null ? `${a} × ${O} = <b>${F(p1)}</b>을 첫째 줄에 놓아요. 카드를 끌어 <b>맨 오른쪽 숫자가 놓일 칸</b>에 놓아요.` : d.r2 == null ? `둘째 줄은 ${a} × <b>${T}</b>의 곱 <b>${F(p2)}</b>예요. 그런데 ${b}의 ${T}${jo(T, '은', '는')} <b>십의 자리</b> 숫자라서 ${a} × ${T * 10}${jo(T * 10, '을', '를')} 뜻해요. ${p2} 카드를 어디에 놓아야 할까요?` : '완성!',
-      init: () => ({ r1: null, r2: null }),
-      view: d => { const f1 = d.r1 != null ? put(p1, d.r1) : () => '', f2 = d.r2 != null ? put(p2, d.r2) : () => '';
-        const row = s => cells.map(j => `<td>${String(s).padStart(L, ' ')[L - 1 - j].trim()}</td>`).join('');
-        const sum = d.r1 === 0 && d.r2 === 1;
-        return `<table class="cktable"><tr>${cells.map(k => `<td style="background:#f1f5f9;font-size:.72rem">${CKN2[k]}</td>`).join('')}</tr><tr>${row(a)}</tr><tr>${cells.map((j, i) => `<td>${i === 0 ? '×' : String(b).padStart(L, ' ')[L - 1 - j].trim()}</td>`).join('')}</tr>
-          <tr>${cells.map(j => `<td class="dz" data-dz="ck-r1" data-i="${j}" style="border-top:3px solid #1e293b">${f1(j)}</td>`).join('')}</tr>
-          <tr>${cells.map(j => `<td class="dz" data-dz="ck-r2" data-i="${j}" style="${j === 0 && sum ? 'color:#94a3b8' : ''}">${f2(j) || (j === 0 && sum ? '(0)' : '')}</td>`).join('')}</tr>
-          <tr>${cells.map(j => `<td style="border-top:3px solid #1e293b;color:#dc2626">${sum ? String(P).padStart(L, ' ')[L - 1 - j].trim() : ''}</td>`).join('')}</tr></table>`
-          + (sum ? `<div class="ckbig" style="font-size:1.05rem">${F(p1)} + ${F(p2 * 10)} = <b>${F(P)}</b></div>` : ckSrc(d.r1 == null ? '✋ 첫째 줄 카드를 끌어 놓아요' : '✋ 둘째 줄 카드를 끌어 놓아요', d.r1 == null ? ckPiece('ck-r1', p1, `<b style="font-size:1.25rem">${p1}</b><small>${a}×${O}</small>`) : ckPiece('ck-r2', p2, `<b style="font-size:1.25rem">${p2}</b><small>${a}×${T}</small>`))); },
-      on: { 'ck-r1:drop'(d, v, z, el, api) { if (z !== 'ck-r1') return; const k = +el.dataset.i; if (k !== 0) { api.say(false, `${a} × ${O}의 곱은 일의 자리부터 써요. 맨 오른쪽 숫자 ${String(p1).slice(-1)}${jo(String(p1).slice(-1), '이', '가')} <b>일의 자리</b>에 오게 놓아요.`, true); return; } d.r1 = 0; api.clear(); try { Sound.pop(); } catch (e) {} },
-        'ck-r2:drop'(d, v, z, el, api) { if (z !== 'ck-r2') return; const k = +el.dataset.i;
-          if (k === 0) { api.say(false, `반쪽이처럼 일의 자리에 맞추면 ${F(p2)}${jo(F(p2), '이', '가')} 돼요. 하지만 ${a} × ${T * 10} = <b>${F(p2 * 10)}</b>이에요. 한 칸 왼쪽, <b>십의 자리부터</b> 놓아야 해요.`); return; }
-          if (k !== 1) { api.say(false, `${k}칸 왼쪽이면 ${F(p2)}의 ${Math.pow(10, k)}배가 돼요. ×${T * 10}${jo(T * 10, '은', '는')} ${F(p2)}의 <b>10배</b>예요.`, true); return; }
-          d.r2 = 1; api.win(say()); } } }; };
-  /* ③ 빠진 반쪽 채우기: 반쪽이가 ×몇만 계산한 세로셈에 ×몇십 줄을 채워 넣기 */
-  const miss = (t, kind, a, b, say) => { const T = Math.floor(b / 10), O = b % 10, good = a * T * 10, cards = [a * T, good, a * O * 10, a * (T + O)].filter((x, i, A) => A.indexOf(x) === i);
-    return { _ty: 'miss', _o: { a, b }, t, kind,
-      q: d => !d.ok ? `반쪽이는 <b>${a} × ${b}</b>에서 ${a} × ${O}만 계산하고 도망갔어요. 빠진 반쪽, <b>${a} × ${T * 10}</b>의 곱 카드를 찾아 빈칸에 끌어 놓아요.` : '완성!',
-      init: () => ({ ok: false, cards: cards.slice().sort(() => Math.random() - .5) }),
-      view: d => `<div style="max-width:420px;margin:0 auto;font-size:1.15rem;font-weight:900;line-height:2.2">
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #cbd5e1"><span>${a} × ${O}</span><span>= ${F(a * O)}</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #cbd5e1"><span>${a} × ${T * 10}</span><span class="ckzone" data-dz="ck-miss" data-i="0" style="min-height:44px;min-width:130px;padding:4px 10px;display:inline-block">${d.ok ? '= ' + F(good) : '?'}</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;color:#dc2626"><span>${a} × ${b}</span><span>= ${d.ok ? F(a * b) : '?'}</span></div></div>`
-        + (d.ok ? `<div class="ckbig" style="font-size:1.05rem">${F(a * O)} + ${F(good)} = <b>${F(a * b)}</b></div>` : ckSrc('✋ 알맞은 곱 카드를 끌어 빈칸에 놓아요', d.cards.map(c => ckPiece('ck-miss', c, `<b style="font-size:1.2rem">${F(c)}</b>`)).join(''))),
-      on: { 'ck-miss:drop'(d, v, z, el, api) { if (z !== 'ck-miss') return; const x = +v;
-        if (x === good) { d.ok = true; api.win(say()); return; }
-        api.say(false, x === a * T ? `${F(x)}${jo(F(x), '은', '는')} ${a} × ${T}의 곱이에요. ${b}의 ${T}${jo(T, '은', '는')} <b>${T * 10}</b>을 나타내니 그 10배가 필요해요.` : x === a * (T + O) ? `${F(x)}${jo(F(x), '은', '는')} ${a} × ${T + O}${jo(T + O, '이에요', '예요')}. 반쪽이처럼 ${T}${jo(T, '과', '와')} ${O}${jo(O, '을', '를')} 더하면 안 돼요!` : `${F(x)}${jo(F(x), '은', '는')} ${a} × ${O * 10}의 곱이에요. 빠진 것은 ${a} × ${T * 10}${jo(T * 10, '이에요', '예요')}.`); } } }; };
-  /* ④ 세로셈 줄의 뜻 잇기: 완성된 세로셈의 각 줄이 어떤 곱셈인지 식 카드를 끌어 놓기 */
-  const mean = (t, kind, a, b, say) => { const T = Math.floor(b / 10), O = b % 10, rows = [[`${a} × ${O}`, a * O, F(a * O)], [`${a} × ${T * 10}`, a * T * 10, F(a * T) + '<span style="color:#cbd5e1">(0)</span>'], [`${a} × ${b}`, a * b, F(a * b)]];
-    const cards = [rows[0][0], rows[1][0], rows[2][0], `${a} × ${T}`].sort(() => Math.random() - .5);
-    return { _ty: 'mean', _o: { a, b }, t, kind,
-      q: d => d.got.length < 3 ? `반쪽이의 세로셈은 계산은 맞지만 줄마다 무엇을 계산했는지 몰라요. 식 카드를 끌어 <b>각 줄이 나타내는 곱셈</b> 옆에 놓아요.` : '완성!',
-      init: () => ({ got: [] }),
-      view: d => `<div style="max-width:460px;margin:0 auto;font-size:1.25rem;font-weight:900">
-          <div style="display:flex;justify-content:flex-end;padding:2px 8px">${a}</div><div style="display:flex;justify-content:flex-end;padding:2px 8px;border-bottom:3px solid #1e293b">× ${b}</div>
-          ${rows.map((r, i) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 8px;${i === 1 ? 'border-bottom:3px solid #1e293b' : ''}${i === 2 ? ';color:#dc2626' : ''}"><span class="ckzone" data-dz="ck-mn" data-i="${i}" style="min-width:150px;min-height:42px;padding:4px 10px;font-size:1.05rem">${d.got.includes(i) ? r[0] : '?'}</span><span>${r[2]}</span></div>`).join('')}</div>`
-        + (d.got.length === 3 ? `<div class="ckbig" style="font-size:1.05rem">둘째 줄 ${F(a * T)}${jo(F(a * T), '은', '는')} ${a} × ${T}이 아니라 <b>${a} × ${T * 10} = ${F(a * T * 10)}</b>이에요.</div>`
-          : ckSrc('✋ 식 카드를 끌어 알맞은 줄 옆에 놓아요', cards.filter(c => !d.got.some(i => rows[i][0] === c)).map(c => ckPiece('ck-mn', c, `<b style="font-size:1.15rem">${c}</b>`)).join(''))),
-      on: { 'ck-mn:drop'(d, v, z, el, api) { if (z !== 'ck-mn') return; const i = +el.dataset.i; if (d.got.includes(i)) return;
-        if (v === `${a} × ${T}`) { api.say(false, `${a} × ${T} = ${F(a * T)}이지만, 둘째 줄은 ${b}의 십의 자리 숫자 ${T}${jo(T, '이', '가')} 나타내는 <b>${T * 10}</b>을 곱한 거예요. 그래서 한 칸 왼쪽부터 써요.`); return; }
-        if (rows[i][0] !== v) { api.say(false, `${v}${jo(v, '은', '는')} 그 줄이 아니에요. 각 줄의 값과 비교해 봐요.`, true); return; }
-        d.got.push(i); if (d.got.length === 3) api.win(say()); else { api.clear(); try { Sound.pop(); } catch (e) {} } } } }; };
+  const { F, T: TX, R: RC, L: LN } = M4, BL = '#93c5fd', BLD = '#1d4ed8', RD = '#fda4af', RDD = '#be123c', GR = '#e2e8f0';
+  /* 블록 판: 한 줄(세로 막대) = a개, 줄 b개 — x0..x0+W, y0..y0+H. col(i) = 그 줄 색 */
+  const board = (a, b, x0, y0, W, H, col, o = {}) => { const cw = W / b, g = Math.min(5, cw * .16); let s = '';
+    for (let i = 0; i < b; i++) { const c = col(i), x = x0 + i * cw + g / 2; s += RC(x, y0, cw - g, H, c[0], { st: c[1], sw: 1.6, rx: 4 });
+      if (cw > 17) s += `<text x="${x + (cw - g) / 2}" y="${y0 + H / 2}" transform="rotate(-90 ${x + (cw - g) / 2} ${y0 + H / 2})" text-anchor="middle" dy="6" font-size="${Math.min(18, cw * .5)}" fill="#334155" font-weight="900">${a}</text>`; }
+    return s; };
+  const brace = (x1, x2, y, lab, col) => `<path d="M${x1 + 3},${y + 10} q0,-10 10,-10 H${(x1 + x2) / 2 - 8} l8,-9 l8,9 H${x2 - 13} q10,0 10,10" fill="none" stroke="${col}" stroke-width="3"/>${TX((x1 + x2) / 2, y - 16, lab, { fs: 21, fill: col, w: 900 })}`;
+
+  /* ① 곱하는 수 가르기 — 줄 사이의 가르는 선을 직접 끌어 판을 두 부분으로 */
+  const split = (t, kind, a, b, say) => { const T10 = Math.floor(b / 10) * 10, O = b % 10, X0 = 40, W = 880, Y0 = 120, H = 300, cw = W / b;
+    return { _ty: 'split', t, kind,
+      q: d => d.ok ? '완성!' : `블록 <b>${a}개씩 ${b}줄</b>이에요. 주황색 <b>가르는 선</b>을 끌어 판을 <b>계산하기 쉬운 두 부분</b>으로 갈라 보세요.`,
+      init: () => ({ c: Math.round(b / 2), mv: false, ok: false }),
+      view: d => { const c = d.c, L1 = c, L2 = b - c, mv = d.mv && c > 0 && c < b, xs = X0 + c * cw;
+        let s = board(a, b, X0, Y0, W, H, i => !mv ? [GR, '#94a3b8'] : i < c ? [BL, BLD] : [RD, RDD]);
+        if (mv) { s += brace(X0, xs, Y0 - 14, `${L1}줄 · ${a} × ${L1} = ${F(a * L1)}`, BLD) + brace(xs, X0 + W, Y0 - 14, `${L2}줄 · ${a} × ${L2} = ${F(a * L2)}`, RDD); }
+        else s += TX(X0 + W / 2, Y0 - 30, `${a}개씩 ${b}줄`, { fs: 24, fill: '#334155', w: 900 });
+        s += TX(X0 + W / 2, Y0 + H + 40, `한 줄 = 블록 ${a}개`, { fs: 18, fill: '#64748b', w: 800 });
+        if (!d.ok) s += M4.grip('c', c, 1, b - 1, [1, 0], cw, [[xs - 45, Y0 - 10, 90, H + 30]], `${LN(xs, Y0 - 8, xs, Y0 + H + 14, '#f97316', 7)}` + M4.hand(xs, Y0 + H / 2, [1, 0], mv ? '' : '← 끌어서 갈라요 →', { two: true, ly: 64 }));
+        else s += LN(xs, Y0 - 8, xs, Y0 + H + 14, '#f97316', 7);
+        const fig = M4.svg(960, 500, s);
+        const info = M4.rows('✂️ 갈라서 곱하기', mv ? [[`🟦 ${L1}줄`, F(a * L1), '개'], [`🟥 ${L2}줄`, F(a * L2), '개'], ['모두', F(a * b), '개', 1]] : [['줄 수', b, '줄'], ['한 줄', a, '개']],
+          mv ? (d.ok ? '' : (L1 % 10 === 0 || L2 % 10 === 0) ? '' : `${a} × ${Math.min(L1, L2) === L1 ? L1 : L2}${jo(L1, '은', '는')} 바로 계산하기 어려워요. 한 부분을 <b>몇십 줄</b>이 되게 갈라 봐요.`) : '줄과 줄 사이를 갈라 두 부분으로 나눠요.')
+          + (d.ok ? M4.eq(`${a} × ${b}<br>= ${a} × ${Math.max(L1, L2) === T10 ? T10 : L1} + ${a} × ${Math.max(L1, L2) === T10 ? O : L2}<br>= ${F(a * T10)} + ${F(a * O)} = <b>${F(a * b)}</b>`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (k !== 'c') return;
+          if (x !== 'end') { d.c = +x; d.mv = true; api.clear(); return; }
+          const c = d.c; if ((c === T10 && b - c === O) || (c === O && b - c === T10)) { d.ok = true; api.win(say()); }
+          else api.say(false, `${c}줄과 ${b - c}줄로 갈랐어요. 둘을 더하면 ${b}줄이 맞지만, 한 부분이 <b>${T10}줄</b>(몇십 줄)이면 ${a} × ${T10}${jo(T10, '을', '를')} 쉽게 구할 수 있어요.`, true); } },
+      _solve(d, on) { on('act:m4set', 'c:' + T10, null); on('act:m4set', 'c:end', null); } }; };
+
+  /* ② 판을 세로셈으로 — 가른 두 부분을 직접 끌어 세로셈의 알맞은 줄로 옮겨요 */
+  const colw = (t, kind, a, b, say) => { const T = Math.floor(b / 10), O = b % 10, p1 = a * O, p2 = a * T * 10, P = a * b, NC = String(P).length + 1, X0 = 24, BW = 400, Y0 = 110, H = 300, cw = BW / b;
+    const CX = 560, CS = 58, cx = j => CX + (NC - 1 - j) * CS;   /* j = 자리(0 = 일) */
+    const digits = (n, y, col, o = {}) => { const S = String(n); let s = ''; for (let i = 0; i < S.length; i++) { const j = S.length - 1 - i + (o.sh || 0); s += TX(cx(j) + CS / 2, y, S[i], { fs: 36, fill: o.ghost && i === S.length - 1 ? '#cbd5e1' : col, w: 900 }); } return s; };
+    return { _ty: 'colw', t, kind,
+      q: d => d.ph === 0 ? `🟥 <b>${a} × ${O}</b> 부분(${O}줄)을 잡고 오른쪽 <b>세로셈의 첫째 줄</b>까지 끌어 옮겨요.` : d.ph === 1 ? `이번엔 🟦 <b>${a} × ${T * 10}</b> 부분(${T * 10}줄)을 끌어 <b>둘째 줄</b>로 옮겨요.` : '완성!',
+      init: () => ({ ph: 0, m: 0 }),
+      view: d => { const ph = d.ph;
+        let s = board(a, b, X0, Y0, BW, H, i => i < T * 10 ? (ph >= 2 ? ['#dbeafe', '#93c5fd'] : [BL, BLD]) : (ph >= 1 ? ['#ffe4e6', '#fecdd3'] : [RD, RDD]));
+        s += TX(X0 + T * 10 * cw / 2, Y0 - 18, `${a} × ${T * 10}`, { fs: 22, fill: BLD, w: 900 }) + TX(X0 + T * 10 * cw + O * cw / 2, Y0 - 18, `${a} × ${O}`, { fs: 22, fill: RDD, w: 900 });
+        /* 세로셈 칸 */
+        const rowY = [70, 128, 196, 254, 330];
+        for (let j = 0; j < NC; j++) s += RC(cx(j) + 3, 40, CS - 6, 316, '#f8fafc', { st: '#e2e8f0', sw: 1.2, rx: 6 });
+        s += digits(a, rowY[0] + 12, '#0f172a') + TX(cx(NC - 1) + CS / 2, rowY[1] + 12, '×', { fs: 34, fill: '#0f172a', w: 900 }) + digits(b, rowY[1] + 12, '#0f172a');
+        s += LN(CX, 152, CX + NC * CS, 152, '#0f172a', 4) + LN(CX, 284, CX + NC * CS, 284, '#0f172a', 4);
+        if (ph >= 1) s += `<g class="pop">${digits(p1, rowY[2] + 12, RDD)}</g>` + TX(CX - 12, rowY[2] + 8, `${a}×${O}`, { fs: 16, fill: RDD, a: 'end', w: 800 });
+        else s += RC(CX + 2, rowY[2] - 26, NC * CS - 4, 50, '#fff1f2', { st: '#fda4af', sw: 2.5, da: '8 6', rx: 10 }) + TX(CX + NC * CS / 2, rowY[2] + 8, '첫째 줄', { fs: 18, fill: '#e11d48', w: 900 });
+        if (ph >= 2) s += `<g class="pop">${digits(p2, rowY[3] + 12, BLD, { ghost: true })}</g>` + TX(CX - 12, rowY[3] + 8, `${a}×${T * 10}`, { fs: 16, fill: BLD, a: 'end', w: 800 }) + digits(P, rowY[4] + 6, '#dc2626');
+        else s += RC(CX + 2, rowY[3] - 26, NC * CS - 4, 50, '#eff6ff', { st: '#93c5fd', sw: 2.5, da: '8 6', rx: 10 }) + TX(CX + NC * CS / 2, rowY[3] + 8, '둘째 줄', { fs: 18, fill: '#2563eb', w: 900 });
+        /* 잡는 부분: 끄는 동안 그 부분이 오른쪽으로 따라와요 */
+        if (ph < 2) { const red = ph === 0, gx = red ? X0 + T * 10 * cw : X0, gw = red ? O * cw : T * 10 * cw, off = d.m * 150, ty = red ? rowY[2] : rowY[3];
+          s += `<g transform="translate(${off},${(ty - Y0 - H / 2) * d.m * .6})" opacity="${.55 + .45 * (1 - d.m)}">${RC(gx, Y0, gw, H, red ? RD : BL, { st: red ? RDD : BLD, sw: 3, rx: 6, op: .85 })}${TX(gx + gw / 2, Y0 + H / 2 + 8, red ? `${a}×${O}` : `${a}×${T * 10}`, { fs: 22, fill: '#0f172a', w: 900 })}</g>`;
+          s += M4.grip('m', d.m, 0, 1, [1, 0], 150, [[gx - 6, Y0 - 6, gw + 12, H + 12]], M4.hand(gx + gw / 2 + off, Y0 + H * .78, [1, 0], '세로셈으로 →', { ly: 42 })); }
+        const fig = M4.svg(960, 470, s);
+        const info = M4.rows('🧾 세로셈의 두 줄', [[`🟥 ${a} × ${O}`, ph >= 1 ? F(p1) : '?', ''], [`🟦 ${a} × ${T * 10}`, ph >= 2 ? F(p2) : '?', ''], [`${a} × ${b}`, ph >= 2 ? F(P) : '?', '', 1]],
+          ph >= 2 ? `둘째 줄의 <b>${F(a * T)}</b>은 ${a} × ${T}이 아니라 <b>${a} × ${T * 10}</b>이라서 <b>십의 자리부터</b> 써요. 일의 자리 0은 쓰지 않아도 돼요.` : '그림의 부분이 세로셈의 한 줄이 돼요.');
+        return M4.box(fig, info, { done: ph >= 2, wide: true, ph }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (k !== 'm') return; if (x !== 'end') { d.m = +x; return; }
+          if (d.m === 1) { d.ph++; d.m = 0; if (d.ph >= 2) api.win(say()); else api.say(true, `${a} × ${O} = ${F(p1)}! 일의 자리부터 썼어요. 이제 🟦 부분을 옮겨요.`); } } },
+      _solve(d, on) { on('act:m4set', 'm:1', null); on('act:m4set', 'm:end', null); on('act:m4set', 'm:1', null); on('act:m4set', 'm:end', null); } }; };
+
+  /* ③ 어림 사각형 — 점선 사각형의 오른쪽·아래 변을 끌어 몇백 × 몇십으로 어림해요 */
+  const est = (t, kind, a, b, say) => { const X0 = 110, Y0 = 70, SX = 760 / 300, SY = 360 / 30, ga = Math.round(a / 100), gb = Math.round(b / 10);
+    return { _ty: 'est', t, kind,
+      q: d => d.ok ? '완성!' : `파란 사각형은 블록 <b>${a} × ${b}</b>개예요. 주황 점선 사각형의 <b>오른쪽 변</b>과 <b>아래 변</b>을 끌어 가장 가까운 <b>몇백 × 몇십</b>으로 어림해요.`,
+      init: () => ({ w: 1, h: 1, ok: false }),
+      view: d => { let s = '';
+        for (let k = 0; k <= 3; k++) { const x = X0 + k * 100 * SX; s += LN(x, Y0 - 6, x, Y0 + 360, '#e2e8f0', 1.5) + TX(x, Y0 - 16, k * 100, { fs: 17, fill: '#64748b', w: 800 }); }
+        for (let k = 0; k <= 3; k++) { const y = Y0 + k * 10 * SY; s += LN(X0 - 6, y, X0 + 760, y, '#e2e8f0', 1.5) + TX(X0 - 14, y + 6, k * 10, { fs: 17, fill: '#64748b', w: 800, a: 'end' }); }
+        s += RC(X0, Y0, a * SX, b * SY, '#bfdbfe', { st: '#1d4ed8', sw: 3, rx: 2 }) + TX(X0 + a * SX - 12, Y0 + b * SY - 14, `${a} × ${b}`, { fs: 26, fill: "#1e3a8a", w: 900, a: "end" });
+        const ew = d.w * 100 * SX, eh = d.h * 10 * SY; s += RC(X0, Y0, ew, eh, 'none', { st: '#f97316', sw: 4, da: '12 8', rx: 2 }) + TX(X0 + ew - 34, Y0 + eh - 12, `${d.w * 100} × ${d.h * 10}`, { fs: 22, fill: '#c2410c', w: 900, a: 'end' });
+        if (!d.ok) { s += M4.grip('w', d.w, 1, 3, [1, 0], 100 * SX, [[X0 + ew - 28, Y0, 56, eh]], M4.hand(X0 + ew, Y0 + eh * .3, [1, 0], '', { two: true }));
+          s += M4.grip('h', d.h, 1, 3, [0, 1], 10 * SY, [[X0, Y0 + eh - 28, ew - 30, 56]], M4.hand(X0 + ew * .3, Y0 + eh, [0, 1], '', { two: true })); }
+        const fig = M4.svg(960, 470, s), E = d.w * 100 * d.h * 10;
+        const info = M4.rows('📐 어림한 곱', [['가로', d.w * 100, ''], ['세로', d.h * 10, ''], ['어림한 곱', F(E), '', 1]], d.ok ? '' : `${a}에 가장 가까운 몇백, ${b}에 가장 가까운 몇십으로 맞춰 봐요.`)
+          + (d.ok ? M4.eq(`${a} × ${b} 는 약 <b>${ga * 100} × ${gb * 10} = ${F(ga * gb * 1000)}</b><br><small>실제 곱 ${F(a * b)}와 비슷해요!</small>`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (x !== 'end') { d[k] = +x; api.clear(); return; }
+          if (d.w === ga && d.h === gb) { d.ok = true; api.win(say()); } else if (k === 'w' && d.w !== ga) api.say(false, `${a}${jo(a, '은', '는')} ${d.w * 100}보다 ${Math.abs(a - ga * 100) < Math.abs(a - d.w * 100) ? `<b>${ga * 100}</b>에 더 가까워요` : '어디에 더 가까울까요'}.`, true); else if (k === 'h' && d.h !== gb) api.say(false, `${b}${jo(b, '은', '는')} 몇십에 가장 가까울까요? 눈금을 보며 맞춰 봐요.`, true); } },
+      _solve(d, on) { on('act:m4set', 'w:' + ga, null); on('act:m4set', 'h:' + gb, null); on('act:m4set', 'h:end', null); } }; };
+
+  /* ④ 빠진 반쪽 칠하기 — 반쪽이가 ×몇만 계산했어요. 남은 몇십 줄을 직접 칠하면 빠진 줄이 세로셈에 생겨요 */
+  const miss = (t, kind, a, b, say) => { const T = Math.floor(b / 10) * 10, O = b % 10, X0 = 24, BW = 560, Y0 = 100, H = 300, cw = BW / b;
+    return { _ty: 'miss', t, kind,
+      q: d => d.ok ? '완성!' : `반쪽이는 <b>${a} × ${b}</b>에서 🟥 ${O}줄만 계산하고 도망갔어요. 파란 붓 끝을 끌어 <b>나머지 줄을 모두 칠해</b> 빠진 반쪽을 찾아요.`,
+      init: () => ({ k: 0, ok: false }),
+      view: d => { const k = d.k;
+        let s = board(a, b, X0, Y0, BW, H, i => i >= T ? [RD, RDD] : i < k ? [BL, BLD] : ['#f1f5f9', '#cbd5e1']);
+        s += TX(X0 + T * cw + O * cw / 2, Y0 - 18, `${a}×${O}`, { fs: 20, fill: RDD, w: 900 });
+        if (k) s += TX(X0 + k * cw / 2, Y0 - 18, `${a}×${k}`, { fs: 20, fill: BLD, w: 900 });
+        if (!d.ok) { const xe = X0 + k * cw; s += M4.grip('k', k, 0, T, [1, 0], cw, [[xe - 45, Y0 - 10, 90, H + 20]], LN(xe, Y0 - 6, xe, Y0 + H + 6, '#2563eb', 6) + M4.hand(xe, Y0 + H + 34, [1, 0], k ? '' : '칠하며 오른쪽으로 →', { ly: 40 })); }
+        /* 오른쪽 계산 */
+        const RX = 620; s += TX(RX, 150, `${a} × ${O}`, { fs: 26, fill: RDD, a: 'start', w: 900 }) + TX(940, 150, `= ${F(a * O)}`, { fs: 26, fill: RDD, a: 'end', w: 900 });
+        s += TX(RX, 220, `${a} × ${k}`, { fs: 26, fill: k ? BLD : '#94a3b8', a: 'start', w: 900 }) + TX(940, 220, k ? `= ${F(a * k)}` : '= ?', { fs: 26, fill: k ? BLD : '#94a3b8', a: 'end', w: 900 });
+        s += LN(RX, 250, 940, 250, '#0f172a', 3) + TX(RX, 300, `${a} × ${b}`, { fs: 28, fill: '#dc2626', a: 'start', w: 900 }) + TX(940, 300, d.ok ? `= ${F(a * b)}` : k === T ? `= ${F(a * T + a * O)}` : '= ?', { fs: 28, fill: '#dc2626', a: 'end', w: 900 });
+        const fig = M4.svg(960, 470, s);
+        const info = M4.rows('🖌 칠한 줄', [['🟥 반쪽이', O, '줄'], ['🟦 내가 칠한', k, '줄'], ['모두', k + O, `줄 / ${b}줄`, 1, k + O === b ? 'ok' : '']], k === T ? '' : `${b}줄이 되려면 몇 줄을 더 칠해야 할까요?`)
+          + (d.ok ? M4.eq(`${a} × ${T} = ${a} × ${T / 10} × 10 = <b>${F(a * T)}</b><br>${F(a * O)} + ${F(a * T)} = <b>${F(a * b)}</b>`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (k !== 'k') return; if (x !== 'end') { d.k = +x; api.clear(); return; }
+          if (d.k === T) { d.ok = true; api.win(say()); } else if (d.k) api.say(false, `${d.k + O}줄이에요. ${b}줄이 되게 끝까지 칠해요.`, true); } },
+      _solve(d, on) { on('act:m4set', 'k:' + T, null); on('act:m4set', 'k:end', null); } }; };
+
   CK.install([
     { k: 'split', vk: 'half', icon: '✂️', name: '곱하는 수 가르기', short: '곱하는 수 가르기', dnd: [],
-      sub: '블록 묶음 판을 두 부분으로 갈라 보세요. 어떻게 가르면 계산이 쉬워질까요?', taunt: '18은 1이랑 8이지? 히히!', msg: '블록 묶음 판을 몇십 줄과 몇 줄로 갈라 보자!',
+      sub: '블록 판의 가르는 선을 직접 끌어 두 부분으로 갈라 보세요. 어떻게 가르면 계산이 쉬워질까요?', taunt: '18은 1이랑 8이지? 히히!', msg: '가르는 선을 끌어 몇십 줄과 몇 줄로 갈라 보자!',
       summary: '곱하는 수를 몇십과 몇으로 갈라 각각 곱한 뒤 더해요. 213 × 18 = 213 × 10 + 213 × 8 = 2130 + 1704 = <b>3834</b>.',
       stages: [split('213 × 18', null, 213, 18, () => '10줄과 8줄! <b>213 × 18 = 213 × 10 + 213 × 8 = 2130 + 1704 = 3834</b>이에요.'),
         split('확인', 'check', 125, 23, () => '20줄과 3줄! <b>125 × 23 = 125 × 20 + 125 × 3 = 2500 + 375 = 2875</b>.')] },
-    { k: 'colw', vk: 'tilt', icon: '🧾', name: '세로셈 두 줄 맞추기', short: '세로셈 두 줄 쓰기', dnd: ['ck-r1', 'ck-r2'],
-      sub: '세로셈에서 두 줄의 곱을 각각 어느 자리부터 써야 할지 카드를 직접 놓아 보세요.', taunt: '둘째 줄도 오른쪽 끝에 맞추면 되지!', msg: '세로셈 두 줄을 알맞은 자리에 놓아 보자!',
-      summary: '첫째 줄은 (세 자리 수)×(일의 자리 숫자)를 <b>일의 자리부터</b>, 둘째 줄은 (세 자리 수)×(십의 자리 숫자)를 <b>십의 자리부터</b> 쓰고 두 줄을 더해요.',
-      stages: [colw('213 × 18', null, 213, 18, () => '1704는 일의 자리부터, 213은 십의 자리부터! 둘째 줄은 2130을 뜻해요. <b>213 × 18 = 3834</b>.'),
-        colw('확인', 'check', 342, 26, () => '2052는 일의 자리부터, 684는 십의 자리부터! <b>342 × 26 = 2052 + 6840 = 8892</b>.')] },
-    { k: 'area', vk: 'tilt', icon: '🔗', name: '세로셈 줄의 뜻 잇기', short: '세로셈 줄의 뜻', dnd: ['ck-mn'],
-      sub: '세로셈의 첫째 줄, 둘째 줄, 셋째 줄이 각각 어떤 곱셈인지 식 카드로 이어 보세요.', taunt: '둘째 줄은 그냥 ×2 한 거잖아?', msg: '세로셈 줄마다 무엇을 계산했는지 이어 보자!',
-      summary: '세로셈의 첫째 줄은 <b>×몇</b>, 둘째 줄은 <b>×몇십</b>(끝의 0은 생략), 셋째 줄은 두 줄을 더한 <b>×몇십몇</b>의 곱이에요.',
-      stages: [mean('342 × 26', null, 342, 26, () => '첫째 줄 342 × 6, 둘째 줄 342 × 20, 셋째 줄 342 × 26! 둘째 줄은 <b>6840</b>을 나타내요.'),
-        mean('확인', 'check', 415, 37, () => '415 × 7 = 2905, 415 × 30 = 12450, 더하면 <b>415 × 37 = 15355</b>.')] },
-    { k: 'miss', vk: 'half', icon: '🧩', name: '빠진 반쪽 채우기', short: '빠진 반쪽 찾기', dnd: ['ck-miss'],
-      sub: '반쪽이는 세로셈을 반쪽만 했어요. 무엇이 빠졌는지 찾아 채워 보세요.', taunt: '×6만 해도 반은 했잖아?', msg: '반쪽이가 빠뜨린 반쪽을 채워 보자!',
+    { k: 'colw', vk: 'tilt', icon: '🧾', name: '판을 세로셈으로', short: '세로셈 두 줄', dnd: [],
+      sub: '가른 두 부분을 직접 끌어 세로셈의 첫째 줄과 둘째 줄로 옮겨 보세요. 둘째 줄은 왜 한 칸 왼쪽부터 쓸까요?', taunt: '둘째 줄도 오른쪽 끝에 맞추면 되지!', msg: '판의 두 부분을 세로셈으로 옮겨 보자!',
+      summary: '첫째 줄은 (세 자리 수)×(일의 자리 숫자)를 <b>일의 자리부터</b>, 둘째 줄은 (세 자리 수)×(몇십)이라 <b>십의 자리부터</b> 쓰고 두 줄을 더해요.',
+      stages: [colw('213 × 18', null, 213, 18, () => '1704는 일의 자리부터, 2130은 십의 자리부터! <b>213 × 18 = 1704 + 2130 = 3834</b>.'),
+        colw('확인', 'check', 342, 26, () => '2052는 일의 자리부터, 6840은 십의 자리부터! <b>342 × 26 = 2052 + 6840 = 8892</b>.')] },
+    { k: 'area', vk: 'mixup', icon: '📐', name: '어림 사각형', short: '곱을 어림하기', dnd: [],
+      sub: '블록 수를 나타낸 사각형에 점선 사각형을 겹쳐, 몇백 × 몇십으로 곱을 어림해 보세요.', taunt: '어림은 아무렇게나 하면 되지!', msg: '점선 사각형을 끌어 곱을 어림해 보자!',
+      summary: '곱을 어림할 때는 세 자리 수는 <b>가장 가까운 몇백</b>, 두 자리 수는 <b>가장 가까운 몇십</b>으로 바꾸어 곱해요. 213 × 18은 약 200 × 20 = <b>4000</b>이에요.',
+      stages: [est('213 × 18', null, 213, 18, () => '213은 약 200, 18은 약 20! <b>200 × 20 = 4000</b>이니 실제 곱 3834와 비슷해요.'),
+        est('확인', 'check', 289, 32, () => '289는 약 300, 32는 약 30! <b>300 × 30 = 9000</b>. 실제 곱은 9248이에요.')] },
+    { k: 'miss', vk: 'half', icon: '🖌', name: '빠진 반쪽 칠하기', short: '빠진 반쪽', dnd: [],
+      sub: '반쪽이는 세로셈을 반쪽만 했어요. 남은 줄을 직접 칠해 무엇이 빠졌는지 찾아보세요.', taunt: '×6만 해도 반은 했잖아?', msg: '남은 줄을 칠해 빠진 반쪽을 찾자!',
       summary: '(세 자리 수)×(몇십몇) = (세 자리 수)×(몇십) + (세 자리 수)×(몇)이에요. ×몇십은 ×몇의 <b>10배</b>예요.',
-      stages: [miss('245 × 36', null, 245, 36, () => '245 × 30 = 7350! <b>245 × 36 = 7350 + 1470 = 8820</b>이에요.'),
+      stages: [miss('245 × 36', null, 245, 36, () => '30줄이 빠졌어요! 245 × 30 = 7350. <b>245 × 36 = 7350 + 1470 = 8820</b>이에요.'),
         miss('확인', 'check', 407, 52, () => '407 × 50 = 20350! <b>407 × 52 = 20350 + 814 = 21164</b>.')] }
   ]);
 })();
@@ -9567,134 +9719,6 @@ const JX = (() => {
 })();
 
 </script><!--JO-END-->
-<!--FM-START--><style>.fmcard{margin-top:12px!important;border:3px solid #a78bfa!important;background:linear-gradient(180deg,#faf5ff,#fff)!important;padding:12px 14px!important;text-align:left}
-.fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
-.fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
-.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
-.fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
-.fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
-.fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
-.fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
-.fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
-.fmops{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmop{border:2px solid #c4b5fd;background:#fff;border-radius:10px;padding:3px 12px;font-weight:900;font-size:1rem;cursor:pointer}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
-@keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
-.fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
-.fmseq{display:flex;align-items:center;flex-wrap:wrap;gap:3px;font-weight:900;font-size:.85rem}.fmseq b{border:2px solid #60a5fa;border-radius:6px;padding:1px 6px;background:#eff6ff}.fmseq i{color:#ea580c;font-style:normal}
-.fmgr{border-collapse:collapse}.fmgr td{border:1.5px solid #93c5fd;padding:2px 6px;font-weight:900;font-size:.8rem;text-align:center}
-.fmbox{border-radius:10px;padding:6px 10px;font-weight:900;font-size:.95rem;text-align:center;border:2px solid #cbd5e1}
-@media(max-width:700px){.fmrows{grid-template-columns:minmax(0,1fr)}.fmf{font-size:1rem}}
-.fmp-t{break-inside:avoid;margin:6px 0 10px}.fmp-r{display:flex;align-items:center;gap:10px;margin:5px 0 5px 10px;break-inside:avoid}.fmp-pic{flex:none;max-width:44%}.fmp-pic svg{max-width:100%;height:auto}
-.fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
-.fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
-.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}
-</style><script>
-/* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
-(function () {
-  if (window.__FM) return; window.__FM = 1;
-  const SV = n => '<svg viewBox="0 0 ' + n[0] + ' ' + n[1] + '" width="' + n[0] + '" height="' + n[1] + '" class="fmsvg">';
-  const T = (x, y, t, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || 'middle') + '" font-size="' + (o.s || 13) + '" font-weight="900" fill="' + (o.c || '#334155') + '">' + t + '</text>'; };
-  const rad = d => d * Math.PI / 180;
-  const P = window.FMP = {
-    blk: (lab, n, col, w) => '<div class="fmblk">' + Array.from({ length: n }, () => '<span style="background:' + (col || '#dbeafe') + ';min-width:' + (w || 34) + 'px">' + lab + '</span>').join('') + '</div>',
-    pv: cols => '<table class="fmpv"><tr>' + cols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr><tr>' + cols.map(c => '<td' + (c[2] ? ' class="hl"' : '') + '>' + c[1] + '</td>').join('') + '</tr></table>',
-    seq: (a, op) => '<div class="fmseq">' + a.map((x, i) => (i ? '<i>' + (op || '→') + '</i>' : '') + '<b>' + x + '</b>').join('') + '</div>',
-    nl: (labs, jump) => { const W = 230, n = labs.length, g = (W - 30) / (n - 1); let s = SV([W, 62]) + '<line x1="10" y1="44" x2="' + (W - 6) + '" y2="44" stroke="#475569" stroke-width="2"/>';
-      labs.forEach((l, i) => { const x = 15 + i * g; s += '<line x1="' + x + '" y1="38" x2="' + x + '" y2="50" stroke="#475569" stroke-width="2"/>' + T(x, 60, l, { s: 10 }); if (i && jump) s += '<path d="M' + (x - g + 3) + ' 36 Q' + (x - g / 2) + ' 8 ' + (x - 3) + ' 36" fill="none" stroke="#ea580c" stroke-width="2"/>' + T(x - g / 2, 16, jump, { s: 10, c: '#ea580c' }); });
-      return s + '</svg>'; },
-    ang: (d, o) => { o = o || {}; const W = 150, H = d > 95 ? 92 : 100, cx = d > 95 ? 80 : 20, cy = H - 14, L = 110 * (o.k || 1), r = 26;
-      const x2 = cx + L * Math.cos(rad(d)), y2 = cy - L * Math.sin(rad(d)) * (d > 95 ? .75 : 1);
-      let s = SV([W + (d > 95 ? 0 : 0), H]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + Math.min(W - 4, cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#1d4ed8" stroke-width="3"/>';
-      s += d === 90 ? '<path d="M' + (cx + 14) + ' ' + cy + ' v-14 h-14" fill="none" stroke="#ea580c" stroke-width="2"/>' : '<path d="M' + (cx + r) + ' ' + cy + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d))) + ' ' + (cy - r * Math.sin(rad(d)) * (d > 95 ? .75 : 1)) + '" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>';
-      if (o.lab !== false) s += T(cx + 40 * Math.cos(rad(d / 2)) + 4, cy - 34 * Math.sin(rad(d / 2)), o.lab || d + '°', { s: 12, c: '#c2410c' });
-      return s + '</svg>'; },
-    two: (a, b, o) => { o = o || {}; const cx = 75, cy = 88, L = 70; let s = SV([160, 100]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/>';
-      [a, a + b].forEach(d => { s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L * Math.cos(rad(d))) + '" y2="' + (cy - L * Math.sin(rad(d))) + '" stroke="#1d4ed8" stroke-width="3"/>'; });
-      const arc = (d0, d1, r, c) => '<path d="M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(rad(d0))) + ' ' + (cy - r * Math.sin(rad(d0))) + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d1))) + ' ' + (cy - r * Math.sin(rad(d1))) + 'Z" fill="' + c + '" opacity=".55"/>';
-      s += arc(0, a, 30, '#c4b5fd') + arc(a, a + b, 30, '#fdba74') + T(cx + 44 * Math.cos(rad(a / 2)), cy - 40 * Math.sin(rad(a / 2)) + 4, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx + 46 * Math.cos(rad(a + b / 2)), cy - 44 * Math.sin(rad(a + b / 2)) + 4, o.lb || b + '°', { s: 11, c: '#c2410c' });
-      return s + '</svg>'; },
-    line: (a, o) => { o = o || {}; const cx = 80, cy = 70; let s = SV([160, 80]) + '<line x1="6" y1="' + cy + '" x2="154" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 70 * Math.cos(rad(a))) + '" y2="' + (cy - 60 * Math.sin(rad(a))) + '" stroke="#1d4ed8" stroke-width="3"/>';
-      return s + T(cx + 36 * Math.cos(rad(a / 2)) + 6, cy - 14, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx - 34, cy - 14, o.lb || '?', { s: 11, c: '#c2410c' }) + '</svg>'; },
-    tri: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [60, 12]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/>';
-      const at = [[30, 80], [128, 80], [62, 34]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#c2410c' }); }); return s + '</svg>'; },
-    quad: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [134, 18], [38, 10]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>' + (o.diag ? '<line x1="14" y1="86" x2="134" y2="18" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>' : '');
-      const at = [[32, 80], [130, 80], [122, 32], [46, 26]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#15803d' }); }); return s + '</svg>'; },
-    push: (dx, dy) => { const c = 14, W = 12 * c, H = 7 * c; let s = SV([W, H]); for (let x = 0; x <= 12; x++) s += '<line x1="' + x * c + '" y1="0" x2="' + x * c + '" y2="' + H + '" stroke="#e2e8f0"/>'; for (let y = 0; y <= 7; y++) s += '<line x1="0" y1="' + y * c + '" x2="' + W + '" y2="' + y * c + '" stroke="#e2e8f0"/>';
-      const ox = dx >= 0 ? 1 : 8, oy = dy >= 0 ? 1 : 4, tri = (x, y, f, l, d) => '<polygon points="' + [[x, y], [x, y + 2], [x + 3, y + 2]].map(q => q[0] * c + ',' + q[1] * c).join(' ') + '" fill="' + f + '" stroke="' + l + '" stroke-width="2"' + (d ? ' stroke-dasharray="4 3"' : '') + '/>';
-      return s + tri(ox, oy, '#f1f5f9', '#94a3b8', 1) + tri(ox + dx, oy + dy, '#bfdbfe', '#1d4ed8') + '<line x1="' + ox * c + '" y1="' + oy * c + '" x2="' + (ox + dx) * c + '" y2="' + (oy + dy) * c + '" stroke="#ea580c" stroke-width="2" marker-end="url(#fmA)"/><defs><marker id="fmA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#ea580c"/></marker></defs></svg>'; },
-    bars: (v, step, o) => { o = o || {}; const n = v.length, W = 40 + n * 34, H = 110, top = Math.max(...v) / step, k = 80 / Math.max(top, 1); let s = SV([W, H]) + '<line x1="30" y1="96" x2="' + (W - 4) + '" y2="96" stroke="#475569" stroke-width="2"/><line x1="30" y1="96" x2="30" y2="8" stroke="#475569" stroke-width="2"/>';
-      for (let i = 0; i <= top; i++) s += '<line x1="30" y1="' + (96 - i * k) + '" x2="' + (W - 4) + '" y2="' + (96 - i * k) + '" stroke="#e2e8f0"/>' + (o.nolab ? '' : T(24, 100 - i * k, i * step, { s: 9, a: 'end' }));
-      v.forEach((x, i) => { const h = x / step * k; s += '<rect x="' + (40 + i * 34) + '" y="' + (96 - h) + '" width="22" height="' + h + '" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399', '#f472b6'][i % 5] + '"/>'; });
-      return s + '</svg>'; },
-    hbars: (v, step) => { const n = v.length, H = 20 + n * 22, top = Math.max(...v) / step, k = 110 / top; let s = SV([150, H]) + '<line x1="20" y1="4" x2="20" y2="' + (H - 6) + '" stroke="#475569" stroke-width="2"/>';
-      v.forEach((x, i) => { s += '<rect x="20" y="' + (8 + i * 22) + '" width="' + x / step * k + '" height="14" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399'][i % 4] + '"/>'; }); return s + '</svg>'; },
-    clock: h => { const cx = 50, cy = 50; let s = SV([100, 100]) + '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#334155" stroke-width="3"/>';
-      for (let i = 1; i <= 12; i++) s += T(cx + 34 * Math.sin(rad(i * 30)), cy - 34 * Math.cos(rad(i * 30)) + 4, i, { s: 10 });
-      return s + '<line x1="50" y1="50" x2="50" y2="14" stroke="#1d4ed8" stroke-width="3"/><line x1="50" y1="50" x2="' + (cx + 24 * Math.sin(rad(h * 30))) + '" y2="' + (cy - 24 * Math.cos(rad(h * 30))) + '" stroke="#dc2626" stroke-width="4"/></svg>'; },
-    grid: (rows, hl) => '<table class="fmgr">' + rows.map((r, i) => '<tr>' + r.map((x, j) => '<td' + (hl && hl.some(q => q[0] === i && q[1] === j) ? ' class="hl"' : '') + '>' + x + '</td>').join('') + '</tr>').join('') + '</table>',
-    box: (t, c) => '<div class="fmbox" style="background:' + (c || '#f1f5f9') + '">' + t + '</div>'
-  };
-  const D = () => window.SV_FM || null;
-  const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
-  const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
-  const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
-  function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
-  function html(k) {
-    const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
-    let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
-    R.forEach((r, i) => { const v = S.a[i], on = i === nx;
-      h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
-        + '<div class="fmf">' + slot(r[1], v) + (on ? '<div class="fmops">' + r[3].map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '') + '</div></div>'; });
-    h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
-    return h;
-  }
-  function inject() {
-    if (!D()) return; const k = curTool(); if (!k || !D()[k]) return;
-    const card = document.querySelector('.svsl-tc') || document.querySelector('#toolBody > .antool, #toolBody > .card') || [...document.querySelectorAll('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head'));
-    if (!card) return; const done = card.querySelector('.andone'); const old = card.querySelector('.fmcard');
-    if (!done) { if (old) old.remove(); return; }
-    if (old && old.dataset.fm === k && old.dataset.v === JSON.stringify(ST(k))) return;
-    const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
-    if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('.fmop'); if (!b) return; const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
-    if (String(b.dataset.fmv) === String(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
-      S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
-      try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
-    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); }
-    try { touch('s1'); } catch (er) {} inject();
-  });
-  let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
-  const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
-  /* 인쇄 ① 개념 정리: [그림 | 식(빈 상자)] */
-  window.FM_PRINT = function () {
-    const F = D(); if (!F) return null; const keys = Object.keys(F); let h = '<div class="fmp">', ans = [];
-    keys.forEach((k, ti) => { const t = F[k]; h += '<div class="fmp-t"><b>' + (ti + 1) + '. ' + (t.name || t.t || '') + '</b>';
-      rowsOf(t).forEach((r, i) => { h += '<div class="fmp-r">' + (r[0] != null ? '<div class="fmp-pic">' + r[0] + '</div><div class="fmp-ar">➜</div>' : '<div class="fmp-rl">🔑</div>') + '<div class="fmp-f">' + r[1].replace('{?}', '<span class="fmp-b"></span>') + '</div></div>'; });
-      h += '</div>'; ans.push((ti + 1) + '. ' + rowsOf(t).map(r => r[2]).join(' / ')); });
-    return { html: h + '</div>', key: ans.join('<br>') };
-  };
-})();
-
-window.SV_FM = {
- split: { name: '곱하는 수 가르기', t: '몇십몇 = 몇십 + 몇', rows: [
-  [FMP.box('🟦 213 × 10 줄<br>🟥 213 × 8 줄', '#eff6ff'), '213 × 18 = 213 × 10 + 213 × 8 = 2130 + 1704 = {?}', '3834', ['1917', '3834', '38340']],
-  [FMP.box('🟦 125 × 20 줄<br>🟥 125 × 3 줄', '#fff1f2'), '125 × 23 = 2500 + 375 = {?}', '2875', ['2875', '625', '28750']]],
-  rule: ['(세 자리 수) × (몇십몇) = (세 자리 수) × (몇십) + (세 자리 수) × ({?})', '몇', ['몇', '몇십', '몇백']], sum: '곱하는 수를 몇십과 몇으로 갈라 곱한 뒤 더해요.' },
- colw: { name: '세로셈 두 줄', t: '자리 맞추기', rows: [
-  [FMP.box('&nbsp;&nbsp;&nbsp;&nbsp;2 1 3<br>×&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 8<br>―――――<br>&nbsp;&nbsp;1 7 0 4<br>&nbsp;2 1 3<b style="color:#94a3b8">0</b><br>―――――<br>&nbsp;3 8 3 4'), '둘째 줄 213은 213 × {?}을 나타내요.', '10', ['1', '10', '100']],
-  [FMP.box('&nbsp;&nbsp;&nbsp;&nbsp;3 4 2<br>×&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 6<br>―――――<br>&nbsp;&nbsp;2 0 5 2<br>&nbsp;&nbsp;6 8 4<b style="color:#94a3b8">0</b><br>―――――<br>&nbsp;&nbsp;? ? ? ?'), '342 × 26 = 2052 + 6840 = {?}', '8892', ['2736', '8892', '88920']]],
-  rule: ['세로셈의 둘째 줄은 {?}의 자리부터 써요.', '십', ['일', '십', '백']], sum: '둘째 줄은 ×몇십이라 십의 자리부터 써요.' },
- miss: { name: '빠진 반쪽 채우기', t: '×몇십 = ×몇 × 10', rows: [
-  [FMP.seq(['245 × 3 = 735', '245 × 30 = 7350'], '×10'), '245 × 36 = 7350 + 1470 = {?}', '8820', ['1470', '8820', '9555']],
-  [FMP.seq(['407 × 5 = 2035', '407 × 50 = 20350'], '×10'), '407 × 52 = 20350 + 814 = {?}', '21164', ['21164', '2849', '20350']]],
-  rule: ['(세 자리 수) × (몇십)은 (세 자리 수) × (몇)의 {?}배예요.', '10', ['2', '10', '100']], sum: '빠뜨리지 말고 두 부분을 모두 더해요.' }
-};
-
-</script><!--FM-END-->
 <!--NET-START--><style>.svnet-card{border:2.5px dashed #a78bfa;border-radius:16px;padding:10px 14px;margin:10px 0;background:#faf5ff}
 .svnet-link{display:flex;gap:6px;margin:8px 0}.svnet-link input{flex:1;min-width:0;border:2px solid #c4b5fd;border-radius:10px;padding:6px 8px;font-size:.8rem}
 .svnet-pl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 12px}.svnet-pl>div{border:2px solid #e9d5ff;border-radius:12px;padding:6px 10px;font-weight:800;background:#fff}.svnet-pl>div.me{border-color:#7c3aed;background:#f5f3ff}
@@ -9921,6 +9945,134 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 })();
 
 </script><!--FR-END-->
+<!--FM-START--><style>.fmcard{margin-top:12px!important;border:3px solid #a78bfa!important;background:linear-gradient(180deg,#faf5ff,#fff)!important;padding:12px 14px!important;text-align:left}
+.fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
+.fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
+.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
+.fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
+.fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
+.fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
+.fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
+.fmops{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmop{border:2px solid #c4b5fd;background:#fff;border-radius:10px;padding:3px 12px;font-weight:900;font-size:1rem;cursor:pointer}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
+@keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
+.fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
+.fmseq{display:flex;align-items:center;flex-wrap:wrap;gap:3px;font-weight:900;font-size:.85rem}.fmseq b{border:2px solid #60a5fa;border-radius:6px;padding:1px 6px;background:#eff6ff}.fmseq i{color:#ea580c;font-style:normal}
+.fmgr{border-collapse:collapse}.fmgr td{border:1.5px solid #93c5fd;padding:2px 6px;font-weight:900;font-size:.8rem;text-align:center}
+.fmbox{border-radius:10px;padding:6px 10px;font-weight:900;font-size:.95rem;text-align:center;border:2px solid #cbd5e1}
+@media(max-width:700px){.fmrows{grid-template-columns:minmax(0,1fr)}.fmf{font-size:1rem}}
+.fmp-t{break-inside:avoid;margin:6px 0 10px}.fmp-r{display:flex;align-items:center;gap:10px;margin:5px 0 5px 10px;break-inside:avoid}.fmp-pic{flex:none;max-width:44%}.fmp-pic svg{max-width:100%;height:auto}
+.fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
+.fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
+.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}
+</style><script>
+/* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
+(function () {
+  if (window.__FM) return; window.__FM = 1;
+  const SV = n => '<svg viewBox="0 0 ' + n[0] + ' ' + n[1] + '" width="' + n[0] + '" height="' + n[1] + '" class="fmsvg">';
+  const T = (x, y, t, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || 'middle') + '" font-size="' + (o.s || 13) + '" font-weight="900" fill="' + (o.c || '#334155') + '">' + t + '</text>'; };
+  const rad = d => d * Math.PI / 180;
+  const P = window.FMP = {
+    blk: (lab, n, col, w) => '<div class="fmblk">' + Array.from({ length: n }, () => '<span style="background:' + (col || '#dbeafe') + ';min-width:' + (w || 34) + 'px">' + lab + '</span>').join('') + '</div>',
+    pv: cols => '<table class="fmpv"><tr>' + cols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr><tr>' + cols.map(c => '<td' + (c[2] ? ' class="hl"' : '') + '>' + c[1] + '</td>').join('') + '</tr></table>',
+    seq: (a, op) => '<div class="fmseq">' + a.map((x, i) => (i ? '<i>' + (op || '→') + '</i>' : '') + '<b>' + x + '</b>').join('') + '</div>',
+    nl: (labs, jump) => { const W = 230, n = labs.length, g = (W - 30) / (n - 1); let s = SV([W, 62]) + '<line x1="10" y1="44" x2="' + (W - 6) + '" y2="44" stroke="#475569" stroke-width="2"/>';
+      labs.forEach((l, i) => { const x = 15 + i * g; s += '<line x1="' + x + '" y1="38" x2="' + x + '" y2="50" stroke="#475569" stroke-width="2"/>' + T(x, 60, l, { s: 10 }); if (i && jump) s += '<path d="M' + (x - g + 3) + ' 36 Q' + (x - g / 2) + ' 8 ' + (x - 3) + ' 36" fill="none" stroke="#ea580c" stroke-width="2"/>' + T(x - g / 2, 16, jump, { s: 10, c: '#ea580c' }); });
+      return s + '</svg>'; },
+    ang: (d, o) => { o = o || {}; const W = 150, H = d > 95 ? 92 : 100, cx = d > 95 ? 80 : 20, cy = H - 14, L = 110 * (o.k || 1), r = 26;
+      const x2 = cx + L * Math.cos(rad(d)), y2 = cy - L * Math.sin(rad(d)) * (d > 95 ? .75 : 1);
+      let s = SV([W + (d > 95 ? 0 : 0), H]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + Math.min(W - 4, cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#1d4ed8" stroke-width="3"/>';
+      s += d === 90 ? '<path d="M' + (cx + 14) + ' ' + cy + ' v-14 h-14" fill="none" stroke="#ea580c" stroke-width="2"/>' : '<path d="M' + (cx + r) + ' ' + cy + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d))) + ' ' + (cy - r * Math.sin(rad(d)) * (d > 95 ? .75 : 1)) + '" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>';
+      if (o.lab !== false) s += T(cx + 40 * Math.cos(rad(d / 2)) + 4, cy - 34 * Math.sin(rad(d / 2)), o.lab || d + '°', { s: 12, c: '#c2410c' });
+      return s + '</svg>'; },
+    two: (a, b, o) => { o = o || {}; const cx = 75, cy = 88, L = 70; let s = SV([160, 100]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/>';
+      [a, a + b].forEach(d => { s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L * Math.cos(rad(d))) + '" y2="' + (cy - L * Math.sin(rad(d))) + '" stroke="#1d4ed8" stroke-width="3"/>'; });
+      const arc = (d0, d1, r, c) => '<path d="M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(rad(d0))) + ' ' + (cy - r * Math.sin(rad(d0))) + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d1))) + ' ' + (cy - r * Math.sin(rad(d1))) + 'Z" fill="' + c + '" opacity=".55"/>';
+      s += arc(0, a, 30, '#c4b5fd') + arc(a, a + b, 30, '#fdba74') + T(cx + 44 * Math.cos(rad(a / 2)), cy - 40 * Math.sin(rad(a / 2)) + 4, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx + 46 * Math.cos(rad(a + b / 2)), cy - 44 * Math.sin(rad(a + b / 2)) + 4, o.lb || b + '°', { s: 11, c: '#c2410c' });
+      return s + '</svg>'; },
+    line: (a, o) => { o = o || {}; const cx = 80, cy = 70; let s = SV([160, 80]) + '<line x1="6" y1="' + cy + '" x2="154" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 70 * Math.cos(rad(a))) + '" y2="' + (cy - 60 * Math.sin(rad(a))) + '" stroke="#1d4ed8" stroke-width="3"/>';
+      return s + T(cx + 36 * Math.cos(rad(a / 2)) + 6, cy - 14, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx - 34, cy - 14, o.lb || '?', { s: 11, c: '#c2410c' }) + '</svg>'; },
+    tri: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [60, 12]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/>';
+      const at = [[30, 80], [128, 80], [62, 34]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#c2410c' }); }); return s + '</svg>'; },
+    quad: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [134, 18], [38, 10]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>' + (o.diag ? '<line x1="14" y1="86" x2="134" y2="18" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>' : '');
+      const at = [[32, 80], [130, 80], [122, 32], [46, 26]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#15803d' }); }); return s + '</svg>'; },
+    push: (dx, dy) => { const c = 14, W = 12 * c, H = 7 * c; let s = SV([W, H]); for (let x = 0; x <= 12; x++) s += '<line x1="' + x * c + '" y1="0" x2="' + x * c + '" y2="' + H + '" stroke="#e2e8f0"/>'; for (let y = 0; y <= 7; y++) s += '<line x1="0" y1="' + y * c + '" x2="' + W + '" y2="' + y * c + '" stroke="#e2e8f0"/>';
+      const ox = dx >= 0 ? 1 : 8, oy = dy >= 0 ? 1 : 4, tri = (x, y, f, l, d) => '<polygon points="' + [[x, y], [x, y + 2], [x + 3, y + 2]].map(q => q[0] * c + ',' + q[1] * c).join(' ') + '" fill="' + f + '" stroke="' + l + '" stroke-width="2"' + (d ? ' stroke-dasharray="4 3"' : '') + '/>';
+      return s + tri(ox, oy, '#f1f5f9', '#94a3b8', 1) + tri(ox + dx, oy + dy, '#bfdbfe', '#1d4ed8') + '<line x1="' + ox * c + '" y1="' + oy * c + '" x2="' + (ox + dx) * c + '" y2="' + (oy + dy) * c + '" stroke="#ea580c" stroke-width="2" marker-end="url(#fmA)"/><defs><marker id="fmA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#ea580c"/></marker></defs></svg>'; },
+    bars: (v, step, o) => { o = o || {}; const n = v.length, W = 40 + n * 34, H = 110, top = Math.max(...v) / step, k = 80 / Math.max(top, 1); let s = SV([W, H]) + '<line x1="30" y1="96" x2="' + (W - 4) + '" y2="96" stroke="#475569" stroke-width="2"/><line x1="30" y1="96" x2="30" y2="8" stroke="#475569" stroke-width="2"/>';
+      for (let i = 0; i <= top; i++) s += '<line x1="30" y1="' + (96 - i * k) + '" x2="' + (W - 4) + '" y2="' + (96 - i * k) + '" stroke="#e2e8f0"/>' + (o.nolab ? '' : T(24, 100 - i * k, i * step, { s: 9, a: 'end' }));
+      v.forEach((x, i) => { const h = x / step * k; s += '<rect x="' + (40 + i * 34) + '" y="' + (96 - h) + '" width="22" height="' + h + '" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399', '#f472b6'][i % 5] + '"/>'; });
+      return s + '</svg>'; },
+    hbars: (v, step) => { const n = v.length, H = 20 + n * 22, top = Math.max(...v) / step, k = 110 / top; let s = SV([150, H]) + '<line x1="20" y1="4" x2="20" y2="' + (H - 6) + '" stroke="#475569" stroke-width="2"/>';
+      v.forEach((x, i) => { s += '<rect x="20" y="' + (8 + i * 22) + '" width="' + x / step * k + '" height="14" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399'][i % 4] + '"/>'; }); return s + '</svg>'; },
+    clock: h => { const cx = 50, cy = 50; let s = SV([100, 100]) + '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#334155" stroke-width="3"/>';
+      for (let i = 1; i <= 12; i++) s += T(cx + 34 * Math.sin(rad(i * 30)), cy - 34 * Math.cos(rad(i * 30)) + 4, i, { s: 10 });
+      return s + '<line x1="50" y1="50" x2="50" y2="14" stroke="#1d4ed8" stroke-width="3"/><line x1="50" y1="50" x2="' + (cx + 24 * Math.sin(rad(h * 30))) + '" y2="' + (cy - 24 * Math.cos(rad(h * 30))) + '" stroke="#dc2626" stroke-width="4"/></svg>'; },
+    grid: (rows, hl) => '<table class="fmgr">' + rows.map((r, i) => '<tr>' + r.map((x, j) => '<td' + (hl && hl.some(q => q[0] === i && q[1] === j) ? ' class="hl"' : '') + '>' + x + '</td>').join('') + '</tr>').join('') + '</table>',
+    box: (t, c) => '<div class="fmbox" style="background:' + (c || '#f1f5f9') + '">' + t + '</div>'
+  };
+  const D = () => window.SV_FM || null;
+  const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
+  const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
+  const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
+  function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
+  function html(k) {
+    const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
+    let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
+    R.forEach((r, i) => { const v = S.a[i], on = i === nx;
+      h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
+        + '<div class="fmf">' + slot(r[1], v) + (on ? '<div class="fmops">' + r[3].map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '') + '</div></div>'; });
+    h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
+    return h;
+  }
+  function inject() {
+    if (!D()) return; const k = curTool(); if (!k || !D()[k]) return;
+    const card = document.querySelector('.svsl-tc') || document.querySelector('#toolBody > .antool, #toolBody > .card') || [...document.querySelectorAll('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head'));
+    if (!card) return; const done = card.querySelector('.andone'); const old = card.querySelector('.fmcard');
+    if (!done) { if (old) old.remove(); return; }
+    if (old && old.dataset.fm === k && old.dataset.v === JSON.stringify(ST(k))) return;
+    const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
+    if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.fmop'); if (!b) return; const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
+    if (String(b.dataset.fmv) === String(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
+      S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
+      try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
+    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); }
+    try { touch('s1'); } catch (er) {} inject();
+  });
+  let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
+  const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  /* 인쇄 ① 개념 정리: [그림 | 식(빈 상자)] */
+  window.FM_PRINT = function () {
+    const F = D(); if (!F) return null; const keys = Object.keys(F); let h = '<div class="fmp">', ans = [];
+    keys.forEach((k, ti) => { const t = F[k]; h += '<div class="fmp-t"><b>' + (ti + 1) + '. ' + (t.name || t.t || '') + '</b>';
+      rowsOf(t).forEach((r, i) => { h += '<div class="fmp-r">' + (r[0] != null ? '<div class="fmp-pic">' + r[0] + '</div><div class="fmp-ar">➜</div>' : '<div class="fmp-rl">🔑</div>') + '<div class="fmp-f">' + r[1].replace('{?}', '<span class="fmp-b"></span>') + '</div></div>'; });
+      h += '</div>'; ans.push((ti + 1) + '. ' + rowsOf(t).map(r => r[2]).join(' / ')); });
+    return { html: h + '</div>', key: ans.join('<br>') };
+  };
+})();
+
+window.SV_FM = {
+ split: { name: '곱하는 수 가르기', t: '몇십몇 = 몇십 + 몇', rows: [
+  [FMP.box('🟦 213 × 10 줄<br>🟥 213 × 8 줄', '#eff6ff'), '213 × 18 = 213 × 10 + 213 × 8 = 2130 + 1704 = {?}', '3834', ['1917', '3834', '38340']],
+  [FMP.box('🟦 125 × 20 줄<br>🟥 125 × 3 줄', '#fff1f2'), '125 × 23 = 2500 + 375 = {?}', '2875', ['2875', '625', '28750']]],
+  rule: ['(세 자리 수) × (몇십몇) = (세 자리 수) × (몇십) + (세 자리 수) × ({?})', '몇', ['몇', '몇십', '몇백']], sum: '곱하는 수를 몇십과 몇으로 갈라 곱한 뒤 더해요.' },
+ colw: { name: '판을 세로셈으로', t: '자리 맞추기', rows: [
+  [FMP.box('&nbsp;&nbsp;&nbsp;&nbsp;2 1 3<br>×&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 8<br>―――――<br>&nbsp;&nbsp;1 7 0 4<br>&nbsp;2 1 3<b style="color:#94a3b8">0</b><br>―――――<br>&nbsp;3 8 3 4'), '둘째 줄 213은 213 × {?}을 나타내요.', '10', ['1', '10', '100']],
+  [FMP.box('&nbsp;&nbsp;&nbsp;&nbsp;3 4 2<br>×&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 6<br>―――――<br>&nbsp;&nbsp;2 0 5 2<br>&nbsp;&nbsp;6 8 4<b style="color:#94a3b8">0</b><br>―――――<br>&nbsp;&nbsp;? ? ? ?'), '342 × 26 = 2052 + 6840 = {?}', '8892', ['2736', '8892', '88920']]],
+  rule: ['세로셈의 둘째 줄은 {?}의 자리부터 써요.', '십', ['일', '십', '백']], sum: '둘째 줄은 ×몇십이라 십의 자리부터 써요.' },
+ miss: { name: '빠진 반쪽 칠하기', t: '×몇십 = ×몇 × 10', rows: [
+  [FMP.seq(['245 × 3 = 735', '245 × 30 = 7350'], '×10'), '245 × 36 = 7350 + 1470 = {?}', '8820', ['1470', '8820', '9555']],
+  [FMP.seq(['407 × 5 = 2035', '407 × 50 = 20350'], '×10'), '407 × 52 = 20350 + 814 = {?}', '21164', ['21164', '2849', '20350']]],
+  rule: ['(세 자리 수) × (몇십)은 (세 자리 수) × (몇)의 {?}배예요.', '10', ['2', '10', '100']], sum: '빠뜨리지 말고 두 부분을 모두 더해요.' }
+};
+
+</script><!--FM-END-->
 <!--PJ-START--><script>
 /* =====================================================================
    🖨️ 학습지 인쇄 보강 — 점프 문제를 수업과 같은 4개(점프 1 오늘의 문제 + 보스전 도전 3개)로 맞추고,
@@ -10616,6 +10768,18 @@ body.svsl-on .sv-heroboard.svsl-scrolly::after{content:'⬇ 위로 밀어 더 �
 body.svsl-on .drimg:empty{display:none}
 
 #svslTabs button .svtic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:none;border-radius:50%;overflow:hidden;vertical-align:middle;margin-right:4px}#svslTabs button .svtic svg{width:26px!important;height:26px!important}#svslTabs button .svtic.e{font-size:20px;line-height:1}
+/* 점프 문제: 그림이 칸을 채우게 (작은 고정 크기 그림 → 칸 폭에 맞춰 키움, 화면 높이 안에서) */
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig{align-self:stretch;min-width:0}
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig .rffig,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig.rffig,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig{width:100%!important;max-width:100%!important;display:flex;justify-content:center}
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig>svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig>svg{width:100%!important;height:auto!important;max-height:46vh;max-width:none!important}
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1ask{zoom:1.3}
+/* 상황 살펴보기 두 칸: 왼쪽 = 제목·상황 글·과제, 오른쪽 = 큰 그림 */
+body.svsl-land .sv-heroboard.svsl-hb2{display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-h{grid-column:1;grid-row:2;justify-self:center;font-size:calc(1.1em * var(--hbk,1))}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-story{grid-column:1;grid-row:3;max-width:none;font-size:calc(1.25em * var(--hbk,1));line-height:1.7;padding:16px 20px}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-task{grid-column:1;grid-row:4;text-align:center;font-size:calc(1.15em * var(--hbk,1));line-height:1.5}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-fig{grid-column:2;grid-row:1/-1;justify-self:center;align-self:center}
+body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-story{font-size:calc(1.15em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-task{font-size:calc(1.05em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-h{font-size:calc(1.1em * var(--hbk,1))}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -10631,7 +10795,7 @@ const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '�
 let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
 const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
 /* 글자 크기 범위: 화면에 맞추되 너무 작거나 크게 바뀌지 않게 (넘치면 그 칸만 스크롤) */
-const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.15;
+const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.55;
 /* 창 높이가 낮은 화면(노트북 브라우저 창 높이 600~700): 스크롤 대신 조작판을 조금 더 줄여서 한 화면에 */
 const zmin = () => innerHeight >= 740 ? ZMIN : Math.max(.52, ZMIN * innerHeight / 740);
 const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
@@ -10911,7 +11075,10 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
     const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const st = hb.querySelector('.sv-hb-story'), tk = hb.querySelector('.sv-hb-task'), ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - (st ? st.offsetHeight + 10 : 0) - (tk ? tk.offsetHeight + 10 : 0) - 24, cw = hb.clientWidth - 24; const land = B.classList.contains('svsl-land'); hb.classList.remove('svsl-scrolly');
         /* 세로 화면(휴대폰): 그림을 너무 작게 줄이지 않고 폭에 맞춘 뒤, 넘치면 이 장면만 위아래로 스크롤 */
         if (!land) { const z = .97 * Math.max(.5, Math.min(1.2, cw / f.scrollWidth, Math.max(ch, 300) / f.scrollHeight)); f.style.zoom = z.toFixed(3); if (hb.scrollHeight > hb.clientHeight + 2) hb.classList.add('svsl-scrolly'); }
-        else { const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } } }
+        else { hb.classList.remove('svsl-hb2'); hb.style.removeProperty('--hbk'); const fw = f.scrollWidth, fh = f.scrollHeight, z1 = .95 * Math.max(.5, Math.min(2.1, cw / fw, ch / fh));
+          /* 가로 화면: 그림이 세로로 높으면 [상황 글 | 큰 그림] 두 칸이 그림을 더 크게 보여 줘요 */
+          hb.classList.add('svsl-hb2'); const R = hb.clientWidth * .6 - 30, z2 = .96 * Math.max(.5, Math.min(2.1, R / fw, (hb.clientHeight - 24) / fh));
+          if (z2 > z1 * 1.12) { f.style.zoom = z2.toFixed(3); const L = [h, st, tk].filter(Boolean), lh = () => L.reduce((a, e) => a + e.offsetHeight + 14, 0); let k = 1; hb.style.setProperty('--hbk', 1); for (let i = 0; i < 12 && lh() < hb.clientHeight * .72; i++) { k += .07; hb.style.setProperty('--hbk', k.toFixed(2)); } for (let i = 0; i < 12 && k > .7 && lh() > hb.clientHeight - 20; i++) { k -= .05; hb.style.setProperty('--hbk', k.toFixed(2)); } } else { hb.classList.remove('svsl-hb2'); f.style.zoom = z1.toFixed(3); const used = () => [...hb.children].filter(e => e.offsetParent).reduce((a, e) => a + e.getBoundingClientRect().height + 10, 0); let k = 1; hb.style.setProperty('--hbk', 1); for (let i = 0; i < 10 && used() < hb.clientHeight - 40; i++) { k += .06; hb.style.setProperty('--hbk', k.toFixed(2)); } if (used() > hb.clientHeight - 6) { k -= .06; hb.style.setProperty('--hbk', Math.max(1, k).toFixed(2)); } } } } } } }
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 /* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
 const PG = { key: '', i: 0 };

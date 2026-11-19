@@ -12385,6 +12385,18 @@ body.svsl-on .sv-heroboard.svsl-scrolly::after{content:'⬇ 위로 밀어 더 �
 body.svsl-on .drimg:empty{display:none}
 
 #svslTabs button .svtic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:none;border-radius:50%;overflow:hidden;vertical-align:middle;margin-right:4px}#svslTabs button .svtic svg{width:26px!important;height:26px!important}#svslTabs button .svtic.e{font-size:20px;line-height:1}
+/* 점프 문제: 그림이 칸을 채우게 (작은 고정 크기 그림 → 칸 폭에 맞춰 키움, 화면 높이 안에서) */
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig{align-self:stretch;min-width:0}
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig .rffig,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig.rffig,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig{width:100%!important;max-width:100%!important;display:flex;justify-content:center}
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig>svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig>svg{width:100%!important;height:auto!important;max-height:46vh;max-width:none!important}
+body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1ask{zoom:1.3}
+/* 상황 살펴보기 두 칸: 왼쪽 = 제목·상황 글·과제, 오른쪽 = 큰 그림 */
+body.svsl-land .sv-heroboard.svsl-hb2{display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-h{grid-column:1;grid-row:2;justify-self:center;font-size:calc(1.1em * var(--hbk,1))}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-story{grid-column:1;grid-row:3;max-width:none;font-size:calc(1.25em * var(--hbk,1));line-height:1.7;padding:16px 20px}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-task{grid-column:1;grid-row:4;text-align:center;font-size:calc(1.15em * var(--hbk,1));line-height:1.5}
+body.svsl-land .sv-heroboard.svsl-hb2>.sv-fig{grid-column:2;grid-row:1/-1;justify-self:center;align-self:center}
+body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-story{font-size:calc(1.15em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-task{font-size:calc(1.05em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-h{font-size:calc(1.1em * var(--hbk,1))}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -12400,7 +12412,7 @@ const MSC = ['.svh', '.sv-heroboard', '.sv-panel'], MNAME = ['문제 상황', '�
 let on = false, mi = 0, lastStep = null, lastKey = '', busy = false, dir = 0;
 const S1 = () => (typeof state !== 'undefined' && state.s1) || {};
 /* 글자 크기 범위: 화면에 맞추되 너무 작거나 크게 바뀌지 않게 (넘치면 그 칸만 스크롤) */
-const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.15;
+const ZMIN = .7, ZMAX = 1.35, PMIN = .66, QMIN = .82, QMAX = 1.25, JMAX = 1.55;
 /* 창 높이가 낮은 화면(노트북 브라우저 창 높이 600~700): 스크롤 대신 조작판을 조금 더 줄여서 한 화면에 */
 const zmin = () => innerHeight >= 740 ? ZMIN : Math.max(.52, ZMIN * innerHeight / 740);
 const SET = () => (typeof state !== 'undefined' && state.tab === 's2') ? 's2' : 's1';
@@ -12680,7 +12692,10 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
     const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const st = hb.querySelector('.sv-hb-story'), tk = hb.querySelector('.sv-hb-task'), ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - (st ? st.offsetHeight + 10 : 0) - (tk ? tk.offsetHeight + 10 : 0) - 24, cw = hb.clientWidth - 24; const land = B.classList.contains('svsl-land'); hb.classList.remove('svsl-scrolly');
         /* 세로 화면(휴대폰): 그림을 너무 작게 줄이지 않고 폭에 맞춘 뒤, 넘치면 이 장면만 위아래로 스크롤 */
         if (!land) { const z = .97 * Math.max(.5, Math.min(1.2, cw / f.scrollWidth, Math.max(ch, 300) / f.scrollHeight)); f.style.zoom = z.toFixed(3); if (hb.scrollHeight > hb.clientHeight + 2) hb.classList.add('svsl-scrolly'); }
-        else { const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } } }
+        else { hb.classList.remove('svsl-hb2'); hb.style.removeProperty('--hbk'); const fw = f.scrollWidth, fh = f.scrollHeight, z1 = .95 * Math.max(.5, Math.min(2.1, cw / fw, ch / fh));
+          /* 가로 화면: 그림이 세로로 높으면 [상황 글 | 큰 그림] 두 칸이 그림을 더 크게 보여 줘요 */
+          hb.classList.add('svsl-hb2'); const R = hb.clientWidth * .6 - 30, z2 = .96 * Math.max(.5, Math.min(2.1, R / fw, (hb.clientHeight - 24) / fh));
+          if (z2 > z1 * 1.12) { f.style.zoom = z2.toFixed(3); const L = [h, st, tk].filter(Boolean), lh = () => L.reduce((a, e) => a + e.offsetHeight + 14, 0); let k = 1; hb.style.setProperty('--hbk', 1); for (let i = 0; i < 12 && lh() < hb.clientHeight * .72; i++) { k += .07; hb.style.setProperty('--hbk', k.toFixed(2)); } for (let i = 0; i < 12 && k > .7 && lh() > hb.clientHeight - 20; i++) { k -= .05; hb.style.setProperty('--hbk', k.toFixed(2)); } } else { hb.classList.remove('svsl-hb2'); f.style.zoom = z1.toFixed(3); const used = () => [...hb.children].filter(e => e.offsetParent).reduce((a, e) => a + e.getBoundingClientRect().height + 10, 0); let k = 1; hb.style.setProperty('--hbk', 1); for (let i = 0; i < 10 && used() < hb.clientHeight - 40; i++) { k += .06; hb.style.setProperty('--hbk', k.toFixed(2)); } if (used() > hb.clientHeight - 6) { k -= .06; hb.style.setProperty('--hbk', Math.max(1, k).toFixed(2)); } } } } } } }
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 /* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
 const PG = { key: '', i: 0 };
