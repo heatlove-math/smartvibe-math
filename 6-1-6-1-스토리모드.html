@@ -8294,7 +8294,7 @@ const VK3D = (() => {
     function faceAt(X, Y, frontOnly) { if (!el.__last) return null; const r = cv.getBoundingClientRect(), x = X - r.left, y = Y - r.top;
       return el.__last.items.slice().reverse().find(it => { if (frontOnly && !it.front) return false; let ins = false; const P = it.S2; for (let i = 0, j = 3; i < 4; j = i++) if (((P[i][1] > y) !== (P[j][1] > y)) && x < (P[j][0] - P[i][0]) * (y - P[i][1]) / (P[j][1] - P[i][1]) + P[i][0]) ins = !ins; return ins; }) || null; }
     function swipeAt(X, Y) { const it = faceAt(X, Y, false); if (!it || !st.swipe.includes(it.x.f.id)) return 0; st.sw = st.sw || []; const id = it.x.f.id; if (!st.sw.includes(id)) { st.sw.push(id); st.fcol = Object.assign({}, st.fcol, { [id]: '#f472b6' }); try { Sound.pop(); } catch (e) {}
-        if (st.sw.length === st.swipe.length) { st.merged = 1; try { Sound.correct(); } catch (e) {} st.meas = []; st.hDone = 0; st.rH = 0; st.rV = 0; st.rul = { x: 16, y: -1, r: 0 }; fire('join:1'); } draw(); } return 1; }
+        if (st.sw.length === st.swipe.length) { st.merged = 1; try { Sound.correct(); } catch (e) {} st.meas = []; st.hDone = 0; st.rH = 0; st.rV = 0; st.rul = { x: 16, y: -1, r: 0 }; st.yaw = -Math.PI / 2; st.pitch = -1.5699; st.zoom = 1; st.fitReq = 1; fire('join:1'); } draw(); } return 1; }
     function pxcm() { const it = el.__last && el.__last.items.find(i => i.x.f.id === 2); if (!it) return 20; const E = G.E[it.x.f.e[0]], p = it.S2[0], q = it.S2[1]; return Math.hypot(q[0] - p[0], q[1] - p[1]) / E.len; }
     const RT = 34;
     function drawRuler() { const R0 = st.rul, B = st.box; if (R0.sn && B) { R0.x = R0.sn === 'v1' ? B.x1 : B.x0; R0.y = R0.sn === 'h1' ? B.y1 : B.y0; } const k = pxcm(), n = Math.ceil(2 * (a + b)) + 1, L = n * k; if (R0.y < 0) R0.y = Math.min(H - RT - 30, (st.box ? st.box.y1 : H / 2) + 24 + (st.box ? 0 : 0)); 
@@ -8305,7 +8305,7 @@ const VK3D = (() => {
         if (big) { if (R0.r) { ctx.save(); ctx.translate(x, 22); ctx.scale(1, -1); ctx.rotate(-Math.PI / 2); ctx.textBaseline = 'middle'; ctx.fillText(String(i / 10), 0, 0); ctx.restore(); } else ctx.fillText(String(i / 10), x, 16); } }
       ctx.restore(); }
     function rulHit(x, y) { const R0 = st.rul; if (!R0) return 0; const k = pxcm(), L = (Math.ceil(2 * (a + b)) + 1) * k, u = R0.r ? y - R0.y : x - R0.x, v = R0.r ? R0.x - x : y - R0.y; return u > -10 && u < L + 10 && v > -6 && v < RT + 6; }
-    function rulSnap() { const R0 = st.rul, B = st.box; if (!B) return; const d = 18; let ok = 0;
+    function rulSnap() { const R0 = st.rul, B = st.box; if (!B) return; const d = 40; let ok = 0;
       if (!R0.r && Math.abs(R0.x - B.x0) < d) { if (Math.abs(R0.y - B.y0) < d) { R0.sn = 'h0'; ok = 1; } else if (Math.abs(R0.y - B.y1) < d) { R0.sn = 'h1'; ok = 1; } if (ok) { st.rH = 1; try { Sound.correct(); } catch (e) {} say('자의 0을 옆면 한 장의 끝에 딱 맞췄어요! 반대쪽 끝의 눈금을 읽어 봐요. 가로는 몇 cm일까요?', 'ok'); } }
       if (R0.r && Math.abs(R0.y - B.y0) < d) { if (Math.abs(R0.x - B.x0) < d) { R0.sn = 'v0'; ok = 1; } else if (Math.abs(R0.x - B.x1) < d) { R0.sn = 'v1'; ok = 1; } if (ok) { st.rV = 1; try { Sound.correct(); } catch (e) {} say('자를 옆면 한 장의 세로에 딱 맞췄어요! 눈금을 읽어 봐요. 세로는 몇 cm일까요?', 'ok'); } }
       if (st.rH && st.rV && !st.hDone) { st.hDone = 1; fire('merge:1'); } }
@@ -8340,9 +8340,10 @@ const VK3D = (() => {
       if (ptr.size === 2) { const [p, q] = [...ptr.values()], d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (pinch) st.zoom = Math.max(.5, Math.min(2.6, st.zoom * d / pinch)); pinch = d; draw(); return; }
       if (down && down.sw) { if (!st.merged) swipeAt(e.clientX, e.clientY); return; }
       if (down && down.rl) { const dx = e.clientX - down.x0, dy = e.clientY - down.y0; down.mv = Math.max(down.mv, Math.hypot(dx, dy)); if (down.mv > 5) { st.rul.sn = ''; st.rul.x = down.rx + dx; st.rul.y = down.ry + dy; draw(); } return; }
+      if (down && st.merged && st.rul && !st.hDone) { const dx = e.clientX - down.x, dy = e.clientY - down.y; if (Math.hypot(dx, dy) > 5) { st.rul.sn = ''; st.rul.x = (down.rx0 != null ? down.rx0 : (down.rx0 = st.rul.x)) + dx; st.rul.y = (down.ry0 != null ? down.ry0 : (down.ry0 = st.rul.y)) + dy; draw(); } return; }
       if (down) { const dx = e.clientX - down.x, dy = e.clientY - down.y; down.mv = Math.max(down.mv, Math.hypot(dx, dy)); if (down.mv > 5) { st.yaw = down.yaw - dx * .012; st.pitch = Math.max(-1.55, Math.min(1.55, down.pitch + dy * .012)); hover = -1; cv.style.cursor = 'grabbing'; draw(); return; } }
       const h = pick(e.clientX - r.left, e.clientY - r.top); if (h !== hover) { hover = h; draw(); } cv.style.cursor = h >= 0 ? `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'26\' font-size=\'26\'>✂️</text></svg>')}") 8 8, crosshair` : 'grab'; });
-    const up = e => { ptr.delete(e.pointerId); if (ptr.size < 2) pinch = 0; if (!down) return; const d0 = down; down = null; if (d0.sw) return; if (d0.rl) { if (d0.mv <= 5) { st.rul.r = st.rul.r ? 0 : 1; st.rul.sn = ''; try { Sound.pop(); } catch (e) {} } rulSnap(); draw(); return; } cv.style.cursor = 'grab'; if (d0.mv <= 5) { const r = cv.getBoundingClientRect(), h = pick(e.clientX - r.left, e.clientY - r.top); if (h >= 0) cut(h); } };
+    const up = e => { ptr.delete(e.pointerId); if (ptr.size < 2) pinch = 0; if (!down) return; const d0 = down; down = null; if (d0.sw) return; if (d0.rl) { if (d0.mv <= 5) { st.rul.r = st.rul.r ? 0 : 1; st.rul.sn = ''; try { Sound.pop(); } catch (e) {} } rulSnap(); draw(); return; } if (d0.rx0 != null) { rulSnap(); draw(); return; } cv.style.cursor = 'grab'; if (d0.mv <= 5) { const r = cv.getBoundingClientRect(), h = pick(e.clientX - r.left, e.clientY - r.top); if (h >= 0) cut(h); } };
     cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', e => { ptr.delete(e.pointerId); down = null; });
     cv.addEventListener('wheel', e => { e.preventDefault(); st.zoom = Math.max(.5, Math.min(2.6, st.zoom * (e.deltaY < 0 ? 1.1 : .91))); draw(); }, { passive: false });
     el.querySelectorAll('[data-k3]').forEach(bt => bt.addEventListener('click', () => { const k = bt.dataset.k3;
@@ -8399,7 +8400,7 @@ const MGX = (() => {
     el.innerHTML = g.d.view(r) + (g.res ? `<div class="qzex ${g.res.ok ? 'ok' : 'no'}">${g.res.ok ? '✅' : '❌'} ${g.res.msg}</div>` : r.tip ? `<div class="mgxtip">${r.tip}</div>` : ''); }
   function end(g, ok, msg, log) { const r = g.r; if (r.done) return; r.done = true; r.tip = ''; g.res = { ok, msg }; let p = 0;
     if (ok) { p = vgGood(g.d.pts || 12, [3, (g.d.pts || 12) + 4]); try { Sound.correct(); } catch (e) {} } else { vgBad(4, `${g.d.name}: ${log || ''}`); try { Sound.wrong(); } catch (e) {} }
-    vgHud(); paint(g); if (ok) vgPop('#mgxStage', '+' + p, true); g.tm = setTimeout(() => round(g), ok ? 1500 : 3200); }
+    vgHud(); paint(g); if (ok) vgPop('#mgxStage', '+' + p, true); g.tm = setTimeout(() => round(g), ok ? (r.wr ? 2800 : 1500) : 3200); }
   function slip(g, msg, log) { vgBad(4, `${g.d.name}: ${log || String(msg).replace(/<[^>]+>/g, '')}`); try { Sound.wrong(); } catch (e) {} vgHud(); g.r.tip = '❗ ' + msg; }
   const api = g => ({ end: (ok, msg, log) => end(g, ok, msg, log), slip: (msg, log) => slip(g, msg, log), pop: () => { try { Sound.pop(); } catch (e) {} } });
   const cur = () => { try { return onGame(VG.id) ? G[VG.id] : null; } catch (e) { return null; } };
