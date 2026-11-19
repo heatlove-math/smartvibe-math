@@ -8076,21 +8076,36 @@ const VK = (() => {
   /* ⑥ 밑면 끌어 올리기: c = { base:[a,b], H, rec, win, q } — 밑면(쌓인 윗면)을 직접 잡고 위로 끌면 한 층씩 쌓여요. 쌓기나무 수가 늘어나는 것이 옆에 바로 보여요 */
   function lift(c) {
     const [a, b] = c.base, H = c.H, mx = c.max || H + 2, chk = c.kind === 'check';
+    /* 단계: x(맨 앞 가로 한 줄 깔기) → y(그 줄을 세로로 늘여 밑면 채우기) → h(밑면을 높이만큼 끌어 올리기) */
     return stage('vklift', c, {
-      q: d => d.recOK ? '완성!' : d.h === H && d.done ? (c.q2 || '빈칸을 채워 부피를 구하는 식을 완성해요.') : c.q,
-      init: () => ({ h: 0, done: false, rv: {} }),
-      view: d => { const n = a * b * d.h, fin = d.done && d.h === H;
-        const L = VOX.fillList(a, b, d.h, n, (x, y, z) => fin ? 'green' : z === d.h - 1 ? 'cube' : 'blue');
-        const fig = VOX.cubes(L, { frame: [a, b, mx], u: PU, cls: 'vkpull', pad: 14, padL: 34, floorGrid: true, floorCol: '#bfdbfe', frameCol: '#94a3b8', lab: { a: a + ' cm', b: b + ' cm', c: '' },
-          extra: (p, u) => { let s = '<g class="vkrule">'; for (let k = 0; k <= mx; k++) { const q = p(0, 0, k); s += `<path d="M${q[0]},${q[1]}h${k % 5 ? -7 : -11}"/>${k ? `<text x="${q[0] - 14}" y="${q[1] + 5}" text-anchor="end" class="${k === d.h ? 'on' : ''}">${k}</text>` : ''}`; } const q0 = p(0, 0, mx); s += `<text x="${q0[0] - 12}" y="${q0[1] - 12}" text-anchor="end" class="u">cm</text></g>`;
-            if (d.done) return s; const z = d.h, tf = [p(0, 0, z), p(a, 0, z), p(a, b, z), p(0, b, z)], polys = [tf, shf(tf, 0, -u * .8)]; if (z > 0) polys.push([p(0, 0, 0), p(a, 0, 0), p(a, 0, z), p(0, 0, z)], [p(a, 0, 0), p(a, b, 0), p(a, b, z), p(a, 0, z)]);
-            return s + grip('h', d.h, 0, mx, [0, -1], u, polys, hand(p(a / 2, b / 2, z), [0, -1], z ? '' : '밑면을 잡고 위로 ↑', { one: z === 0 })); } });
-        const info = volBox('📦 쌓을수록 부피가 늘어나요', [['높이', d.h, 'cm'], ['쌓기나무', chk && d.h ? '?' : n, '개', 1]], n / (a * b * mx), chk ? '쌓기나무 수는 식으로 구해 봐요.' : d.h ? `한 층 더 쌓을 때마다 <b>밑면에 깔린 개수만큼</b> 늘어나요.` : '밑면을 한 층씩 쌓아 올려 봐요.', d.done) + (d.done ? rec(d, c) : '');
-        return stageBox(fig, info, fin, figAR(a + .8, b, mx), d.done); },
-      on: { 'act:vkset'(d, v, el, api) { if (d.done || !v) return; if (v === 'end') { if (d.h === H) { d.done = true; api.say(true, c.mid || `높이 ${H} cm! 밑면이 ${H}층 쌓였어요.`); } else if (d.h > H) api.say(false, `높이가 ${H} cm보다 높아요. 조금 내려 봐요.`, true); return; } const [k, x] = v.split(':'); d[k] = +x; api.clear(); },
+      q: d => d.recOK ? '완성!' : d.done ? (c.q2 || '빈칸을 채워 부피를 구하는 식을 완성해요.') : d.ph === 'x' ? `쌓기나무의 <b>오른쪽 면을 잡고 끌어</b> 밑면의 <b>가로 한 줄(${a} cm)</b>을 깔아요.` : d.ph === 'y' ? `가로 한 줄의 <b>앞면을 잡고 앞으로 끌어</b> <b>세로 ${b} cm</b>까지 줄을 늘여 밑면을 채워요.` : c.q,
+      init: () => ({ ph: 'x', x: 1, y: 1, h: 1, done: false, rv: {} }),
+      view: d => { const ph = d.ph, fin = d.done, X = ph === 'x' ? d.x : a, Y = ph === 'x' ? 1 : ph === 'y' ? d.y : b, Z = ph === 'h' ? d.h : 1, n = X * Y * Z, y0 = b - Y;
+        const L = []; for (let z = 0; z < Z; z++) for (let y = 0; y < Y; y++) for (let x = 0; x < X; x++) L.push([x, b - 1 - y, z, 1, 1, 1, fin ? 'green' : ph === 'x' ? 'cube' : ph === 'y' ? (y === Y - 1 ? 'cube' : 'blue') : (z === Z - 1 ? 'cube' : 'blue')]);
+        const MZ = ph === 'h' ? mx : 2;   /* 밑면을 깔 때는 낮은 틀로 크게 보여요 */
+        const fig = VOX.cubes(L, { frame: [a, b, MZ], frameBack: true, u: PU, cls: 'vkpull', pad: 14, padL: 40, padB: 30, padR: 70, floorGrid: true, floorCol: '#bfdbfe', frameCol: '#94a3b8',
+          extra: (p, u) => { const pr = Math.hypot(VOX.CX, VOX.CY), fdir = [-VOX.CX / pr, VOX.CY / pr];
+            let s = '<g class="vkrule">'; for (let k = 0; k <= MZ; k++) { const q = p(0, 0, k); s += `<path d="M${q[0]},${q[1]}h${k % 5 ? -7 : -11}"/>${k ? `<text x="${q[0] - 14}" y="${q[1] + 5}" text-anchor="end" class="${ph === 'h' && k === d.h ? 'on' : ''}">${k}</text>` : ''}`; } const q0 = p(0, 0, MZ); s += `<text x="${q0[0] - 12}" y="${q0[1] - 12}" text-anchor="end" class="u">cm</text></g>`;
+            s += `<g class="vkdl"><text x="${p(X / 2, y0, 0)[0]}" y="${p(X / 2, y0, 0)[1] + 21}" text-anchor="middle">가로 ${X} cm</text>${ph !== 'x' ? `<text x="${p(a, y0 + Y / 2, 0)[0] + 9}" y="${p(a, y0 + Y / 2, 0)[1] + 14}">세로 ${Y} cm</text>` : ''}</g>`;
+            if (fin) return s;
+            if (ph === 'x') { const rf = [p(X, y0, 0), p(X, b, 0), p(X, b, 1), p(X, y0, 1)]; return s + grip('x', d.x, 1, a, [1, 0], u, [rf, shf(rf, u * .8, 0), Object.assign([p(X - 1, y0, 0), p(X, y0, 0), p(X, y0, 1), p(X - 1, y0, 1)], { ex: 1 })], hand(p(X, y0 + .5, .5), [1, 0], X === 1 ? '오른쪽으로 끌어요 →' : '', { r: 15, ly: 34, one: X === 1 })); }
+            if (ph === 'y') { const ff = [p(0, y0, 0), p(a, y0, 0), p(a, y0, 1), p(0, y0, 1)]; return s + grip('y', d.y, 1, b, fdir, u * pr, [ff, shf(ff, fdir[0] * u * .8, fdir[1] * u * .8), [p(0, y0, 1), p(a, y0, 1), p(a, y0 + 1, 1), p(0, y0 + 1, 1)]], hand(p(a * .75, y0, .5), fdir, Y === 1 ? '앞으로 끌어요' : '', { r: 15, lx: 22, ly: 36, one: Y === 1 })); }
+            const tf = [p(0, 0, Z), p(a, 0, Z), p(a, b, Z), p(0, b, Z)]; return s + grip('h', d.h, 1, mx, [0, -1], u, [tf, shf(tf, 0, -u * .8), [p(0, 0, 0), p(a, 0, 0), p(a, 0, Z), p(0, 0, Z)], [p(a, 0, 0), p(a, b, 0), p(a, b, Z), p(a, 0, Z)]], hand(p(a / 2, b / 2, Z), [0, -1], Z === 1 ? '밑면을 잡고 위로 ↑' : '', { one: Z === 1 })); } });
+        const rows = ph === 'x' ? [['가로 한 줄', X, '개'], ['밑면 쌓기나무', n, '개', 1]] : ph === 'y' ? [['가로 한 줄', a, '개'], ['줄 수(세로)', Y, '줄'], ['밑면 쌓기나무', chk && Y > 1 ? '?' : n, '개', 1]]
+          : [['밑면', a * b, '개'], ['높이', Z, 'cm'], ['쌓기나무', chk && Z > 1 ? '?' : n, '개', 1]];
+        const note = ph === 'x' ? '오른쪽 면을 끌면 가로 줄에 쌓기나무가 하나씩 놓여요.' : ph === 'y' ? `한 줄 더 늘일 때마다 <b>${a}개</b>씩 늘어나요. 밑면을 다 채우면 <b>가로 × 세로</b>개!` : chk ? '쌓기나무 수는 식으로 구해 봐요.' : `한 층 더 쌓을 때마다 <b>밑면의 개수(${a * b}개)</b>만큼 늘어나요.`;
+        const info = volBox(ph === 'h' ? '📦 쌓을수록 부피가 늘어나요' : '🧱 밑면부터 깔아요', rows, n / (a * b * mx), note, d.done) + (d.done ? rec(d, c) : '');
+        return stageBox(fig, info, fin, figAR(a + 1.2, b, MZ), d.done); },
+      on: { 'act:vkset'(d, v, el, api) { if (d.done || !v) return;
+          if (v === 'end') {
+            if (d.ph === 'x') { if (d.x === a) { d.ph = 'y'; api.say(true, `가로 한 줄에 쌓기나무 ${a}개! 이제 줄을 앞으로 끌어 세로 ${b} cm까지 늘여요.`); } return; }
+            if (d.ph === 'y') { if (d.y === b) { d.ph = 'h'; d.h = 1; api.say(true, `밑면에 ${a}개씩 ${b}줄 = ${a * b}개가 깔렸어요! 이제 밑면을 위로 끌어 높이 ${H} cm까지 쌓아요.`); } return; }
+            if (d.h === H) { d.done = true; api.say(true, c.mid || `높이 ${H} cm! 밑면이 ${H}층 쌓였어요.`); } else if (d.h > H) api.say(false, `높이가 ${H} cm보다 높아요. 조금 내려 봐요.`, true); return; }
+          const [k, x] = v.split(':'); if (k !== d.ph) return; d[k] = +x; api.clear(); },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
-      _solve(d, on) { on('act:vkset', 'h:' + H, null); on('act:vkset', 'end', null); on('act:mxchk', 'auto', null); } });
+      _solve(d, on) { on('act:vkset', 'x:' + a, null); on('act:vkset', 'end', null); on('act:vkset', 'y:' + b, null); on('act:vkset', 'end', null); on('act:vkset', 'h:' + H, null); on('act:vkset', 'end', null); on('act:mxchk', 'auto', null); } });
   }
+
   /* ⑦ 가로·세로·높이 늘이기: c = { A:[a,b,h], tasks:[[ma,mb,mh,label]], win, q } — 직육면체의 오른쪽 면(가로)·앞면(세로)·윗면(높이)을 직접 잡아당겨요.
      처음 상자와 똑같은 덩어리가 색을 바꿔 가며 늘어나서, 부피가 처음의 몇 배인지 눈으로 보여요 */
   function grow(c) {

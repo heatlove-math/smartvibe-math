@@ -5860,6 +5860,51 @@ body{background:radial-gradient(circle at 1px 1px,rgba(2,132,199,.15) 1.5px,tran
 .vkz3f{display:flex;flex-direction:column;align-items:center;gap:4px;background:#f8fafc;border:3px solid #e2e8f0;border-radius:18px;padding:8px 12px}.vkz3f svg{transition:all .4s}.vkz3f b{font-size:1.05rem;color:#1e293b}
 .vkzn i.z,.vkzn i.vkzlast{color:var(--zc)!important;animation:vkzIn .35s cubic-bezier(.3,1.6,.5,1)}@keyframes vkzIn{from{transform:scale(2.2);opacity:0}}
 .vkzc{background:var(--zc,#f59e0b)!important;color:#fff!important}
+
+/* ✋ 도형을 직접 잡아 끌기 (6-1-6-2): [그림 칸 꽉 차게 | 부피 보기 · 기록] */
+body.svsl-on .svsl-tc .svsl-main>div:has(>.vkp){align-self:stretch;flex:1 1 100%;width:100%!important;max-width:none!important;min-width:0;min-height:0;align-items:stretch!important;gap:0}
+body.svsl-land .svsl-tc .svsl-main>div:has(>.vkp)>.vkp{flex:1 1 auto;min-height:0}
+.vkp{--vkz:1;display:flex;gap:14px;align-items:stretch;width:100%;box-sizing:border-box}
+body.svsl-land .vkp{height:100%}
+.vkpfig{flex:1.35 1 0;min-width:0;min-height:0;height:clamp(300px,54vh,640px);position:relative;box-sizing:border-box;border:3px dashed #f59e0b;border-radius:18px;background:#fffbeb;padding:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+body.svsl-land .vkpfig{flex:0 1 auto;height:auto;align-self:stretch;aspect-ratio:var(--ar,1.05);max-width:60%}
+.vkp.done .vkpfig{border-style:solid;border-color:#22c55e;background:#f0fdf4}
+.vkpfig>svg{width:100%!important;height:100%!important;max-width:none!important;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.vkpinfo{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:8px}
+.vkpinfo>*{zoom:var(--vkz)}
+.vkpinfo .mxrec{margin:0}.vkpinfo .row.mt-2{margin-top:0}
+body.svsl-port .vkp{flex-direction:column}body.svsl-port .vkpfig{flex:none;height:clamp(260px,40vh,600px)}body.svsl-port .vkpinfo{flex:none}
+@media(max-width:760px){.vkp{flex-direction:column}.vkpfig{flex:none;height:clamp(250px,42vh,480px)}.vkpinfo{flex:none}}
+.vkh{cursor:grab}.vkhf{fill:#fff;fill-opacity:0;stroke:none;pointer-events:all}
+.vkh:hover .vkhf{fill:#fde047;fill-opacity:.2}.vkh:hover .vkhf.x,body.vkpulling .vkh .vkhf{fill-opacity:0}
+.vkhb circle{fill:#f59e0b;stroke:#fff;stroke-width:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.vkha path{fill:none;stroke:#b45309;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.vkhl{font-size:15px;font-weight:900;fill:#92400e;paint-order:stroke;stroke:#fff;stroke-width:4.5px}
+.vkhb{animation:vkhp 1.4s ease-in-out infinite}@keyframes vkhp{50%{opacity:.62}}body.vkpulling .vkhb{animation:none}
+.vkghost polygon{fill:rgba(148,163,184,.08);stroke:#94a3b8;stroke-width:2;stroke-dasharray:7 6}
+.vkfloor{fill:#eef2f7;stroke:#cbd5e1;stroke-width:1.5}
+.vkdl text{font-size:16px;font-weight:900;fill:#1e293b;paint-order:stroke;stroke:#fff;stroke-width:4.5px}
+.vkrule path{stroke:#475569;stroke-width:2;fill:none}.vkrule text{font-size:14px;font-weight:800;fill:#64748b}.vkrule text.on{fill:#ea580c;font-size:19px;font-weight:900}.vkrule text.u{font-size:13px}
+.vkvol{border:3px solid #bfdbfe;background:#eff6ff;border-radius:16px;padding:8px 14px;display:flex;flex-direction:column;gap:3px}
+.vkvh{font-weight:900;color:#1d4ed8;font-size:1.02rem}
+.vkvr{display:flex;align-items:baseline;gap:8px;font-weight:900;color:#334155}.vkvr span{min-width:78px;font-size:1.02rem}.vkvr b{font-family:'Jua',sans-serif;font-size:1.7rem;color:#1e293b;min-width:2.4em;text-align:right;line-height:1.15}.vkvr em{font-style:normal;color:#64748b}
+.vkvr.big b{font-size:2.5rem;color:#ea580c;display:inline-block;animation:vkpop .25s ease-out}@keyframes vkpop{0%{transform:scale(1.4)}100%{transform:none}}
+.vkvbar{height:16px;border-radius:999px;background:#dbeafe;overflow:hidden;border:2px solid #93c5fd;margin:2px 0}.vkvbar i{display:block;height:100%;background:linear-gradient(90deg,#fbbf24,#f97316);border-radius:999px}
+.vkvol small{font-weight:800;color:#475569;font-size:.86rem;line-height:1.35}.vkvol small b{color:#b45309}
+.vkvnote{border:3px dashed #fdba74;background:#fff7ed;border-radius:16px;padding:10px 14px;font-weight:900;color:#9a3412;font-size:1.08rem;line-height:1.5;text-align:center}.vkvnote small{display:block;color:#64748b;font-size:.88rem;font-weight:800}.vkvnote.ok{border:3px solid #86efac;background:#f0fdf4;color:#166534;font-size:1rem}
+.vkvcp{display:flex;align-items:center;gap:8px;font-weight:900;color:#334155;flex-wrap:wrap}.vkvcp b{font-family:'Jua',sans-serif;font-size:2.2rem;color:#ea580c;line-height:1;display:inline-block;animation:vkpop .25s ease-out}.vkvcp em{font-style:normal}
+.vkvblk{display:flex;flex-wrap:wrap;gap:3px;margin:1px 0 3px;min-height:41px;align-content:flex-start}.vkvblk i{width:26px;height:19px;border-radius:4px;border:2px solid #7c2d12;background:#fbbf24;box-sizing:border-box}.vkvblk i.c0{background:#2dd4bf}.vkvblk i.c1{background:#60a5fa}.vkvblk i.c2{background:#f472b6}.vkvblk i.c3{background:#a78bfa}
+.vkpinfo .vkgt{font-size:.92rem;margin:0 auto}.vkpinfo .vkgt td,.vkpinfo .vkgt th{padding:2px 8px}
+
+.vkvol.mini{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 10px;padding:5px 12px;font-weight:900;color:#334155}.vkvol.mini b{font-family:'Jua',sans-serif;font-size:1.5rem;color:#ea580c;margin:0 2px}.vkvol.mini i{font-style:normal;color:#94a3b8}
+.vkvol.mini .q{color:#1d4ed8;font-size:.95rem}
+.vkgl{fill:#64748b;font-size:17px}
+/* 늘이기 표: 부피 칸을 누르면 그 줄 모양이 왼쪽에 */
+.vkgfigs{position:relative;width:100%;height:100%;display:grid}.vkgfig{grid-area:1/1;display:none;flex-direction:column;align-items:center;justify-content:center;min-height:0}.vkgfig.on{display:flex;animation:vkgIn .25s ease}
+.vkgfig>svg{width:100%;height:auto;max-height:100%;flex:1;min-height:0}
+.vkgcap{font-weight:900;font-size:1.15rem;color:#1e3a8a;background:#eff6ff;border:2.5px solid #93c5fd;border-radius:999px;padding:4px 16px;display:flex;gap:10px;align-items:baseline}.vkgcap small{color:#64748b;font-size:.85rem}
+.vkgt tr[data-vkg]{cursor:pointer}.vkgt tr.vkgon td{background:#fef9c3}.vkghint{font-weight:800;color:#475569;font-size:.95rem;margin-bottom:6px}
+@keyframes vkgIn{from{opacity:.3;transform:scale(.97)}to{opacity:1;transform:none}}
 </style>
 <script>
 /* 6-1 6단원 3차시 · 1 m³ 알아보기 */
@@ -7963,63 +8008,162 @@ const VK = (() => {
     document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const sv = document.querySelector('#toolBody svg.vkmsvg'); if (!sv) return; const v = val(sv, e); if (v !== D.v) { D.v = v; send(D.k + ':' + v); } }, { passive: false });
     const up = () => { if (!D) return; D = null; document.body.classList.remove('vkdragging'); send('end'); };
     document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true); })();
-  /* ⑤ 층 나누어 보기: c = { A:[a,b,h], rec, win, q } — 손잡이를 위로 끌면 층이 벌어져 한 층씩 보여요 */
+  /* =====================================================================
+     ✋ 도형을 직접 잡아 끌기 (6-1-6-2 · 2026-11-19)
+     · 그림(SVG) 위의 면·층·꼭짓점(.vkh)을 잡고 끌면 그 방향으로 값이 바뀌어요. 그림 밖 손잡이·단추는 쓰지 않아요.
+     · .vkh: data-k(값 이름) data-v(지금 값) data-min data-max data-dx data-dy(끄는 방향, 화면 기준) data-per(값 1에 해당하는 SVG 길이) data-mode="max"(가로·세로 중 많이 움직인 쪽)
+     · 값이 바뀔 때마다 숨은 [data-ck=vkset]에 'k:값', 손을 떼면 'end'를 보내요 (예전 손잡이와 같은 약속).
+     · 끄는 동안 그림이 다시 그려져도 끊기지 않게 pointer capture를 body에 걸어요 (패드·폰 터치).
+     ===================================================================== */
+  (() => { if (window.__vkPull) return; window.__vkPull = 1; let D = null;
+    const send = v => { const b = document.querySelector('#toolBody [data-ck="vkset"]'); if (b) { b.dataset.v = v; b.click(); } };
+    document.addEventListener('pointerdown', e => { if (D || (e.button != null && e.button > 0)) return; const h = e.target.closest && e.target.closest('#toolBody .vkh'); if (!h) return; const sv = h.closest('svg'); if (!sv) return; e.preventDefault();
+      let s = 1; try { const r = sv.getBoundingClientRect(), vb = sv.viewBox.baseVal; if (vb && vb.width && vb.height) s = Math.min(r.width / vb.width, r.height / vb.height) || 1; } catch (er) {}
+      D = { k: h.dataset.k, v0: +h.dataset.v, v: +h.dataset.v, min: +h.dataset.min, max: +h.dataset.max, ux: +h.dataset.dx || 0, uy: +h.dataset.dy || 0, mode: h.dataset.mode || '', per: Math.max(4, (+h.dataset.per || 40) * s), x: e.clientX, y: e.clientY, id: e.pointerId };
+      try { document.body.setPointerCapture(e.pointerId); } catch (er) {}
+      document.body.classList.add('vkdragging', 'vkpulling'); }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const dx = e.clientX - D.x, dy = e.clientY - D.y;
+      const pr = D.mode === 'max' ? (Math.abs(dx) > Math.abs(dy) ? dx : -dy) : dx * D.ux + dy * D.uy, v = Math.max(D.min, Math.min(D.max, D.v0 + Math.round(pr / D.per)));
+      if (v !== D.v) { D.v = v; send(D.k + ':' + v); } }, { passive: false });
+    const up = e => { if (!D || (e && e.pointerId != null && e.pointerId !== D.id)) return; try { document.body.releasePointerCapture(D.id); } catch (er) {} D = null; document.body.classList.remove('vkdragging', 'vkpulling'); send('end'); };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+    /* 오른쪽 칸(부피 보기·기록)의 글자 크기: 칸이 비지 않게 키우고, 넘치면 줄여요. 끄는 동안 크기가 들썩이지 않게 단계마다 한 번 정한 값을 써요 */
+    const ZC = {};
+    const fit = () => { document.querySelectorAll('#toolBody .vkp').forEach(r => { const info = r.querySelector('.vkpinfo'); if (!info) return; const m = r.closest('.svsl-main'), land = document.body.classList.contains('svsl-land') && m;
+      const h = land ? m.clientHeight : Math.min(innerHeight * .56, 560), iw = info.clientWidth, set = z => r.style.setProperty('--vkz', z.toFixed(2)), over = () => info.scrollHeight > info.clientHeight + 2 || info.scrollWidth > info.clientWidth + 2;
+      let key = ''; try { const k = state.s1.tool; key = [k, CK.S(k).i, r.dataset.ph || 0, innerWidth, innerHeight, land ? 1 : 0].join(':'); } catch (er) {}
+      let z = ZC[key];
+      if (z == null) { z = Math.max(.8, Math.min(1.9, h / 372, iw > 60 ? Math.max(.86, iw / 340) : 9)); set(z);
+        if (land) { const ks = [...info.children].filter(e => e.getClientRects().length), ch = () => ks.length ? ks[ks.length - 1].getBoundingClientRect().bottom - ks[0].getBoundingClientRect().top : 0;
+          for (let i = 0; i < 12 && z < 1.75 && !over() && ch() < info.clientHeight * .72; i++) { z *= 1.06; set(z); } } } else set(z);
+      if (land) for (let i = 0; i < 16 && z > .5 && over(); i++) { z *= .94; set(z); }
+      if (key) ZC[key] = z; }); };
+    try { new MutationObserver(fit).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} addEventListener('resize', fit); })();
+  const PU = 40, pp = P => P.map(q => q.join(',')).join(' '), shf = (P, dx, dy) => Object.assign(P.map(q => [Math.round((q[0] + dx) * 10) / 10, Math.round((q[1] + dy) * 10) / 10]), { ex: 1 });
+  /* 잡는 곳: 면(다각형) 여러 개 + 손 표시. dir = 끄는 방향(화면), per = 값 1만큼의 SVG 길이 */
+  const grip = (k, v, min, max, dir, per, polys, mark, mode) => `<g class="vkh" data-k="${k}" data-v="${v}" data-min="${min}" data-max="${max}" data-dx="${dir[0]}" data-dy="${dir[1]}" data-per="${per}" ${mode ? `data-mode="${mode}"` : ''}>${polys.map(P => `<polygon points="${pp(P)}" class="vkhf${P.ex ? ' x' : ''}"/>`).join('')}${mark || ''}</g>`;
+  /* 손 표시: 가운데 q, 끄는 방향 화살표(양쪽), 이름표 */
+  const hand = (q, dir, lab, o = {}) => { const ang = Math.atan2(dir[1], dir[0]) * 180 / Math.PI, r = o.r || 17, lx = o.lx != null ? o.lx : 0, ly = o.ly != null ? o.ly : -r - 9;
+    return `<g class="vkhb" transform="translate(${q[0]},${q[1]})"><g transform="rotate(${ang.toFixed(1)})" class="vkha"><path d="M${r + 4},0h13m-6,-6l6,6l-6,6"/>${o.one ? '' : `<path d="M${-r - 4},0h-13m6,-6l-6,6l6,6"/>`}</g><circle r="${r}"/><text y="${r * .36}" text-anchor="middle" font-size="${r * 1.05}">✋</text>${lab ? `<text class="vkhl" x="${lx}" y="${ly}" text-anchor="${o.anc || 'middle'}">${lab}</text>` : ''}</g>`; };
+  /* 부피 보기 칸: rows = [[이름, 값, 단위, 강조]], bar = 0~1 */
+  const volBox = (title, rows, bar, note, mini) => mini ? `<div class="vkvol mini">${rows.filter(r => !r[3]).map(r => `<span>${r[0]} <b>${r[1]}</b>${r[2] || ''}</span>`).join('<i>·</i>')}<span class="q">쌓기나무는 모두 몇 개일까요?</span></div>` : `<div class="vkvol"><div class="vkvh">${title}</div>${rows.map(r => `<div class="vkvr ${r[3] ? 'big' : ''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2] || ''}</em></div>`).join('')}${bar != null ? `<div class="vkvbar"><i style="width:${Math.max(0, Math.min(100, bar * 100)).toFixed(1)}%"></i></div>` : ''}${note ? `<small>${note}</small>` : ''}</div>`;
+  const figAR = (ex, ey, ez) => ((ex + ey * VOX.CX + 1.3) / (ez + ey * VOX.CY + 1.3)).toFixed(3);
+  const stageBox = (fig, info, done, ar, ph) => `<div class="vkp ${done ? 'done' : ''}" data-svnofit="1" data-ph="${ph ? 1 : 0}" style="--ar:${ar || 1.05}"><div class="vkpfig">${fig}</div><div class="vkpinfo">${info}</div>${setBtn}</div>`;
+
+  /* ⑤ 층 나누어 보기: c = { A:[a,b,h], rec, win, q } — 쌓기나무의 층을 직접 잡고 위로 끌면 층이 벌어져요 (잡은 층이 손을 따라와요) */
   function explode(c) {
-    const [a, b, h] = c.A;
+    const [a, b, h] = c.A, GM = 10, GS = .1, OK = 7;
     return stage('vkexp', c, {
-      q: d => d.recOK ? '완성!' : d.g >= 3 ? (c.q2 || '층이 모두 보여요! 한 층의 개수와 층수를 세어 빈칸에 써요.') : c.q,
+      q: d => d.recOK ? '완성!' : d.g >= OK ? (c.q2 || '층이 모두 보여요! 한 층의 개수와 층수를 세어 빈칸에 써요.') : c.q,
       init: () => ({ g: 0, rv: {} }),
-      view: d => { const gap = d.g * .35, L = []; for (let z = 0; z < h; z++) for (let y = 0; y < b; y++) for (let x = 0; x < a; x++) L.push([x, y, z * (1 + gap), 1, 1, 1, z % 2 ? 'cube' : 'blue']);
-        const fig = VOX.cubes(L, { maxW: 400, maxH: 320 });
-        return `<div class="vklayer"><div class="vkzone big"><div class="vkfig">${fig}</div><div class="vkcnt">${d.g >= 3 ? `한 층씩 나누어 보았어요 (${h}층)` : '손잡이를 위로 끌어 층을 벌려 봐요'}</div></div>
-          <div class="vkside"><div class="vkknob">${knob('g', d.g, 0, 4, { step: 30, inner: '✋<small>위로 끌기</small>' })}<span>층 벌리기</span></div></div></div>${setBtn}` + (d.g >= 3 ? rec(d, c) : ''); },
-      on: { 'act:vkset'(d, v, el, api) { if (v === 'end' || !v) return; const [k, x] = v.split(':'); d[k] = +x; if (d.g >= 3 && !d.said) { d.said = 1; api.say(true, c.mid || '층이 나누어졌어요! 한 층에 몇 개씩인가요?'); } },
+      view: d => { const gap = d.g * GS, L = [], open = d.g >= OK; for (let z = 0; z < h; z++) for (let y = 0; y < b; y++) for (let x = 0; x < a; x++) L.push([x, y, z * (1 + gap), 1, 1, 1, z % 2 ? 'cube' : 'blue']);
+        const HT = h + (h - 1) * GM * GS;
+        const fig = VOX.cubes(L, { ext: [a, b, HT], u: PU, cls: 'vkpull', pad: 18,
+          under: p => { if (open) return ''; const z0 = (h - 1) * (1 + GM * GS); return `<g class="vkghost"><polygon points="${pp([p(0, 0, z0), p(a, 0, z0), p(a, 0, z0 + 1), p(0, 0, z0 + 1)])}"/><polygon points="${pp([p(0, 0, z0 + 1), p(a, 0, z0 + 1), p(a, b, z0 + 1), p(0, b, z0 + 1)])}"/><polygon points="${pp([p(a, 0, z0), p(a, b, z0), p(a, b, z0 + 1), p(a, 0, z0 + 1)])}"/></g>`; },
+          extra: (p, u) => { let s = ''; for (let j = 0; j < h; j++) { const z0 = j * (1 + gap), top = j === h - 1;   /* 맨 아래층을 잡고 끌어도 위층들이 벌어져요 */
+              s += grip('g', d.g, 0, GM, [0, -1], (j || h - 1) * GS * u, [[p(0, 0, z0), p(a, 0, z0), p(a, 0, z0 + 1), p(0, 0, z0 + 1)], [p(0, 0, z0 + 1), p(a, 0, z0 + 1), p(a, b, z0 + 1), p(0, b, z0 + 1)], [p(a, 0, z0), p(a, b, z0), p(a, b, z0 + 1), p(a, 0, z0 + 1)]],
+                top && !open ? hand(p(a / 2, 0, z0 + .5), [0, -1], '', { one: d.g === 0 }) : ''); }
+            if (!open && d.g < 4) { const q = p(a / 2, 0, (h - 1) * (1 + GM * GS) + .5); s += `<text class="vkhl vkgl" x="${q[0]}" y="${q[1] + 6}" text-anchor="middle" pointer-events="none">여기까지 ↑</text>`; }   /* 점선 상자 = 맨 위층이 올라갈 자리 */
+            return s; } });
+        const info = open ? `<div class="vkvnote ok">🧊 층이 <b>한 층씩</b> 나누어졌어요. 맨 앞줄과 줄 수를 세어 봐요.</div>` + rec(d, c)
+          : `<div class="vkvnote">✋ 쌓기나무의 <b>층을 직접 잡고</b> 위로 끌어 올려요.<small>층이 벌어지면 한 층에 몇 개씩인지 세기 쉬워요.</small></div>`;
+        return stageBox(fig, info, open, figAR(a + .6, b, HT), open); },
+      on: { 'act:vkset'(d, v, el, api) { if (v === 'end' || !v) return; const [k, x] = v.split(':'); d[k] = +x; if (d.g >= OK && !d.said) { d.said = 1; api.say(true, c.mid || '층이 나누어졌어요! 한 층에 몇 개씩인가요?'); } },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
-      _solve(d, on) { on('act:vkset', 'g:3', null); on('act:mxchk', 'auto', null); } });
+      _solve(d, on) { on('act:vkset', 'g:' + GM, null); on('act:mxchk', 'auto', null); } });
   }
-  /* ⑥ 밑면 끌어 올리기: c = { base:[a,b], H, rec, win, q } — 밑면 위의 손잡이를 위로 끌어 높이 H cm까지 올려요 */
+  /* ⑥ 밑면 끌어 올리기: c = { base:[a,b], H, rec, win, q } — 밑면(쌓인 윗면)을 직접 잡고 위로 끌면 한 층씩 쌓여요. 쌓기나무 수가 늘어나는 것이 옆에 바로 보여요 */
   function lift(c) {
-    const [a, b] = c.base, H = c.H, mx = c.max || H + 2;
+    const [a, b] = c.base, H = c.H, mx = c.max || H + 2, chk = c.kind === 'check';
+    /* 단계: x(맨 앞 가로 한 줄 깔기) → y(그 줄을 세로로 늘여 밑면 채우기) → h(밑면을 높이만큼 끌어 올리기) */
     return stage('vklift', c, {
-      q: d => d.recOK ? '완성!' : d.h === H && d.done ? (c.q2 || '빈칸을 채워 부피를 구하는 식을 완성해요.') : c.q,
-      init: () => ({ h: 0, done: false, rv: {} }),
-      view: d => { const fig = d.h ? VOX.fill(a, b, d.h, null, { maxW: 380, maxH: 300, lab: { a: a + ' cm', b: b + ' cm', c: d.h + ' cm' }, color: d.h === H ? 'green' : 'cube' })
-          : VOX.cubes([], { frame: [a, b, .02], maxW: 380, maxH: 300, floorGrid: true, floorCol: '#bfdbfe', lab: { a: a + ' cm', b: b + ' cm', c: '' } });
-        return `<div class="vklayer"><div class="vkzone big ${d.h === H ? 'done' : ''}"><div class="vkfig">${fig}</div><div class="vkcnt">높이 <b>${d.h}</b> cm · 쌓기나무 <b>${a * b * d.h}</b>개</div></div>
-          <div class="vkside"><div class="vkknob">${d.done ? '' : knob('h', d.h, 0, mx, { step: 30, inner: '✋<small>위로 끌기</small>' })}<span>${d.done ? `높이 ${H} cm 완성!` : '밑면 끌어 올리기'}</span></div></div></div>${setBtn}` + (d.done ? rec(d, c) : ''); },
-      on: { 'act:vkset'(d, v, el, api) { if (d.done || !v) return; if (v === 'end') { if (d.h === H) { d.done = true; api.say(true, c.mid || `높이 ${H} cm! 밑면이 ${H}층 쌓였어요.`); } else if (d.h > H) api.say(false, `높이가 ${H} cm보다 높아요. 조금 내려 봐요.`, true); return; } const [k, x] = v.split(':'); d[k] = +x; api.clear(); },
+      q: d => d.recOK ? '완성!' : d.done ? (c.q2 || '빈칸을 채워 부피를 구하는 식을 완성해요.') : d.ph === 'x' ? `쌓기나무의 <b>오른쪽 면을 잡고 끌어</b> 밑면의 <b>가로 한 줄(${a} cm)</b>을 깔아요.` : d.ph === 'y' ? `가로 한 줄의 <b>앞면을 잡고 앞으로 끌어</b> <b>세로 ${b} cm</b>까지 줄을 늘여 밑면을 채워요.` : c.q,
+      init: () => ({ ph: 'x', x: 1, y: 1, h: 1, done: false, rv: {} }),
+      view: d => { const ph = d.ph, fin = d.done, X = ph === 'x' ? d.x : a, Y = ph === 'x' ? 1 : ph === 'y' ? d.y : b, Z = ph === 'h' ? d.h : 1, n = X * Y * Z, y0 = b - Y;
+        const L = []; for (let z = 0; z < Z; z++) for (let y = 0; y < Y; y++) for (let x = 0; x < X; x++) L.push([x, b - 1 - y, z, 1, 1, 1, fin ? 'green' : ph === 'x' ? 'cube' : ph === 'y' ? (y === Y - 1 ? 'cube' : 'blue') : (z === Z - 1 ? 'cube' : 'blue')]);
+        const MZ = ph === 'h' ? mx : 2;   /* 밑면을 깔 때는 낮은 틀로 크게 보여요 */
+        const fig = VOX.cubes(L, { frame: [a, b, MZ], frameBack: true, u: PU, cls: 'vkpull', pad: 14, padL: 40, padB: 30, padR: 70, floorGrid: true, floorCol: '#bfdbfe', frameCol: '#94a3b8',
+          extra: (p, u) => { const pr = Math.hypot(VOX.CX, VOX.CY), fdir = [-VOX.CX / pr, VOX.CY / pr];
+            let s = '<g class="vkrule">'; for (let k = 0; k <= MZ; k++) { const q = p(0, 0, k); s += `<path d="M${q[0]},${q[1]}h${k % 5 ? -7 : -11}"/>${k ? `<text x="${q[0] - 14}" y="${q[1] + 5}" text-anchor="end" class="${ph === 'h' && k === d.h ? 'on' : ''}">${k}</text>` : ''}`; } const q0 = p(0, 0, MZ); s += `<text x="${q0[0] - 12}" y="${q0[1] - 12}" text-anchor="end" class="u">cm</text></g>`;
+            s += `<g class="vkdl"><text x="${p(X / 2, y0, 0)[0]}" y="${p(X / 2, y0, 0)[1] + 21}" text-anchor="middle">가로 ${X} cm</text>${ph !== 'x' ? `<text x="${p(a, y0 + Y / 2, 0)[0] + 9}" y="${p(a, y0 + Y / 2, 0)[1] + 14}">세로 ${Y} cm</text>` : ''}</g>`;
+            if (fin) return s;
+            if (ph === 'x') { const rf = [p(X, y0, 0), p(X, b, 0), p(X, b, 1), p(X, y0, 1)]; return s + grip('x', d.x, 1, a, [1, 0], u, [rf, shf(rf, u * .8, 0), Object.assign([p(X - 1, y0, 0), p(X, y0, 0), p(X, y0, 1), p(X - 1, y0, 1)], { ex: 1 })], hand(p(X, y0 + .5, .5), [1, 0], X === 1 ? '오른쪽으로 끌어요 →' : '', { r: 15, ly: 34, one: X === 1 })); }
+            if (ph === 'y') { const ff = [p(0, y0, 0), p(a, y0, 0), p(a, y0, 1), p(0, y0, 1)]; return s + grip('y', d.y, 1, b, fdir, u * pr, [ff, shf(ff, fdir[0] * u * .8, fdir[1] * u * .8), [p(0, y0, 1), p(a, y0, 1), p(a, y0 + 1, 1), p(0, y0 + 1, 1)]], hand(p(a * .75, y0, .5), fdir, Y === 1 ? '앞으로 끌어요' : '', { r: 15, lx: 22, ly: 36, one: Y === 1 })); }
+            const tf = [p(0, 0, Z), p(a, 0, Z), p(a, b, Z), p(0, b, Z)]; return s + grip('h', d.h, 1, mx, [0, -1], u, [tf, shf(tf, 0, -u * .8), [p(0, 0, 0), p(a, 0, 0), p(a, 0, Z), p(0, 0, Z)], [p(a, 0, 0), p(a, b, 0), p(a, b, Z), p(a, 0, Z)]], hand(p(a / 2, b / 2, Z), [0, -1], Z === 1 ? '밑면을 잡고 위로 ↑' : '', { one: Z === 1 })); } });
+        const rows = ph === 'x' ? [['가로 한 줄', X, '개'], ['밑면 쌓기나무', n, '개', 1]] : ph === 'y' ? [['가로 한 줄', a, '개'], ['줄 수(세로)', Y, '줄'], ['밑면 쌓기나무', chk && Y > 1 ? '?' : n, '개', 1]]
+          : [['밑면', a * b, '개'], ['높이', Z, 'cm'], ['쌓기나무', chk && Z > 1 ? '?' : n, '개', 1]];
+        const note = ph === 'x' ? '오른쪽 면을 끌면 가로 줄에 쌓기나무가 하나씩 놓여요.' : ph === 'y' ? `한 줄 더 늘일 때마다 <b>${a}개</b>씩 늘어나요. 밑면을 다 채우면 <b>가로 × 세로</b>개!` : chk ? '쌓기나무 수는 식으로 구해 봐요.' : `한 층 더 쌓을 때마다 <b>밑면의 개수(${a * b}개)</b>만큼 늘어나요.`;
+        const info = volBox(ph === 'h' ? '📦 쌓을수록 부피가 늘어나요' : '🧱 밑면부터 깔아요', rows, n / (a * b * mx), note, d.done) + (d.done ? rec(d, c) : '');
+        return stageBox(fig, info, fin, figAR(a + 1.2, b, MZ), d.done); },
+      on: { 'act:vkset'(d, v, el, api) { if (d.done || !v) return;
+          if (v === 'end') {
+            if (d.ph === 'x') { if (d.x === a) { d.ph = 'y'; api.say(true, `가로 한 줄에 쌓기나무 ${a}개! 이제 줄을 앞으로 끌어 세로 ${b} cm까지 늘여요.`); } return; }
+            if (d.ph === 'y') { if (d.y === b) { d.ph = 'h'; d.h = 1; api.say(true, `밑면에 ${a}개씩 ${b}줄 = ${a * b}개가 깔렸어요! 이제 밑면을 위로 끌어 높이 ${H} cm까지 쌓아요.`); } return; }
+            if (d.h === H) { d.done = true; api.say(true, c.mid || `높이 ${H} cm! 밑면이 ${H}층 쌓였어요.`); } else if (d.h > H) api.say(false, `높이가 ${H} cm보다 높아요. 조금 내려 봐요.`, true); return; }
+          const [k, x] = v.split(':'); if (k !== d.ph) return; d[k] = +x; api.clear(); },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
-      _solve(d, on) { on('act:vkset', 'h:' + H, null); on('act:vkset', 'end', null); on('act:mxchk', 'auto', null); } });
+      _solve(d, on) { on('act:vkset', 'x:' + a, null); on('act:vkset', 'end', null); on('act:vkset', 'y:' + b, null); on('act:vkset', 'end', null); on('act:vkset', 'h:' + H, null); on('act:vkset', 'end', null); on('act:mxchk', 'auto', null); } });
   }
-  /* ⑦ 가로·세로·높이 늘이기: c = { A:[a,b,h], tasks:[[ma,mb,mh,label]], rec:(i)=>[...], win, q } — 세 손잡이(×1~×3)를 끌어 주문대로 만들고 부피 기록 */
+
+  /* ⑦ 가로·세로·높이 늘이기: c = { A:[a,b,h], tasks:[[ma,mb,mh,label]], win, q } — 직육면체의 오른쪽 면(가로)·앞면(세로)·윗면(높이)을 직접 잡아당겨요.
+     처음 상자와 똑같은 덩어리가 색을 바꿔 가며 늘어나서, 부피가 처음의 몇 배인지 눈으로 보여요 */
   function grow(c) {
-    const T = c.tasks, V0 = c.A[0] * c.A[1] * c.A[2];
+    const T = c.tasks, A = c.A, V0 = A[0] * A[1] * A[2], MX3 = c.maxM || 3, CL = ['blue', 'teal', 'pink', 'violet'];
     return stage('vkgrow', c, {
-      q: d => d.recOK ? '완성!' : d.i >= T.length ? (c.q2 || '표를 보고 빈칸을 채워요.') : `손잡이를 끌어 <b>${T[d.i][3]}</b>로 만들어요.`,
+      q: d => d.recOK ? '완성!' : d.i >= T.length ? (c.q2 || '표를 보고 빈칸을 채워요.') : `직육면체의 <b>면을 잡아당겨</b> <b>${T[d.i][3]}</b>로 만들어요.`,
       init: () => ({ m: [1, 1, 1], i: 0, got: [], rv: {} }),
-      view: d => { const [a, b, h] = c.A.map((x, j) => x * d.m[j]), cur = T[Math.min(d.i, T.length - 1)];
-        const ok = d.i < T.length && d.m.every((x, j) => x === cur[j]);
-        const row = (nm, j) => `<div class="vkgr"><span>${nm}</span>${knob('m' + j, d.m[j], 1, 3, { axis: 'x', step: 46, inner: '×' + d.m[j], cls: 'pill' })}</div>`;
-        const tbl = `<table class="cktable vkgt"><tr><th>만든 모양</th><th>부피(cm³)</th></tr><tr><td>처음 (${c.A.join(' × ')})</td><td>${V0}</td></tr>${d.got.map(g => `<tr><td>${T[g][3]}</td><td>${(d.i >= T.length) ? MX.inp('g' + g, d, { w: 60 }) : '?'}</td></tr>`).join('')}</table>`;
-        return `<div class="vklayer"><div class="vkzone big ${ok ? 'done' : ''}"><div class="vkfig">${VOX.fill(a, b, h, null, { maxW: 360, maxH: 280 })}</div><div class="vkcnt">가로 ${a} · 세로 ${b} · 높이 ${h}</div></div>
-          <div class="vkside">${d.i < T.length ? `<div class="vkgrs">${row('가로', 0)}${row('세로', 1)}${row('높이', 2)}</div>` + ckRow(ckBtn('vkgo', '🧱 이 모양으로 기록', ok ? 'btn-primary' : 'btn-sub')) : ''}${tbl}</div></div>${setBtn}`
-          + (d.i >= T.length && !d.recOK ? MX.recBtn(d, c.hint) : '') + (d.recOK && c.rec2 ? '' : ''); },
+      view: d => { const [a, b, h] = A.map((x, j) => x * d.m[j]), cur = T[Math.min(d.i, T.length - 1)], fin = d.i >= T.length, ok = !fin && d.m.every((x, j) => x === cur[j]);
+        const EM = [0, 1, 2].map(j => Math.min(MX3, Math.max(2, fin ? 1 : cur[j], d.m[j])));   /* 작업판: 이번 과제에서 늘일 수 있는 만큼(적어도 2배)만 — 그림이 크게 보여요 */
+        if (fin) [0, 1, 2].forEach(j => { EM[j] = Math.max(EM[j], ...d.got.map(g => T[g][j])); });   /* 표 채우기: 가장 큰 모양까지 들어가는 같은 틀 */
+        const FB = A[1] * EM[1], y0 = FB - b;   /* 세로는 뒤쪽을 붙박아 두고 앞면이 앞으로 나와요 */
+        const blocks = m => { const [aa, bb, hh] = A.map((x, j) => x * m[j]), LL = []; for (let z = 0; z < hh; z++) for (let y = 0; y < bb; y++) for (let x = 0; x < aa; x++) { const ix = Math.floor(x / A[0]), iy = Math.floor(y / A[1]), iz = Math.floor(z / A[2]); LL.push([x, FB - 1 - y, z, 1, 1, 1, ix + iy + iz === 0 ? 'cube' : CL[(ix + iy * 2 + iz * 3 - 1) % CL.length]]); } return LL; };
+        const L = blocks(d.m);
+        const dimLab = (m, p) => { const [aa, bb, hh] = A.map((x, j) => x * m[j]), yy = FB - bb; return `<g class="vkdl"><text x="${p(aa / 2, yy, 0)[0]}" y="${p(aa / 2, yy, 0)[1] + 21}" text-anchor="middle">가로 ${aa} cm</text><text x="${p(aa, yy + bb / 2, 0)[0] + 9}" y="${p(aa, yy + bb / 2, 0)[1] + 14}">세로 ${bb} cm</text><text x="${p(0, yy, hh / 2)[0] - 9}" y="${p(0, yy, hh / 2)[1] + 5}" text-anchor="end">높이 ${hh} cm</text></g>`; };
+        const FO = { frame: [A[0] * EM[0], FB, A[2] * EM[2]], frameBack: true, frameCol: '#cbd5e1', floorCol: '#eef2f7', u: PU, cls: 'vkpull', pad: 16, padB: 26, padL: 96, padT: 34, padR: 86 };
+        if (fin) {   /* 표의 부피 칸을 누르면 그 줄의 모양이 왼쪽에 나타나요 */
+          const rows = [{ g: 'o', m: [1, 1, 1], t: '처음' }].concat(d.got.map(g => ({ g, m: T[g].slice(0, 3), t: T[g][3] })));
+          const figs = rows.map((r, i) => `<div class="vkgfig${i ? '' : ' on'}" data-g="${r.g}"><div class="vkgcap">${r.t} · ${A.map((x, j) => x * r.m[j]).join(' × ')}<small>처음 상자 ${r.m[0] * r.m[1] * r.m[2]}개만큼</small></div>${VOX.cubes(blocks(r.m), Object.assign({}, FO, { extra: (p) => dimLab(r.m, p) }))}</div>`).join('');
+          const tblF = `<table class="cktable vkgt"><tr><th>만든 모양</th><th>가로 × 세로 × 높이</th><th>부피(cm³)</th></tr><tr data-vkg="o"><td>처음</td><td>${A.join(' × ')}</td><td>${V0}</td></tr>${d.got.map(g => `<tr data-vkg="${g}"><td>${T[g][3]}</td><td>${A.map((x, j) => x * T[g][j]).join(' × ')}</td><td>${MX.inp('g' + g, d, { w: 60 })}</td></tr>`).join('')}</table>`;
+          return stageBox(`<div class="vkgfigs">${figs}</div>`, `<div class="vkghint">👉 부피 칸을 누르면 그 모양이 왼쪽에 나타나요.</div>` + tblF + (!d.recOK ? MX.recBtn(d, c.hint) : ''), true, figAR(A[0] * EM[0] + 4.2, FB, A[2] * EM[2] + .9), fin); }
+        const fig = VOX.cubes(L, { frame: [A[0] * EM[0], FB, A[2] * EM[2]], frameBack: true, frameCol: '#cbd5e1', floorCol: '#eef2f7', u: PU, cls: 'vkpull', pad: 16, padB: 26, padL: 96, padT: 34, padR: 86,
+          extra: (p, u) => { if (fin) return ''; const pr = Math.hypot(VOX.CX, VOX.CY), fdir = [-VOX.CX / pr, VOX.CY / pr];
+            const lab = `<g class="vkdl"><text x="${p(a / 2, y0, 0)[0]}" y="${p(a / 2, y0, 0)[1] + 21}" text-anchor="middle">가로 ${a} cm</text><text x="${p(a, y0 + b / 2, 0)[0] + 9}" y="${p(a, y0 + b / 2, 0)[1] + 14}">세로 ${b} cm</text><text x="${p(0, y0, h / 2)[0] - 9}" y="${p(0, y0, h / 2)[1] + 5}" text-anchor="end">높이 ${h} cm</text></g>`;
+            const tf = [p(0, y0, h), p(a, y0, h), p(a, FB, h), p(0, FB, h)], rf = [p(a, y0, 0), p(a, FB, 0), p(a, FB, h), p(a, y0, h)];   /* 얇은 면도 잡기 쉽게: 당기는 쪽으로 잡는 곳을 넓혀요 */
+            const tq = p(a / 2, y0 + b / 2, h), rq = p(a, y0 + b / 2, h / 2);
+            return lab + grip('m1', d.m[1], 1, EM[1], fdir, A[1] * u * pr, [[p(0, y0, 0), p(a, y0, 0), p(a, y0, h), p(0, y0, h)]], hand(p(a / 2, y0, h / 2), fdir, '세로', { r: 14, lx: -19, ly: 31, anc: 'end' }))
+              + grip('m2', d.m[2], 1, EM[2], [0, -1], A[2] * u, [tf, shf(tf, 0, -u * .7)], hand([tq[0], tq[1] - 15], [0, -1], '높이', { r: 14, lx: -21, ly: 5, anc: 'end' }))
+              + grip('m0', d.m[0], 1, EM[0], [1, 0], A[0] * u, [rf, shf(rf, u * .7, 0)], hand([rq[0] + 15, rq[1]], [1, 0], '가로', { r: 14, ly: 31 })); } });
+        const k = d.m[0] * d.m[1] * d.m[2], blk = Array.from({ length: k }, (_, i) => `<i class="${i ? 'c' + (i % 4) : 'o'}"></i>`).join('');
+        const tbl = `<table class="cktable vkgt"><tr><th>만든 모양</th><th>가로 × 세로 × 높이</th><th>부피(cm³)</th></tr><tr><td>처음</td><td>${A.join(' × ')}</td><td>${V0}</td></tr>${d.got.map(g => `<tr><td>${T[g][3]}</td><td>${A.map((x, j) => x * T[g][j]).join(' × ')}</td><td>${fin ? MX.inp('g' + g, d, { w: 60 }) : '?'}</td></tr>`).join('')}</table>`;
+        const info = (fin ? '' : `<div class="vkvol"><div class="vkvh">📦 부피가 얼마나 늘어날까?</div><div class="vkvcp"><span>처음 상자</span><b>${k}</b><em>개만큼이에요</em></div><div class="vkvblk">${blk}</div><small>노란 덩어리가 <b>처음 상자</b>예요. 면을 당기면 같은 덩어리가 늘어나요.</small></div>`
+          + ckRow(ckBtn('vkgo', ok ? `🧱 ${cur[3]} 완성! 표에 기록` : '🧱 이 모양으로 기록', ok ? 'btn-primary' : 'btn-sub'))) + tbl + (fin && !d.recOK ? MX.recBtn(d, c.hint) : '');
+        return stageBox(fig, info, ok || fin, figAR(A[0] * EM[0] + 4.2, FB, A[2] * EM[2] + .9), fin); },
       on: { 'act:vkset'(d, v, el, api) { if (!v || v === 'end' || d.i >= T.length) return; const [k, x] = v.split(':'); d.m[+k.slice(1)] = +x; api.clear(); },
-        'act:vkgo'(d, v, el, api) { if (d.i >= T.length) return; const cur = T[d.i]; if (!d.m.every((x, j) => x === cur[j])) { api.say(false, `${cur[3]}로 만들어야 해요. 손잡이를 다시 끌어 봐요.`, true); return; } d.got.push(d.i); d.i++; d.m = [1, 1, 1];
-          if (d.i >= T.length) api.say(true, c.mid || '모두 만들었어요! 쌓기나무 수를 세어 표를 채워요.'); else api.say(true, `기록했어요! 다음은 ${T[d.i][3]}.`); },
-        'act:mxchk'(d, v, el, api) { const R = T.map((t, g) => ({ a: String(V0 * t[0] * t[1] * t[2]), why: `${t[3]}: 쌓기나무를 한 층씩 세어 봐요.` })); const RR = []; R.forEach(r => RR.push(r)); if (MX.recCheck(d, RR, api, v, 'g')) api.win(c.win); },
+        'act:vkgo'(d, v, el, api) { if (d.i >= T.length) return; const cur = T[d.i]; if (!d.m.every((x, j) => x === cur[j])) { api.say(false, `${cur[3]}로 만들어야 해요. 면을 다시 잡아당겨 봐요.`, true); return; } d.got.push(d.i); d.i++; d.m = [1, 1, 1];
+          if (d.i >= T.length) api.say(true, c.mid || '모두 만들었어요! 가로 × 세로 × 높이를 보고 부피를 구해 표를 채워요.'); else api.say(true, `기록했어요! 다음은 ${T[d.i][3]}.`); },
+        'act:mxchk'(d, v, el, api) { const R = T.map((t, g) => ({ a: String(V0 * t[0] * t[1] * t[2]), why: `${t[3]}: 가로 × 세로 × 높이를 계산해 봐요.` })); const RR = []; R.forEach(r => RR.push(r)); if (MX.recCheck(d, RR, api, v, 'g')) api.win(c.win); },
         'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
       _solve(d, on) { T.forEach(t => { [0, 1, 2].forEach(j => on('act:vkset', 'm' + j + ':' + t[j], null)); on('act:vkgo', null, null); }); on('act:mxchk', 'auto', null); } });
   }
-  /* ⑧ 정육면체 만들기: c = { E, rec, win, q } — 손잡이 하나로 가로·세로·높이를 함께 늘여 한 모서리 E cm 정육면체 */
+  if (!window.__vkgSel) { window.__vkgSel = 1; const sel = e => { const tr = e.target.closest && e.target.closest('.vkgt tr[data-vkg]'); if (!tr) return; const card = tr.closest('.card') || document;
+      card.querySelectorAll('.vkgt tr[data-vkg]').forEach(r => r.classList.toggle('vkgon', r === tr)); card.querySelectorAll('.vkgfig').forEach(f => f.classList.toggle('on', f.dataset.g === tr.dataset.vkg)); };
+    document.addEventListener('focusin', sel); document.addEventListener('pointerdown', sel); }
+  /* ⑧ 정육면체 만들기: c = { E, rec, win, q } — 쌓기나무의 꼭짓점을 직접 잡아당기면 가로·세로·높이가 함께 늘어나요 */
   function cube(c) {
-    const E = c.E;
+    const E = c.E, mx = E + 1, chk = c.kind === 'check';
     return stage('vkcube', c, {
       q: d => d.recOK ? '완성!' : d.done ? (c.q2 || '빈칸을 채워 정육면체의 부피를 구해요.') : c.q,
       init: () => ({ e: 1, done: false, rv: {} }),
-      view: d => `<div class="vklayer"><div class="vkzone big ${d.done ? 'done' : ''}"><div class="vkfig">${VOX.fill(d.e, d.e, d.e, null, { maxW: 340, maxH: 300, lab: true, color: d.e === E ? 'green' : 'violet' })}</div><div class="vkcnt">한 모서리 <b>${d.e}</b> cm</div></div>
-        <div class="vkside"><div class="vkknob">${d.done ? '' : knob('e', d.e, 1, Math.max(E + 1, 6), { axis: 'x', step: 40, inner: '✋<small>옆으로 끌기</small>' })}<span>${d.done ? '완성!' : '한 모서리 늘이기'}</span></div></div></div>${setBtn}` + (d.done ? rec(d, c) : ''),
-      on: { 'act:vkset'(d, v, el, api) { if (d.done || !v) return; if (v === 'end') { if (d.e === E) { d.done = true; api.say(true, c.mid || `한 모서리 ${E} cm인 정육면체 완성!`); } return; } d.e = +v.split(':')[1]; api.clear(); },
+      view: d => { const e = d.e, n = e * e * e, fin = d.done;
+        const L = VOX.fillList(e, e, e, n, (x, y, z) => fin ? 'green' : (x === e - 1 || y === e - 1 || z === e - 1) && e > 1 ? 'pink' : 'violet');
+        const fig = VOX.cubes(L, { frame: [mx, mx, mx], frameBack: true, frameCol: '#cbd5e1', floorCol: '#eef2f7', u: PU, cls: 'vkpull', pad: 18, padB: 26, padL: 30,
+          extra: (p, u) => { const lab = `<g class="vkdl"><text x="${p(e / 2, 0, 0)[0]}" y="${p(e / 2, 0, 0)[1] + 21}" text-anchor="middle">${e} cm</text><text x="${p(e, e / 2, 0)[0] + 9}" y="${p(e, e / 2, 0)[1] + 14}">${e} cm</text><text x="${p(0, 0, e / 2)[0] - 9}" y="${p(0, 0, e / 2)[1] + 5}" text-anchor="end">${e} cm</text></g>`;
+            if (fin) return lab; const dg = [Math.SQRT1_2, -Math.SQRT1_2];
+            const vq = p(e, 0, e), R = u * .8;   /* 꼭짓점 둘레도 넉넉히 잡혀요 */
+            return lab + grip('e', e, 1, mx, dg, u, [[p(0, 0, 0), p(e, 0, 0), p(e, 0, e), p(0, 0, e)], [p(0, 0, e), p(e, 0, e), p(e, e, e), p(0, e, e)], [p(e, 0, 0), p(e, e, 0), p(e, e, e), p(e, 0, e)], Object.assign([[vq[0] - R, vq[1] - R], [vq[0] + R, vq[1] - R], [vq[0] + R, vq[1] + R], [vq[0] - R, vq[1] + R]], { ex: 1 })], hand(p(e, 0, e), dg, e === 1 ? '꼭짓점을 잡아당겨요' : '', { one: e === 1, lx: 24, ly: 26, anc: 'start' }), 'max'); } });
+        const info = volBox('📦 한 모서리가 늘어나면 부피는?', [['한 모서리', e, 'cm'], ['쌓기나무', chk && e > 1 ? '?' : n, '개', 1]], n / (mx * mx * mx), chk ? '쌓기나무 수는 식으로 구해 봐요.' : e > 1 ? '<b>분홍색</b>이 방금 늘어난 쌓기나무예요.' : '꼭짓점을 잡아당겨 정육면체를 키워 봐요.', fin) + (fin ? rec(d, c) : '');
+        return stageBox(fig, info, fin, figAR(mx + .8, mx, mx), fin); },
+      on: { 'act:vkset'(d, v, el, api) { if (d.done || !v) return; if (v === 'end') { if (d.e === E) { d.done = true; api.say(true, c.mid || `한 모서리 ${E} cm인 정육면체 완성!`); } else if (d.e > E) api.say(false, `한 모서리가 ${E} cm보다 길어요. 조금 줄여 봐요.`, true); return; } d.e = +v.split(':')[1]; api.clear(); },
         'act:mxchk'(d, v, el, api) { if (MX.recCheck(d, c.rec, api, v)) api.win(c.win); }, 'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
       _solve(d, on) { on('act:vkset', 'e:' + E, null); on('act:vkset', 'end', null); on('act:mxchk', 'auto', null); } });
   }
