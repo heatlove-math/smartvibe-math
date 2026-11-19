@@ -84,7 +84,7 @@ a{color:inherit}
 .pspot b em{font-style:normal}.pspot b{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(.72rem,1.4vw,1rem);background:#fff;color:var(--night);border-radius:12px;padding:3px 10px;box-shadow:0 3px 0 rgba(3,105,161,.35);white-space:nowrap;transition:transform .18s}
 .pspot:hover b{transform:translateY(-3px)}
 .pspot.on b{background:#fde047;color:#422006;transform:scale(1.12)}
-.pspot.on b::before{content:'⚓ '}
+.pspot.on b::before{content:'⚓ '}.map.pair .pspot.on b::before{content:'🎈 '}
 .pspot>span{font-size:clamp(.6rem,1vw,.72rem);font-weight:900;color:#075985;background:rgba(255,255,255,.88);border-radius:999px;padding:1px 8px}
 .pspot.dim b{opacity:.8}
 .pglow{position:absolute;z-index:1;pointer-events:none;opacity:0;transition:opacity .35s;filter:drop-shadow(0 0 6px rgba(253,224,71,.9))}
@@ -116,6 +116,7 @@ a{color:inherit}
 
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4%) rotate(2deg)}}
 @keyframes bobf{0%,100%{transform:scaleX(-1) translateY(0) rotate(-2deg)}50%{transform:scaleX(-1) translateY(-4%) rotate(2deg)}}
+.ppuff{position:absolute;z-index:1;width:16px;height:12px;border-radius:50%;background:radial-gradient(circle,#fff 40%,rgba(255,255,255,0));transform:translate(-50%,-50%);pointer-events:none;animation:puff 1.4s ease-out forwards}@keyframes puff{from{opacity:.95;transform:translate(-50%,-50%) scale(.6)}to{opacity:0;transform:translate(-50%,-80%) scale(1.8)}}.pboat.pair{width:11%;filter:drop-shadow(0 10px 8px rgba(30,64,120,.28))}
 .pwake{position:absolute;z-index:1;width:10px;height:5px;border-radius:50%;background:rgba(255,255,255,.85);transform:translate(-50%,-50%);pointer-events:none;animation:wake 1.2s ease-out forwards}
 @keyframes wake{to{opacity:0;transform:translate(-50%,-50%) scale(3,2)}}
 .pall{position:absolute;right:12px;bottom:12px;z-index:3;font:inherit;font-weight:900;border:none;cursor:pointer;background:#fff;color:var(--night);border-radius:14px;padding:8px 14px;box-shadow:0 4px 0 rgba(3,105,161,.35)}
@@ -329,10 +330,10 @@ function sailTo(UNITS, to) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, segT = reduce ? 1 : 900, total = segT * (pts.length - 1), t0 = performance.now(), map = b.parentElement;
   b.classList.toggle('flip', step < 0); b.classList.add('sail'); let lastW = 0;
   const tick = now => { const k = Math.min(1, (now - t0) / total), f = k * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)), e = f - i, s = e < .5 ? 2 * e * e : 1 - Math.pow(-2 * e + 2, 2) / 2;
-    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], x = x0 + (x1 - x0) * s, y = y0 + (y1 - y0) * s + Math.sin(e * Math.PI) * 4;
+    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], x = x0 + (x1 - x0) * s, y = y0 + (y1 - y0) * s + Math.sin(e * Math.PI) * (CR(cur).ride === 'air' ? -6 : 4);
     b.style.left = x + '%'; b.style.top = y + '%';
     const near = e < .5 ? i : i + 1, nn = (boatAt != null ? boatAt : to) + near * step; if (nn !== window.__lastLit) { if (window.__lastLit != null && window.__lastLit !== to) lit(window.__lastLit, false); lit(nn, true); window.__lastLit = nn; }
-    if (now - lastW > 90 && !reduce) { lastW = now; const w = document.createElement('i'); w.className = 'pwake'; w.style.left = (x - step * 3.5) + '%'; w.style.top = (y - .5) + '%'; map.appendChild(w); setTimeout(() => w.remove(), 1200); }
+    if (now - lastW > 90 && !reduce) { lastW = now; const w = document.createElement('i'); w.className = CR(cur).ride === 'air' ? 'ppuff' : 'pwake'; w.style.left = (x - step * 3.5) + '%'; w.style.top = (y - .5) + '%'; map.appendChild(w); setTimeout(() => w.remove(), 1200); }
     if (k < 1) sailing = requestAnimationFrame(tick); else { sailing = null; if (window.__lastLit != null && window.__lastLit !== to) lit(window.__lastLit, false); window.__lastLit = null; boatAt = to; b.classList.remove('sail'); } };
   sailing = requestAnimationFrame(tick);
 }
@@ -369,12 +370,12 @@ function paint() {
     if (sel && !UNITS.some(u => u.n === sel)) sel = 0;
     const MAPIMG = CR(cur).map;
     if (MAPIMG && !(window.__mapFail || {})[MAPIMG] && UNITS.every(u => u.pos)) {
-      document.getElementById('isles').className = 'map pmap' + (CR(cur).ride === 'train' ? ' ptmap' : '');
+      document.getElementById('isles').className = 'map pmap' + (CR(cur).ride === 'train' ? ' ptmap' : '') + (CR(cur).ride === 'air' ? ' pair' : '');
       document.getElementById('isles').innerHTML = `<img class="pmimg" src="${MAPIMG}" alt="" onerror="(window.__mapFail = window.__mapFail || {})[this.getAttribute('src')] = 1; paint();">`
         + UNITS.map(u => { const n = CL.filter(l => l.u === u.n).length; return `<button class="pspot ${sel === u.n ? 'on' : ''} ${n ? '' : 'dim'}" data-u="${u.n}" style="left:${u.pos[0]}%;top:${u.pos[1]}%"><b class="${u.name.length > 10 ? 'wrap' : ''}"><em>${u.n}</em><span class="nm">. ${esc(u.name)}</span></b><span>${n ? n + '개 열림' : '준비 중'}</span></button>`; }).join('')
         + `<button class="pall ${sel === 0 ? 'on' : ''}" data-u="0">🌏 전체 보기 <small>${CL.length}개</small></button>`
         + UNITS.filter(u => u.glow).map(u => `<img class="pglow ${sel === u.n ? 'on' : ''}" data-g="${u.n}" src="${u.glow[0]}" alt="" style="left:${u.glow[1]}%;top:${u.glow[2]}%;width:${u.glow[3]}%;height:${u.glow[4]}%">`).join('')
-        + (CR(cur).ride === 'train' ? railSVG(CR(cur), UNITS, CL) + `<div class="pboat ptrain" id="pboat"><span class="ptwrap"><img src="${CR(cur).vehicle}" alt=""><img class="pface" src="assets/g56/hub/${heroKey()}.jpg" alt="" onerror="this.remove()"></span></div>` : `<div class="pboat" id="pboat"><img src="assets/scenes/ship.webp" alt=""></div>`);
+        + (CR(cur).ride === 'train' ? railSVG(CR(cur), UNITS, CL) + `<div class="pboat ptrain" id="pboat"><span class="ptwrap"><img src="${CR(cur).vehicle}" alt=""><img class="pface" src="assets/g56/hub/${heroKey()}.jpg" alt="" onerror="this.remove()"></span></div>` : `<div class="pboat ${CR(cur).ride === 'air' ? 'pair' : ''}" id="pboat"><img src="${CR(cur).vehicle || 'assets/scenes/ship.webp'}" alt=""></div>`);
       placeBoat(UNITS);
     } else {
     document.getElementById('isles').className = 'map';

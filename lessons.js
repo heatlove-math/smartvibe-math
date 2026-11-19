@@ -25,7 +25,14 @@ window.SV_COURSES = [
     { n: 5, name: '막대그래프', icon: '📊', color: '#b45309', glow: ['assets/scenes/glow-4-1-5.webp', 65.62, 23.4, 17.49, 46.28], island: '그래프 공장', pos: [74, 48], dock: [73.5, 81], land: 'factory' },
     { n: 6, name: '규칙과 관계', icon: '🔢', color: '#db2777', glow: ['assets/scenes/glow-4-1-6.webp', 81.99, 27.39, 17.86, 47.21], island: '숫자 섬', pos: [91, 47], dock: [90, 85], land: 'tower' }] },
   { id: '4-2', grade: 4, sem: 2, units: [] },
-  { id: '5-1', grade: 5, sem: 1, units: [] },
+  /* 5학년 1학기: 베일의 안개 대륙 · 구출 비행선(ride: 'air') */
+  { id: '5-1', grade: 5, sem: 1, map: 'assets/scenes/map-5-1.webp', ride: 'air', vehicle: 'assets/scenes/airship-5-1.webp', units: [
+    { n: 1, name: '자연수의 혼합 계산', icon: '🔥', color: '#dc2626', glow: ['assets/scenes/glow-5-1-1.webp', 1.79, 36.84, 14.81, 35.51], island: '계산 순서의 탑', pos: [9.2, 56], dock: [14.0, 89] },
+    { n: 2, name: '약수와 배수', icon: '💎', color: '#0d9488', glow: ['assets/scenes/glow-5-1-2.webp', 18.08, 40.69, 14.36, 30.59], island: '톱니바퀴 수정 동굴', pos: [25.26, 56], dock: [25.26, 89] },
+    { n: 3, name: '대응 관계', icon: '🌀', color: '#16a34a', glow: ['assets/scenes/glow-5-1-3.webp', 34.15, 48.67, 14.73, 22.74], island: '소용돌이 다리', pos: [41.52, 56], dock: [41.52, 89] },
+    { n: 4, name: '약분과 통분', icon: '🏮', color: '#1d4ed8', glow: ['assets/scenes/glow-5-1-4.webp', 50.67, 39.76, 14.51, 31.52], island: '등롱 정원', pos: [57.93, 56], dock: [57.93, 89] },
+    { n: 5, name: '분수의 덧셈과 뺄셈', icon: '⚖️', color: '#b91c1c', glow: ['assets/scenes/glow-5-1-5.webp', 66.89, 41.76, 14.58, 29.52], island: '천칭 광장', pos: [74.18, 56], dock: [74.18, 89] },
+    { n: 6, name: '다각형의 둘레와 넓이', icon: '🟫', color: '#b45309', glow: ['assets/scenes/glow-5-1-6.webp', 83.41, 41.76, 14.96, 30.72], island: '영토 요새', pos: [90.89, 56], dock: [90.89, 89] }] },
   { id: '5-2', grade: 5, sem: 2, units: [] },
   /* 6학년 1학기: 하늘 도시 디지토피아 · 빛의 레일 열차(ride: 'train') — rail 은 지도 위 레일 길(가로 %, 세로 %) */
   { id: '6-1', grade: 6, sem: 1, map: 'assets/scenes/map-6-1.webp', ride: 'train', vehicle: 'assets/scenes/train-6-1.webp',
