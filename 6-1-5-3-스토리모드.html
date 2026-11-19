@@ -13116,6 +13116,12 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   (document.head || document.documentElement).appendChild(st);
   let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; add(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
 })();
+
+/* 결과 항목의 「미니게임 N종」을 실제 게임 수에 맞춰요 */
+(function () { if (window.__uniLairN) return; window.__uniLairN = 1;
+  const fix = () => { try { if (typeof LAIR === 'undefined' || !LAIR.length) return; const n = LAIR.length;
+    document.querySelectorAll('ul.ritems li, .ritems li, .rp-items li').forEach(li => { const w = document.createTreeWalker(li, NodeFilter.SHOW_TEXT); let t; while ((t = w.nextNode())) { if (/미니게임 \d+종/.test(t.nodeValue) && !/미니게임 \d+종/.test(t.nodeValue.replace(/미니게임 \d+종/, '')) && !t.nodeValue.includes('미니게임 ' + n + '종')) t.nodeValue = t.nodeValue.replace(/미니게임 \d+종/, '미니게임 ' + n + '종'); } }); } catch (e) {} };
+  try { new MutationObserver(() => { clearTimeout(fix.t); fix.t = setTimeout(fix, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
