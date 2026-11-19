@@ -11399,6 +11399,28 @@ function vFace(key, px, pose) {
 }
 const _sv_avatar = avatar;
 avatar = function (key, px, pose) { return V_ALIAS[key] ? vFace(key, px, pose) : _sv_avatar(key, px, pose); };
+</script><script>/* [UNI] 각도기 눈금 직접 읽기 — 숫자 자판 대신, 각도기의 눈금(안쪽·바깥쪽)을 손가락으로 눌러 읽은 값을 정해요 */
+(function () { if (typeof protG !== 'function' || typeof kpHTML !== 'function') return;
+  const _pg = protG; protG = function (o) { const s = _pg(o), R = o.R || 150, k = R / 150; return s.replace('<g class="prot"', `<g class="prot" data-c="${o.c[0]},${o.c[1]}" data-r="${R}" data-k="${k}" data-rot="${o.rot || 0}"`); };
+  const _kp = kpHTML; let OWN = null;
+  kpHTML = function (owner, val, dis) { if (!dis) OWN = owner; else if (OWN === owner) OWN = null;
+    return `<div class="kpwrap prw ${dis ? 'dis' : ''}"><div class="kpval ${dis ? 'dis' : ''}">${val ? esc(val) : '?'}<span>°</span></div><div class="prtip">${dis ? '각도기를 먼저 바르게 대요' : '👆 각도기에서 <b>각의 다른 변이 지나는 눈금</b>을 눌러 읽어요<br><small>0에서 시작한 쪽 눈금(<span style="color:#be123c">안쪽 빨강</span> / <span style="color:#0c4a6e">바깥쪽 파랑</span>)을 골라요</small>'}</div><button class="kpb ok prok" data-an="kp" data-v="${owner}:ok" ${dis || !val ? 'disabled' : ''}>✔ 이 값으로 기록</button></div><div class="kpclassic" data-own="${owner}">${_kp(owner, val, dis)}</div>`; };
+  /* 각도기로 재는 때만 눈금 읽기, 계산·어림 칸은 원래 자판 */
+  const mode = () => document.querySelectorAll('.kpclassic').forEach(c => { const box = c.closest('.svsl-tc') || document, prot = !!box.querySelector('g.prot[data-c]'), ctx = (c.parentElement && c.parentElement.textContent || '') + ' ' + ((c.parentElement && c.parentElement.previousElementSibling && c.parentElement.previousElementSibling.textContent) || ''), meas = prot && /각도기|잰|재어|읽/.test(ctx) && !/더하|합|빼|차|어림|\?\)은|나머지/.test(ctx), pr = c.previousElementSibling;
+    c.style.display = meas ? 'none' : ''; if (pr && pr.classList.contains('prw')) pr.style.display = meas ? '' : 'none'; if (!meas && OWN === c.dataset.own) OWN = null; else if (meas && !pr.classList.contains('dis')) OWN = c.dataset.own; });
+  try { new MutationObserver(() => { clearTimeout(mode.t); mode.t = setTimeout(mode, 20); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  const hit = e => { if (!OWN || !KP[OWN]) return; const svg = e.target.closest && e.target.closest('svg'); if (!svg) return; const g = svg.querySelector('g.prot[data-c]'); if (!g) return;
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const m = svg.getScreenCTM(); if (!m) return; const q = pt.matrixTransform(m.inverse());
+    const [cx, cy] = g.dataset.c.split(',').map(Number), R = +g.dataset.r, k = +g.dataset.k, rot = +g.dataset.rot, dx = q.x - cx, dy = cy - q.y, rr = Math.hypot(dx, dy);
+    if (rr < R * .3 || rr > R + 14) return; let a = Math.atan2(dy, dx) * 180 / Math.PI - rot; a = ((a % 360) + 360) % 360; if (a > 185) return; let d = Math.max(0, Math.min(180, Math.round(a)));
+    const outer = rr > R - 34 * k, v = outer ? 180 - d : d; e.preventDefault(); e.stopPropagation();
+    KP[OWN].set(String(v)); try { Sound.pop(); } catch (x) {} KP[OWN].paint();
+    setTimeout(() => { const sv = document.querySelector('#toolBody svg g.prot[data-c]'); const s2 = sv && sv.ownerSVGElement; if (!s2) return; s2.querySelectorAll('.prnd').forEach(n => n.remove());
+      const ns = 'http://www.w3.org/2000/svg', a2 = (rot + d) * Math.PI / 180, x = cx + Math.cos(a2) * R, y = cy - Math.sin(a2) * R, ln = document.createElementNS(ns, 'g'); ln.setAttribute('class', 'prnd');
+      ln.innerHTML = `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#f97316" stroke-width="2.5" stroke-dasharray="5 4"/><circle cx="${x}" cy="${y}" r="7" fill="#f97316"/><text x="${x}" y="${y - 12}" text-anchor="middle" font-size="15" font-weight="900" fill="${outer ? '#0c4a6e' : '#be123c'}" paint-order="stroke" stroke="#fff" stroke-width="4">${v}°</text>`; s2.appendChild(ln); }, 30); };
+  document.addEventListener('pointerdown', hit, true);
+  const st = document.createElement('style'); st.textContent = '.prw{display:flex;flex-direction:column;align-items:center;gap:8px}.prw .prtip{font-weight:800;color:#334155;text-align:center;font-size:.95rem;line-height:1.5}.prw .prok{min-width:180px;font-size:1.05rem}body g.prot[data-c]{pointer-events:auto!important;cursor:pointer}';
+  document.head.appendChild(st); })();
 </script><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["canbe"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><!--BGUP-END-->
 </body>
 </html>

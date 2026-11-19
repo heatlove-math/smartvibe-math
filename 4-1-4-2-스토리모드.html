@@ -6527,12 +6527,10 @@ GBT.stamp = {
       t.anim.ph = 'press'; gbPaint('stamp'); try { Sound.pop(); } catch (e) {}
       setTimeout(() => {
         t.anim = null; t.printed[t.r] = true;
-        const right = t4Order(t)[t.pre] === 0;
-        t.fb = right ? { ok: true, msg: '✅ 예상이 딱 맞았어요! 도장 면을 <b>왼쪽(오른쪽)으로 뒤집은 모양</b>이 찍혔어요.' }
-          : { ok: false, msg: '찍힌 모양을 보세요. 도장 면을 <b>왼쪽(오른쪽)으로 뒤집은 모양</b>이 찍혔어요. 도장을 종이에 대면 도장 면이 뒤집히기 때문이에요.' };
-        try { right ? Sound.correct() : Sound.wrong(); } catch (e) {}
-        if (t.r === 0) setTimeout(() => { t.r = 1; t.pre = null; t.fb = { ok: true, kind: 'hint', msg: '이번에는 다른 도장이에요. 찍힌 모양을 먼저 예상해 골라요.' }; renderStampT(); }, 1800);
-        else t.q = 1;
+        t.fb = { ok: true, msg: '찍힌 모양을 도장 면과 비교해 보세요. 도장 면을 <b>왼쪽(오른쪽)으로 뒤집은 모양</b>이 찍혔어요!' };
+        try { Sound.correct(); } catch (e) {}
+        if (t.r === 0) setTimeout(() => { t.r = 1; t.pre = null; t.fb = { ok: true, kind: 'hint', msg: '이번에는 다른 도장이에요. 끌어서 찍어 보고 또 비교해요.' }; renderStampT(); }, 1800);
+        else { t.fb = { ok: true, msg: '두 도장 모두 도장 면을 <b>왼쪽(오른쪽)으로 뒤집은 모양</b>으로 찍혔어요! 도장을 찍으면 도장 면이 뒤집혀요.' }; award('stamp'); }
         renderStampT();
       }, 420);
     });
@@ -6540,8 +6538,8 @@ GBT.stamp = {
   ctl() {
     const t = AN_().stamp, k = T4R[Math.min(t.r, 1)], sh = FS[k];
     if (bdg('stamp')) return '<div class="andone">🎖 시간도둑 봉인 완료! 도장을 찍으면 도장 면을 <b>왼쪽(오른쪽)으로 뒤집은 모양</b>이 찍혀요. 뒤집은 것이라서 모양과 크기는 그대로예요.</div>' + rpToolBtn('stamp');
-    let h = '<div class="ancap">🔖 찍힐 모양을 <b>먼저 예상</b>하고, 도장을 <b>끌어 종이에 꾹</b> 찍어요. <span class="anpill">' + Math.min(2, t.r + (t.printed[t.r] ? 1 : 0)) + '/2 도장</span></div>';
-    if (!t.printed[t.r]) {
+    let h = '<div class="ancap">🔖 ✋ 손잡이로 도장을 <b>끌어 종이에 꾹</b> 찍고, <b>도장 면</b>과 <b>찍힌 모양</b>을 비교해요. <span class="anpill">' + Math.min(2, t.r + (t.printed[t.r] ? 1 : 0)) + '/2 도장</span></div>';
+    if (false) {
       const O = t4Opts(k), ord = t4Order(t);
       h += '<div class="font-black center mt-1">종이에 찍힌 모양은 어느 것일까요?</div><div class="st4opts">'
         + ord.map((oi, i) => '<button class="btn ' + (t.pre === i ? 'btn-primary' : 'btn-sub') + ' st4o" data-an="st-pre" data-v="' + i + '"><b>' + AL[i] + '</b>' + fMini(O[oi], sh, 18, { fill: 'rgba(220,38,38,.78)', line: '#991b1b', bg: '#fff' }) + '</button>').join('') + '</div>';

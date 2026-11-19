@@ -6538,13 +6538,13 @@ GBT.ptn = {
       else s += '<rect x="' + f1(x - P4CELL / 2 + 2) + '" y="' + f1(y - P4CELL / 2 + 2) + '" width="' + (P4CELL - 4) + '" height="' + (P4CELL - 4) + '" rx="6" fill="#f8fafc" stroke="' + (i === t.cells.length ? '#f59e0b' : '#cbd5e1') + '" stroke-width="2.5" stroke-dasharray="6 4"/>'
         + (i === t.cells.length ? fTxt(x, y + 6, '?', '#f59e0b', 20) : '');
       s += fTxt(x, P4Y0 + P4CELL + 30, (i + 1) + '번', '#92400e', 12); }
-    if (t.rule && !done && t.cells.length < P4N) {
+    if (!done && t.cells.length < P4N) {
       const deg = t.bench + (t.R.on ? t.R.acc : 0), bx = t.drag ? t.drag[0] : P4BC[0], by = t.drag ? t.drag[1] : P4BC[1];
       s += '<rect x="' + (P4BC[0] - 70) + '" y="' + (P4BC[1] - 70) + '" width="140" height="140" rx="16" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>' + fTxt(P4BC[0], P4BC[1] + 92, '🛠️ 작업대', '#92400e', 13);
       s += '<g class="gbk" data-gh="mv">' + tileSvg(deg, bx, by, 76, { ink: '#3b82f6' }) + '</g>';
       if (!t.drag) s += rKnob(P4BC, 62, deg, 'rk', '#d97706');
       s += fTxt(MOB ? 200 : 430, MOB ? 420 : 210, '① ⟳ 손잡이로 타일을 돌려요', '#92400e', 15, MOB ? 'middle' : 'start') + fTxt(MOB ? 200 : 430, MOB ? 448 : 240, '② 타일을 끌어 ' + (t.cells.length + 1) + '번 칸에 놓아요', '#92400e', 15, MOB ? 'middle' : 'start')
-        + fTxt(MOB ? 200 : 430, MOB ? 482 : 280, '규칙: ' + RAR[t.rule.d] + ' ' + RD[t.rule.d] + ' ' + t.rule.a + '°씩', '#b45309', 16, MOB ? 'middle' : 'start');
+        + fTxt(MOB ? 200 : 430, MOB ? 482 : 280, t.rule ? '규칙: ' + RAR[t.rule.d] + ' ' + RD[t.rule.d] + ' ' + t.rule.a + '°씩' : '2번 칸 모양 = 규칙', '#b45309', 16, MOB ? 'middle' : 'start');
     } else if (!t.rule && !done) s += fTxt(TW / 2, 250, (MOB ? '👇 먼저 아래에서 무늬의 규칙을 정해요' : '👉 먼저 오른쪽에서 무늬의 규칙을 정해요'), '#92400e', 18);
     return s;
   },
@@ -6556,24 +6556,26 @@ GBT.ptn = {
     if (h !== 'mv' || !t.drag) return;
     const p = t.drag; t.drag = null; const i = t.cells.length, x = P4X0 + i * (P4CELL + 6) + P4CELL / 2, y = P4Y0 + P4CELL / 2;
     if (Math.hypot(p[0] - x, p[1] - y) > P4CELL) { t.fb = { ok: true, kind: 'hint', msg: '타일을 노란 테두리의 <b>' + (i + 1) + '번 칸</b>으로 끌어다 놓아요.' }; renderPtn(); return; }
+    if (!t.rule) { const dl = t.bench - t.cells[0], a = Math.abs(dl) % 360; if (!a) { t.fb = { ok: true, kind: 'hint', msg: '1번 칸과 똑같은 모양이에요. ⟳ 손잡이로 타일을 <b>돌린 다음</b> 놓아요.' }; renderPtn(); return; } t.rule = { d: dl > 0 ? 'cw' : 'ccw', a }; }
     const want = (((t.cells[i - 1] + p4Step(t)) % 360) + 360) % 360, have = ((t.bench % 360) + 360) % 360;
     touch('s1');
     if (want === have) { t.cells.push(t.bench); try { Sound.coin(); } catch (e) {}
       t.fb = { ok: true, msg: '✅ ' + (i + 1) + '번 칸 완성! 앞 칸 타일을 ' + RD[t.rule.d] + '으로 ' + t.rule.a + '°만큼 돌린 모양이에요.' };
-      if (t.cells.length >= P4N) { t.q = 1; t.fb = { ok: true, msg: '무늬 완성! 같은 모양이 다시 나오는 칸을 찾아볼까요?' }; try { FX.rain(80); } catch (e) {} } }
+      if (i === 1) t.fb = { ok: true, msg: '✅ 규칙이 정해졌어요: <b>' + RD[t.rule.d] + '으로 ' + t.rule.a + '°씩</b>! 같은 규칙으로 3번 칸부터 이어 놓아요.' };
+      if (t.cells.length >= P4N) { const per = t.rule.a === 180 ? 2 : 4; t.fb = { ok: true, msg: '무늬 완성! ' + t.rule.a + '°씩 돌리면 <b>' + per + '칸마다</b> 1번 칸과 같은 모양이 다시 나와요. 돌린 각도를 모두 더해 360°가 되면 처음과 같아지기 때문이에요.' }; try { FX.rain(80); } catch (e) {} award('ptn'); } }
     else { try { Sound.wrong(); } catch (e) {} t.fb = { ok: false, msg: '❌ 앞 칸 타일을 <b>' + RD[t.rule.d] + '으로 ' + t.rule.a + '°</b>만큼 돌린 모양이 아니에요. 앞 칸과 견주어 손잡이로 다시 돌려 봐요.' }; }
     renderPtn();
   },
   ctl() {
     const t = AN_().ptn;
     if (bdg('ptn')) return '<div class="andone">🎖 뒤죽이 봉인 완료! 돌리기 규칙을 정해 같은 타일을 계속 돌려 놓으면 <b>규칙적인 무늬</b>가 생겨요. 90°씩 돌리면 4칸마다, 180°씩 돌리면 2칸마다 처음 모양이 다시 나와요.</div>' + rpToolBtn('ptn');
-    let h = '<div class="ancap">🎨 규칙을 정하고, 작업대의 타일을 <b>돌려서</b> 칸에 <b>끌어 놓아</b> 무늬를 만들어요. <span class="anpill">' + t.cells.length + '/' + P4N + ' 칸</span></div>';
-    if (!t.rule || t.cells.length === 1) {
+    let h = '<div class="ancap">🎨 작업대의 타일을 ⟳ 손잡이로 <b>돌려서</b> 칸에 <b>끌어 놓아요</b>. 2번 칸에 놓은 모양이 무늬의 <b>규칙</b>이 돼요. <span class="anpill">' + t.cells.length + '/' + P4N + ' 칸</span></div>';
+    if (false) {
       const R = t.rule || {};
       h += '<div class="p4rule"><b>규칙 정하기</b><div class="row" style="justify-content:center;gap:6px">' + ['cw', 'ccw'].map(d => anBtn('pt-d', d, RAR[d] + ' ' + RD[d], R.d === d ? 'btn-primary' : 'btn-sub')).join('') + '</div>'
         + '<div class="row" style="justify-content:center;gap:6px">' + [90, 180, 270].map(a => anBtn('pt-a', a, a + '°만큼', R.a === a ? 'btn-primary' : 'btn-sub')).join('') + '</div></div>';
     }
-    if (t.q === 1) { const a = t.rule.a; h += '<div class="font-black center mt-1">이 규칙으로 계속 놓으면 처음 모양(1번 칸)이 몇 칸마다 다시 나올까요?</div>' + qBtns('pt-q', ['2칸마다', '3칸마다', '4칸마다', '나오지 않아요']); void a; }
+    if (false) { const a = t.rule.a; h += '<div class="font-black center mt-1">이 규칙으로 계속 놓으면 처음 모양(1번 칸)이 몇 칸마다 다시 나올까요?</div>' + qBtns('pt-q', ['2칸마다', '3칸마다', '4칸마다', '나오지 않아요']); void a; }
     return h + tfb(t.fb);
   }
 };
