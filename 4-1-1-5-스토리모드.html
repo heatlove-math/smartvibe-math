@@ -7799,6 +7799,47 @@ ufReplay({ scale: ['renderScale', ufDel('sc')], ladder: ['renderLadder', ufDel('
 .foldbox svg{width:min(100%,360px)!important;height:auto!important}
 .gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
 .ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
+
+/* v46: 표는 머리칸까지 모든 칸에 선 */
+.cktable th{border:2px solid #94a3b8;background:#e0e7ff;font-weight:900;padding:6px 12px;text-align:center}.cktable td{border-color:#94a3b8}
+/* ✋ M4 · 4학년 직접 조작 키트 — 그림이 칸을 가득, 오른쪽은 좁은 값 칸 */
+body.svsl-on .svsl-tc .svsl-main>div:has(>.m4p){align-self:stretch;flex:1 1 100%;width:100%!important;max-width:none!important;min-width:0;min-height:0;align-items:stretch!important;gap:0}
+body.svsl-land .svsl-tc .svsl-main>div:has(>.m4p)>.m4p{flex:1 1 auto;min-height:0}
+.m4p{--m4z:1;display:flex;gap:14px;align-items:stretch;width:100%;box-sizing:border-box}
+body.svsl-land .m4p{height:100%}
+.m4fig{flex:2.1 1 0;min-width:0;min-height:0;height:clamp(300px,56vh,680px);position:relative;box-sizing:border-box;border:3px dashed #f59e0b;border-radius:18px;background:#fffbeb;padding:6px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.m4p.wide .m4fig{flex:3 1 0}
+body.svsl-land .m4fig{height:auto;align-self:stretch}
+.m4p.done .m4fig{border-style:solid;border-color:#22c55e;background:#f0fdf4}
+.m4fig>svg{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;font-family:inherit;font-weight:900}
+.m4info{flex:1 1 0;min-width:0;min-height:0;max-width:380px;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:8px;overflow:hidden}
+.m4info>*{zoom:var(--m4z)}
+.m4info .mxrec,.m4info .row.mt-2{margin:0}
+body.svsl-port .m4p{flex-direction:column}body.svsl-port .m4fig{flex:none;height:clamp(260px,44vh,620px)}body.svsl-port .m4info{flex:none;max-width:none}
+@media(max-width:760px){.m4p{flex-direction:column}.m4fig{flex:none;height:clamp(240px,44vh,500px)}.m4info{flex:none;max-width:none}}
+/* 잡는 곳 */
+.m4h{cursor:grab;touch-action:none}.m4drag .m4h,.m4drag{cursor:grabbing!important}
+.m4hit{fill:#fff;fill-opacity:.001;stroke:none}
+.m4h:hover .m4hit{fill:#fde68a;fill-opacity:.28}
+.m4hand circle{fill:#fff7ed;stroke:#f97316;stroke-width:3.5}.m4hand path{fill:none;stroke:#f97316;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.m4hand .m4hi{font-size:19px}.m4hand .m4hl{font-size:17px;fill:#c2410c;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.m4hand.pulse circle{animation:m4pulse 1.3s ease-in-out infinite}.m4drag .m4hand.pulse circle{animation:none}
+@keyframes m4pulse{0%,100%{stroke-width:3.5}50%{stroke-width:7}}
+/* 오른쪽 값 칸 */
+.m4vol{background:#eff6ff;border:3px solid #93c5fd;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.m4vh{font-weight:900;color:#1d4ed8;font-size:1.05rem}
+.m4vr{display:flex;align-items:baseline;gap:8px;font-weight:900;color:#1e293b;font-size:1rem}.m4vr span{flex:1;min-width:0}.m4vr b{font-size:1.35rem;color:#0f172a}.m4vr em{font-style:normal;color:#64748b;font-size:.9rem}
+.m4vr.big b{font-size:2rem;color:#ea580c}.m4vr.ok b{color:#16a34a}.m4vr.bad b{color:#dc2626}
+.m4vol small{color:#475569;font-weight:800;font-size:.88rem;line-height:1.45;word-break:keep-all}
+.m4eq{background:#fff;border:3px solid #fcd34d;border-radius:16px;padding:10px 12px;font-weight:900;font-size:1.15rem;text-align:center;color:#1e293b;line-height:1.6;word-break:keep-all}.m4eq b{color:#ea580c}.m4eq.ok{border-color:#86efac;background:#f0fdf4}
+/* SVG 글자 */
+.m4fig svg text{font-family:inherit}
+.m4fig .tl{font-size:20px;fill:#334155}.m4fig .tb{font-size:26px;fill:#0f172a}.m4fig .ts{font-size:15px;fill:#64748b}.m4fig .tr{fill:#dc2626}.m4fig .tg{fill:#16a34a}.m4fig .to{fill:#ea580c}.m4fig .tw{fill:#fff}
+.m4fig .pop{animation:m4pop .35s ease}@keyframes m4pop{from{opacity:.2;transform:scale(.92)}to{opacity:1;transform:none}}
+.m4info>*{flex-shrink:0}
+.m4vr span{white-space:nowrap}.m4vr.big b{font-size:1.75rem}
+.m4vr.big{flex-direction:column;align-items:flex-start;gap:0}.m4vr.big b{font-size:1.6rem;line-height:1.15;word-break:break-all;max-width:100%}.m4vr.big b em{font-size:.5em;color:#64748b;font-style:normal}
+.m4vr.big b{white-space:nowrap;overflow:visible}
 </style>
 <script>
 /* =====================================================================
@@ -7835,7 +7876,7 @@ const CK = (() => {
     if (s.i < n && !s.d) { const g = t.stages[s.i]; s.d = g.init ? g.init() : {}; }
     const steps = `<div class="t11steps">${t.stages.map((g, j) => `<span class="${(done && s.i >= n) || j < s.i ? 'ok' : j === s.i ? 'cur' : ''}">${(done && s.i >= n) || j < s.i ? '✅' : j === s.i ? '👉' : '⬜'} ${g.t}</span>`).join('')}</div>`;
     let body = '';
-    if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
+    if (s.i >= n) body = `<div class="andone">${typeof svSumHTML === 'function' ? svSumHTML('봉인 해제!', t.summary, t.name) : '🎖 봉인 해제! ' + t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
     else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
       body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
         + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 다시 조작해 보기</button><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : (s.i > 0 || done ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 이 활동 처음부터</button></div>` : '')); }
@@ -7971,69 +8012,346 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
+
+/* =====================================================================
+   ✋ M4 · 4학년 직접 조작 키트 (2026-11-19)
+   · 그림(SVG)이 도구 칸을 가득 채우고, 오른쪽 좁은 칸에 지금 값·기록을 보여요.
+   · 그림 속 물건(.m4h)을 잡고 끌면 그 방향으로 값이 바뀌어요 — 단추·키패드·정답 카드 없이.
+     .m4h: data-k(값 이름) data-v(지금 값) data-min data-max data-dx data-dy(끄는 방향) data-per(값 1만큼의 SVG 길이)
+     값이 바뀔 때마다 숨은 [data-ck=m4set]에 'k:값', 손을 떼면 'k:end'를 보내요 → stage.on['act:m4set'](d, 'k:값')
+   · 패드·폰: pointer capture 를 body 에 걸어 다시 그려져도 끊기지 않아요.
+   ===================================================================== */
+/* 받침에 따라 조사 고르기 (없는 차시용) */
+if (typeof jo === 'undefined') window.jo = (w, a, b) => { const c = String(w).replace(/<[^>]+>/g, '').trim().slice(-1), n = c.charCodeAt(0); if (n >= 0xAC00 && n <= 0xD7A3) return (n - 0xAC00) % 28 ? a : b; return '0136781'.includes(c) || /[LMN]/i.test(c) ? a : b; };
+const M4 = (() => {
+  if (!window.__m4Pull) { window.__m4Pull = 1; let D = null;
+    const send = v => { const b = document.querySelector('#toolBody [data-ck="m4set"]'); if (b) { b.dataset.v = v; b.click(); } };
+    document.addEventListener('pointerdown', e => { if (D || (e.button != null && e.button > 0)) return; const h = e.target.closest && e.target.closest('#toolBody .m4h'); if (!h) return; const sv = h.closest('svg'); if (!sv) return; e.preventDefault();
+      let s = 1; try { const r = sv.getBoundingClientRect(), vb = sv.viewBox.baseVal; if (vb && vb.width) s = Math.min(r.width / vb.width, r.height / vb.height) || 1; } catch (er) {}
+      D = { k: h.dataset.k, v0: +h.dataset.v, v: +h.dataset.v, min: +h.dataset.min, max: +h.dataset.max, ux: +h.dataset.dx || 0, uy: +h.dataset.dy || 0, per: Math.max(4, (+h.dataset.per || 40) * s), x: e.clientX, y: e.clientY, id: e.pointerId };
+      try { document.body.setPointerCapture(e.pointerId); } catch (er) {} document.body.classList.add('m4drag'); try { Sound.click(); } catch (er) {} }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const dx = e.clientX - D.x, dy = e.clientY - D.y;
+      const v = Math.max(D.min, Math.min(D.max, D.v0 + Math.round((dx * D.ux + dy * D.uy) / D.per))); if (v !== D.v) { D.v = v; send(D.k + ':' + v); try { Sound.pop(); } catch (er) {} } }, { passive: false });
+    const up = e => { if (!D || (e && e.pointerId != null && e.pointerId !== D.id)) return; try { document.body.releasePointerCapture(D.id); } catch (er) {} const k = D.k; D = null; document.body.classList.remove('m4drag'); send(k + ':end'); };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+    /* 오른쪽 칸 글자: 칸 높이에 맞춰 키우거나 줄여요 (단계마다 한 번 정하고 고정) */
+    const ZC = {}; const fit = () => { document.querySelectorAll('#toolBody .m4p').forEach(r => { const info = r.querySelector('.m4info'); if (!info || !info.children.length) return;
+      let key = ''; try { const k = state.s1.tool; key = [k, CK.S(k).i, r.dataset.ph || 0, innerWidth, innerHeight].join(':'); } catch (er) {}
+      const set = z => r.style.setProperty('--m4z', z.toFixed(2)), over = () => { const ks = [...info.children]; if (!ks.length) return false; const t = ks[0].getBoundingClientRect().top, bt = ks[ks.length - 1].getBoundingClientRect().bottom, r = info.getBoundingClientRect(); return bt - t > r.height + 2 || info.scrollHeight > info.clientHeight + 2 || [...info.querySelectorAll('.m4vr b')].some(b => b.scrollWidth > b.parentElement.clientWidth + 2); };
+      let z = ZC[key]; if (z == null) { z = 1; set(z); if (innerWidth > 760) { for (let i = 0; i < 10 && !over() && ([...info.children].reduce((a, c) => a + c.getBoundingClientRect().height, 0) < info.clientHeight * .7); i++) { z *= 1.07; set(z); } for (let i = 0; i < 14 && z > .6 && over(); i++) { z *= .94; set(z); } } if (key) ZC[key] = z; } else { set(z); for (let i = 0; i < 14 && z > .55 && over(); i++) { z *= .94; set(z); } } }); };
+    try { new MutationObserver(() => { clearTimeout(fit.t); fit.t = setTimeout(fit, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} addEventListener('resize', () => { for (const k in ZC) delete ZC[k]; fit(); }); }
+  const setBtn = '<button data-ck="m4set" data-v="" hidden></button>';
+  /* 칸 배치: [그림 | 오른쪽 좁은 칸] — 그림이 칸을 가득 채워요 */
+  const box = (fig, info, o = {}) => `<div class="m4p ${o.done ? 'done' : ''} ${o.wide ? 'wide' : ''}" data-svnofit="1" data-ph="${o.ph || 0}"><div class="m4fig">${fig}</div>${info ? `<div class="m4info">${info}</div>` : ''}${setBtn}</div>`;
+  const svg = (w, h, inner, cls) => `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" class="${cls || ''}">${inner}</svg>`;
+  /* 잡는 곳: 투명한 큰 사각형(손가락 크기 이상) + 보이는 손 표시 */
+  const grip = (k, v, min, max, dir, per, rects, hand) => `<g class="m4h" data-k="${k}" data-v="${v}" data-min="${min}" data-max="${max}" data-dx="${dir[0]}" data-dy="${dir[1]}" data-per="${per}">${rects.map(r => `<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" rx="${r[4] || 6}" class="m4hit"/>`).join('')}${hand || ''}</g>`;
+  /* 손 표시: 동그라미 + 끄는 방향 화살 + 짧은 말 */
+  const hand = (x, y, dir, lab, o = {}) => { const ang = Math.atan2(dir[1], dir[0]) * 180 / Math.PI, r = o.r || 18;
+    return `<g class="m4hand ${o.pulse === false ? '' : 'pulse'}" transform="translate(${x},${y})"><g transform="rotate(${ang.toFixed(1)})"><path d="M${r + 5},0h16m-7,-7l7,7l-7,7"/>${o.two ? `<path d="M${-r - 5},0h-16m7,-7l-7,7l7,7"/>` : ''}</g><circle r="${r}"/><text y="7" text-anchor="middle" class="m4hi">✋</text>${lab ? `<text x="${o.lx || 0}" y="${o.ly != null ? o.ly : r + 22}" text-anchor="${o.anc || 'middle'}" class="m4hl">${lab}</text>` : ''}</g>`; };
+  /* 오른쪽 칸 줄: [[이름, 값, 단위, 크게?]] */
+  const rows = (title, R, note) => `<div class="m4vol">${title ? `<div class="m4vh">${title}</div>` : ''}${R.map(r => { const len = String(r[1]).replace(/<[^>]+>/g, '').length, fs = r[3] && len > 6 ? ` style="font-size:${Math.max(1, 10.5 / len).toFixed(2)}rem"` : ''; return r[3] ? `<div class="m4vr big ${r[4] || ''}"><span>${r[0]}</span><b${fs}>${r[1]}<em> ${r[2] || ''}</em></b></div>` : `<div class="m4vr ${r[4] || ''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2] || ''}</em></div>`; }).join('')}${note ? `<small>${note}</small>` : ''}</div>`;
+  const eq = (h, cls) => `<div class="m4eq ${cls || ''}">${h}</div>`;
+  const F = n => Number(n).toLocaleString();
+  const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" class="${o.c || ''}" text-anchor="${o.a || 'middle'}" ${o.fs ? `font-size="${o.fs}"` : ''} ${o.fill ? `fill="${o.fill}"` : ''} ${o.w ? `font-weight="${o.w}"` : ''}>${s}</text>`;
+  const R = (x, y, w, h, fill, o = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx != null ? o.rx : 4}" fill="${fill}" ${o.st ? `stroke="${o.st}" stroke-width="${o.sw || 2}"` : ''} ${o.c ? `class="${o.c}"` : ''} ${o.op != null ? `opacity="${o.op}"` : ''} ${o.da ? `stroke-dasharray="${o.da}"` : ''}/>`;
+  const L = (x1, y1, x2, y2, st, sw, o = {}) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${st}" stroke-width="${sw || 2}" ${o.da ? `stroke-dasharray="${o.da}"` : ''} stroke-linecap="round"/>`;
+  /* 수 모형: 백(판) · 십(막대) · 일(낱개) — 크기 u (일 모형 한 변) */
+  const flat = (x, y, u, col) => { let s = R(x, y, u * 10, u * 10, col || '#fcd34d', { st: '#b45309', sw: 1.6, rx: 2 }); for (let i = 1; i < 10; i++) s += L(x + i * u, y, x + i * u, y + u * 10, '#d97706', .7) + L(x, y + i * u, x + u * 10, y + i * u, '#d97706', .7); return s; };
+  const rod = (x, y, u, col, vert) => { let s = vert ? R(x, y, u, u * 10, col || '#93c5fd', { st: '#1d4ed8', sw: 1.4, rx: 2 }) : R(x, y, u * 10, u, col || '#93c5fd', { st: '#1d4ed8', sw: 1.4, rx: 2 }); for (let i = 1; i < 10; i++) s += vert ? L(x, y + i * u, x + u, y + i * u, '#3b82f6', .7) : L(x + i * u, y, x + i * u, y + u, '#3b82f6', .7); return s; };
+  const one = (x, y, u, col) => R(x, y, u, u, col || '#f9a8d4', { st: '#be185d', sw: 1.2, rx: 2 });
+  return { box, svg, grip, hand, rows, eq, F, T, R, L, flat, rod, one, setBtn };
+})();
+
+/* =====================================================================
+   💰 B1 · 4학년 1단원 큰 수 — 모형 돈·단위 묶음 직접 조작 도구 (M4 위에서)
+   PV(자릿값 판) · GROUP(10개 묶기) · ADD(모자란 만큼 채우기) · JUMP(수직선 뛰기) · STACK(만 원 쌓기)
+   EXCH(바꾸기) · MAG(돋보기) · CUT(네 자리씩 끊기) · ALIGN(자리 맞춰 비교) · LINE(수직선에 놓기)
+   ===================================================================== */
+const B1 = (() => {
+  const { T: TX, R: RC, L: LN } = M4;
+  const NM = k => CKN[k], V = k => Math.pow(10, k), S = n => String(n);
+  const KOR = n => { try { return ckKor(n); } catch (e) { return S(n); } };
+  const GC = k => k < 4 ? null : k < 8 ? ['#16a34a', '#dcfce7'] : k < 12 ? ['#7c3aed', '#ede9fe'] : ['#db2777', '#fce7f3'];
+  /* 모형 돈·단위 묶음 한 개 (x,y = 왼쪽 위, w·h 크기) */
+  function piece(k, x, y, w, h, o = {}) {
+    if (k === 4) return RC(x, y, w, h, '#86efac', { st: '#15803d', sw: 2, rx: 5 }) + `<circle cx="${x + w * .2}" cy="${y + h / 2}" r="${h * .28}" fill="#bbf7d0" stroke="#15803d" stroke-width="1.5"/>` + TX(x + w * .62, y + h / 2 + h * .17, '10000', { fs: h * .46, fill: '#14532d', w: 900 });
+    if (k === 3) return RC(x, y, w, h, '#93c5fd', { st: '#1d4ed8', sw: 2, rx: 5 }) + `<circle cx="${x + w * .2}" cy="${y + h / 2}" r="${h * .28}" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>` + TX(x + w * .62, y + h / 2 + h * .17, '1000', { fs: h * .5, fill: '#1e3a8a', w: 900 });
+    if (k <= 2) { const r = Math.min(w, h) / 2, c = ['#fde68a', '#fdba74', '#e2e8f0'][k], s = ['#b45309', '#9a3412', '#475569'][k];
+      return `<circle cx="${x + w / 2}" cy="${y + h / 2}" r="${r - 1}" fill="${c}" stroke="${s}" stroke-width="2"/>` + TX(x + w / 2, y + h / 2 + r * .3, S(V(k)), { fs: r * (k === 2 ? .78 : .9), fill: s, w: 900 }); }
+    const g = GC(k); return RC(x, y, w, h, g[1], { st: g[0], sw: 2.5, rx: 6 }) + RC(x + 3, y + 3, w - 6, h * .22, g[0], { rx: 3, op: .25 }) + TX(x + w / 2, y + h / 2 + h * .18, NM(k), { fs: Math.min(h * .5, w * .32), fill: g[0], w: 900 });
+  }
+  const isCoin = k => k <= 2;
+  const unitName = k => k <= 4 ? (k === 4 ? '만 원짜리' : k === 3 ? '천 원짜리' : k + '' && `${V(k)}원짜리`) : `${NM(k)} 묶음`;
+  /* 자리 표 (숫자 칸) */
+  const digitRow = (cols, num, x0, cw, y, o = {}) => { let s = ''; cols.forEach((k, i) => { const dg = Math.floor(num / V(k)) % 10, x = x0 + i * cw, hl = o.hl === k;
+    s += RC(x + 4, y, cw - 8, 54, hl ? '#fef3c7' : '#fff', { st: hl ? '#f59e0b' : '#cbd5e1', sw: 2, rx: 8 }) + TX(x + cw / 2, y + 40, o.hide && o.hide(k) ? '' : dg, { fs: 34, fill: '#0f172a', w: 900 }) + TX(x + cw / 2, y - 8, NM(k), { fs: 16, fill: '#64748b', w: 800 }); }); return s; };
+
+  /* ① PV: 자릿값 판 — 칸마다 돈·묶음 더미의 꼭대기를 위아래로 끌어 개수(0~9)를 정해요 */
+  function PV(c) { const cols = c.cols, n = cols.length, X0 = 20, W = 920, cw = W / n, Y1 = 40, Y2 = 310, ph = (Y2 - Y1) / 10.5;
+    const valOf = d => cols.reduce((a, k, i) => a + d.c[i] * V(k), 0) + (c.base || 0);
+    return { _ty: 'pv', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ c: cols.map(k => (c.start && c.start[k]) || 0), ok: false }),
+      view: d => { let s = '';
+        cols.forEach((k, i) => { const x = X0 + i * cw, cnt = d.c[i], pw = Math.min(cw - 30, isCoin(k) ? ph * 1.6 : 150), px = x + (cw - pw) / 2;
+          s += RC(x + 4, Y1 - 10, cw - 8, Y2 - Y1 + 20, i % 2 ? '#f8fafc' : '#f1f5f9', { st: '#e2e8f0', sw: 1.5, rx: 12 });
+          for (let j = 0; j < cnt; j++) s += piece(k, px, Y2 - (j + 1) * ph - 2, pw, ph - 3);
+          const yt = Y2 - cnt * ph; if (!d.ok) s += M4.grip('c' + i, cnt, 0, 9, [0, -1], ph, [[x + 6, Math.max(Y1 - 10, yt - 46), cw - 12, 92]], M4.hand(x + cw / 2, Math.max(Y1 + 8, yt - 20), [0, -1], '', { two: cnt > 0, r: 15, pulse: i === 0 && cnt === 0 }));
+          s += TX(x + cw / 2, Y2 + 30, `${cnt}${isCoin(k) ? '개' : k <= 4 ? '장' : '개'}`, { fs: 18, fill: '#475569', w: 800 }); });
+        s += digitRow(cols, valOf(d), X0, cw, Y2 + 62);
+        const fig = M4.svg(960, 440, s), v = valOf(d);
+        const info = M4.rows(c.title || '🧱 자릿값 판', [['만든 수', v, '', 1], ['읽기', `<span style="font-size:.8em">${KOR(v)}</span>`, '']].concat(c.goalTxt ? [['주문', c.goalTxt, '']] : []), c.note ? c.note(d, v) : '')
+          + (d.ok ? M4.eq(c.done ? c.done(v) : `<b>${v}</b> · ${KOR(v)}`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (x !== 'end') { d.c[+k.slice(1)] = +x; api.clear(); return; }
+          if (valOf(d) === c.goal) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { cols.forEach((k, i) => on('act:m4set', 'c' + i + ':' + Math.floor((c.goal - (c.base || 0)) / V(k)) % 10, null)); on('act:m4set', 'c0:end', null); } }; }
+
+  /* ② GROUP: 같은 단위를 하나씩 끌어 모아 10개가 되면 한 묶음(다음 자리)이 돼요 */
+  function GROUP(c) { const k = c.k, coin = isCoin(k), SW = coin ? 96 : 168, SH = coin ? 96 : 76, GX = 14, GY = 14, X0 = 480 - (5 * SW + 4 * GX) / 2, Y0 = 70;
+    const slot = j => [X0 + (j % 5) * (SW + GX), Y0 + Math.floor(j / 5) * (SH + GY)];
+    return { _ty: 'group', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ n: c.start || 0, ok: false }),
+      view: d => { const n = d.n, full = n >= 10, BH = 2 * SH + GY; let s = '';
+        s += TX(480, 44, `${NM(k)}${k <= 4 ? '(' + V(k) + ')' : ''}이 ${n}개`, { fs: 28, fill: '#0f172a', w: 900 });
+        for (let j = 0; j < 10; j++) { const [x, y] = slot(j); if (j < n) s += `<g class="${j === n - 1 ? 'pop' : ''}">${piece(k, x, y, SW, SH)}</g>`; else s += RC(x, y, SW, SH, 'none', { st: '#cbd5e1', sw: 2, da: '6 6', rx: 8 }); }
+        if (full) { s += `<g class="pop">${RC(X0 - 12, Y0 - 12, 5 * SW + 4 * GX + 24, BH + 24, 'none', { st: '#f97316', sw: 6, rx: 18 })}</g>`;
+          const ay = Y0 + BH + 16; s += `<path d="M480,${ay} v26" stroke="#f97316" stroke-width="5"/><path d="M466,${ay + 24} l14,16 l14,-16z" fill="#f97316"/>`;
+          s += `<g class="pop">${piece(k + 1, 360, ay + 46, 240, coin ? 100 : 80)}</g>` + TX(720, ay + 100, `= ${V(k + 1)}`, { fs: 30, fill: '#c2410c', w: 900, a: 'start' }); }
+        else { const [x, y] = slot(Math.max(0, n - 1)), cx = n ? x + SW / 2 : X0 - 40, cy = n ? y + SH / 2 : Y0 + SH / 2; s += TX(480, Y0 + BH + 60, `10개가 모이면 어떻게 될까요?`, { fs: 22, fill: '#64748b', w: 800 });
+          if (!d.ok) s += M4.grip('n', n, c.start || 0, 10, [1, 0], (SW + GX) * .8, [[n ? x - 10 : X0 - 70, y - 8, SW + 60, SH + 16]], M4.hand(cx + SW / 2 + 10, cy, [1, 0], n === (c.start || 0) ? '끌어서 하나씩 더 →' : '', { ly: SH / 2 + 26 })); }
+        const fig = M4.svg(960, 430, s), val = n * V(k);
+        const info = M4.rows('📦 10개 묶기', [[`${NM(k)}`, n, '개'], ['나타내는 수', val, '', 1]], full ? `${V(k)}이 10개면 <b>${V(k + 1)}</b>, <b>${NM(k + 1)}</b>이라고 읽어요.` : `${10 - n}개 더 모으면?`)
+          + (d.ok ? M4.eq(`${V(k)}이 10개 → <b>${V(k + 1)}</b> (${NM(k + 1)})`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'n') return; if (x !== 'end') { d.n = +x; api.clear(); return; } if (d.n === 10) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'n:10', null); on('act:m4set', 'n:end', null); } }; }
+
+  /* ③ ADD: 처음 돈에 단위 돈을 하나씩 더해 목표 수까지 — 모자란 만큼이 보여요 */
+  function ADD(c) { const k = c.k, need = (c.goal - c.base) / V(k), X0 = 40;
+    return { _ty: 'add', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ n: 0, ok: false }),
+      view: d => { const n = d.n, tot = c.base + n * V(k); let s = '';
+        /* 처음 돈: 큰 단위부터 */
+        let x = X0, rem = c.base; const parts = [];
+        for (let u = 4; u >= 0; u--) { const m = Math.floor(rem / V(u)); rem -= m * V(u); for (let j = 0; j < m; j++) parts.push(u); }
+        s += TX(X0, 40, `처음 ${c.base}`, { fs: 22, fill: '#334155', a: 'start', w: 900 });
+        parts.forEach((u, j) => { const w = isCoin(u) ? 46 : 100, h = isCoin(u) ? 46 : 50; s += piece(u, x, 60 + (isCoin(u) ? 2 : 0), w, h); x += w + (j < parts.length - 1 && parts[j + 1] !== u ? 18 : 4); });
+        /* 더한 돈 */
+        s += TX(X0, 170, `더한 ${NM(k)}${k <= 4 ? '원' : ''}: ${n}${isCoin(k) ? '개' : '장'}`, { fs: 22, fill: '#ea580c', a: 'start', w: 900 });
+        const pw = isCoin(k) ? 64 : 110, ph2 = isCoin(k) ? 64 : 56;
+        for (let j = 0; j < Math.max(n, need + 1); j++) { const xx = X0 + j * (pw + 8); if (j < n) s += `<g class="${j === n - 1 ? 'pop' : ''}">${piece(k, xx, 190, pw, ph2)}</g>`; else s += RC(xx, 190, pw, ph2, 'none', { st: '#e2e8f0', sw: 2, da: '6 6', rx: 8 }); }
+        if (!d.ok) { const xe = X0 + n * (pw + 8); s += M4.grip('n', n, 0, need + 2, [1, 0], pw + 8, [[Math.max(X0 - 10, xe - pw), 180, pw + 50, ph2 + 20]], M4.hand(Math.max(X0 + 20, xe - pw / 2 + (n ? 0 : pw / 2)), 290, [1, 0], n ? '' : '하나씩 더해요 →', { two: n > 0, ly: 36 })); }
+        /* 수직선 */
+        const L0 = c.base - V(k), L1 = c.goal + V(k), sc = 860 / (L1 - L0), xv = v => 50 + (v - L0) * sc;
+        s += LN(50, 380, 910, 380, '#334155', 4); for (let v = L0; v <= L1; v += V(k)) s += LN(xv(v), 372, xv(v), 390, '#334155', 2) + ((v - L0) % (V(k) * (need > 6 ? 2 : 1)) === 0 || v === c.goal ? TX(xv(v), 418, v, { fs: 16, fill: v === c.goal ? '#dc2626' : '#475569', w: 900 }) : '');
+        s += `<path d="M${xv(c.base)},372 Q${(xv(c.base) + xv(Math.min(tot, L1))) / 2},${330} ${xv(Math.min(tot, L1))},372" fill="none" stroke="#f97316" stroke-width="4"/>` + `<circle cx="${xv(Math.min(tot, L1))}" cy="380" r="9" fill="#ea580c"/>`;
+        const fig = M4.svg(960, 440, s);
+        const info = M4.rows('💰 모두 얼마?', [['처음', c.base, ''], [`더한 ${V(k)}`, n, '개'], ['모두', tot, '', 1, tot === c.goal ? 'ok' : tot > c.goal ? 'bad' : '']], tot > c.goal ? `${c.goal}을 넘었어요!` : '')
+          + (d.ok ? M4.eq(`${c.goal}은 ${c.base}보다 <b>${c.goal - c.base}</b> 큰 수`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'n') return; if (x !== 'end') { d.n = +x; api.clear(); return; }
+          if (d.n === need) { d.ok = true; api.win(c.say()); } else if (d.n > need) api.say(false, `${c.goal}보다 커졌어요. 하나 덜 더해 봐요.`, true); } },
+      _solve(d, on) { on('act:m4set', 'n:' + need, null); on('act:m4set', 'n:end', null); } }; }
+
+  /* ④ JUMP: 수직선 위 개구리를 끌어 일정한 크기로 뛰어요 (step 음수면 거꾸로, mul이면 10배씩) */
+  function JUMP(c) { const pts = c.mul ? Array.from({ length: c.n + 1 }, (_, i) => c.start * Math.pow(10, i)) : Array.from({ length: c.n + 1 }, (_, i) => c.start + c.step * i), N = c.n, X0 = 60, W = 840;
+    const xi = i => X0 + (c.step < 0 ? N - i : i) * W / N;
+    return { _ty: 'jump', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ j: 0, ok: false }),
+      view: d => { const j = d.j; let s = LN(X0 - 20, 250, X0 + W + 20, 250, '#334155', 4);
+        pts.forEach((v, i) => { const x = xi(i), on = i <= j; s += LN(x, 240, x, 262, '#334155', 3);
+          const str = S(v), prev = i ? S(pts[i - 1]) : null; let dig = '';
+          if (on) { const L = str.length; for (let q = 0; q < L; q++) { const ch = prev && (prev.length !== L || prev[q] !== str[q]); dig += `<tspan fill="${ch ? '#dc2626' : '#0f172a'}">${str[q]}</tspan>`; } }
+          s += `<text x="${x}" y="${i % 2 ? 330 : 300}" text-anchor="middle" font-size="${Math.min(22, 300 / Math.max(6, str.length * 1.2))}" font-weight="900">${on ? dig : (c.hideNext ? '?' : str)}</text>`;
+          if (i && i <= j) { const x1 = xi(i - 1); s += `<path d="M${x1},238 Q${(x1 + x) / 2},170 ${x},238" fill="none" stroke="#22c55e" stroke-width="4"/>` + TX((x1 + x) / 2, 182, c.mul ? '×10' : (c.step > 0 ? '+' : '−') + Math.abs(c.step), { fs: 15, fill: '#15803d', w: 900 }); } });
+        const fx = xi(j); s += `<text x="${fx}" y="236" font-size="44" text-anchor="middle">🐸</text>`;
+        if (!d.ok) s += M4.grip('j', j, 0, N, [c.step < 0 ? -1 : 1, 0], W / N, [[fx - 40, 180, 80, 80]], M4.hand(fx, 120, [c.step < 0 ? -1 : 1, 0], j ? '' : (c.step < 0 ? '← 끌어서 뛰어요' : '끌어서 뛰어요 →'), { ly: -30 }));
+        s += TX(480, 400, `빨간 숫자 = 바뀐 자리`, { fs: 18, fill: '#dc2626', w: 800 });
+        const fig = M4.svg(960, 430, s), cur = pts[j];
+        const info = M4.rows('🐸 뛰어 세기', [['뛴 횟수', j, '번'], ['지금 수', cur, '', 1]], c.note || '')
+          + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'j') return; if (x !== 'end') { d.j = +x; api.clear(); return; } if (d.j === N) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'j:' + N, null); on('act:m4set', 'j:end', null); } }; }
+
+  /* ⑤ SIZE: 두 수 사이의 뛴 크기 찾기 — 무지개 다리 끝을 끌어 늘이면 1·10·100…배로 커져요 */
+  function SIZE(c) { const pts = c.pts, step = pts[1] - pts[0], K = Math.round(Math.log10(step)), X0 = 70, W = 820;
+    return { _ty: 'size', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ e: 0, ok: false }),
+      view: d => { const sz = V(d.e), x = i => X0 + i * W / (pts.length - 1); let s = LN(X0 - 20, 260, X0 + W + 20, 260, '#334155', 4);
+        pts.forEach((v, i) => { s += LN(x(i), 250, x(i), 272, '#334155', 3) + TX(x(i), i % 2 ? 340 : 308, v, { fs: 19, fill: '#0f172a', w: 900 }); });
+        const ratio = Math.min(1.6, sz / step), x1 = x(0), x2 = x1 + ratio * W / (pts.length - 1), ok = sz === step;
+        s += `<path d="M${x1},248 Q${(x1 + x2) / 2},150 ${x2},248" fill="none" stroke="${ok ? '#16a34a' : '#f97316'}" stroke-width="7"/>` + TX((x1 + x2) / 2, 168, `+${sz}`, { fs: 26, fill: ok ? '#15803d' : '#c2410c', w: 900 });
+        if (!d.ok) s += M4.grip('e', d.e, 0, 8, [1, 0], W / (pts.length - 1) / 3, [[x2 - 36, 200, 72, 80]], M4.hand(x2, 120, [1, 0], '다리를 늘여요', { two: true, ly: -30 }));
+        const fig = M4.svg(960, 420, s);
+        const info = M4.rows('🌈 뛴 크기', [['다리 크기', sz, ''], ['바뀌는 자리', NM(d.e) + '의 자리', '', 1, ok ? 'ok' : '']], '어느 자리 숫자가 1씩 커지는지 보세요.')
+          + (d.ok ? M4.eq(`<b>${step}</b>씩 뛰어 세었어요 → <b>${NM(K)}의 자리</b> 숫자가 1씩 커져요`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'e') return; if (x !== 'end') { d.e = +x; api.clear(); return; } if (V(d.e) === step) { d.ok = true; api.win(c.say()); } else api.say(false, `+${V(d.e)}${V(d.e) > step ? '은 너무 커요' : '로는 다음 수에 닿지 않아요'}.`, true); } },
+      _solve(d, on) { on('act:m4set', 'e:' + K, null); on('act:m4set', 'e:end', null); } }; }
+
+  /* ⑥ STACK: 만 원짜리를 위로 쌓아 몇만을 만들고, 옆의 천 원짜리 더미와 비교 */
+  function STACK(c) { const k = c.k || 4, ph = 30, Y2 = 380;
+    return { _ty: 'stack', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ n: 0, ok: false }),
+      view: d => { const n = d.n; let s = '';
+        for (let j = 0; j < n; j++) s += piece(k, 120, Y2 - (j + 1) * ph, 260, ph - 4);
+        for (let j = 0; j < n; j++) s += piece(k - 1, 560, Y2 - (j + 1) * ph, 220, ph - 4);
+        s += RC(110, 60, 280, Y2 - 52, 'none', { st: '#cbd5e1', sw: 2, da: '6 6', rx: 12 }) + TX(250, 50, `${NM(k)} ${n}개`, { fs: 24, fill: '#15803d', w: 900 }) + TX(670, 50, `${NM(k - 1)} ${n}개`, { fs: 24, fill: '#1d4ed8', w: 900 });
+        s += TX(250, 416, n * V(k), { fs: 30, fill: '#0f172a', w: 900 }) + TX(670, 416, n * V(k - 1), { fs: 30, fill: '#0f172a', w: 900 });
+        if (n) s += TX(470, Y2 - n * ph / 2, '10배', { fs: 26, fill: '#ea580c', w: 900 }) + `<path d="M520,${Y2 - n * ph / 2 - 8} h-90" stroke="#ea580c" stroke-width="4"/><path d="M430,${Y2 - n * ph / 2 - 8} l14,-9 v18z" fill="#ea580c"/>`;
+        const yt = Y2 - n * ph; if (!d.ok) s += M4.grip('n', n, 0, 9, [0, -1], ph, [[110, yt - 50, 280, 100]], M4.hand(250, yt - 22, [0, -1], n ? '' : '위로 쌓아요 ↑', { two: n > 0, ly: -26 }));
+        const fig = M4.svg(960, 440, s);
+        const info = M4.rows('🏗️ 쌓은 수', [[`${NM(k)}`, n, '개'], ['수', n * V(k), '', 1], ['읽기', n ? KOR(n * V(k)) : '-', '']], '')
+          + (d.ok ? M4.eq(c.done(n), 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'n') return; if (x !== 'end') { d.n = +x; api.clear(); return; } if (d.n * V(k) === c.goal) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'n:' + c.goal / V(k), null); on('act:m4set', 'n:end', null); } }; }
+
+  /* ⑦ EXCH: 큰 돈 한 장을 바꾸기 기계로 끌어 내리면 작은 돈 여러 개로 — 줄 수를 끌어 채워요 */
+  function EXCH(c) { const k = c.k, dk = c.dk, cnt = Math.pow(10, dk), rows = cnt / 10, u = k - dk;
+    return { _ty: 'exch', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ r: 0, ok: false }),
+      view: d => { const r = d.r; let s = piece(k, 40, 60, 250, 110) + TX(165, 210, `${V(k)} 한 장`, { fs: 22, fill: '#14532d', w: 900 });
+        s += `<path d="M310,115 h60" stroke="#94a3b8" stroke-width="5"/><path d="M370,103 l18,12 l-18,12z" fill="#94a3b8"/>`;
+        const pw = rows > 1 ? 50 : 104, ph2 = rows > 1 ? 34 : 60, X0 = 400, perRow = rows > 1 ? 10 : 5;
+        const RR = rows > 1 ? rows : 2; for (let i = 0; i < RR; i++) for (let j = 0; j < perRow; j++) { const x = X0 + j * (pw + 4), y = 40 + i * (ph2 + 4), on = rows > 1 ? i < r : r >= 1; if (on) s += piece(u, x, y, pw, ph2 - 2); else s += RC(x, y, pw, ph2 - 2, 'none', { st: '#e2e8f0', sw: 1.2, rx: 4 }); }
+        if (!d.ok) { const step = rows > 1 ? ph2 + 4 : 2 * (ph2 + 4), ye = 40 + r * step; s += M4.grip('r', r, 0, rows, [0, 1], step, [[X0 - 6, Math.max(30, ye - 30), perRow * (pw + 4) + 12, 70]], M4.hand(X0 + perRow * (pw + 4) / 2, Math.min(410, ye + 4), [0, 1], r ? '' : '아래로 끌어 채워요 ↓', { two: r > 0, ly: 40 })); }
+        const fig = M4.svg(960, 440, s), have = r * 10;
+        const info = M4.rows('🔁 바꾸기', [[`${V(u)}`, have, '개'], ['모두', have * V(u), '', 1, have * V(u) === V(k) ? 'ok' : '']], `${V(k)}이 될 때까지 채워요.`)
+          + (d.ok ? M4.eq(`${V(k)}은 ${V(u)}이 <b>${cnt}개</b>인 수`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'r') return; if (x !== 'end') { d.r = +x; api.clear(); return; } if (d.r === rows) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'r:' + rows, null); on('act:m4set', 'r:end', null); } }; }
+
+  /* ⑧ MAG: 돋보기를 끌어 숫자 위에 대면 그 숫자가 나타내는 값이 보여요 (need = 들여다봐야 할 자리들) */
+  function MAG(c) { const str = S(c.num), L = str.length, CS = Math.min(96, 880 / L), X0 = 480 - L * CS / 2, need = c.need || [...Array(L).keys()].map(i => L - 1 - i);
+    return { _ty: 'mag', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ p: 0, seen: {}, ok: false }),
+      view: d => { const p = d.p, k = L - 1 - p; let s = '';
+        for (let i = 0; i < L; i++) { const kk = L - 1 - i; s += RC(X0 + i * CS + 3, 80, CS - 6, 100, i === p ? '#fef3c7' : d.seen[kk] ? '#ecfdf5' : '#fff', { st: i === p ? '#f59e0b' : '#cbd5e1', sw: 2.5, rx: 10 }) + TX(X0 + i * CS + CS / 2, 152, str[i], { fs: CS * .62, fill: '#0f172a', w: 900 }) + TX(X0 + i * CS + CS / 2, 70, NM(kk), { fs: Math.min(16, CS * .3), fill: '#64748b', w: 800 }); }
+        const mx = X0 + p * CS + CS / 2; s += `<circle cx="${mx}" cy="130" r="${CS * .62}" fill="none" stroke="#f97316" stroke-width="7"/><path d="M${mx + CS * .44},${130 + CS * .44} l40,40" stroke="#f97316" stroke-width="12" stroke-linecap="round"/>`;
+        const dg = +str[p], val = dg * V(k); s += TX(480, 290, `${dg} → ${NM(k)}의 자리 → ${val}`, { fs: 34, fill: '#c2410c', w: 900 });
+        const parts = [...Array(L).keys()].filter(i => d.seen[L - 1 - i] && +str[i]).map(i => S(+str[i] * V(L - 1 - i)));
+        s += TX(480, 360, parts.length ? parts.join(' + ') : '', { fs: Math.min(24, 900 / Math.max(10, parts.join(' + ').length * .62)), fill: '#1d4ed8', w: 900 });
+        if (!d.ok) s += M4.grip('p', p, 0, L - 1, [1, 0], CS, [[mx - CS * .7, 70, CS * 1.4, 150]], M4.hand(mx + CS * .7, 230, [1, 0], Object.keys(d.seen).length < 2 ? '돋보기를 끌어요' : '', { two: true, ly: 38 }));
+        const fig = M4.svg(960, 420, s);
+        const info = M4.rows('🔍 숫자의 값', [['숫자', dg, ''], ['자리', NM(k), ''], ['나타내는 값', val, '', 1]], `살펴본 자리 ${need.filter(x => d.seen[x]).length} / ${need.length}`)
+          + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'p') return; if (x !== 'end') { d.p = +x; d.seen[L - 1 - d.p] = 1; api.clear(); return; } d.seen[L - 1 - d.p] = 1; if (need.every(q => d.seen[q])) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { need.forEach(q => on('act:m4set', 'p:' + (L - 1 - q), null)); on('act:m4set', 'p:end', null); } }; }
+
+  /* ⑨ CUT: 칸막이를 끌어 숫자 사이에 놓아 네 자리씩 끊어요 (오른쪽부터) */
+  function CUT(c) { const str = S(c.num), L = str.length, CS = Math.min(80, 880 / L), X0 = 480 - L * CS / 2, need = []; for (let g = 4; g < L; g += 4) need.push(g); const U = ['', '만', '억', '조'];
+    return { _ty: 'cut', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ g: need.map(() => 1), ok: false }),
+      view: d => { let s = '';
+        for (let i = 0; i < L; i++) s += RC(X0 + i * CS + 3, 110, CS - 6, 100, '#fff', { st: '#cbd5e1', sw: 2, rx: 10 }) + TX(X0 + i * CS + CS / 2, 182, str[i], { fs: CS * .66, fill: '#0f172a', w: 900 });
+        const okAll = need.every((g, j) => d.g[j] === g);
+        need.forEach((g0, j) => { const g = d.g[j], x = X0 + (L - g) * CS, okj = g === g0; s += LN(x, 90, x, 230, okj ? '#16a34a' : '#f97316', 7) + (okj ? TX(x - 2 * CS, 252, U[j + 1], { fs: 28, fill: '#16a34a', w: 900 }) : '');
+          if (!d.ok) s += M4.grip('g' + j, g, 1, L - 1, [-1, 0], CS, [[x - 30, 80, 60, 160]], M4.hand(x, 290 + j * 0, [-1, 0], j === 0 && g === 1 ? '← 칸막이를 끌어요' : '', { two: true, ly: 40, r: 15 })); });
+        if (okAll) { const groups = []; let e = L; for (let j = 0; j <= need.length; j++) { const st = Math.max(0, L - 4 * (j + 1)); groups.unshift([str.slice(st, e), U[j]]); e = st; }
+          s += TX(480, 380, groups.filter(g => +g[0]).map(g => (+g[0]) + g[1]).join(' '), { fs: 34, fill: '#1d4ed8', w: 900 }); }
+        const fig = M4.svg(960, 420, s);
+        const info = M4.rows('✂️ 네 자리씩', [['자릿수', L, '자리'], ['칸막이', need.length, '개']], '오른쪽(일의 자리)부터 네 자리씩 끊어요.') + (d.ok ? M4.eq(`${str}<br><b>${KOR(c.num)}</b>`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (x !== 'end') { d.g[+kk.slice(1)] = +x; api.clear(); return; } if (need.every((g, j) => d.g[j] === g)) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { need.forEach((g, j) => on('act:m4set', 'g' + j + ':' + g, null)); on('act:m4set', 'g0:end', null); } }; }
+
+  /* ⑩ ALIGN: 두 수 띠를 끌어 자리 표의 일의 자리에 맞추면 자릿수가 보이고, 저울이 기울어요 */
+  function ALIGN(c) { const A = S(c.a), B = S(c.b), NC = Math.max(A.length, B.length) + 1, CS = Math.min(70, 860 / NC), X0 = 480 - NC * CS / 2, big = c.a > c.b ? 0 : 1;
+    return { _ty: 'align', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ a: 0, b: 0, ok: false }),
+      view: d => { let s = '';
+        for (let i = 0; i < NC; i++) { const k = NC - 1 - i; s += RC(X0 + i * CS + 2, 60, CS - 4, 210, i % 2 ? '#f8fafc' : '#f1f5f9', { st: '#e2e8f0', sw: 1.2, rx: 6 }) + TX(X0 + i * CS + CS / 2, 52, NM(k), { fs: Math.min(15, CS * .32), fill: '#64748b', w: 800 }); }
+        const row = (str, off, y, col, key) => { let q = ''; const x0 = X0 + off * CS; for (let i = 0; i < str.length; i++) q += RC(x0 + i * CS + 4, y, CS - 8, 64, col[1], { st: col[0], sw: 2.5, rx: 8 }) + TX(x0 + i * CS + CS / 2, y + 46, str[i], { fs: CS * .6, fill: '#0f172a', w: 900 });
+          if (!d.ok) q += M4.grip(key, off, 0, NC - str.length, [1, 0], CS, [[x0, y - 4, str.length * CS, 72]], M4.hand(x0 + str.length * CS + 24, y + 32, [1, 0], '', { two: true, r: 14, pulse: off === 0 })); return q; };
+        s += row(A, d.a, 80, ['#2563eb', '#dbeafe'], 'a') + row(B, d.b, 180, ['#db2777', '#fce7f3'], 'b');
+        const okA = d.a === NC - A.length, okB = d.b === NC - B.length;
+        if (okA && okB) { const tilt = big === 0 ? -8 : 8; s += `<g transform="translate(480,360) rotate(${tilt})"><line x1="-200" y1="0" x2="200" y2="0" stroke="#475569" stroke-width="8"/>${TX(-170, -16, c.a, { fs: 20, fill: '#1d4ed8', w: 900 })}${TX(170, -16, c.b, { fs: 20, fill: '#be185d', w: 900 })}</g><path d="M480,368 l-22,40 h44z" fill="#64748b"/>`; }
+        const fig = M4.svg(960, 420, s);
+        const info = M4.rows('⚖️ 두 수', [['위 수', `${A.length}자리`, ''], ['아래 수', `${B.length}자리`, '']], okA && okB ? '' : '두 수의 끝(일의 자리)을 자리 표의 맨 오른쪽에 맞춰요.') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (x !== 'end') { d[kk] = +x; api.clear(); return; } if (d.a === NC - A.length && d.b === NC - B.length) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'a:' + (NC - A.length), null); on('act:m4set', 'b:' + (NC - B.length), null); on('act:m4set', 'b:end', null); } }; }
+
+  /* ⑪ LADDER: 자리 맞춘 두 수 위에서 돋보기를 높은 자리부터 끌어 처음으로 다른 숫자를 찾아요 */
+  function LADDER(c) { const A = S(c.a), B = S(c.b), L = A.length, CS = Math.min(68, 860 / L), X0 = 480 - L * CS / 2; let fd = 0; while (fd < L && A[fd] === B[fd]) fd++;
+    return { _ty: 'ladder', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ p: 0, ok: false }),
+      view: d => { const p = d.p; let s = '';
+        for (let i = 0; i < L; i++) { const k = L - 1 - i, same = A[i] === B[i], past = i < p; s += TX(X0 + i * CS + CS / 2, 56, NM(k), { fs: Math.min(15, CS * .3), fill: '#64748b', w: 800 });
+          [[A, 70, '#dbeafe', '#2563eb'], [B, 160, '#fce7f3', '#db2777']].forEach(([str, y, f, st]) => { s += RC(X0 + i * CS + 3, y, CS - 6, 74, past && same ? '#f1f5f9' : f, { st: i === p ? '#f97316' : st, sw: i === p ? 4 : 2, rx: 8 }) + TX(X0 + i * CS + CS / 2, y + 52, str[i], { fs: CS * .6, fill: past && same ? '#94a3b8' : '#0f172a', w: 900 }); });
+          if (past && same) s += TX(X0 + i * CS + CS / 2, 270, '=', { fs: 24, fill: '#94a3b8', w: 900 }); }
+        const mx = X0 + p * CS + CS / 2; s += RC(mx - CS / 2, 62, CS, 180, 'none', { st: '#f97316', sw: 6, rx: 12 });
+        if (p === fd && fd < L) s += TX(mx, 290, `${A[fd]} ${+A[fd] > +B[fd] ? '>' : '<'} ${B[fd]}`, { fs: 34, fill: '#dc2626', w: 900 });
+        if (!d.ok) s += M4.grip('p', p, 0, L - 1, [1, 0], CS, [[mx - CS / 2 - 10, 60, CS + 20, 190]], M4.hand(mx, 320, [1, 0], p ? '' : '높은 자리부터 →', { ly: 38 }));
+        const fig = M4.svg(960, 400, s), big = c.a > c.b ? c.a : c.b;
+        const info = M4.rows('🪜 높은 자리부터', [['살펴본 자리', NM(L - 1 - p), ''], ['같은 숫자', Math.min(p, fd), '개']], p < fd ? '숫자가 같으면 다음 자리로!' : '') + (d.ok ? M4.eq(`${c.a} ${c.a > c.b ? '>' : '<'} ${c.b}<br><small>${NM(L - 1 - fd)}의 자리에서 결정!</small>`, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'p') return; if (x !== 'end') { d.p = +x; api.clear(); return; } if (d.p === fd) { d.ok = true; api.win(c.say()); } else if (d.p > fd) api.say(false, '더 높은 자리에서 이미 숫자가 달라요. 돋보기를 되돌려 봐요.', true); } },
+      _solve(d, on) { on('act:m4set', 'p:' + fd, null); on('act:m4set', 'p:end', null); } }; }
+
+  /* ⑫ LINE: 깃발을 끌어 수직선의 알맞은 자리에 꽂아요 */
+  function LINE(c) { const X0 = 70, W = 820, N = c.n, unit = (c.b - c.a) / N, xv = v => X0 + (v - c.a) / (c.b - c.a) * W, cols = ['#2563eb', '#db2777', '#16a34a', '#a855f7'];
+    return { _ty: 'line', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q,
+      init: () => ({ f: c.vals.map(() => 0), ok: false }),
+      view: d => { let s = LN(X0 - 20, 240, X0 + W + 20, 240, '#334155', 4);
+        for (let i = 0; i <= N; i++) { const v = c.a + unit * i, x = xv(v); s += LN(x, 230, x, 252, '#334155', i % (c.lab || 1) ? 1.5 : 3) + (i % (c.lab || 1) === 0 ? TX(x, 282, c.fmt ? c.fmt(v) : v, { fs: 17, fill: '#334155', w: 900 }) : ''); }
+        c.vals.forEach((val, j) => { const fv = c.a + unit * d.f[j], x = xv(fv), y = 120 - j * 0, ok = Math.abs(fv - val) < 1e-6, col = cols[j];
+          s += LN(x, 240, x, 140 - j * 26, col, 4) + `<path d="M${x},${140 - j * 26} h70 l-12,12 l12,12 h-70z" fill="${col}"/>` + TX(x + 32, 157 - j * 26, c.names[j], { fs: 14, fill: '#fff', w: 900 });
+          if (ok) s += `<circle cx="${x}" cy="240" r="8" fill="${col}"/>`;
+          if (!d.ok) s += M4.grip('f' + j, d.f[j], 0, N, [1, 0], W / N, [[x - 20, 130 - j * 26, 92, 34]], ''); });
+        s += M4.hand(480, 360, [1, 0], '깃발을 잡고 끌어요', { two: true, pulse: false, ly: 40 });
+        const fig = M4.svg(960, 420, s);
+        const info = M4.rows('🚩 수직선', c.vals.map((v, j) => [c.names[j], c.fmt ? c.fmt(v) : v, '', 0, Math.abs(c.a + unit * d.f[j] - v) < 1e-6 ? 'ok' : '']), `작은 눈금 한 칸은 ${c.fmt ? c.fmt(unit) : unit}이에요.`) + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return M4.box(fig, info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (x !== 'end') { d.f[+kk.slice(1)] = +x; api.clear(); return; } if (c.vals.every((v, j) => Math.abs(c.a + unit * d.f[j] - v) < 1e-6)) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { c.vals.forEach((v, j) => on('act:m4set', 'f' + j + ':' + Math.round((v - c.a) / unit), null)); on('act:m4set', 'f0:end', null); } }; }
+
+  return { piece, PV, GROUP, ADD, JUMP, SIZE, STACK, EXCH, MAG, CUT, ALIGN, LADDER, LINE };
+})();
 
 
 
-/* 4-1-1-5 수의 크기 비교 — 기본 개념 4가지 */
+
+/* 4-1-1-5 수의 크기 비교 — 자리 맞추기·돋보기·수직선 직접 조작 (B1) */
 (function () {
-  const R = ckRead;
-  const table = (nums, L, mark) => { const cols = Array.from({ length: L }, (_, i) => L - 1 - i);
-    return `<table class="cktable"><tr><td style="background:#f1f5f9"></td>${cols.map(k => `<td style="background:#f1f5f9;font-size:.72rem">${CKN[k]}</td>`).join('')}</tr>`
-      + nums.map((n, r) => `<tr><td style="background:#f1f5f9">${'가나'[r]}</td>${cols.map(k => { const s = n == null ? '' : String(n), d = k < s.length ? s[s.length - 1 - k] : ''; return `<td class="${mark && mark[k] ? 'lit' : ''}">${d}</td>`; }).join('')}</tr>`).join('') + '</table>'; };
-  /* ⚖️ 진짜 저울: 무거운 쪽(큰 수)으로 기울고, 흔들리다 멈춰요 */
-  const BAL = window.CKBAL = window.CKBAL || { last: 0, raf: 0 };
-  const balDraw = ang => { const r = ang * Math.PI / 180, cx = 210, cy = 70, L = 150, lx = cx - L * Math.cos(r), ly = cy - L * Math.sin(r), rx = cx + L * Math.cos(r), ry = cy + L * Math.sin(r);
-    const g = id => document.getElementById(id); const arm = g('ckbArm'), pl = g('ckbPL'), pr = g('ckbPR'); if (!arm) return false;
-    arm.setAttribute('x1', lx); arm.setAttribute('y1', ly); arm.setAttribute('x2', rx); arm.setAttribute('y2', ry);
-    pl.setAttribute('transform', `translate(${lx},${ly})`); pr.setAttribute('transform', `translate(${rx},${ry})`); return true; };
-  const balGo = tg => { cancelAnimationFrame(BAL.raf); const from = BAL.last, t0 = performance.now();
-    const step = now => { const t = Math.min(1, (now - t0) / 1300), a = tg + (from - tg) * Math.exp(-4.2 * t) * Math.cos(11 * t); if (!balDraw(t >= 1 ? tg : a)) return; BAL.last = t >= 1 ? tg : a; if (t < 1) BAL.raf = requestAnimationFrame(step); else { BAL.last = tg; try { if (tg !== from && tg !== 0) Sound.pop(); } catch (e) {} } };
-    BAL.raf = requestAnimationFrame(step); };
-  const beam = (a, b) => { const tg = a == null || b == null ? 0 : a > b ? -11 : a < b ? 11 : 0; setTimeout(() => balGo(tg), 40);
-    const pan = (id, lab, v, col) => `<g id="${id}"><line x1="0" y1="0" x2="-34" y2="58" stroke="#64748b" stroke-width="2"/><line x1="0" y1="0" x2="34" y2="58" stroke="#64748b" stroke-width="2"/><path d="M-50 58 Q0 92 50 58 Z" fill="${col}" stroke="#92400e" stroke-width="3"/><text x="0" y="99" text-anchor="middle" font-size="15" font-weight="900" fill="#78350f">${lab}${v ? ' ' + v : ''}</text></g>`;
-    const sh = n => n == null ? '' : String(n).length + '자리';
-    return `<div class="ckbal"><svg viewBox="0 0 420 210" width="420" height="210" style="max-width:100%;height:auto"><path d="M170 200 L250 200 L224 180 L196 180 Z" fill="#92400e"/><rect x="204" y="70" width="12" height="112" rx="5" fill="#b45309"/>`
-      + `<line id="ckbArm" x1="60" y1="70" x2="360" y2="70" stroke="#78350f" stroke-width="10" stroke-linecap="round"/>${pan('ckbPL', '가', sh(a), '#fde68a')}${pan('ckbPR', '나', sh(b), '#bfdbfe')}<circle cx="210" cy="70" r="11" fill="#facc15" stroke="#78350f" stroke-width="3"/>`
-      + `<text x="210" y="24" text-anchor="middle" font-size="16" font-weight="900" fill="${tg ? '#dc2626' : '#475569'}">${a == null || b == null ? '두 수를 올려요' : tg < 0 ? '가 쪽이 더 무거워요 → 가가 더 커요' : tg > 0 ? '나 쪽이 더 무거워요 → 나가 더 커요' : '수평 → 두 수가 같아요'}</text></svg></div>`; };
-  setTimeout(() => balDraw(BAL.last), 0);
-  /* 두 수를 자릿값 표에 끌어 놓으면 끝자리가 맞춰지고 저울이 기울어요 */
-  const align = (t, kind, cards, q, say) => ({ _ty: 'align', _o: { n: cards.length }, t, kind, q,
-    init: () => ({ put: [null, null] }),
-    view: d => { const a = d.put[0] != null ? cards[0].v : null, b = d.put[1] != null ? cards[1].v : null, L = Math.max(String(cards[0].v).length, String(cards[1].v).length);
-      return `<div class="ckgrid2">${[0, 1].map(i => `<div class="ckzone" data-dz="ck-row" data-i="${i}">${'가나'[i]} 칸 ${d.put[i] != null ? `✅ <b>${cards[i].show}</b>` : '<br><small>카드를 여기에</small>'}</div>`).join('')}</div>`
-        + table([a, b], L) + (a != null && b != null ? beam(a, b) + `<div class="ckbig" style="font-size:1rem">가: ${String(a).length}자리 · 나: ${String(b).length}자리</div>` : '')
-        + (d.put.some(x => x == null) ? ckSrc('✋ 수 카드를 끌어 가·나 칸에 놓아요', cards.map((c, i) => d.put[i] == null ? ckPiece('ck-card', i, `<b>${c.show}</b>`) : '').join('')) : ''); },
-    on: { 'ck-card:drop'(d, v, z, el, api) { if (z !== 'ck-row') return; const i = +el.dataset.i; if (i !== +v) { api.say(false, `이 카드는 <b>${'가나'[+v]}</b> 칸에 놓아요.`, true); return; } d.put[i] = 1; try { Sound.pop(); } catch (e) {} api.clear(); if (d.put.every(x => x != null)) api.win(say()); } } });
-  /* 높은 자리부터: 돋보기를 한 칸씩 아래 자리로 끌어 내려요 */
-  const ladder = (t, kind, a, b, say) => { const L = String(a).length, diff = (() => { for (let k = L - 1; k >= 0; k--) if (String(a)[L - 1 - k] !== String(b)[L - 1 - k]) return k; })();
-    return { _ty: 'ladder', _o: { L, diff }, t, kind, q: d => `가장 높은 자리부터 숫자를 비교해요. 🔍 돋보기를 <b>한 칸 아래 자리</b>로 끌어 내리며 처음으로 숫자가 다른 자리를 찾아요.`,
-      init: () => ({ at: L - 1 }),
-      view: d => { const mk = {}; for (let k = L - 1; k >= d.at; k--) mk[k] = 1; const cols = Array.from({ length: L }, (_, i) => L - 1 - i);
-        return table([a, b], L, mk) + `<table class="cktable"><tr><td style="background:#f1f5f9">🔍</td>${cols.map(k => `<td class="dz" data-dz="ck-col" data-i="${k}">${k === d.at ? '🔍' : ''}</td>`).join('')}</tr></table>`
-          + `<div class="ckbig" style="font-size:1.05rem">${CKN[d.at]}의 자리: 가 ${String(a)[L - 1 - d.at]} ${String(a)[L - 1 - d.at] === String(b)[L - 1 - d.at] ? '=' : String(a)[L - 1 - d.at] > String(b)[L - 1 - d.at] ? '>' : '<'} 나 ${String(b)[L - 1 - d.at]}</div>`
-          + beam(d.at <= diff ? a : null, d.at <= diff ? b : null) + (d.at > diff ? ckSrc('✋ 돋보기를 끌어 바로 아래 자리 칸에 놓아요', ckPiece('ck-mag', 1, '<b>🔍 돋보기</b>')) : ''); },
-      on: { 'ck-mag:drop'(d, v, z, el, api) { if (z !== 'ck-col') return; const k = +el.dataset.i; if (k !== d.at - 1) { api.say(false, '돋보기는 <b>바로 아래 자리</b>로 한 칸씩 옮겨요.', true); return; } d.at = k; try { Sound.pop(); } catch (e) {} api.clear(); if (d.at === diff) api.win(say()); } } }; };
   CK.install([
-    { k: 'len', vk: 'tilt', icon: '⚖️', name: '자릿수 저울', short: '자리 수가 다르면?', dnd: ['ck-card'],
-      sub: '두 수를 자릿값 표에 끌어 놓고 저울이 어느 쪽으로 기우는지 살펴보세요. 무엇이 결정했을까요?', taunt: '저울을 흔들어 버렸지!', msg: '두 수를 자릿값 표에 놓고 자리 수를 비교해 보자!',
-      summary: '두 수의 <b>자리 수가 다르면</b> 자리 수가 많은 쪽이 더 큰 수예요. 102345(6자리) > 98765(5자리).',
-      stages: [align('5자리와 6자리', null, [{ v: 98765, show: '98765' }, { v: 102345, show: '102345' }], '두 수 카드를 가·나 칸에 끌어 놓아요.', () => '나는 <b>십만의 자리</b>까지 있는 6자리 수, 가는 5자리 수! 자리 수가 많은 <b>나</b>가 더 커요.'),
-        align('확인', 'check', [{ v: 1200000000, show: '12억' }, { v: 999990000, show: '9억 9999만' }], '「12억」과 「9억 9999만」을 놓아 자리 수로 확인해요.', () => '12억은 10자리, 9억 9999만은 9자리예요. 자리 수가 많은 <b>12억</b>이 더 커요.')] },
-    { k: 'ladder', vk: 'half', icon: '🪜', name: '높은 자리부터 비교', short: '자리 수가 같으면?', dnd: ['ck-mag'],
-      sub: '자리 수가 같은 두 수는 어떻게 비교할까요? 돋보기를 한 칸씩 옮기며 찾아봐요.', taunt: '사다리 칸을 미끄럽게 만들었지!', msg: '높은 자리부터 돋보기를 내리며 비교해 보자!',
-      summary: '자리 수가 같으면 <b>가장 높은 자리부터</b> 비교해서 처음으로 숫자가 다른 자리에서 크기가 정해져요.',
-      stages: [ladder('7자리 두 수', null, 4572310, 4569999, () => '백만·십만의 자리는 같고, <b>만의 자리</b>에서 7 > 6! 그래서 4572310이 더 커요. 아랫자리 숫자는 볼 필요가 없어요.'),
-        ladder('확인', 'check', 328400000, 328050000, () => '억·천만·백만의 자리가 같고 <b>십만의 자리</b>에서 4 > 0! 3억 2840만이 더 커요.')] },
-    { k: 'same', vk: 'mixup', icon: '🔁', name: '같은 모양으로 비교', short: '모양이 다른 두 수', dnd: ['ck-card'],
-      sub: '읽는 말과 숫자가 섞여 있어요. 어떻게 하면 쉽게 비교할 수 있을지 자릿값 표에 놓아 보세요.', taunt: '글자와 숫자를 뒤섞어 놨지~', msg: '두 수를 같은 모양으로 바꿔 비교해 보자!',
-      summary: '모양이 다른 수는 <b>같은 모양으로 나타낸 뒤</b> 자리 수와 높은 자리부터 비교해요. 3억(9자리) > 29990000(8자리).',
-      stages: [align('3억과 29990000', null, [{ v: 300000000, show: '3억' }, { v: 29990000, show: '29990000' }], '「3억」과 「29990000」을 표에 놓아 같은 모양으로 비교해요.', () => '3억은 300000000(9자리), 29990000은 8자리! <b>3억</b>이 더 커요.'),
-        align('확인', 'check', [{ v: 4030000000000, show: '4조 300억' }, { v: 4003000000000, show: '4003000000000' }], '두 수를 표에 놓아 같은 모양으로 바꿔 확인해요.', () => '둘 다 13자리! 조의 자리 4와 천억의 자리 0이 같고, <b>백억의 자리</b>에서 3 > 0이라 <b>4조 300억</b>이 더 커요.')] },
-    { k: 'line', vk: 'clock', icon: '🔭', name: '수직선에 놓기', short: '수직선에 꽂아 보기', dnd: ['ck-flag'],
-      sub: '두 수를 수직선 위 알맞은 자리에 꽂아 보세요. 놓인 자리와 수의 크기는 어떤 관계일까요?', taunt: '수직선 눈금을 지워 버렸지!', msg: '두 수를 수직선에 꽂아 크기를 비교해 보자!',
-      summary: '수직선에서는 <b>오른쪽에 있는 수일수록 커요</b>. 7000만은 3000만보다 오른쪽에 있어요.',
-      stages: [CKS.place({ t: '0~1억', a: 0, b: 100000000, n: 10, labels: [[0, '0'], [50000000, '5000만'], [100000000, '1억']], vals: [30000000, 70000000], names: ['3000만', '7000만'], icons: ['🔵', '🔴'], q: '3000만과 7000만 깃발을 수직선에 꽂아요. 한 칸은 1000만이에요.', say: () => '7000만이 3000만보다 <b>오른쪽</b>에 있어요. 오른쪽에 있는 수가 더 커요.' }),
-        CKS.place({ kind: 'check', t: '확인', a: 4e12, b: 5e12, n: 10, labels: [[4e12, '4조'], [5e12, '5조']], vals: [4.7e12, 4.2e12], names: ['4조 7000억', '4조 2000억'], icons: ['🔵', '🔴'], q: '4조 7000억과 4조 2000억을 꽂아 스스로 확인해요. 한 칸은 1000억이에요.', say: () => '4조 7000억이 더 오른쪽! <b>4조 7000억 > 4조 2000억</b>이에요.' })] }
+    { k: 'len', vk: 'tilt', icon: '⚖️', name: '자릿수 저울', short: '자리 수부터', dnd: [],
+      sub: '두 수 띠를 끌어 자리 표의 맨 오른쪽(일의 자리)에 맞춰 보세요. 어느 수가 더 클까요?', taunt: '앞 숫자가 크면 큰 수지!', msg: '두 수의 자리를 맞춰 비교해 보자!',
+      summary: '자리 수가 다르면 <b>자리 수가 많은 쪽</b>이 더 큰 수예요. 9600000 &lt; 14400000',
+      stages: [B1.ALIGN({ t: '콩과 쌀', a: 9600000, b: 14400000, q: '두 수 띠를 <b>오른쪽으로 끌어</b> 일의 자리를 맞춰요.', done: '7자리 &lt; 8자리 → 9600000 &lt; <b>14400000</b>', say: () => '9600000은 7자리, 14400000은 8자리! <b>14400000이 더 커요</b>.' }),
+        B1.ALIGN({ t: '확인', kind: 'check', a: 5106730, b: 423518, q: '이번 두 수도 자리를 맞춰 비교해요.', done: '<b>5106730</b> &gt; 423518', say: () => '7자리 &gt; 6자리! <b>5106730이 더 커요</b>.' })] },
+    { k: 'ladder', vk: 'half', icon: '🪜', name: '높은 자리부터 비교', short: '처음 다른 자리', dnd: [],
+      sub: '돋보기 칸을 높은 자리부터 끌어 처음으로 숫자가 다른 자리를 찾아보세요.', taunt: '끝자리를 비교하면 되지!', msg: '높은 자리부터 차례로 비교해 보자!',
+      summary: '자리 수가 같으면 <b>가장 높은 자리부터</b> 차례로 비교해서, 처음으로 다른 자리의 숫자가 큰 쪽이 더 큰 수예요.',
+      stages: [B1.LADDER({ t: '1273조·1281조', a: 1273000000000, b: 1281000000000, q: '주황 칸을 <b>오른쪽으로 끌어</b> 처음으로 숫자가 다른 자리에 멈춰요.', say: () => '백억의 자리에서 7 &lt; 8! <b>1281000000000이 더 커요</b>.' }),
+        B1.LADDER({ t: '확인', kind: 'check', a: 387653000, b: 387461000, q: '두 수를 높은 자리부터 비교해요.', say: () => '십만의 자리에서 6 &gt; 4! <b>387653000이 더 커요</b>.' })] },
+    { k: 'same', vk: 'mixup', icon: '🔁', name: '같은 모양으로 비교', short: '억 단위로 맞추기', dnd: [],
+      sub: '숫자로만 쓴 수를 칸막이로 끊어 「억」 단위로 바꿔 보세요. 그러면 비교가 쉬워져요.', taunt: '0이 많으면 무조건 커!', msg: '같은 모양으로 바꿔 비교해 보자!',
+      summary: '읽는 말과 숫자가 섞여 있으면 <b>같은 모양</b>으로 바꾸어 비교해요. 236700000000 = 2367억',
+      stages: [B1.CUT({ t: '다누리호 2367억', num: 236700000000, q: '다누리호 개발 비용 <b>236700000000원</b>을 칸막이로 끊어 억 단위로 읽어요. (나로호 5025억, 누리호 1조 9572억)', say: () => '<b>2367억</b>! 그래서 누리호(1조 9572억) &gt; 나로호(5025억) &gt; 다누리호(2367억)예요.' }),
+        B1.CUT({ t: '확인', kind: 'check', num: 4900000000, q: '<b>4900000000</b>을 끊어 49억과 비교해요.', say: () => '<b>49억</b>! 두 수는 같아요.' })] },
+    { k: 'line', vk: 'clock', icon: '🚩', name: '수직선에 놓기', short: '오른쪽일수록 큰 수', dnd: [],
+      sub: '깃발을 끌어 수직선의 알맞은 자리에 꽂아 보세요. 오른쪽에 있을수록 어떤 수일까요?', taunt: '수직선은 아무 데나 꽂으면 돼!', msg: '깃발을 꽂아 크기를 비교해 보자!',
+      summary: '수직선에서 <b>오른쪽에 있는 수일수록 큰 수</b>예요.',
+      stages: [B1.LINE({ t: '250만과 400만', a: 2000000, b: 5000000, n: 30, lab: 10, fmt: v => (v / 10000) + '만', vals: [2500000, 4000000], names: ['250만', '400만'], q: '두 깃발을 끌어 <b>250만</b>과 <b>400만</b>의 자리에 꽂아요.', done: '400만이 더 오른쪽 → <b>400만 &gt; 250만</b>', say: () => '400만이 더 오른쪽! <b>400만이 더 커요</b>.' }),
+        B1.LINE({ t: '확인', kind: 'check', a: 2000000000000, b: 3000000000000, n: 10, lab: 5, fmt: v => (v % 1e12 ? `${Math.floor(v / 1e12)}조 ${(v % 1e12) / 1e8}억` : `${v / 1e12}조`), vals: [2300000000000, 2800000000000], names: ['2조3000억', '2조8000억'], q: '<b>2조 3000억</b>과 <b>2조 8000억</b>에 깃발을 꽂아요.', done: '2조 8000억 &gt; 2조 3000억', say: () => '<b>2조 8000억</b>이 더 오른쪽, 더 커요!' })] }
   ]);
 })();
 
@@ -8060,137 +8378,6 @@ const CKS = {
 })();
 
 </script><!--JO-END-->
-<!--FM-START--><style>.fmcard{margin-top:12px!important;border:3px solid #a78bfa!important;background:linear-gradient(180deg,#faf5ff,#fff)!important;padding:12px 14px!important;text-align:left}
-.fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
-.fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
-.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
-.fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
-.fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
-.fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
-.fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
-.fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
-.fmops{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmop{border:2px solid #c4b5fd;background:#fff;border-radius:10px;padding:3px 12px;font-weight:900;font-size:1rem;cursor:pointer}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
-@keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
-.fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
-.fmseq{display:flex;align-items:center;flex-wrap:wrap;gap:3px;font-weight:900;font-size:.85rem}.fmseq b{border:2px solid #60a5fa;border-radius:6px;padding:1px 6px;background:#eff6ff}.fmseq i{color:#ea580c;font-style:normal}
-.fmgr{border-collapse:collapse}.fmgr td{border:1.5px solid #93c5fd;padding:2px 6px;font-weight:900;font-size:.8rem;text-align:center}
-.fmbox{border-radius:10px;padding:6px 10px;font-weight:900;font-size:.95rem;text-align:center;border:2px solid #cbd5e1}
-@media(max-width:700px){.fmrows{grid-template-columns:minmax(0,1fr)}.fmf{font-size:1rem}}
-.fmp-t{break-inside:avoid;margin:6px 0 10px}.fmp-r{display:flex;align-items:center;gap:10px;margin:5px 0 5px 10px;break-inside:avoid}.fmp-pic{flex:none;max-width:44%}.fmp-pic svg{max-width:100%;height:auto}
-.fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
-.fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
-</style><script>
-/* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
-(function () {
-  if (window.__FM) return; window.__FM = 1;
-  const SV = n => '<svg viewBox="0 0 ' + n[0] + ' ' + n[1] + '" width="' + n[0] + '" height="' + n[1] + '" class="fmsvg">';
-  const T = (x, y, t, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || 'middle') + '" font-size="' + (o.s || 13) + '" font-weight="900" fill="' + (o.c || '#334155') + '">' + t + '</text>'; };
-  const rad = d => d * Math.PI / 180;
-  const P = window.FMP = {
-    blk: (lab, n, col, w) => '<div class="fmblk">' + Array.from({ length: n }, () => '<span style="background:' + (col || '#dbeafe') + ';min-width:' + (w || 34) + 'px">' + lab + '</span>').join('') + '</div>',
-    pv: cols => '<table class="fmpv"><tr>' + cols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr><tr>' + cols.map(c => '<td' + (c[2] ? ' class="hl"' : '') + '>' + c[1] + '</td>').join('') + '</tr></table>',
-    seq: (a, op) => '<div class="fmseq">' + a.map((x, i) => (i ? '<i>' + (op || '→') + '</i>' : '') + '<b>' + x + '</b>').join('') + '</div>',
-    nl: (labs, jump) => { const W = 230, n = labs.length, g = (W - 30) / (n - 1); let s = SV([W, 62]) + '<line x1="10" y1="44" x2="' + (W - 6) + '" y2="44" stroke="#475569" stroke-width="2"/>';
-      labs.forEach((l, i) => { const x = 15 + i * g; s += '<line x1="' + x + '" y1="38" x2="' + x + '" y2="50" stroke="#475569" stroke-width="2"/>' + T(x, 60, l, { s: 10 }); if (i && jump) s += '<path d="M' + (x - g + 3) + ' 36 Q' + (x - g / 2) + ' 8 ' + (x - 3) + ' 36" fill="none" stroke="#ea580c" stroke-width="2"/>' + T(x - g / 2, 16, jump, { s: 10, c: '#ea580c' }); });
-      return s + '</svg>'; },
-    ang: (d, o) => { o = o || {}; const W = 150, H = d > 95 ? 92 : 100, cx = d > 95 ? 80 : 20, cy = H - 14, L = 110 * (o.k || 1), r = 26;
-      const x2 = cx + L * Math.cos(rad(d)), y2 = cy - L * Math.sin(rad(d)) * (d > 95 ? .75 : 1);
-      let s = SV([W + (d > 95 ? 0 : 0), H]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + Math.min(W - 4, cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#1d4ed8" stroke-width="3"/>';
-      s += d === 90 ? '<path d="M' + (cx + 14) + ' ' + cy + ' v-14 h-14" fill="none" stroke="#ea580c" stroke-width="2"/>' : '<path d="M' + (cx + r) + ' ' + cy + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d))) + ' ' + (cy - r * Math.sin(rad(d)) * (d > 95 ? .75 : 1)) + '" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>';
-      if (o.lab !== false) s += T(cx + 40 * Math.cos(rad(d / 2)) + 4, cy - 34 * Math.sin(rad(d / 2)), o.lab || d + '°', { s: 12, c: '#c2410c' });
-      return s + '</svg>'; },
-    two: (a, b, o) => { o = o || {}; const cx = 75, cy = 88, L = 70; let s = SV([160, 100]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/>';
-      [a, a + b].forEach(d => { s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L * Math.cos(rad(d))) + '" y2="' + (cy - L * Math.sin(rad(d))) + '" stroke="#1d4ed8" stroke-width="3"/>'; });
-      const arc = (d0, d1, r, c) => '<path d="M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(rad(d0))) + ' ' + (cy - r * Math.sin(rad(d0))) + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d1))) + ' ' + (cy - r * Math.sin(rad(d1))) + 'Z" fill="' + c + '" opacity=".55"/>';
-      s += arc(0, a, 30, '#c4b5fd') + arc(a, a + b, 30, '#fdba74') + T(cx + 44 * Math.cos(rad(a / 2)), cy - 40 * Math.sin(rad(a / 2)) + 4, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx + 46 * Math.cos(rad(a + b / 2)), cy - 44 * Math.sin(rad(a + b / 2)) + 4, o.lb || b + '°', { s: 11, c: '#c2410c' });
-      return s + '</svg>'; },
-    line: (a, o) => { o = o || {}; const cx = 80, cy = 70; let s = SV([160, 80]) + '<line x1="6" y1="' + cy + '" x2="154" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 70 * Math.cos(rad(a))) + '" y2="' + (cy - 60 * Math.sin(rad(a))) + '" stroke="#1d4ed8" stroke-width="3"/>';
-      return s + T(cx + 36 * Math.cos(rad(a / 2)) + 6, cy - 14, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx - 34, cy - 14, o.lb || '?', { s: 11, c: '#c2410c' }) + '</svg>'; },
-    tri: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [60, 12]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/>';
-      const at = [[30, 80], [128, 80], [62, 34]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#c2410c' }); }); return s + '</svg>'; },
-    quad: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [134, 18], [38, 10]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>' + (o.diag ? '<line x1="14" y1="86" x2="134" y2="18" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>' : '');
-      const at = [[32, 80], [130, 80], [122, 32], [46, 26]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#15803d' }); }); return s + '</svg>'; },
-    push: (dx, dy) => { const c = 14, W = 12 * c, H = 7 * c; let s = SV([W, H]); for (let x = 0; x <= 12; x++) s += '<line x1="' + x * c + '" y1="0" x2="' + x * c + '" y2="' + H + '" stroke="#e2e8f0"/>'; for (let y = 0; y <= 7; y++) s += '<line x1="0" y1="' + y * c + '" x2="' + W + '" y2="' + y * c + '" stroke="#e2e8f0"/>';
-      const ox = dx >= 0 ? 1 : 8, oy = dy >= 0 ? 1 : 4, tri = (x, y, f, l, d) => '<polygon points="' + [[x, y], [x, y + 2], [x + 3, y + 2]].map(q => q[0] * c + ',' + q[1] * c).join(' ') + '" fill="' + f + '" stroke="' + l + '" stroke-width="2"' + (d ? ' stroke-dasharray="4 3"' : '') + '/>';
-      return s + tri(ox, oy, '#f1f5f9', '#94a3b8', 1) + tri(ox + dx, oy + dy, '#bfdbfe', '#1d4ed8') + '<line x1="' + ox * c + '" y1="' + oy * c + '" x2="' + (ox + dx) * c + '" y2="' + (oy + dy) * c + '" stroke="#ea580c" stroke-width="2" marker-end="url(#fmA)"/><defs><marker id="fmA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#ea580c"/></marker></defs></svg>'; },
-    bars: (v, step, o) => { o = o || {}; const n = v.length, W = 40 + n * 34, H = 110, top = Math.max(...v) / step, k = 80 / Math.max(top, 1); let s = SV([W, H]) + '<line x1="30" y1="96" x2="' + (W - 4) + '" y2="96" stroke="#475569" stroke-width="2"/><line x1="30" y1="96" x2="30" y2="8" stroke="#475569" stroke-width="2"/>';
-      for (let i = 0; i <= top; i++) s += '<line x1="30" y1="' + (96 - i * k) + '" x2="' + (W - 4) + '" y2="' + (96 - i * k) + '" stroke="#e2e8f0"/>' + (o.nolab ? '' : T(24, 100 - i * k, i * step, { s: 9, a: 'end' }));
-      v.forEach((x, i) => { const h = x / step * k; s += '<rect x="' + (40 + i * 34) + '" y="' + (96 - h) + '" width="22" height="' + h + '" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399', '#f472b6'][i % 5] + '"/>'; });
-      return s + '</svg>'; },
-    hbars: (v, step) => { const n = v.length, H = 20 + n * 22, top = Math.max(...v) / step, k = 110 / top; let s = SV([150, H]) + '<line x1="20" y1="4" x2="20" y2="' + (H - 6) + '" stroke="#475569" stroke-width="2"/>';
-      v.forEach((x, i) => { s += '<rect x="20" y="' + (8 + i * 22) + '" width="' + x / step * k + '" height="14" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399'][i % 4] + '"/>'; }); return s + '</svg>'; },
-    clock: h => { const cx = 50, cy = 50; let s = SV([100, 100]) + '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#334155" stroke-width="3"/>';
-      for (let i = 1; i <= 12; i++) s += T(cx + 34 * Math.sin(rad(i * 30)), cy - 34 * Math.cos(rad(i * 30)) + 4, i, { s: 10 });
-      return s + '<line x1="50" y1="50" x2="50" y2="14" stroke="#1d4ed8" stroke-width="3"/><line x1="50" y1="50" x2="' + (cx + 24 * Math.sin(rad(h * 30))) + '" y2="' + (cy - 24 * Math.cos(rad(h * 30))) + '" stroke="#dc2626" stroke-width="4"/></svg>'; },
-    grid: (rows, hl) => '<table class="fmgr">' + rows.map((r, i) => '<tr>' + r.map((x, j) => '<td' + (hl && hl.some(q => q[0] === i && q[1] === j) ? ' class="hl"' : '') + '>' + x + '</td>').join('') + '</tr>').join('') + '</table>',
-    box: (t, c) => '<div class="fmbox" style="background:' + (c || '#f1f5f9') + '">' + t + '</div>'
-  };
-  const D = () => window.SV_FM || null;
-  const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
-  const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
-  const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
-  function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
-  function html(k) {
-    const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
-    let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
-    R.forEach((r, i) => { const v = S.a[i], on = i === nx;
-      h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
-        + '<div class="fmf">' + slot(r[1], v) + (on ? '<div class="fmops">' + r[3].map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '') + '</div></div>'; });
-    h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
-    return h;
-  }
-  function inject() {
-    if (!D()) return; const k = curTool(); if (!k || !D()[k]) return;
-    const card = document.querySelector('.svsl-tc') || document.querySelector('#toolBody > .antool, #toolBody > .card') || [...document.querySelectorAll('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head'));
-    if (!card) return; const done = card.querySelector('.andone'); const old = card.querySelector('.fmcard');
-    if (!done) { if (old) old.remove(); return; }
-    if (old && old.dataset.fm === k && old.dataset.v === JSON.stringify(ST(k))) return;
-    const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
-    if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('.fmop'); if (!b) return; const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
-    if (String(b.dataset.fmv) === String(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
-      S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
-      try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
-    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); }
-    try { touch('s1'); } catch (er) {} inject();
-  });
-  let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
-  const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
-  /* 인쇄 ① 개념 정리: [그림 | 식(빈 상자)] */
-  window.FM_PRINT = function () {
-    const F = D(); if (!F) return null; const keys = Object.keys(F); let h = '<div class="fmp">', ans = [];
-    keys.forEach((k, ti) => { const t = F[k]; h += '<div class="fmp-t"><b>' + (ti + 1) + '. ' + (t.name || t.t || '') + '</b>';
-      rowsOf(t).forEach((r, i) => { h += '<div class="fmp-r">' + (r[0] != null ? '<div class="fmp-pic">' + r[0] + '</div><div class="fmp-ar">➜</div>' : '<div class="fmp-rl">🔑</div>') + '<div class="fmp-f">' + r[1].replace('{?}', '<span class="fmp-b"></span>') + '</div></div>'; });
-      h += '</div>'; ans.push((ti + 1) + '. ' + rowsOf(t).map(r => r[2]).join(' / ')); });
-    return { html: h + '</div>', key: ans.join('<br>') };
-  };
-})();
-
-window.SV_FM = {
- len: { name: '자릿수 저울', t: '자리 수부터', rows: [
-  [FMP.pv([['', '5자리'], ['', '52340']]) + FMP.pv([['', '6자리'], ['', '103000']]), '52340 {?} 103000', '<', ['<', '>', '=']],
-  [FMP.box('9자리 vs 8자리'), '자리 수가 더 {?} 수가 더 커요.', '많은', ['많은', '적은', '같은']]],
-  rule: ['자리 수가 다르면 자리 수가 {?} 쪽이 큰 수예요.', '많은', ['많은', '적은', '같은']], sum: '먼저 자리 수를 비교해요.' },
- ladder: { name: '높은 자리부터 비교', t: '처음 다른 자리', rows: [
-  [FMP.pv([['백만', 4], ['십만', 5, 1], ['만', 2]]) + FMP.pv([['백만', 4], ['십만', 3, 1], ['만', 8]]), '4520000 {?} 4380000', '>', ['>', '<', '=']],
-  [FMP.box('9,5<b>6</b>0,000 / 9,5<b>2</b>9,999'), '처음으로 다른 자리 숫자는 6과 {?}', '2', ['2', '5', '9']]],
-  rule: ['자리 수가 같으면 가장 {?} 자리부터 차례로 비교해요.', '높은', ['높은', '낮은', '가운데']], sum: '처음으로 다른 자리 숫자가 큰 수가 더 커요.' },
- same: { name: '같은 모양으로 비교', t: '모양 맞추기', rows: [
-  [FMP.box('3억 2000만 ○ 3억 5000만'), '3억 2000만 {?} 3억 5000만', '<', ['<', '>', '=']],
-  [FMP.box('49억 ○ 4,900,000,000'), '49억 {?} 4900000000', '=', ['=', '<', '>']]],
-  rule: ['읽는 말과 숫자가 섞여 있으면 같은 {?}으로 바꾸어 비교해요.', '모양', ['모양', '색', '길이']], sum: '수를 같은 모양으로 나타내면 비교하기 쉬워요.' },
- line: { name: '수직선에 놓기', t: '오른쪽일수록', rows: [
-  [FMP.nl(['250만', '400만'], ''), '수직선에서 400만은 250만보다 {?}쪽에 있어요.', '오른', ['오른', '왼', '같은']],
-  [FMP.nl(['2조', '2조 3000억', '3조'], ''), '2조 3000억 {?} 2조', '>', ['>', '<', '=']]],
-  rule: ['수직선에서 오른쪽에 있는 수일수록 더 {?} 수예요.', '큰', ['큰', '작은', '같은']], sum: '수직선의 위치로 크기를 비교할 수 있어요.' }
-};
-
-</script><!--FM-END-->
 <!--NET-START--><style>.svnet-card{border:2.5px dashed #a78bfa;border-radius:16px;padding:10px 14px;margin:10px 0;background:#faf5ff}
 .svnet-link{display:flex;gap:6px;margin:8px 0}.svnet-link input{flex:1;min-width:0;border:2px solid #c4b5fd;border-radius:10px;padding:6px 8px;font-size:.8rem}
 .svnet-pl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 12px}.svnet-pl>div{border:2px solid #e9d5ff;border-radius:12px;padding:6px 10px;font-weight:800;background:#fff}.svnet-pl>div.me{border-color:#7c3aed;background:#f5f3ff}
@@ -8455,6 +8642,138 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 })();
 
 </script><!--FR-END-->
+<!--FM-START--><style>.fmcard{margin-top:12px!important;border:3px solid #a78bfa!important;background:linear-gradient(180deg,#faf5ff,#fff)!important;padding:12px 14px!important;text-align:left}
+.fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
+.fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
+.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
+.fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
+.fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
+.fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
+.fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
+.fmops{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmop{border:2px solid #c4b5fd;background:#fff;border-radius:10px;padding:3px 12px;font-weight:900;font-size:1rem;cursor:pointer}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
+@keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
+.fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
+.fmseq{display:flex;align-items:center;flex-wrap:wrap;gap:3px;font-weight:900;font-size:.85rem}.fmseq b{border:2px solid #60a5fa;border-radius:6px;padding:1px 6px;background:#eff6ff}.fmseq i{color:#ea580c;font-style:normal}
+.fmgr{border-collapse:collapse}.fmgr td{border:1.5px solid #93c5fd;padding:2px 6px;font-weight:900;font-size:.8rem;text-align:center}
+.fmbox{border-radius:10px;padding:6px 10px;font-weight:900;font-size:.95rem;text-align:center;border:2px solid #cbd5e1}
+@media(max-width:700px){.fmrows{grid-template-columns:minmax(0,1fr)}.fmf{font-size:1rem}}
+.fmp-t{break-inside:avoid;margin:6px 0 10px}.fmp-r{display:flex;align-items:center;gap:10px;margin:5px 0 5px 10px;break-inside:avoid}.fmp-pic{flex:none;max-width:44%}.fmp-pic svg{max-width:100%;height:auto}
+.fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
+.fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
+.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}
+</style><script>
+/* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
+(function () {
+  if (window.__FM) return; window.__FM = 1;
+  const SV = n => '<svg viewBox="0 0 ' + n[0] + ' ' + n[1] + '" width="' + n[0] + '" height="' + n[1] + '" class="fmsvg">';
+  const T = (x, y, t, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || 'middle') + '" font-size="' + (o.s || 13) + '" font-weight="900" fill="' + (o.c || '#334155') + '">' + t + '</text>'; };
+  const rad = d => d * Math.PI / 180;
+  const P = window.FMP = {
+    blk: (lab, n, col, w) => '<div class="fmblk">' + Array.from({ length: n }, () => '<span style="background:' + (col || '#dbeafe') + ';min-width:' + (w || 34) + 'px">' + lab + '</span>').join('') + '</div>',
+    pv: cols => '<table class="fmpv"><tr>' + cols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr><tr>' + cols.map(c => '<td' + (c[2] ? ' class="hl"' : '') + '>' + c[1] + '</td>').join('') + '</tr></table>',
+    seq: (a, op) => '<div class="fmseq">' + a.map((x, i) => (i ? '<i>' + (op || '→') + '</i>' : '') + '<b>' + x + '</b>').join('') + '</div>',
+    nl: (labs, jump) => { const W = 230, n = labs.length, g = (W - 30) / (n - 1); let s = SV([W, 62]) + '<line x1="10" y1="44" x2="' + (W - 6) + '" y2="44" stroke="#475569" stroke-width="2"/>';
+      labs.forEach((l, i) => { const x = 15 + i * g; s += '<line x1="' + x + '" y1="38" x2="' + x + '" y2="50" stroke="#475569" stroke-width="2"/>' + T(x, 60, l, { s: 10 }); if (i && jump) s += '<path d="M' + (x - g + 3) + ' 36 Q' + (x - g / 2) + ' 8 ' + (x - 3) + ' 36" fill="none" stroke="#ea580c" stroke-width="2"/>' + T(x - g / 2, 16, jump, { s: 10, c: '#ea580c' }); });
+      return s + '</svg>'; },
+    ang: (d, o) => { o = o || {}; const W = 150, H = d > 95 ? 92 : 100, cx = d > 95 ? 80 : 20, cy = H - 14, L = 110 * (o.k || 1), r = 26;
+      const x2 = cx + L * Math.cos(rad(d)), y2 = cy - L * Math.sin(rad(d)) * (d > 95 ? .75 : 1);
+      let s = SV([W + (d > 95 ? 0 : 0), H]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + Math.min(W - 4, cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#1d4ed8" stroke-width="3"/>';
+      s += d === 90 ? '<path d="M' + (cx + 14) + ' ' + cy + ' v-14 h-14" fill="none" stroke="#ea580c" stroke-width="2"/>' : '<path d="M' + (cx + r) + ' ' + cy + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d))) + ' ' + (cy - r * Math.sin(rad(d)) * (d > 95 ? .75 : 1)) + '" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>';
+      if (o.lab !== false) s += T(cx + 40 * Math.cos(rad(d / 2)) + 4, cy - 34 * Math.sin(rad(d / 2)), o.lab || d + '°', { s: 12, c: '#c2410c' });
+      return s + '</svg>'; },
+    two: (a, b, o) => { o = o || {}; const cx = 75, cy = 88, L = 70; let s = SV([160, 100]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/>';
+      [a, a + b].forEach(d => { s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L * Math.cos(rad(d))) + '" y2="' + (cy - L * Math.sin(rad(d))) + '" stroke="#1d4ed8" stroke-width="3"/>'; });
+      const arc = (d0, d1, r, c) => '<path d="M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(rad(d0))) + ' ' + (cy - r * Math.sin(rad(d0))) + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d1))) + ' ' + (cy - r * Math.sin(rad(d1))) + 'Z" fill="' + c + '" opacity=".55"/>';
+      s += arc(0, a, 30, '#c4b5fd') + arc(a, a + b, 30, '#fdba74') + T(cx + 44 * Math.cos(rad(a / 2)), cy - 40 * Math.sin(rad(a / 2)) + 4, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx + 46 * Math.cos(rad(a + b / 2)), cy - 44 * Math.sin(rad(a + b / 2)) + 4, o.lb || b + '°', { s: 11, c: '#c2410c' });
+      return s + '</svg>'; },
+    line: (a, o) => { o = o || {}; const cx = 80, cy = 70; let s = SV([160, 80]) + '<line x1="6" y1="' + cy + '" x2="154" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 70 * Math.cos(rad(a))) + '" y2="' + (cy - 60 * Math.sin(rad(a))) + '" stroke="#1d4ed8" stroke-width="3"/>';
+      return s + T(cx + 36 * Math.cos(rad(a / 2)) + 6, cy - 14, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx - 34, cy - 14, o.lb || '?', { s: 11, c: '#c2410c' }) + '</svg>'; },
+    tri: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [60, 12]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/>';
+      const at = [[30, 80], [128, 80], [62, 34]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#c2410c' }); }); return s + '</svg>'; },
+    quad: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [134, 18], [38, 10]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>' + (o.diag ? '<line x1="14" y1="86" x2="134" y2="18" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>' : '');
+      const at = [[32, 80], [130, 80], [122, 32], [46, 26]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#15803d' }); }); return s + '</svg>'; },
+    push: (dx, dy) => { const c = 14, W = 12 * c, H = 7 * c; let s = SV([W, H]); for (let x = 0; x <= 12; x++) s += '<line x1="' + x * c + '" y1="0" x2="' + x * c + '" y2="' + H + '" stroke="#e2e8f0"/>'; for (let y = 0; y <= 7; y++) s += '<line x1="0" y1="' + y * c + '" x2="' + W + '" y2="' + y * c + '" stroke="#e2e8f0"/>';
+      const ox = dx >= 0 ? 1 : 8, oy = dy >= 0 ? 1 : 4, tri = (x, y, f, l, d) => '<polygon points="' + [[x, y], [x, y + 2], [x + 3, y + 2]].map(q => q[0] * c + ',' + q[1] * c).join(' ') + '" fill="' + f + '" stroke="' + l + '" stroke-width="2"' + (d ? ' stroke-dasharray="4 3"' : '') + '/>';
+      return s + tri(ox, oy, '#f1f5f9', '#94a3b8', 1) + tri(ox + dx, oy + dy, '#bfdbfe', '#1d4ed8') + '<line x1="' + ox * c + '" y1="' + oy * c + '" x2="' + (ox + dx) * c + '" y2="' + (oy + dy) * c + '" stroke="#ea580c" stroke-width="2" marker-end="url(#fmA)"/><defs><marker id="fmA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#ea580c"/></marker></defs></svg>'; },
+    bars: (v, step, o) => { o = o || {}; const n = v.length, W = 40 + n * 34, H = 110, top = Math.max(...v) / step, k = 80 / Math.max(top, 1); let s = SV([W, H]) + '<line x1="30" y1="96" x2="' + (W - 4) + '" y2="96" stroke="#475569" stroke-width="2"/><line x1="30" y1="96" x2="30" y2="8" stroke="#475569" stroke-width="2"/>';
+      for (let i = 0; i <= top; i++) s += '<line x1="30" y1="' + (96 - i * k) + '" x2="' + (W - 4) + '" y2="' + (96 - i * k) + '" stroke="#e2e8f0"/>' + (o.nolab ? '' : T(24, 100 - i * k, i * step, { s: 9, a: 'end' }));
+      v.forEach((x, i) => { const h = x / step * k; s += '<rect x="' + (40 + i * 34) + '" y="' + (96 - h) + '" width="22" height="' + h + '" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399', '#f472b6'][i % 5] + '"/>'; });
+      return s + '</svg>'; },
+    hbars: (v, step) => { const n = v.length, H = 20 + n * 22, top = Math.max(...v) / step, k = 110 / top; let s = SV([150, H]) + '<line x1="20" y1="4" x2="20" y2="' + (H - 6) + '" stroke="#475569" stroke-width="2"/>';
+      v.forEach((x, i) => { s += '<rect x="20" y="' + (8 + i * 22) + '" width="' + x / step * k + '" height="14" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399'][i % 4] + '"/>'; }); return s + '</svg>'; },
+    clock: h => { const cx = 50, cy = 50; let s = SV([100, 100]) + '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#334155" stroke-width="3"/>';
+      for (let i = 1; i <= 12; i++) s += T(cx + 34 * Math.sin(rad(i * 30)), cy - 34 * Math.cos(rad(i * 30)) + 4, i, { s: 10 });
+      return s + '<line x1="50" y1="50" x2="50" y2="14" stroke="#1d4ed8" stroke-width="3"/><line x1="50" y1="50" x2="' + (cx + 24 * Math.sin(rad(h * 30))) + '" y2="' + (cy - 24 * Math.cos(rad(h * 30))) + '" stroke="#dc2626" stroke-width="4"/></svg>'; },
+    grid: (rows, hl) => '<table class="fmgr">' + rows.map((r, i) => '<tr>' + r.map((x, j) => '<td' + (hl && hl.some(q => q[0] === i && q[1] === j) ? ' class="hl"' : '') + '>' + x + '</td>').join('') + '</tr>').join('') + '</table>',
+    box: (t, c) => '<div class="fmbox" style="background:' + (c || '#f1f5f9') + '">' + t + '</div>'
+  };
+  const D = () => window.SV_FM || null;
+  const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
+  const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
+  const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
+  function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
+  function html(k) {
+    const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
+    let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
+    R.forEach((r, i) => { const v = S.a[i], on = i === nx;
+      h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
+        + '<div class="fmf">' + slot(r[1], v) + (on ? '<div class="fmops">' + r[3].map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '') + '</div></div>'; });
+    h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
+    return h;
+  }
+  function inject() {
+    if (!D()) return; const k = curTool(); if (!k || !D()[k]) return;
+    const card = document.querySelector('.svsl-tc') || document.querySelector('#toolBody > .antool, #toolBody > .card') || [...document.querySelectorAll('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head'));
+    if (!card) return; const done = card.querySelector('.andone'); const old = card.querySelector('.fmcard');
+    if (!done) { if (old) old.remove(); return; }
+    if (old && old.dataset.fm === k && old.dataset.v === JSON.stringify(ST(k))) return;
+    const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
+    if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.fmop'); if (!b) return; const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
+    if (String(b.dataset.fmv) === String(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
+      S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
+      try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
+    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); }
+    try { touch('s1'); } catch (er) {} inject();
+  });
+  let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
+  const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  /* 인쇄 ① 개념 정리: [그림 | 식(빈 상자)] */
+  window.FM_PRINT = function () {
+    const F = D(); if (!F) return null; const keys = Object.keys(F); let h = '<div class="fmp">', ans = [];
+    keys.forEach((k, ti) => { const t = F[k]; h += '<div class="fmp-t"><b>' + (ti + 1) + '. ' + (t.name || t.t || '') + '</b>';
+      rowsOf(t).forEach((r, i) => { h += '<div class="fmp-r">' + (r[0] != null ? '<div class="fmp-pic">' + r[0] + '</div><div class="fmp-ar">➜</div>' : '<div class="fmp-rl">🔑</div>') + '<div class="fmp-f">' + r[1].replace('{?}', '<span class="fmp-b"></span>') + '</div></div>'; });
+      h += '</div>'; ans.push((ti + 1) + '. ' + rowsOf(t).map(r => r[2]).join(' / ')); });
+    return { html: h + '</div>', key: ans.join('<br>') };
+  };
+})();
+
+window.SV_FM = {
+ len: { name: '자릿수 저울', t: '자리 수부터', rows: [
+  [FMP.pv([['', '5자리'], ['', '52340']]) + FMP.pv([['', '6자리'], ['', '103000']]), '52340 {?} 103000', '<', ['<', '>', '=']],
+  [FMP.box('9자리 vs 8자리'), '자리 수가 더 {?} 수가 더 커요.', '많은', ['많은', '적은', '같은']]],
+  rule: ['자리 수가 다르면 자리 수가 {?} 쪽이 큰 수예요.', '많은', ['많은', '적은', '같은']], sum: '먼저 자리 수를 비교해요.' },
+ ladder: { name: '높은 자리부터 비교', t: '처음 다른 자리', rows: [
+  [FMP.pv([['백만', 4], ['십만', 5, 1], ['만', 2]]) + FMP.pv([['백만', 4], ['십만', 3, 1], ['만', 8]]), '4520000 {?} 4380000', '>', ['>', '<', '=']],
+  [FMP.box('9,5<b>6</b>0,000 / 9,5<b>2</b>9,999'), '처음으로 다른 자리 숫자는 6과 {?}', '2', ['2', '5', '9']]],
+  rule: ['자리 수가 같으면 가장 {?} 자리부터 차례로 비교해요.', '높은', ['높은', '낮은', '가운데']], sum: '처음으로 다른 자리 숫자가 큰 수가 더 커요.' },
+ same: { name: '같은 모양으로 비교', t: '모양 맞추기', rows: [
+  [FMP.box('3억 2000만 ○ 3억 5000만'), '3억 2000만 {?} 3억 5000만', '<', ['<', '>', '=']],
+  [FMP.box('49억 ○ 4,900,000,000'), '49억 {?} 4900000000', '=', ['=', '<', '>']]],
+  rule: ['읽는 말과 숫자가 섞여 있으면 같은 {?}으로 바꾸어 비교해요.', '모양', ['모양', '색', '길이']], sum: '수를 같은 모양으로 나타내면 비교하기 쉬워요.' },
+ line: { name: '수직선에 놓기', t: '오른쪽일수록', rows: [
+  [FMP.nl(['250만', '400만'], ''), '수직선에서 400만은 250만보다 {?}쪽에 있어요.', '오른', ['오른', '왼', '같은']],
+  [FMP.nl(['2조', '2조 3000억', '3조'], ''), '2조 3000억 {?} 2조', '>', ['>', '<', '=']]],
+  rule: ['수직선에서 오른쪽에 있는 수일수록 더 {?} 수예요.', '큰', ['큰', '작은', '같은']], sum: '수직선의 위치로 크기를 비교할 수 있어요.' }
+};
+
+</script><!--FM-END-->
 <!--PJ-START--><script>
 /* =====================================================================
    🖨️ 학습지 인쇄 보강 — 점프 문제를 수업과 같은 4개(점프 1 오늘의 문제 + 보스전 도전 3개)로 맞추고,
@@ -9156,12 +9475,27 @@ body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig .rffig,body.svsl-on
 body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig>svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig>svg{width:100%!important;height:auto!important;max-height:46vh;max-width:none!important}
 body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1ask{zoom:1.3}
 /* 상황 살펴보기 두 칸: 왼쪽 = 제목·상황 글·과제, 오른쪽 = 큰 그림 */
-body.svsl-land .sv-heroboard.svsl-hb2{display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
+body.svsl-land .sv-heroboard.svsl-hb2:not(.svsl-off){display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-h{grid-column:1;grid-row:2;justify-self:center;font-size:calc(1.1em * var(--hbk,1))}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-story{grid-column:1;grid-row:3;max-width:none;font-size:calc(1.25em * var(--hbk,1));line-height:1.7;padding:16px 20px}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-task{grid-column:1;grid-row:4;text-align:center;font-size:calc(1.15em * var(--hbk,1));line-height:1.5}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-fig{grid-column:2;grid-row:1/-1;justify-self:center;align-self:center}
 body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-story{font-size:calc(1.15em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-task{font-size:calc(1.05em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-h{font-size:calc(1.1em * var(--hbk,1))}
+/* ===== 휴대폰 가로(높이 500 이하): 위·아래 막대를 한 줄로 얇게 → 조작 그림에 높이를 몰아줘요 ===== */
+@media (orientation:landscape) and (max-height:500px){
+body.svsl-on #svslTop{flex-wrap:nowrap;padding:3px 8px;gap:6px}
+body.svsl-on #svslTop .ti,body.svsl-on #svslTop .sets{display:none!important}
+body.svsl-on #svslTop .st{font-size:11px;padding:0 2px}body.svsl-on #svslTop .md{padding:3px 10px;font-size:11px}
+body.svsl-on #svslTabs{padding:2px 8px!important}body.svsl-on #svslTabs button{font-size:11px!important;padding:2px 8px!important}
+body.svsl-on #svslNav{padding:2px 8px calc(2px + env(safe-area-inset-bottom))!important;gap:8px}
+body.svsl-on #svslNav .nv{padding:5px 14px;font-size:13px;min-width:70px}body.svsl-on #svslNav .lb b{font-size:11px}
+body.svsl-on.svsl-land .svsl-tc{padding:4px 8px!important}
+body.svsl-on.svsl-land .svsl-main>.uni-cap,body.svsl-on.svsl-land .svsl-tc .ancap{font-size:12.5px!important;padding:4px 10px!important;margin-bottom:3px!important;line-height:1.3!important;border-width:2px!important;box-shadow:none!important}
+body.svsl-on.svsl-land .svsl-tc .ancap .ckno{zoom:.75}
+body.svsl-on #svslNav .say-row{zoom:.6}body.svsl-on #svslNav .lb{zoom:.8}body.svsl-on #svslTabs .svtic,body.svsl-on #svslTabs img{zoom:.7}
+body.svsl-on.svsl-land .m4fig,body.svsl-on.svsl-land .vkpfig{height:calc(100vh - 205px)!important;max-height:none;padding:2px;border-width:2px}
+body.svsl-on.svsl-land .m4info{max-width:260px}body.svsl-on.svsl-land .m4info,body.svsl-on.svsl-land .vkpinfo{height:calc(100vh - 205px)!important;overflow:hidden}
+}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -9219,7 +9553,7 @@ function fitBub(bb) { if (!bb || bb.style.display === 'none') return; bb.style.o
 /* 차시마다 도구 카드 모양이 달라요: #toolBody 안 카드, 또는 도구 고르기 판 뒤의 카드(4학년 1단원) */
 const TCARD = () => $('#toolBody > .antool') || $('#toolBody > .card') || [...$$('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head') && !c.classList.contains('qcard') && !c.classList.contains('qnav-wrap'));
 const MIS_SEL = ':scope > .anmis > span, :scope .anmis > span, .t11steps > span, .ftsteps > span';
-const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
+const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로|다음 활동)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
 function toolInfo() { const hub = $$('#s1body .hub [data-act=tool]'); const cur = hub.findIndex(b => b.classList.contains('on'));
   const tc = TCARD(), mis = tc ? [...tc.querySelectorAll(MIS_SEL)] : []; const done = mis.map(s => s.classList.contains('ok') || s.classList.contains('done') || /^\s*✅/.test(s.textContent));
   let si = done.findIndex(d => !d); if (si < 0) si = mis.length - 1;
@@ -9828,6 +10162,19 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
     const g = ti.querySelector('svg,img'); if (g) { g.style.width = '36px'; g.style.height = '36px'; }
     if (em && h2 && !h2.textContent.trim().startsWith(em)) h2.insertAdjacentText('afterbegin', em + ' '); }); }
   let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; fix(); }, 60); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 휴대폰 세로 화면: 조작 활동(개념 탐험·미니게임·보드게임)에서는 가로로 돌려 달라는 안내 — 문제 풀이는 세로 그대로 */
+(function () { if (window.__uniRot) return; window.__uniRot = 1;
+  const isPhone = () => Math.min(screen.width, screen.height) < 600 && matchMedia('(pointer:coarse)').matches;
+  const act = () => { const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
+  let el = null, dis = {};
+  function upd() { const port = innerHeight > innerWidth, on = isPhone() && port && act(); const key = (document.body.dataset.svst || '') + '|' + (document.body.dataset.svset || '');
+    if (!el) { el = document.createElement('div'); el.id = 'uniRot'; el.innerHTML = '<div class="uniRotBox"><div class="uniRotPh">📱</div><b>휴대폰을 가로로 돌려 주세요</b><p>직접 끌어 조작하는 활동은 가로 화면에서 그림이 크게 보여요.</p><button type="button">세로로 그냥 할게요</button></div>'; el.querySelector('button').onclick = () => { dis[key] = 1; upd(); }; document.body.appendChild(el); }
+    el.classList.toggle('on', on && !dis[key]); }
+  addEventListener('resize', upd); addEventListener('orientationchange', () => setTimeout(upd, 200));
+  try { new MutationObserver(() => { clearTimeout(upd.t); upd.t = setTimeout(upd, 150); }).observe(document.body, { attributes: true, attributeFilter: ['data-svst', 'data-svset', 'class'] }); } catch (e) {}
+  document.addEventListener('click', () => setTimeout(upd, 300), true); setTimeout(upd, 800);
+  const st = document.createElement('style'); st.textContent = '#uniRot{position:fixed;inset:0;z-index:9000;background:rgba(30,27,75,.86);display:none;align-items:center;justify-content:center;padding:24px}#uniRot.on{display:flex}.uniRotBox{background:#fff;border-radius:24px;padding:26px 22px;text-align:center;max-width:320px;font-weight:800;color:#1e1b4b;box-shadow:0 10px 30px rgba(0,0,0,.3)}.uniRotBox b{display:block;font-size:1.3rem;margin:8px 0}.uniRotBox p{font-size:.95rem;color:#475569;margin:0 0 16px;line-height:1.5}.uniRotBox button{border:0;background:#e2e8f0;border-radius:999px;padding:8px 18px;font-weight:800;color:#334155}.uniRotPh{font-size:3.4rem;display:inline-block;animation:uniRotA 1.6s ease-in-out infinite}@keyframes uniRotA{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}';
+  document.head.appendChild(st); })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
