@@ -10895,6 +10895,14 @@ body.svsl-on.svsl-short #s2body>.card.gamecard:has(>.gamebox)>.vrow,body.svsl-on
 
 /* 연습장 단추 겹침: 오른쪽 아래 떠 있는 「📝 연습장」 하나만 (문제 카드·보드게임 안의 같은 단추는 숨김) */
 body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
+/* 좁은 화면(세로 휴대폰): 문제 글이 한 글자씩 세로로 쌓이지 않게 — 단계 칩은 위로, 문제 글은 한 줄 전체 */
+@media (max-width:700px){body.svsl-on .svsl-tc>.svsl-q{flex-wrap:wrap!important;gap:6px!important}body.svsl-on .svsl-tc>.svsl-q .ancap,body.svsl-on .svsl-tc>.svsl-q .labq{flex:1 1 100%!important;width:100%;font-size:1.05rem!important;padding:6px 12px!important}body.svsl-on .svsl-tc>.svsl-q .t11steps{order:-1!important;margin:0 auto!important;flex-wrap:wrap}}
+@media (max-width:700px){body.svsl-on .sv-j0card .sv-fig,body.svsl-on .sv-j0card .sv-paper{max-width:100%;min-width:0}body.svsl-on .sv-j0card .sv-paper svg{max-width:100%;height:auto}body.svsl-on .sv-j0card .sv-paper [style*="display:flex"]{flex-wrap:wrap}body.svsl-on .sv-j0card .sv-paper .sv-row{flex-wrap:wrap}}
+body.svsl-on .sv-heroboard.svsl-scrolly{overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+body.svsl-on .sv-heroboard.svsl-scrolly::after{content:'⬇ 위로 밀어 더 보기';position:sticky;bottom:0;align-self:center;display:block;margin:6px auto 0;width:max-content;font-weight:900;font-size:.85rem;color:#fff;background:rgba(109,40,217,.85);border-radius:999px;padding:3px 12px;pointer-events:none}
+body.svsl-on .drimg:empty{display:none}
+
+#svslTabs button .svtic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:none;border-radius:50%;overflow:hidden;vertical-align:middle;margin-right:4px}#svslTabs button .svtic svg{width:26px!important;height:26px!important}#svslTabs button .svtic.e{font-size:20px;line-height:1}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -11023,8 +11031,9 @@ function twoCol(card, rsel, cls) { if (!card || card.querySelector(':scope > .sv
 function unCol() { $$('.card.svsl-2c').forEach(card => { const kids = $$('.svsl-rl > *, .svsl-rr > *').filter(c => c.parentElement.parentElement === card).sort((a, b) => a.dataset.ro - b.dataset.ro); kids.forEach(c => card.appendChild(c));
   card.querySelectorAll(':scope > .svsl-rl, :scope > .svsl-rr').forEach(x => x.remove()); card.classList.remove('svsl-2c', 'svsl-res2', 'svsl-set2'); card.style.zoom = ''; }); $$('#s1body > .card, #s2body > .card').forEach(c => { c.style.zoom = ''; c.style.maxHeight = ''; c.style.overflowY = ''; }); }
 function freeAvail(body) { const wrap = $('.wrap'); return wrap.clientHeight - (body.getBoundingClientRect().top - wrap.getBoundingClientRect().top) - 12; }
-function fitCards(body, pg, avail, zmax, zlo) { const lo = zlo || .6, used = () => Math.max(...pg.map(c => c.getBoundingClientRect().bottom)) - body.getBoundingClientRect().top; pg.forEach(c => { c.style.zoom = ''; c.style.maxHeight = ''; c.style.overflowY = ''; });
+function fitCards(body, pg, avail, zmax, zlo) { const lo = B.classList.contains('svsl-port') ? Math.max(.93, zlo || .6) : (zlo || .6), used = () => Math.max(...pg.map(c => c.getBoundingClientRect().bottom)) - body.getBoundingClientRect().top; pg.forEach(c => { c.style.zoom = ''; c.style.maxHeight = ''; c.style.overflowY = ''; });
   let z = Math.max(lo, Math.min(zmax, avail / Math.max(40, used()))); for (let i = 0; i < 18; i++) { pg.forEach(c => c.style.zoom = z.toFixed(3)); if (used() <= avail + 1 || z <= lo) break; z = Math.max(lo, z * .96); }
+  if (used() > avail + 2 && pg.length > 1 && B.classList.contains('svsl-port')) body.style.overflowY = 'auto'; else if (B.classList.contains('svsl-port')) body.style.overflowY = '';
   if (used() > avail + 2 && pg.length === 1) { const off = Math.max(0, pg[0].getBoundingClientRect().top - body.getBoundingClientRect().top); pg[0].style.maxHeight = ((avail - off) / z - 4).toFixed(0) + 'px'; pg[0].style.overflowY = 'auto'; } }
 function resLayout() { const body = RBODY(); rn = 1; if (!body) return; const land = !B.classList.contains('svsl-port');
   const cards = [...body.children].filter(c => c.matches('.card') && !c.classList.contains('hidden')); if (!cards.length) return;
@@ -11088,7 +11097,9 @@ function qInfo() { const ch = $$('#s1body .qnav .qnchip'); return { ch, cur: ch.
 function renderTabs(k) { const tb = $('#svslTabs');
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); tb.innerHTML = Q.ch.map((b, j) => { const ok = /ok|done|solved|right/.test(b.className) || !!b.querySelector('svg,img') || /✅|✔/.test(b.textContent); return `<button type="button" class="sq ${j === Q.cur ? 'on' : ''} ${ok ? 'ok' : ''}" data-q="${j}">${ok ? '✅ ' : ''}${j + 1}번</button>`; }).join(''); return; }
   if (k !== 'concept') { tb.innerHTML = ''; return; } const T = toolInfo();
-  tb.innerHTML = T.hub.map(b => { const v = b.dataset.v, nm = tname(b), img = b.querySelector('img'); return `<button type="button" data-v="${v}" class="${b.classList.contains('on') ? 'on' : ''} ${T.badges[v] ? 'ok' : ''}">${T.badges[v] ? '✅' : img ? `<img src="${img.src}" alt="">` : ''}${nm}</button>`; }).join(''); }
+  tb.innerHTML = T.hub.map(b => { const v = b.dataset.v, nm = tname(b), img = b.querySelector('.ti img') || b.querySelector('img'), ti = b.querySelector('.ti'), sv = ti && ti.querySelector('svg'), em = ti && !img && !sv ? (ti.querySelector('[role=img]') || ti).textContent.trim() : '';
+    const ic = img ? `<img src="${img.src}" alt="">` : sv ? `<span class="svtic">${sv.outerHTML}</span>` : em ? `<span class="svtic e">${em}</span>` : '';
+    return `<button type="button" data-v="${v}" class="${b.classList.contains('on') ? 'on' : ''} ${T.badges[v] ? 'ok' : ''}">${T.badges[v] ? '✅' : ic}${nm}</button>`; }).join(''); }
 function nextInfo() { const k = step();
   if (k === 'result' && ri < rn - 1) return { ok: true, t: '다음 ▶' };
   if (SET() === 's1' && k === 'mission') { if (mi < 2) return { ok: true, t: '다음 ▶' }; return { ok: !!S1().goalConfirmed, t: '개념 탐험 ▶', why: '내 생각을 저장하면 다음으로 갈 수 있어요' }; }
@@ -11131,7 +11142,7 @@ function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const
   b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
   B.appendChild(b); setTimeout(() => b.remove(), 2100); }
 /* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
-function zfit(box, inner, max, min, floor) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); if (inner.hasAttribute && (inner.hasAttribute('data-svnofit') || (inner.firstElementChild && inner.firstElementChild.hasAttribute('data-svnofit')))) { inner.style.zoom = ''; inner.style.removeProperty('width'); return; } max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, floor || zmin()); inner.style.zoom = 1; inner.style.removeProperty('width'); const cw = box.clientWidth, ch = box.clientHeight; let w = inner.scrollWidth;
+function zfit(box, inner, max, min, floor) { if (!box || !inner) return; if (inner.classList && (inner.classList.contains('ufin') || inner.classList.contains('ufig'))) return; /* 정리 화면은 uni 가 맞춰요 */ box.classList.remove('svsl-scrolly'); if (inner.hasAttribute && (inner.hasAttribute('data-svnofit') || (inner.firstElementChild && inner.firstElementChild.hasAttribute('data-svnofit')))) { inner.style.zoom = ''; inner.style.removeProperty('width'); return; } max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, floor || zmin()); inner.style.zoom = 1; inner.style.removeProperty('width'); const cw = box.clientWidth, ch = box.clientHeight; let w = inner.scrollWidth;
   /* 안쪽 칸이 폭을 다 차지하지만(긴 안내 글 때문에) 실제 내용은 더 좁을 때: 내용 폭에 맞춰 줄인 뒤 키워서 빈 곳을 채워요 */
   try { const ks = [...inner.children].filter(e => e.getClientRects().length && getComputedStyle(e).position !== 'absolute'); if (ks.length && w >= cw - 48 && w <= cw + 2 && !inner.classList.contains('svsl-shelfside') && !inner.classList.contains('svsl-cols2')) { let L = 1e9, R = -1e9; ks.forEach(e => { const r = e.getBoundingClientRect(); L = Math.min(L, r.left); R = Math.max(R, r.right); }); const ext = Math.ceil(R - L) + 10; if (ext > 200 && ext < w - 30) { inner.style.setProperty('width', ext + 'px', 'important'); if (inner.scrollWidth <= ext + 2) w = ext; else inner.style.removeProperty('width'); } } } catch (e) {}
   const h = inner.scrollHeight;
@@ -11184,7 +11195,10 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
   if (k === 'basic') fitQ($('#s1body > .qcard'), $('#s1body'));
   if (k === 'jump') fitJ();
   if (k === 'mission') { const box = $('#s1body .sv-mission'), el = curEl(); if (box && el && !el.classList.contains('sv-heroboard')) { el.style.zoom = 1; const h = el.scrollHeight, w = el.scrollWidth; if (h > box.clientHeight + 2) { let z = Math.max(.7, box.clientHeight / h); el.style.zoom = z.toFixed(3); for (let i = 0; i < 8 && z > .7 && box.scrollHeight > box.clientHeight + 1; i++) { z *= .95; el.style.zoom = z.toFixed(3); } } }
-    const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const st = hb.querySelector('.sv-hb-story'), tk = hb.querySelector('.sv-hb-task'), ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - (st ? st.offsetHeight + 10 : 0) - (tk ? tk.offsetHeight + 10 : 0) - 24, cw = hb.clientWidth - 24; const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } }
+    const hb = $('#s1body .sv-heroboard:not(.svsl-off)'); if (hb) { const f = hb.querySelector('.sv-fig'), h = hb.querySelector('.sv-hb-h'); if (f) { f.style.zoom = 1; const st = hb.querySelector('.sv-hb-story'), tk = hb.querySelector('.sv-hb-task'), ch = hb.clientHeight - (h ? h.offsetHeight + 12 : 0) - (st ? st.offsetHeight + 10 : 0) - (tk ? tk.offsetHeight + 10 : 0) - 24, cw = hb.clientWidth - 24; const land = B.classList.contains('svsl-land'); hb.classList.remove('svsl-scrolly');
+        /* 세로 화면(휴대폰): 그림을 너무 작게 줄이지 않고 폭에 맞춘 뒤, 넘치면 이 장면만 위아래로 스크롤 */
+        if (!land) { const z = .97 * Math.max(.5, Math.min(1.2, cw / f.scrollWidth, Math.max(ch, 300) / f.scrollHeight)); f.style.zoom = z.toFixed(3); if (hb.scrollHeight > hb.clientHeight + 2) hb.classList.add('svsl-scrolly'); }
+        else { const z = .95 * Math.max(.5, Math.min(1.5, cw / f.scrollWidth, ch / f.scrollHeight)); f.style.zoom = z.toFixed(3); } } } } }
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 /* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
 const PG = { key: '', i: 0 };
@@ -11192,17 +11206,19 @@ function pgClear(q) { $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl
 function pageCard(q, box, deep) { pgClear(q);
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const cs = getComputedStyle(q), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 8;
-  let H = box.clientHeight - others - pad - 62; if (H < 160) return false;
+  let H = box.clientHeight - others - pad - (B.classList.contains("svsl-land") ? 62 : 96); if (H < (B.classList.contains("svsl-land") ? 160 : 110)) return false;
   const part = deep ? q.querySelector(':scope > [id^="part-"]') : null, blocks = [];
-  [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) blocks.push(k); }); else blocks.push(c); });
+  /* 한 쪽보다 큰 덩어리(그림 + 답 칸 등)는 줄이지 않고 안쪽 칸으로 나누어 쪽을 더 만들어요 (휴대폰 세로 화면) */
+  const flat = (c, d) => { if (d < 6 && c.getBoundingClientRect().height + 10 > H) { const K = [...c.children].filter(k => k.offsetParent !== null && k.getBoundingClientRect().height > 4); if (K.length >= 2) { K.forEach(k => flat(k, d + 1)); return; } if (K.length === 1) { flat(K[0], d + 1); return; } } blocks.push(c); };
+  [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) flat(k, 0); }); else flat(c, 0); });
   if (blocks.length < 2) return false;
   const hh = b => b.getBoundingClientRect().height + 10;
   /* 쪽 수가 3쪽을 넘지 않도록 카드를 조금(최대 20%) 줄여 가며 가장 큰 크기를 골라요 */
   const pack = z => { q.style.zoom = z; blocks.forEach(b => { if (b.hasAttribute('data-pgz')) { b.style.zoom = ''; b.removeAttribute('data-pgz'); } });
     blocks.forEach(b => { if (hh(b) > H) { b.style.zoom = Math.max(.42, (H - 10) / (hh(b) - 10)).toFixed(3); b.setAttribute('data-pgz', '1'); } });
-    const P = [[]]; let h = 0; blocks.forEach(b => { const bh = hh(b); if (h + bh > H && P[P.length - 1].length) { P.push([]); h = 0; } P[P.length - 1].push(b); h += bh; }); return P; };
+    const P = [[]]; let h = 0; blocks.forEach(b => { const bh = hh(b); if (h + bh > H && P[P.length - 1].length) { const cur = P[P.length - 1], last = cur[cur.length - 1], carry = last && cur.length > 1 && hh(last) < 60 ? [cur.pop()] : []; P.push(carry); h = carry.reduce((a, x) => a + hh(x), 0); } P[P.length - 1].push(b); h += bh; }); return P; };
   let pages = null, best = null;
-  for (const z of [1, .94, .88, .82]) { const P = pack(z); if (!best || P.length < best.n) best = { n: P.length, z }; if (P.length <= 3) { pages = P; break; } }
+  for (const z of [1, .94, .88, .82]) { const P = pack(z); if (!best || P.length < best.n) best = { n: P.length, z }; if (P.length <= 5) { pages = P; break; } }
   if (!pages) pages = pack(best.z);
   if (pages.length < 2) { pgClear(q); q.style.zoom = 1; return false; }
   const key = SET() + '|' + step() + '|' + (q.id || '') + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 40);
@@ -11212,6 +11228,7 @@ function pageCard(q, box, deep) { pgClear(q);
   q.insertAdjacentHTML('beforeend', `<div class="svsl-pager"><button type="button" data-svpg="-1" ${PG.i ? '' : 'disabled'}>◀ 앞 장면</button><span class="svsl-pgd">${pages.map((_, i) => `<i class="${i === PG.i ? 'on' : ''}"></i>`).join('')}<b>${PG.i + 1} / ${pages.length}</b></span><button type="button" data-svpg="1" ${PG.i < pages.length - 1 ? '' : 'disabled'}>다음 장면 ▶</button></div>`);
   return true; }
 document.addEventListener('click', e => { const t = e.target.closest('[data-svpg]'); if (!t) return; e.preventDefault(); e.stopPropagation(); PG.i += +t.dataset.svpg; try { fit(); } catch (x) {} }, true);
+window.__svslPage = (q, b, d) => pageCard(q, b, d);
 function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.children].find(c => c.classList.contains('qcard') && c.offsetParent !== null); if (!q) return; pgClear(q);
   const land = B.classList.contains('svsl-land');
   $$('.svsl-jgrid', q).forEach(e => e.classList.remove('svsl-jgrid')); $$('.svsl-jfig,.svsl-jR', q).forEach(e => e.classList.remove('svsl-jfig', 'svsl-jR'));
@@ -11223,8 +11240,15 @@ function fitJ() { const box = $('#s1body'); if (!box) return; const q = [...box.
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const avH = box.clientHeight - others - 6, avW = box.clientWidth - 4;
   const JMIN = Math.max(.46, (q.id === 'svj0' ? .54 : .62) * Math.min(1, innerHeight / 740));   /* 점프 문제는 스크롤 대신 한 화면에 들어오도록 조금 더 줄일 수 있어요 (오늘의 문제 카드는 글이 많아 조금 더) */
-  box.classList.remove('svsl-qscroll'); let z = Math.max(JMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth)); q.style.zoom = z.toFixed(3);
+  box.classList.remove('svsl-qscroll'); let z = Math.max(JMIN, Math.min(JMAX, avH / q.scrollHeight, avW / q.scrollWidth));
+  /* 세로 화면(휴대폰): 많이 줄여야 하면 줄이지 말고 쪽을 나눠요 */
+  if (!land && z < .86) { q.style.zoom = 1; if (pageCard(q, box, true)) return; }
+  q.style.zoom = z.toFixed(3);
   for (let i = 0; i < 12 && box.scrollHeight > box.clientHeight + 1 && z > JMIN; i++) { z = Math.max(JMIN, z * .97); q.style.zoom = z.toFixed(3); }
+  /* 아래에 빈 곳이 남으면 넘치기 직전까지 조금씩 키워요 */
+  { const fitsNow = () => { if (box.scrollHeight > box.clientHeight + 1 || q.scrollWidth > q.clientWidth + 2) return false; const bb = box.getBoundingClientRect(), kids = [...box.children].filter(c => c.offsetParent !== null); return Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) <= bb.bottom - 2; };
+    /* 줌을 바꾸면 카드 안 글 줄바꿈도 바뀌어서, 처음 어림한 크기보다 크게 들어갈 수 있어요 → 넘치지 않는 가장 큰 크기를 찾아요 */
+    if (fitsNow()) { let lo = z, hi = JMAX; for (let i = 0; i < 9; i++) { const m = (lo + hi) / 2; q.style.zoom = m.toFixed(3); if (fitsNow()) lo = m; else hi = m; } z = lo; q.style.zoom = z.toFixed(3); } }
   if (box.scrollHeight > box.clientHeight + 1) { q.style.zoom = 1; if (pageCard(q, box, false)) { box.classList.remove('svsl-qscroll'); return; } q.style.zoom = z.toFixed(3); box.classList.add('svsl-qscroll'); } }
 /* 문제 카드 맞추기: 한 문제는 답하기 전후 같은 크기(처음 잰 크기를 기억), 그림 있는 문제는 [그림 | 보기] 두 칸 */
 const QZ = {};
@@ -11238,7 +11262,7 @@ function qShape(q) { if (!q) return; const land = B.classList.contains('svsl-lan
     else if (qR) { kids.slice(i + 1).forEach(c => qR.appendChild(c)); } }
   else if (qR) { [...qR.children].forEach(c => q.insertBefore(c, qR)); qR.remove(); ans = [...q.children].find(c => c.matches('.choices,.modes') || c.querySelector('.choices,input:not(.vmi),textarea,.modes')); }
   /* 그림 문제(가로 화면): [그림 | 문제 글 + 보기] — 그림·표가 왼쪽 칸 전체를 써요 */
-  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig && qt ? qt.querySelector(':scope > .rffig, :scope > .dxfig') : null; let qF = q.querySelector(':scope > .svsl-qF');
+  { const qt = q.querySelector(':scope > .qhead .qtext'), FG = hasFig ? ((qt && qt.querySelector(':scope > .rffig, :scope > .dxfig')) || q.querySelector(':scope > .drimg > .rffig, :scope > .drimg > .dxfig, :scope > .svsl-qF > .rffig')) : null; let qF = q.querySelector(':scope > .svsl-qF');
     if (FG) { if (!qF) { qF = document.createElement('div'); qF.className = 'svsl-qF'; q.insertBefore(qF, q.firstChild); } qF.innerHTML = ''; qF.appendChild(FG); }
     else if (qF && (!hasFig || !qF.firstElementChild)) { const f = qF.firstElementChild; if (f && qt) { f.style.zoom = ''; qt.appendChild(f); } qF.remove(); qF = null; }
     q.classList.toggle('svsl-qfL', !!qF); }
@@ -11285,7 +11309,21 @@ function fitQ(q, box, opt) { if (!q || !box) return; qShape(q);
     if (lv === 0 && sibs.length) { sibs.forEach(c => { c.style.zoom = .62; }); return fitQ(q, box, { lv: 1 }); }
     if (lv <= 1 && sibs.length) { sibs.forEach(c => c.classList.add('svsl-qhide')); return fitQ(q, box, { lv: 2 }); }
     if (lv <= 2) return fitQ(q, box, { lv: 3, floor: .56 });
-    box.classList.add('svsl-qscroll'); } }
+    box.classList.add('svsl-qscroll'); }
+  else figFinal(q, box, key, answered); }
+/* 마지막 배치가 끝난 뒤, 왼쪽 그림 칸의 실제 크기에 그림을 꽉 맞춰요 (빈 칸 없이). 답을 고른 뒤에는 그림이 더 커지지 않아요 */
+const FZ = {};
+function figFinal(q, box, key, answered) { const qF = q.querySelector(':scope > .svsl-qF'), f = qF && qF.firstElementChild; if (!f) return;
+  const keep = f.style.zoom, keepH = qF.style.height; f.style.zoom = 1; const fw = f.offsetWidth || 1, fh = f.offsetHeight || 1; f.style.zoom = .05; qF.style.height = ''; const base = Math.max(box.clientHeight, box.scrollHeight) + 1;
+  const cs = getComputedStyle(qF), W = qF.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8, H = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+  let z = Math.max(.5, Math.min(3.2, W / fw, H / fh)); if (answered && FZ[key]) z = Math.min(z, FZ[key]); else if (!answered) FZ[key] = z;
+  f.style.zoom = z.toFixed(3);
+  const over = () => box.scrollHeight > base;
+  for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+  if (over()) { qF.style.height = keepH; f.style.zoom = .05; const H2 = qF.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
+    z = Math.max(.5, Math.min(z / .95 ** 14, W / fw, H2 / fh)); f.style.zoom = z.toFixed(3);
+    for (let i = 0; i < 14 && over() && z > .5; i++) { z *= .95; f.style.zoom = z.toFixed(3); }
+    if (over()) f.style.zoom = keep; } }
 let fitT = []; const refit = () => { fitT.forEach(clearTimeout); fitT = [180, 500, 1100].map(t => setTimeout(() => { if (on && !busy) { busy = true; try { fit(); } finally { if (mo) mo.takeRecords(); busy = false; } } }, t)); };
 /* 넘겨 보기용 안내 말: '아래에서' 쓰는 목표 → '다음 장면에서' (스크롤 보기로 돌아가면 원래 말로) */
 const WORDS = [[/아래에서\s*$/, '다음 장면에서 '], [/아래에서 (내 생각|배운 내용)/g, '다음 장면에서 $1']];
@@ -11373,6 +11411,29 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
 @media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
+/* ===== 개념 도구 마무리(정리) 화면 공통 배치 ===== */
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main:has(>div>.ufL){justify-content:center;align-items:stretch}}
+.svsl-tc.svsl-fin .svsl-main>div.ufin.ufin.ufin.ufin{display:flex!important;flex-direction:row!important;gap:18px;align-items:center;max-width:none!important;margin:0 auto!important;box-sizing:border-box;grid-template-columns:none!important}
+.svsl-tc.svsl-fin:has(.ufsteps) .stage-head .anmis{display:none!important}
+.ufin>.ufL{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.ufin.ufin-fm>.ufL{flex:1 1 0}.ufin.ufin-fm>.fmcard{flex:1.45 1 0;min-width:0;margin:0!important;display:flex;flex-direction:column;justify-content:center}
+.ufin>.ufL>.t11steps{display:none!important}
+.ufin .ufsteps{background:#f0f9ff;border:3px solid #7dd3fc;border-radius:20px;padding:10px 14px;box-shadow:0 4px 0 #bae6fd}
+.ufin .ufst-h{font-weight:900;color:#0369a1;font-size:1rem;margin-bottom:8px}
+.ufin .ufst-r{display:flex;gap:10px;flex-wrap:wrap}
+.ufin .ufst{flex:1 1 140px;display:flex;align-items:center;gap:8px;background:#fff;border:2.5px solid #38bdf8;border-radius:14px;padding:8px 10px;font-weight:900;font-size:1rem;color:#0c4a6e;min-width:0;word-break:keep-all}
+.ufin .ufst>b{flex:none;width:30px;height:30px;border-radius:50%;background:#0284c7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.ufin .ufst>span{flex:1;min-width:0}.ufin .ufst>i{flex:none;font-style:normal;color:#16a34a;font-size:1.15rem}
+.svsl-tc.svsl-fin .ufin .andone{margin:0!important;width:auto!important;max-width:none!important;font-size:1.3em;padding:18px 22px}
+.svsl-tc.svsl-fin .ufin .andone .svsum{max-width:none!important;width:auto!important}
+.svsl-tc.svsl-fin .ufin .rpbar{margin:0!important;justify-content:center}
+@media(max-width:899px){.svsl-tc.svsl-fin .svsl-main>div.ufin.ufin.ufin.ufin{flex-direction:column!important;width:100%!important;max-width:none!important}.ufin>.ufL,.ufin.ufin-fm>.fmcard{flex:none!important;width:100%;align-self:stretch}.ufin .ufst-r{grid-template-columns:repeat(min(var(--ufn,3),2),minmax(0,1fr))!important}}
+@media(max-width:600px){.ufin .ufst-r{grid-template-columns:minmax(0,1fr)!important}.svsl-tc.svsl-fin .ufin .andone{font-size:1.05em;padding:12px 14px}}
+.andone .usym.usym{font-style:normal;display:inline!important;width:auto!important;min-width:0!important;height:auto!important;border:0!important;margin:0!important;box-shadow:none!important;vertical-align:baseline!important;padding:0 .12em;border-radius:.25em;line-height:1.1}.andone .usym.sq{color:#2563eb;background:#dbeafe}.andone .usym.tr{color:#ea580c;background:#ffedd5}
+.ufin>.ufL>.ufwrap{display:contents!important}.ufin .ufL .t11steps{display:none!important}
+.ufin .ufst-r{display:grid!important;grid-template-columns:repeat(var(--ufn,3),minmax(0,1fr))}
+@media(max-width:899px){.svsl-tc.svsl-fin .svsl-main:has(.ufin){justify-content:flex-start!important}}
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main>div.ufig.ufig.ufig{grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr)!important;gap:16px!important}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '두 가지 · 2종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -11400,7 +11461,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
 /* 위로 올린 안내 띠(.uni-cap) 높이만큼 그림 칸을 줄여 화면 안에 다 들어오게 해요 (데스크톱) */
 (function () {
-  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main').forEach(main => {
+  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main:not(:has(.ufin,.ufig))').forEach(main => {
     const cap = main.querySelector(':scope>.uni-cap'); if (!cap) return;
     const inner = [...main.children].find(e => e !== cap && e.getClientRects().length); if (!inner) return;
     const avail = main.clientHeight - cap.offsetHeight - 14, h = inner.getBoundingClientRect().height; if (avail < 120 || h <= avail + 1) return;
@@ -11457,6 +11518,54 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   const fix = () => { try { if (typeof LAIR === 'undefined' || !LAIR.length) return; const n = LAIR.length;
     document.querySelectorAll('ul.ritems li, .ritems li, .rp-items li').forEach(li => { const w = document.createTreeWalker(li, NodeFilter.SHOW_TEXT); let t; while ((t = w.nextNode())) { if (/미니게임 \d+종/.test(t.nodeValue) && !/미니게임 \d+종/.test(t.nodeValue.replace(/미니게임 \d+종/, '')) && !t.nodeValue.includes('미니게임 ' + n + '종')) t.nodeValue = t.nodeValue.replace(/미니게임 \d+종/, '미니게임 ' + n + '종'); } }); } catch (e) {} };
   try { new MutationObserver(() => { clearTimeout(fix.t); fix.t = setTimeout(fix, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* ===== 개념 도구 마무리(정리) 화면 공통 배치 (4·6학년 모든 도구 엔진) =====
+   [왼쪽: 오늘 익힌 단계 카드 + 큰 정리 + 다시 하기] [오른쪽: 식으로 정리(FM) 카드] — 식 카드가 없으면 한 칸 가득.
+   그다음 칸 높이에 맞춰 통째로 키워(최대 1.8배) 빈 곳이 남지 않게 해요. */
+(function () { if (window.__uniFin) return; window.__uniFin = 1;
+  const clean = t => t.replace(/^[\s✅✔️☑️🔒⬜]+/u, '').replace(/^\d+\s*[.)]\s*/, '').trim();
+  function build(card) {
+    const main = card.querySelector(':scope>.svsl-main'); if (!main) return null;
+    const inner = [...main.children].find(e => e.querySelector && (e.matches('.andone') ? false : e.querySelector('.andone'))); if (!inner) return null;
+    if (inner.querySelector(':scope>.gbwrap,:scope>svg,:scope>.anfig')) { inner.classList.add('ufig'); return { main, inner }; } /* 그림을 남기는 도구: 배치는 그대로, 크기만 맞춰요 */
+    inner.classList.add('ufin');
+    let L = inner.querySelector(':scope>.ufL');
+    const fm = inner.querySelector('.fmcard');
+    if (!L) { L = document.createElement('div'); L.className = 'ufL'; inner.prepend(L); }
+    [...inner.children].forEach(c => { if (c !== L && c !== fm) L.appendChild(c); });
+    [...L.children].forEach(c => { if (c.tagName === 'DIV' && !c.matches('.andone,.rpbar,.ufsteps,.fmcard') && c.querySelector(':scope>.andone')) c.classList.add('ufwrap'); });
+    const rps = [...L.querySelectorAll(':scope>.rpbar,:scope>.ufwrap>.rpbar')]; rps.forEach((r, i) => { r.style.display = rps.slice(0, i).some(x => x.textContent === r.textContent) ? 'none' : ''; });
+    inner.classList.toggle('ufin-fm', !!fm); if (fm && (fm.parentElement !== inner || fm.previousElementSibling !== L)) inner.appendChild(fm);
+    /* 기호 ■·▲ 를 또렷한 색 기호로 */
+    L.querySelectorAll('.andone').forEach(a => { if (a.dataset.usym) return; a.dataset.usym = 1; const w = document.createTreeWalker(a, NodeFilter.SHOW_TEXT), ns = []; let t; while ((t = w.nextNode())) if (/[■▲]/.test(t.nodeValue)) ns.push(t);
+      ns.forEach(t => { const sp = document.createElement('span'); sp.innerHTML = t.nodeValue.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/■/g, '<i class="usym sq">■</i>').replace(/▲/g, '<i class="usym tr">▲</i>'); t.replaceWith(...sp.childNodes); }); });
+    /* 단계 카드 */
+    let src = [...card.querySelectorAll('.stage-head .anmis>span')]; if (!src.length) src = [...L.querySelectorAll('.t11steps>span')];
+    const txt = src.map(s => clean(s.textContent)).filter(Boolean), key = txt.join('|');
+    let st = L.querySelector(':scope>.ufsteps');
+    if (txt.length && (!st || st.dataset.k !== key)) { if (st) st.remove(); st = document.createElement('div'); st.className = 'ufsteps'; st.dataset.k = key;
+      st.innerHTML = '<div class="ufst-h">🧭 오늘 익힌 단계</div><div class="ufst-r" style="--ufn:' + (txt.length > 3 ? 2 : txt.length) + '">' + txt.map((t, i) => `<div class="ufst"><b>${i + 1}</b><span>${t}</span><i>✔</i></div>`).join('') + '</div>'; L.prepend(st); }
+    return { main, inner };
+  }
+  function fit(o) { const { main, inner } = o; inner.style.zoom = 1; inner.style.removeProperty('width');
+    if (innerWidth < 700) return;
+    const cap = main.querySelector(':scope>.uni-cap'); const aw = main.clientWidth - 8, ah = main.clientHeight - (cap && cap.getClientRects().length ? cap.offsetHeight + 10 : 0) - 12; if (ah < 150) return;
+    const set = z => { inner.style.zoom = z; inner.style.setProperty('width', (aw / z) + 'px', 'important'); return inner.getBoundingClientRect().height; };
+    let lo = .55, hi = 1.8; if (set(hi) <= ah) return; if (set(1) <= ah) lo = 1; else hi = 1;
+    for (let k = 0; k < 7; k++) { const m = (lo + hi) / 2; if (set(m) <= ah) lo = m; else hi = m; } set(lo); }
+  let q = 0, busy = 0;
+  function run() { if (busy) return; busy = 1; try { document.querySelectorAll('.svsl-tc.svsl-fin').forEach(c => { const o = build(c); if (o) fit(o); }); } catch (e) {} setTimeout(() => { busy = 0; }, 0); }
+  try { new MutationObserver(() => { if (q || busy) return; q = setTimeout(() => { q = 0; run(); }, 90); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  addEventListener('resize', () => { clearTimeout(run.t); clearTimeout(run.t2); run.t = setTimeout(run, 150); run.t2 = setTimeout(run, 500); }); window.__ufin = run;
+})();
+/* 도구 카드 머리: 4학년도 6학년처럼 왼쪽 동그라미에 그 도구의 악당 얼굴, 도구 그림(이모지)은 제목 앞으로 */
+(function () { if (window.__uniHeadV) return; window.__uniHeadV = 1;
+  function fix() { document.querySelectorAll('.svsl-tc>.stage-head>.ti, #toolBody .stage-head>.ti').forEach(ti => { if (ti.dataset.uv || ti.querySelector('img,svg,[role=img]')) return;
+    const hb = document.querySelector('#s1body .hub [data-act=tool].on .ti'); if (!hb) return; const src = hb.querySelector('img,svg') || hb.querySelector('[role=img]'); if (!src) return;
+    const em = ti.textContent.trim(), h2 = ti.parentElement.querySelector('.h2'); ti.dataset.uv = 1;
+    ti.innerHTML = src.tagName === 'SPAN' ? `<span style="font-size:30px;line-height:1">${src.textContent}</span>` : src.outerHTML.replace(/width="\d+"/, 'width="36"').replace(/height="\d+"/, 'height="36"');
+    const g = ti.querySelector('svg,img'); if (g) { g.style.width = '36px'; g.style.height = '36px'; }
+    if (em && h2 && !h2.textContent.trim().startsWith(em)) h2.insertAdjacentText('afterbegin', em + ' '); }); }
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; fix(); }, 60); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
@@ -11596,6 +11705,102 @@ window.SCN_MAP = {
 .gfx-sno{animation:gfxShake .5s}@keyframes gfxShake{15%{transform:translateX(-9px)}30%{transform:translateX(8px);box-shadow:0 0 0 6px #f87171}45%{transform:translateX(-6px)}60%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
 @media (prefers-reduced-motion:reduce){.gfx{display:none}}`; document.head.appendChild(s); } catch (e) {} })();
 </script><!--UNI-END-->
-<!--BGUP-START--><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["deliv"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><!--BGUP-END-->
+<!--BGUP-START--><script>/* [UNI] 4학년 악당 얼굴 통일 — 이모지 대신 4-1-1-1 기준 SVG 악당 그림 */
+/* =====================================================================
+   😈 악당 그림 — SmartVibe 기준(4-1-1-1)과 같은 그림 (assets/villains/… PNG → 없으면 내장 SVG)
+   ===================================================================== */
+const SVV = {
+  dark:   { name: '다크몽',   c1: '#2b1b4d', c2: '#8b5cf6', ac: '#ffc83d' },
+  bbidak: { name: '삐딱이',   c1: '#6d28d9', c2: '#f59f00', ac: '#ff8a1f' },
+  dwijuk: { name: '뒤죽이',   c1: '#0f766e', c2: '#f97316', ac: '#22d3ee' },
+  thief:  { name: '시간도둑', c1: '#1e3a8a', c2: '#0ea5e9', ac: '#ffc83d' },
+  half:   { name: '반쪽이',   c1: '#1f2937', c2: '#e11d48', ac: '#f3f4f6' }
+};
+const V_ALIAS = { dark: 'dark', tilt: 'bbidak', mixup: 'dwijuk', clock: 'thief', half: 'half', bbidak: 'bbidak', dwijuk: 'dwijuk', thief: 'thief' };
+const V_DIR = './assets/villains/', V_FAIL = new Set();
+const vSrc = (key, pose) => V_DIR + key + '/' + (pose || 'idle') + '.png';
+function vSvgArt(key) {
+  const v = SVV[key] || SVV.dark;
+  if (key === 'dark') return `
+    <ellipse cx="50" cy="93" rx="30" ry="5" fill="#000" opacity=".18"/>
+    <path d="M12 90 Q20 56 32 46 L68 46 Q80 56 88 90 Q68 80 50 85 Q32 90 12 90Z" fill="${v.c2}" opacity=".85"/>
+    <path d="M24 89 Q30 60 38 50 L62 50 Q70 60 76 89 Q62 80 50 83 Q38 86 24 89Z" fill="${v.c1}"/>
+    <path d="M30 30 L23 7 L45 21Z" fill="${v.c1}"/><path d="M70 30 L77 7 L55 21Z" fill="${v.c1}"/>
+    <circle cx="50" cy="42" r="22" fill="#3b2566"/>
+    <path d="M31 22 L38 5 L50 15 L62 5 L69 22Z" fill="${v.ac}"/><circle cx="50" cy="14" r="4" fill="#c026d3"/>
+    <ellipse cx="42" cy="41" rx="5" ry="7" fill="#e879f9"/><ellipse cx="58" cy="41" rx="5" ry="7" fill="#e879f9"/>
+    <path d="M42 54 Q50 61 58 52" stroke="#e879f9" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="20" cy="64" r="9" fill="#c026d3" opacity=".8"/><circle cx="20" cy="64" r="4" fill="#fff" opacity=".7"/>`;
+  if (key === 'bbidak') return `
+    <ellipse cx="50" cy="93" rx="28" ry="5" fill="#000" opacity=".15"/>
+    <path d="M72 80 Q92 74 85 56" stroke="${v.c1}" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M28 89 Q26 60 50 57 Q74 60 72 89Z" fill="${v.c1}"/>
+    <circle cx="50" cy="40" r="21" fill="#7c3aed"/>
+    <path d="M31 25 L25 7 L43 19Z" fill="#4c1d95"/><path d="M69 25 L75 7 L57 19Z" fill="#4c1d95"/>
+    <circle cx="43" cy="39" r="6" fill="#fff"/><circle cx="57" cy="39" r="6" fill="#fff"/>
+    <circle cx="44" cy="40" r="3" fill="#2b1b4d"/><circle cx="58" cy="40" r="3" fill="#2b1b4d"/>
+    <path d="M41 51 Q50 59 59 50" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="14" y="26" font-size="17" font-weight="900" fill="${v.ac}">+</text>
+    <text x="78" y="24" font-size="17" font-weight="900" fill="${v.c2}">×</text>
+    <text x="80" y="60" font-size="15" font-weight="900" fill="${v.ac}">÷</text>`;
+  if (key === 'dwijuk') return `
+    <ellipse cx="50" cy="93" rx="28" ry="5" fill="#000" opacity=".15"/>
+    <polygon points="50,13 78,40 68,86 32,86 22,40" fill="${v.c1}"/>
+    <polygon points="50,13 78,40 50,49 22,40" fill="${v.ac}" opacity=".85"/>
+    <polygon points="32,86 50,49 68,86" fill="${v.c2}" opacity=".5"/>
+    <circle cx="50" cy="45" r="12" fill="#fff"/><circle cx="53" cy="46" r="5.5" fill="#0f172a"/>
+    <path d="M38 68 L44 61 L50 68 L56 61 L62 68" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <polygon points="12,18 22,33 2,33" fill="${v.c2}"/><polygon points="88,22 96,36 80,36" fill="${v.ac}"/>
+    <rect x="80" y="62" width="13" height="13" rx="2" fill="${v.c2}" transform="rotate(18 86 68)"/>`;
+  if (key === 'thief') return `
+    <ellipse cx="50" cy="93" rx="28" ry="5" fill="#000" opacity=".15"/>
+    <path d="M22 89 Q26 62 50 59 Q74 62 78 89Z" fill="${v.c1}"/>
+    <circle cx="50" cy="45" r="20" fill="#f8fafc" stroke="${v.c1}" stroke-width="3"/>
+    <path d="M50 45 L50 33" stroke="${v.c1}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M50 45 L60 50" stroke="${v.c2}" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="50" cy="45" r="2.5" fill="${v.ac}"/>
+    <circle cx="43" cy="40" r="3" fill="${v.c2}"/><circle cx="58" cy="40" r="3" fill="${v.c2}"/>
+    <rect x="30" y="24" width="40" height="6" rx="3" fill="${v.c1}"/>
+    <rect x="36" y="6" width="28" height="19" rx="3" fill="${v.c1}"/>
+    <rect x="36" y="18" width="28" height="5" fill="${v.ac}"/>
+    <circle cx="82" cy="66" r="8" fill="none" stroke="${v.ac}" stroke-width="3"/>
+    <path d="M82 58 L82 66 L88 70" stroke="${v.ac}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  return `
+    <ellipse cx="50" cy="93" rx="28" ry="5" fill="#000" opacity=".15"/>
+    <path d="M28 89 Q26 60 50 57 L50 89Z" fill="${v.ac}"/>
+    <path d="M72 89 Q74 60 50 57 L50 89Z" fill="${v.c1}"/>
+    <circle cx="50" cy="41" r="21" fill="${v.ac}"/>
+    <path d="M50 20 A21 21 0 0 1 50 62 Z" fill="${v.c1}"/>
+    <path d="M33 24 L28 9 L43 19Z" fill="${v.ac}"/><path d="M67 24 L72 9 L57 19Z" fill="${v.c1}"/>
+    <circle cx="42" cy="39" r="5" fill="#1f2937"/><circle cx="58" cy="39" r="5" fill="#f3f4f6"/>
+    <path d="M40 52 Q50 58 60 50" stroke="${v.c2}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="4" y="30" font-size="16" font-weight="900" fill="${v.c2}">½</text>
+    <text x="74" y="76" font-size="13" font-weight="900" fill="${v.c2}">0.5</text>`;
+}
+const vSvgMarkup = (key, px) => `<svg viewBox="0 0 100 100" width="${px}" height="${px}" role="img" aria-label="${esc((SVV[key] || SVV.dark).name)}">${vSvgArt(key)}</svg>`;
+function vFallback(img) {
+  const key = img.dataset.vk, px = +img.dataset.px || 60;
+  V_FAIL.add(img.getAttribute('src'));
+  const cur = img.getAttribute('src'), mm = cur.match(/\/([a-z]+)\.png$/), PA = V_PA;
+  if (mm && PA[mm[1]]) { const a2 = cur.replace(/\/[a-z]+\.png$/, '/' + PA[mm[1]] + '.png'); if (!V_FAIL.has(a2)) { img.setAttribute('src', a2); return; } }
+  const alt = vSrc(key, 'idle');
+  if (img.getAttribute('src') !== alt && !V_FAIL.has(alt)) { img.setAttribute('src', alt); return; }
+  img.insertAdjacentHTML('afterend', vSvgMarkup(key, px)); img.remove();
+}
+/* 표정 파일 고르기: 요청 표정 → 짝 이름(laugh↔happy, flee↔attack) → idle 순서로, 실패가 확인된 파일은 건너뛰어요 */
+const V_PA = { laugh: 'happy', happy: 'laugh', flee: 'attack', attack: 'flee' };
+function vBestSrc(key, pose) { return ''; /* 4학년 악당은 내장 그림(SVG)으로 통일 */
+  const p = pose || 'idle';
+  return [p, V_PA[p], 'idle'].filter(Boolean).map(x => vSrc(key, x)).find(s => !V_FAIL.has(s)) || '';
+}
+const V_POSE = { angry: 'laugh', taunt: 'laugh', study: 'idle' };
+function vFace(key, px, pose) {
+  const k = V_ALIAS[key] || 'dark', v = SVV[k], src = vBestSrc(k, V_POSE[pose] || pose);
+  const inner = !src ? vSvgMarkup(k, px) : `<img src="${esc(src)}" data-vk="${k}" data-px="${px}" alt="${esc(v.name)}" draggable="false" style="width:${px}px;height:${px}px;object-fit:contain" onerror="vFallback(this)">`;
+  return `<span class="vav" style="display:inline-block;width:${px}px;height:${px}px;vertical-align:middle">${inner}</span>`;
+}
+const _sv_avatar = avatar;
+avatar = function (key, px, pose) { return V_ALIAS[key] ? vFace(key, px, pose) : _sv_avatar(key, px, pose); };
+</script><script>/* 미니게임 2개로 통일: 뺀 게임은 목록에서만 꺼 둬요(코드는 그대로) */(function(){var D=["deliv"];try{for(var i=LAIR.length-1;i>=0;i--)if(D.indexOf(LAIR[i].id)>=0)LAIR.splice(i,1);D.forEach(function(k){try{delete LAIR_VK[k]}catch(e){}});}catch(e){}function fx(){try{var g=state.s2.game,c=g.cleared=g.cleared||{};D.forEach(function(k){c[k]=c[k]||1});c["undefined"]=1;if(D.indexOf(g.lair)>=0)g.lair=null;}catch(e){}}fx();setInterval(fx,800);})();</script><!--BGUP-END-->
 </body>
 </html>
