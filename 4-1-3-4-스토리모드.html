@@ -9140,6 +9140,10 @@ body.svsl-port .m4p{flex-direction:column}body.svsl-port .m4fig{flex:none;height
 .m4fig svg text{font-family:inherit}
 .m4fig .tl{font-size:20px;fill:#334155}.m4fig .tb{font-size:26px;fill:#0f172a}.m4fig .ts{font-size:15px;fill:#64748b}.m4fig .tr{fill:#dc2626}.m4fig .tg{fill:#16a34a}.m4fig .to{fill:#ea580c}.m4fig .tw{fill:#fff}
 .m4fig .pop{animation:m4pop .35s ease}@keyframes m4pop{from{opacity:.2;transform:scale(.92)}to{opacity:1;transform:none}}
+.m4info>*{flex-shrink:0}
+.m4vr span{white-space:nowrap}.m4vr.big b{font-size:1.75rem}
+.m4vr.big{flex-direction:column;align-items:flex-start;gap:0}.m4vr.big b{font-size:1.6rem;line-height:1.15;word-break:break-all;max-width:100%}.m4vr.big b em{font-size:.5em;color:#64748b;font-style:normal}
+.m4vr.big b{white-space:nowrap;overflow:visible}
 </style>
 <script>
 /* =====================================================================
@@ -9404,8 +9408,8 @@ const M4 = (() => {
     /* 오른쪽 칸 글자: 칸 높이에 맞춰 키우거나 줄여요 (단계마다 한 번 정하고 고정) */
     const ZC = {}; const fit = () => { document.querySelectorAll('#toolBody .m4p').forEach(r => { const info = r.querySelector('.m4info'); if (!info || !info.children.length) return;
       let key = ''; try { const k = state.s1.tool; key = [k, CK.S(k).i, r.dataset.ph || 0, innerWidth, innerHeight].join(':'); } catch (er) {}
-      const set = z => r.style.setProperty('--m4z', z.toFixed(2)), over = () => info.scrollHeight > info.clientHeight + 2;
-      let z = ZC[key]; if (z == null) { z = 1; set(z); if (innerWidth > 760) { for (let i = 0; i < 10 && !over() && info.scrollHeight < info.clientHeight * .7; i++) { z *= 1.07; set(z); } for (let i = 0; i < 14 && z > .6 && over(); i++) { z *= .94; set(z); } } if (key) ZC[key] = z; } else set(z); }); };
+      const set = z => r.style.setProperty('--m4z', z.toFixed(2)), over = () => { const ks = [...info.children]; if (!ks.length) return false; const t = ks[0].getBoundingClientRect().top, bt = ks[ks.length - 1].getBoundingClientRect().bottom, r = info.getBoundingClientRect(); return bt - t > r.height + 2 || info.scrollHeight > info.clientHeight + 2 || [...info.querySelectorAll('.m4vr b')].some(b => b.scrollWidth > b.parentElement.clientWidth + 2); };
+      let z = ZC[key]; if (z == null) { z = 1; set(z); if (innerWidth > 760) { for (let i = 0; i < 10 && !over() && ([...info.children].reduce((a, c) => a + c.getBoundingClientRect().height, 0) < info.clientHeight * .7); i++) { z *= 1.07; set(z); } for (let i = 0; i < 14 && z > .6 && over(); i++) { z *= .94; set(z); } } if (key) ZC[key] = z; } else { set(z); for (let i = 0; i < 14 && z > .55 && over(); i++) { z *= .94; set(z); } } }); };
     try { new MutationObserver(() => { clearTimeout(fit.t); fit.t = setTimeout(fit, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} addEventListener('resize', () => { for (const k in ZC) delete ZC[k]; fit(); }); }
   const setBtn = '<button data-ck="m4set" data-v="" hidden></button>';
   /* 칸 배치: [그림 | 오른쪽 좁은 칸] — 그림이 칸을 가득 채워요 */
@@ -9417,7 +9421,7 @@ const M4 = (() => {
   const hand = (x, y, dir, lab, o = {}) => { const ang = Math.atan2(dir[1], dir[0]) * 180 / Math.PI, r = o.r || 18;
     return `<g class="m4hand ${o.pulse === false ? '' : 'pulse'}" transform="translate(${x},${y})"><g transform="rotate(${ang.toFixed(1)})"><path d="M${r + 5},0h16m-7,-7l7,7l-7,7"/>${o.two ? `<path d="M${-r - 5},0h-16m7,-7l-7,7l7,7"/>` : ''}</g><circle r="${r}"/><text y="7" text-anchor="middle" class="m4hi">✋</text>${lab ? `<text x="${o.lx || 0}" y="${o.ly != null ? o.ly : r + 22}" text-anchor="${o.anc || 'middle'}" class="m4hl">${lab}</text>` : ''}</g>`; };
   /* 오른쪽 칸 줄: [[이름, 값, 단위, 크게?]] */
-  const rows = (title, R, note) => `<div class="m4vol">${title ? `<div class="m4vh">${title}</div>` : ''}${R.map(r => `<div class="m4vr ${r[3] ? 'big' : ''} ${r[4] || ''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2] || ''}</em></div>`).join('')}${note ? `<small>${note}</small>` : ''}</div>`;
+  const rows = (title, R, note) => `<div class="m4vol">${title ? `<div class="m4vh">${title}</div>` : ''}${R.map(r => { const len = String(r[1]).replace(/<[^>]+>/g, '').length, fs = r[3] && len > 6 ? ` style="font-size:${Math.max(1, 10.5 / len).toFixed(2)}rem"` : ''; return r[3] ? `<div class="m4vr big ${r[4] || ''}"><span>${r[0]}</span><b${fs}>${r[1]}<em> ${r[2] || ''}</em></b></div>` : `<div class="m4vr ${r[4] || ''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2] || ''}</em></div>`; }).join('')}${note ? `<small>${note}</small>` : ''}</div>`;
   const eq = (h, cls) => `<div class="m4eq ${cls || ''}">${h}</div>`;
   const F = n => Number(n).toLocaleString();
   const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" class="${o.c || ''}" text-anchor="${o.a || 'middle'}" ${o.fs ? `font-size="${o.fs}"` : ''} ${o.fill ? `fill="${o.fill}"` : ''} ${o.w ? `font-weight="${o.w}"` : ''}>${s}</text>`;
@@ -9429,6 +9433,7 @@ const M4 = (() => {
   const one = (x, y, u, col) => R(x, y, u, u, col || '#f9a8d4', { st: '#be185d', sw: 1.2, rx: 2 });
   return { box, svg, grip, hand, rows, eq, F, T, R, L, flat, rod, one, setBtn };
 })();
+
 
 
 /* =====================================================================
@@ -9533,7 +9538,7 @@ const JX = (() => {
   const scale = (t, kind, n, d, say) => { const R10 = Math.round(d / 10) * 10, E = Math.floor(n / R10), Q = Math.floor(n / d), MX = Math.max(E, Q) + 2, LX = 90, LW = 780, ls = LW / 50;
     return { _ty: 'scale', t, kind,
       q: dd => dd.ok ? '완성!' : dd.ph === 'r' ? `<b>${n} ÷ ${d}</b>의 몫을 어림해요. 주황 깃발을 끌어 나누는 수 <b>${d}에 가장 가까운 몇십</b>에 꽂아요.` : `어림한 몫은 <b>${E}</b>! 아래 막대의 <b>오른쪽 끝을 끌어</b> ${d}짜리 블록 수를 고쳐 진짜 몫을 찾아요.`,
-      init: () => ({ ph: 'r', f: 5, q: E, ok: false }),
+      init: () => ({ ph: 'r', f: 4, q: E, ok: false }),
       view: dd => { let s = '';
         if (dd.ph === 'r') { const fx = LX + dd.f * 10 * ls;
           s += LN(LX, 200, LX + LW, 200, '#334155', 4); for (let k = 0; k <= 50; k++) { const x = LX + k * ls; s += LN(x, 200, x, k % 10 ? 210 : 222, '#334155', k % 10 ? 1.5 : 3); if (k % 10 === 0) s += TX(x, 252, k, { fs: 22, fill: '#334155', w: 900 }); }
@@ -10722,12 +10727,27 @@ body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig .rffig,body.svsl-on
 body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig>svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig>svg{width:100%!important;height:auto!important;max-height:46vh;max-width:none!important}
 body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1ask{zoom:1.3}
 /* 상황 살펴보기 두 칸: 왼쪽 = 제목·상황 글·과제, 오른쪽 = 큰 그림 */
-body.svsl-land .sv-heroboard.svsl-hb2{display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
+body.svsl-land .sv-heroboard.svsl-hb2:not(.svsl-off){display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-h{grid-column:1;grid-row:2;justify-self:center;font-size:calc(1.1em * var(--hbk,1))}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-story{grid-column:1;grid-row:3;max-width:none;font-size:calc(1.25em * var(--hbk,1));line-height:1.7;padding:16px 20px}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-task{grid-column:1;grid-row:4;text-align:center;font-size:calc(1.15em * var(--hbk,1));line-height:1.5}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-fig{grid-column:2;grid-row:1/-1;justify-self:center;align-self:center}
 body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-story{font-size:calc(1.15em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-task{font-size:calc(1.05em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-h{font-size:calc(1.1em * var(--hbk,1))}
+/* ===== 휴대폰 가로(높이 500 이하): 위·아래 막대를 한 줄로 얇게 → 조작 그림에 높이를 몰아줘요 ===== */
+@media (orientation:landscape) and (max-height:500px){
+body.svsl-on #svslTop{flex-wrap:nowrap;padding:3px 8px;gap:6px}
+body.svsl-on #svslTop .ti,body.svsl-on #svslTop .sets{display:none!important}
+body.svsl-on #svslTop .st{font-size:11px;padding:0 2px}body.svsl-on #svslTop .md{padding:3px 10px;font-size:11px}
+body.svsl-on #svslTabs{padding:2px 8px!important}body.svsl-on #svslTabs button{font-size:11px!important;padding:2px 8px!important}
+body.svsl-on #svslNav{padding:2px 8px calc(2px + env(safe-area-inset-bottom))!important;gap:8px}
+body.svsl-on #svslNav .nv{padding:5px 14px;font-size:13px;min-width:70px}body.svsl-on #svslNav .lb b{font-size:11px}
+body.svsl-on.svsl-land .svsl-tc{padding:4px 8px!important}
+body.svsl-on.svsl-land .svsl-main>.uni-cap,body.svsl-on.svsl-land .svsl-tc .ancap{font-size:12.5px!important;padding:4px 10px!important;margin-bottom:3px!important;line-height:1.3!important;border-width:2px!important;box-shadow:none!important}
+body.svsl-on.svsl-land .svsl-tc .ancap .ckno{zoom:.75}
+body.svsl-on #svslNav .say-row{zoom:.6}body.svsl-on #svslNav .lb{zoom:.8}body.svsl-on #svslTabs .svtic,body.svsl-on #svslTabs img{zoom:.7}
+body.svsl-on.svsl-land .m4fig,body.svsl-on.svsl-land .vkpfig{height:calc(100vh - 205px)!important;max-height:none;padding:2px;border-width:2px}
+body.svsl-on.svsl-land .m4info{max-width:260px}body.svsl-on.svsl-land .m4info,body.svsl-on.svsl-land .vkpinfo{height:calc(100vh - 205px)!important;overflow:hidden}
+}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -10785,7 +10805,7 @@ function fitBub(bb) { if (!bb || bb.style.display === 'none') return; bb.style.o
 /* 차시마다 도구 카드 모양이 달라요: #toolBody 안 카드, 또는 도구 고르기 판 뒤의 카드(4학년 1단원) */
 const TCARD = () => $('#toolBody > .antool') || $('#toolBody > .card') || [...$$('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head') && !c.classList.contains('qcard') && !c.classList.contains('qnav-wrap'));
 const MIS_SEL = ':scope > .anmis > span, :scope .anmis > span, .t11steps > span, .ftsteps > span';
-const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
+const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로|다음 활동)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
 function toolInfo() { const hub = $$('#s1body .hub [data-act=tool]'); const cur = hub.findIndex(b => b.classList.contains('on'));
   const tc = TCARD(), mis = tc ? [...tc.querySelectorAll(MIS_SEL)] : []; const done = mis.map(s => s.classList.contains('ok') || s.classList.contains('done') || /^\s*✅/.test(s.textContent));
   let si = done.findIndex(d => !d); if (si < 0) si = mis.length - 1;
@@ -11394,6 +11414,19 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
     const g = ti.querySelector('svg,img'); if (g) { g.style.width = '36px'; g.style.height = '36px'; }
     if (em && h2 && !h2.textContent.trim().startsWith(em)) h2.insertAdjacentText('afterbegin', em + ' '); }); }
   let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; fix(); }, 60); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 휴대폰 세로 화면: 조작 활동(개념 탐험·미니게임·보드게임)에서는 가로로 돌려 달라는 안내 — 문제 풀이는 세로 그대로 */
+(function () { if (window.__uniRot) return; window.__uniRot = 1;
+  const isPhone = () => Math.min(screen.width, screen.height) < 600 && matchMedia('(pointer:coarse)').matches;
+  const act = () => { const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
+  let el = null, dis = {};
+  function upd() { const port = innerHeight > innerWidth, on = isPhone() && port && act(); const key = (document.body.dataset.svst || '') + '|' + (document.body.dataset.svset || '');
+    if (!el) { el = document.createElement('div'); el.id = 'uniRot'; el.innerHTML = '<div class="uniRotBox"><div class="uniRotPh">📱</div><b>휴대폰을 가로로 돌려 주세요</b><p>직접 끌어 조작하는 활동은 가로 화면에서 그림이 크게 보여요.</p><button type="button">세로로 그냥 할게요</button></div>'; el.querySelector('button').onclick = () => { dis[key] = 1; upd(); }; document.body.appendChild(el); }
+    el.classList.toggle('on', on && !dis[key]); }
+  addEventListener('resize', upd); addEventListener('orientationchange', () => setTimeout(upd, 200));
+  try { new MutationObserver(() => { clearTimeout(upd.t); upd.t = setTimeout(upd, 150); }).observe(document.body, { attributes: true, attributeFilter: ['data-svst', 'data-svset', 'class'] }); } catch (e) {}
+  document.addEventListener('click', () => setTimeout(upd, 300), true); setTimeout(upd, 800);
+  const st = document.createElement('style'); st.textContent = '#uniRot{position:fixed;inset:0;z-index:9000;background:rgba(30,27,75,.86);display:none;align-items:center;justify-content:center;padding:24px}#uniRot.on{display:flex}.uniRotBox{background:#fff;border-radius:24px;padding:26px 22px;text-align:center;max-width:320px;font-weight:800;color:#1e1b4b;box-shadow:0 10px 30px rgba(0,0,0,.3)}.uniRotBox b{display:block;font-size:1.3rem;margin:8px 0}.uniRotBox p{font-size:.95rem;color:#475569;margin:0 0 16px;line-height:1.5}.uniRotBox button{border:0;background:#e2e8f0;border-radius:999px;padding:8px 18px;font-weight:800;color:#334155}.uniRotPh{font-size:3.4rem;display:inline-block;animation:uniRotA 1.6s ease-in-out infinite}@keyframes uniRotA{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}';
+  document.head.appendChild(st); })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],

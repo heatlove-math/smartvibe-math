@@ -12201,12 +12201,27 @@ body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig .rffig,body.svsl-on
 body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1fig svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig>svg,body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .svsl-jfig .rffig>svg{width:100%!important;height:auto!important;max-height:46vh;max-width:none!important}
 body.svsl-on.svsl-land[data-svst=jump] #s1body>.qcard .j1ask{zoom:1.3}
 /* 상황 살펴보기 두 칸: 왼쪽 = 제목·상황 글·과제, 오른쪽 = 큰 그림 */
-body.svsl-land .sv-heroboard.svsl-hb2{display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
+body.svsl-land .sv-heroboard.svsl-hb2:not(.svsl-off){display:grid!important;grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:22px;row-gap:14px;align-items:center;justify-items:stretch;padding:0 12px;box-sizing:border-box}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-h{grid-column:1;grid-row:2;justify-self:center;font-size:calc(1.1em * var(--hbk,1))}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-story{grid-column:1;grid-row:3;max-width:none;font-size:calc(1.25em * var(--hbk,1));line-height:1.7;padding:16px 20px}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-hb-task{grid-column:1;grid-row:4;text-align:center;font-size:calc(1.15em * var(--hbk,1));line-height:1.5}
 body.svsl-land .sv-heroboard.svsl-hb2>.sv-fig{grid-column:2;grid-row:1/-1;justify-self:center;align-self:center}
 body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-story{font-size:calc(1.15em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-task{font-size:calc(1.05em * var(--hbk,1))}body.svsl-land .sv-heroboard:not(.svsl-hb2)>.sv-hb-h{font-size:calc(1.1em * var(--hbk,1))}
+/* ===== 휴대폰 가로(높이 500 이하): 위·아래 막대를 한 줄로 얇게 → 조작 그림에 높이를 몰아줘요 ===== */
+@media (orientation:landscape) and (max-height:500px){
+body.svsl-on #svslTop{flex-wrap:nowrap;padding:3px 8px;gap:6px}
+body.svsl-on #svslTop .ti,body.svsl-on #svslTop .sets{display:none!important}
+body.svsl-on #svslTop .st{font-size:11px;padding:0 2px}body.svsl-on #svslTop .md{padding:3px 10px;font-size:11px}
+body.svsl-on #svslTabs{padding:2px 8px!important}body.svsl-on #svslTabs button{font-size:11px!important;padding:2px 8px!important}
+body.svsl-on #svslNav{padding:2px 8px calc(2px + env(safe-area-inset-bottom))!important;gap:8px}
+body.svsl-on #svslNav .nv{padding:5px 14px;font-size:13px;min-width:70px}body.svsl-on #svslNav .lb b{font-size:11px}
+body.svsl-on.svsl-land .svsl-tc{padding:4px 8px!important}
+body.svsl-on.svsl-land .svsl-main>.uni-cap,body.svsl-on.svsl-land .svsl-tc .ancap{font-size:12.5px!important;padding:4px 10px!important;margin-bottom:3px!important;line-height:1.3!important;border-width:2px!important;box-shadow:none!important}
+body.svsl-on.svsl-land .svsl-tc .ancap .ckno{zoom:.75}
+body.svsl-on #svslNav .say-row{zoom:.6}body.svsl-on #svslNav .lb{zoom:.8}body.svsl-on #svslTabs .svtic,body.svsl-on #svslTabs img{zoom:.7}
+body.svsl-on.svsl-land .m4fig,body.svsl-on.svsl-land .vkpfig{height:calc(100vh - 205px)!important;max-height:none;padding:2px;border-width:2px}
+body.svsl-on.svsl-land .m4info{max-width:260px}body.svsl-on.svsl-land .m4info,body.svsl-on.svsl-land .vkpinfo{height:calc(100vh - 205px)!important;overflow:hidden}
+}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -12264,7 +12279,7 @@ function fitBub(bb) { if (!bb || bb.style.display === 'none') return; bb.style.o
 /* 차시마다 도구 카드 모양이 달라요: #toolBody 안 카드, 또는 도구 고르기 판 뒤의 카드(4학년 1단원) */
 const TCARD = () => $('#toolBody > .antool') || $('#toolBody > .card') || [...$$('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head') && !c.classList.contains('qcard') && !c.classList.contains('qnav-wrap'));
 const MIS_SEL = ':scope > .anmis > span, :scope .anmis > span, .t11steps > span, .ftsteps > span';
-const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
+const INNEXT = () => { const c = TCARD(); if (!c) return null; return [...c.querySelectorAll('[data-an=fd-next],[data-an=ft-next],button')].find(b => (b.offsetParent !== null || b.classList.contains('svsl-hidnext')) && !b.disabled && (b.matches('[data-an=fd-next],[data-an=ft-next]') || /^\s*(다음|다음 단계|다음 미션|다음으로|다음 활동)\s*(➜|▶|→|»)?\s*$/.test(b.textContent))) || null; };
 function toolInfo() { const hub = $$('#s1body .hub [data-act=tool]'); const cur = hub.findIndex(b => b.classList.contains('on'));
   const tc = TCARD(), mis = tc ? [...tc.querySelectorAll(MIS_SEL)] : []; const done = mis.map(s => s.classList.contains('ok') || s.classList.contains('done') || /^\s*✅/.test(s.textContent));
   let si = done.findIndex(d => !d); if (si < 0) si = mis.length - 1;
@@ -13022,6 +13037,19 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
     const g = ti.querySelector('svg,img'); if (g) { g.style.width = '36px'; g.style.height = '36px'; }
     if (em && h2 && !h2.textContent.trim().startsWith(em)) h2.insertAdjacentText('afterbegin', em + ' '); }); }
   let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; fix(); }, 60); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* 휴대폰 세로 화면: 조작 활동(개념 탐험·미니게임·보드게임)에서는 가로로 돌려 달라는 안내 — 문제 풀이는 세로 그대로 */
+(function () { if (window.__uniRot) return; window.__uniRot = 1;
+  const isPhone = () => Math.min(screen.width, screen.height) < 600 && matchMedia('(pointer:coarse)').matches;
+  const act = () => { const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
+  let el = null, dis = {};
+  function upd() { const port = innerHeight > innerWidth, on = isPhone() && port && act(); const key = (document.body.dataset.svst || '') + '|' + (document.body.dataset.svset || '');
+    if (!el) { el = document.createElement('div'); el.id = 'uniRot'; el.innerHTML = '<div class="uniRotBox"><div class="uniRotPh">📱</div><b>휴대폰을 가로로 돌려 주세요</b><p>직접 끌어 조작하는 활동은 가로 화면에서 그림이 크게 보여요.</p><button type="button">세로로 그냥 할게요</button></div>'; el.querySelector('button').onclick = () => { dis[key] = 1; upd(); }; document.body.appendChild(el); }
+    el.classList.toggle('on', on && !dis[key]); }
+  addEventListener('resize', upd); addEventListener('orientationchange', () => setTimeout(upd, 200));
+  try { new MutationObserver(() => { clearTimeout(upd.t); upd.t = setTimeout(upd, 150); }).observe(document.body, { attributes: true, attributeFilter: ['data-svst', 'data-svset', 'class'] }); } catch (e) {}
+  document.addEventListener('click', () => setTimeout(upd, 300), true); setTimeout(upd, 800);
+  const st = document.createElement('style'); st.textContent = '#uniRot{position:fixed;inset:0;z-index:9000;background:rgba(30,27,75,.86);display:none;align-items:center;justify-content:center;padding:24px}#uniRot.on{display:flex}.uniRotBox{background:#fff;border-radius:24px;padding:26px 22px;text-align:center;max-width:320px;font-weight:800;color:#1e1b4b;box-shadow:0 10px 30px rgba(0,0,0,.3)}.uniRotBox b{display:block;font-size:1.3rem;margin:8px 0}.uniRotBox p{font-size:.95rem;color:#475569;margin:0 0 16px;line-height:1.5}.uniRotBox button{border:0;background:#e2e8f0;border-radius:999px;padding:8px 18px;font-weight:800;color:#334155}.uniRotPh{font-size:3.4rem;display:inline-block;animation:uniRotA 1.6s ease-in-out infinite}@keyframes uniRotA{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}';
+  document.head.appendChild(st); })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
