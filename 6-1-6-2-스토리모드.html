@@ -5899,6 +5899,12 @@ body.svsl-port .vkp{flex-direction:column}body.svsl-port .vkpfig{flex:none;heigh
 .vkvol.mini{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 10px;padding:5px 12px;font-weight:900;color:#334155}.vkvol.mini b{font-family:'Jua',sans-serif;font-size:1.5rem;color:#ea580c;margin:0 2px}.vkvol.mini i{font-style:normal;color:#94a3b8}
 .vkvol.mini .q{color:#1d4ed8;font-size:.95rem}
 .vkgl{fill:#64748b;font-size:17px}
+/* 늘이기 표: 부피 칸을 누르면 그 줄 모양이 왼쪽에 */
+.vkgfigs{position:relative;width:100%;height:100%;display:grid}.vkgfig{grid-area:1/1;display:none;flex-direction:column;align-items:center;justify-content:center;min-height:0}.vkgfig.on{display:flex;animation:vkgIn .25s ease}
+.vkgfig>svg{width:100%;height:auto;max-height:100%;flex:1;min-height:0}
+.vkgcap{font-weight:900;font-size:1.15rem;color:#1e3a8a;background:#eff6ff;border:2.5px solid #93c5fd;border-radius:999px;padding:4px 16px;display:flex;gap:10px;align-items:baseline}.vkgcap small{color:#64748b;font-size:.85rem}
+.vkgt tr[data-vkg]{cursor:pointer}.vkgt tr.vkgon td{background:#fef9c3}.vkghint{font-weight:800;color:#475569;font-size:.95rem;margin-bottom:6px}
+@keyframes vkgIn{from{opacity:.3;transform:scale(.97)}to{opacity:1;transform:none}}
 </style>
 <script>
 /* 6-1 6단원 2차시 · 직육면체의 부피 구하기 */
@@ -8094,8 +8100,17 @@ const VK = (() => {
       init: () => ({ m: [1, 1, 1], i: 0, got: [], rv: {} }),
       view: d => { const [a, b, h] = A.map((x, j) => x * d.m[j]), cur = T[Math.min(d.i, T.length - 1)], fin = d.i >= T.length, ok = !fin && d.m.every((x, j) => x === cur[j]);
         const EM = [0, 1, 2].map(j => Math.min(MX3, Math.max(2, fin ? 1 : cur[j], d.m[j])));   /* 작업판: 이번 과제에서 늘일 수 있는 만큼(적어도 2배)만 — 그림이 크게 보여요 */
-        const FB = A[1] * EM[1], y0 = FB - b, L = [];   /* 세로는 뒤쪽을 붙박아 두고 앞면이 앞으로 나와요 */
-        for (let z = 0; z < h; z++) for (let y = 0; y < b; y++) for (let x = 0; x < a; x++) { const ix = Math.floor(x / A[0]), iy = Math.floor(y / A[1]), iz = Math.floor(z / A[2]); L.push([x, FB - 1 - y, z, 1, 1, 1, ix + iy + iz === 0 ? 'cube' : CL[(ix + iy * 2 + iz * 3 - 1) % CL.length]]); }
+        if (fin) [0, 1, 2].forEach(j => { EM[j] = Math.max(EM[j], ...d.got.map(g => T[g][j])); });   /* 표 채우기: 가장 큰 모양까지 들어가는 같은 틀 */
+        const FB = A[1] * EM[1], y0 = FB - b;   /* 세로는 뒤쪽을 붙박아 두고 앞면이 앞으로 나와요 */
+        const blocks = m => { const [aa, bb, hh] = A.map((x, j) => x * m[j]), LL = []; for (let z = 0; z < hh; z++) for (let y = 0; y < bb; y++) for (let x = 0; x < aa; x++) { const ix = Math.floor(x / A[0]), iy = Math.floor(y / A[1]), iz = Math.floor(z / A[2]); LL.push([x, FB - 1 - y, z, 1, 1, 1, ix + iy + iz === 0 ? 'cube' : CL[(ix + iy * 2 + iz * 3 - 1) % CL.length]]); } return LL; };
+        const L = blocks(d.m);
+        const dimLab = (m, p) => { const [aa, bb, hh] = A.map((x, j) => x * m[j]), yy = FB - bb; return `<g class="vkdl"><text x="${p(aa / 2, yy, 0)[0]}" y="${p(aa / 2, yy, 0)[1] + 21}" text-anchor="middle">가로 ${aa} cm</text><text x="${p(aa, yy + bb / 2, 0)[0] + 9}" y="${p(aa, yy + bb / 2, 0)[1] + 14}">세로 ${bb} cm</text><text x="${p(0, yy, hh / 2)[0] - 9}" y="${p(0, yy, hh / 2)[1] + 5}" text-anchor="end">높이 ${hh} cm</text></g>`; };
+        const FO = { frame: [A[0] * EM[0], FB, A[2] * EM[2]], frameBack: true, frameCol: '#cbd5e1', floorCol: '#eef2f7', u: PU, cls: 'vkpull', pad: 16, padB: 26, padL: 96, padT: 34, padR: 86 };
+        if (fin) {   /* 표의 부피 칸을 누르면 그 줄의 모양이 왼쪽에 나타나요 */
+          const rows = [{ g: 'o', m: [1, 1, 1], t: '처음' }].concat(d.got.map(g => ({ g, m: T[g].slice(0, 3), t: T[g][3] })));
+          const figs = rows.map((r, i) => `<div class="vkgfig${i ? '' : ' on'}" data-g="${r.g}"><div class="vkgcap">${r.t} · ${A.map((x, j) => x * r.m[j]).join(' × ')}<small>처음 상자 ${r.m[0] * r.m[1] * r.m[2]}개만큼</small></div>${VOX.cubes(blocks(r.m), Object.assign({}, FO, { extra: (p) => dimLab(r.m, p) }))}</div>`).join('');
+          const tblF = `<table class="cktable vkgt"><tr><th>만든 모양</th><th>가로 × 세로 × 높이</th><th>부피(cm³)</th></tr><tr data-vkg="o"><td>처음</td><td>${A.join(' × ')}</td><td>${V0}</td></tr>${d.got.map(g => `<tr data-vkg="${g}"><td>${T[g][3]}</td><td>${A.map((x, j) => x * T[g][j]).join(' × ')}</td><td>${MX.inp('g' + g, d, { w: 60 })}</td></tr>`).join('')}</table>`;
+          return stageBox(`<div class="vkgfigs">${figs}</div>`, `<div class="vkghint">👉 부피 칸을 누르면 그 모양이 왼쪽에 나타나요.</div>` + tblF + (!d.recOK ? MX.recBtn(d, c.hint) : ''), true, figAR(A[0] * EM[0] + 4.2, FB, A[2] * EM[2] + .9), fin); }
         const fig = VOX.cubes(L, { frame: [A[0] * EM[0], FB, A[2] * EM[2]], frameBack: true, frameCol: '#cbd5e1', floorCol: '#eef2f7', u: PU, cls: 'vkpull', pad: 16, padB: 26, padL: 96, padT: 34, padR: 86,
           extra: (p, u) => { if (fin) return ''; const pr = Math.hypot(VOX.CX, VOX.CY), fdir = [-VOX.CX / pr, VOX.CY / pr];
             const lab = `<g class="vkdl"><text x="${p(a / 2, y0, 0)[0]}" y="${p(a / 2, y0, 0)[1] + 21}" text-anchor="middle">가로 ${a} cm</text><text x="${p(a, y0 + b / 2, 0)[0] + 9}" y="${p(a, y0 + b / 2, 0)[1] + 14}">세로 ${b} cm</text><text x="${p(0, y0, h / 2)[0] - 9}" y="${p(0, y0, h / 2)[1] + 5}" text-anchor="end">높이 ${h} cm</text></g>`;
@@ -8116,6 +8131,9 @@ const VK = (() => {
         'act:mxhint'(d, v, el, api) { api.say(false, c.hint, true); } },
       _solve(d, on) { T.forEach(t => { [0, 1, 2].forEach(j => on('act:vkset', 'm' + j + ':' + t[j], null)); on('act:vkgo', null, null); }); on('act:mxchk', 'auto', null); } });
   }
+  if (!window.__vkgSel) { window.__vkgSel = 1; const sel = e => { const tr = e.target.closest && e.target.closest('.vkgt tr[data-vkg]'); if (!tr) return; const card = tr.closest('.card') || document;
+      card.querySelectorAll('.vkgt tr[data-vkg]').forEach(r => r.classList.toggle('vkgon', r === tr)); card.querySelectorAll('.vkgfig').forEach(f => f.classList.toggle('on', f.dataset.g === tr.dataset.vkg)); };
+    document.addEventListener('focusin', sel); document.addEventListener('pointerdown', sel); }
   /* ⑧ 정육면체 만들기: c = { E, rec, win, q } — 쌓기나무의 꼭짓점을 직접 잡아당기면 가로·세로·높이가 함께 늘어나요 */
   function cube(c) {
     const E = c.E, mx = E + 1, chk = c.kind === 'check';
@@ -13078,6 +13096,8 @@ body:has(#scratchFab) .btn[data-act="scratch-toggle"]{display:none!important}
 body.svsl-on .sv-heroboard.svsl-scrolly{overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.svsl-on .sv-heroboard.svsl-scrolly::after{content:'⬇ 위로 밀어 더 보기';position:sticky;bottom:0;align-self:center;display:block;margin:6px auto 0;width:max-content;font-weight:900;font-size:.85rem;color:#fff;background:rgba(109,40,217,.85);border-radius:999px;padding:3px 12px;pointer-events:none}
 body.svsl-on .drimg:empty{display:none}
+
+#svslTabs button .svtic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:none;border-radius:50%;overflow:hidden;vertical-align:middle;margin-right:4px}#svslTabs button .svtic svg{width:26px!important;height:26px!important}#svslTabs button .svtic.e{font-size:20px;line-height:1}
 </style>
 <script>
 /* 🎞️ 넘겨 보기 — 원래 수업의 화면·기능은 그대로 두고, 장면 단위로 한 화면씩 보여 줘요 */
@@ -13272,7 +13292,9 @@ function qInfo() { const ch = $$('#s1body .qnav .qnchip'); return { ch, cur: ch.
 function renderTabs(k) { const tb = $('#svslTabs');
   if (SET() === 's1' && k === 'basic') { const Q = qInfo(); tb.innerHTML = Q.ch.map((b, j) => { const ok = /ok|done|solved|right/.test(b.className) || !!b.querySelector('svg,img') || /✅|✔/.test(b.textContent); return `<button type="button" class="sq ${j === Q.cur ? 'on' : ''} ${ok ? 'ok' : ''}" data-q="${j}">${ok ? '✅ ' : ''}${j + 1}번</button>`; }).join(''); return; }
   if (k !== 'concept') { tb.innerHTML = ''; return; } const T = toolInfo();
-  tb.innerHTML = T.hub.map(b => { const v = b.dataset.v, nm = tname(b), img = b.querySelector('img'); return `<button type="button" data-v="${v}" class="${b.classList.contains('on') ? 'on' : ''} ${T.badges[v] ? 'ok' : ''}">${T.badges[v] ? '✅' : img ? `<img src="${img.src}" alt="">` : ''}${nm}</button>`; }).join(''); }
+  tb.innerHTML = T.hub.map(b => { const v = b.dataset.v, nm = tname(b), img = b.querySelector('.ti img') || b.querySelector('img'), ti = b.querySelector('.ti'), sv = ti && ti.querySelector('svg'), em = ti && !img && !sv ? (ti.querySelector('[role=img]') || ti).textContent.trim() : '';
+    const ic = img ? `<img src="${img.src}" alt="">` : sv ? `<span class="svtic">${sv.outerHTML}</span>` : em ? `<span class="svtic e">${em}</span>` : '';
+    return `<button type="button" data-v="${v}" class="${b.classList.contains('on') ? 'on' : ''} ${T.badges[v] ? 'ok' : ''}">${T.badges[v] ? '✅' : ic}${nm}</button>`; }).join(''); }
 function nextInfo() { const k = step();
   if (k === 'result' && ri < rn - 1) return { ok: true, t: '다음 ▶' };
   if (SET() === 's1' && k === 'mission') { if (mi < 2) return { ok: true, t: '다음 ▶' }; return { ok: !!S1().goalConfirmed, t: '개념 탐험 ▶', why: '내 생각을 저장하면 다음으로 갈 수 있어요' }; }
@@ -13315,7 +13337,7 @@ function banner(k) { const i = stepIdx(k), L = steps(); if (i < 0) return; const
   b.innerHTML = `<div><span class="k">${SET() === 's1' ? '세트 1' : '세트 2'} · ${L.length}단계 중 ${i + 1}단계</span><h3>${L[i][2]} ${L[i][1]}</h3><p>${L[i][3]}</p><div class="fl">${L.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'ok' : ''}"></i>`).join('')}</div></div>`;
   B.appendChild(b); setTimeout(() => b.remove(), 2100); }
 /* 칸에 맞추기: 원래 부품(막대·병·카드)을 자르지 않고, 배치된 칸 크기에 맞게 키우거나 줄여요 */
-function zfit(box, inner, max, min, floor) { if (!box || !inner) return; box.classList.remove('svsl-scrolly'); if (inner.hasAttribute && (inner.hasAttribute('data-svnofit') || (inner.firstElementChild && inner.firstElementChild.hasAttribute('data-svnofit')))) { inner.style.zoom = ''; inner.style.removeProperty('width'); return; } max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, floor || zmin()); inner.style.zoom = 1; inner.style.removeProperty('width'); const cw = box.clientWidth, ch = box.clientHeight; let w = inner.scrollWidth;
+function zfit(box, inner, max, min, floor) { if (!box || !inner) return; if (inner.classList && (inner.classList.contains('ufin') || inner.classList.contains('ufig'))) return; /* 정리 화면은 uni 가 맞춰요 */ box.classList.remove('svsl-scrolly'); if (inner.hasAttribute && (inner.hasAttribute('data-svnofit') || (inner.firstElementChild && inner.firstElementChild.hasAttribute('data-svnofit')))) { inner.style.zoom = ''; inner.style.removeProperty('width'); return; } max = Math.min(max || 1.3, ZMAX); const lo = Math.max(min || .3, floor || zmin()); inner.style.zoom = 1; inner.style.removeProperty('width'); const cw = box.clientWidth, ch = box.clientHeight; let w = inner.scrollWidth;
   /* 안쪽 칸이 폭을 다 차지하지만(긴 안내 글 때문에) 실제 내용은 더 좁을 때: 내용 폭에 맞춰 줄인 뒤 키워서 빈 곳을 채워요 */
   try { const ks = [...inner.children].filter(e => e.getClientRects().length && getComputedStyle(e).position !== 'absolute'); if (ks.length && w >= cw - 48 && w <= cw + 2 && !inner.classList.contains('svsl-shelfside') && !inner.classList.contains('svsl-cols2')) { let L = 1e9, R = -1e9; ks.forEach(e => { const r = e.getBoundingClientRect(); L = Math.min(L, r.left); R = Math.max(R, r.right); }); const ext = Math.ceil(R - L) + 10; if (ext > 200 && ext < w - 30) { inner.style.setProperty('width', ext + 'px', 'important'); if (inner.scrollWidth <= ext + 2) w = ext; else inner.style.removeProperty('width'); } } } catch (e) {}
   const h = inner.scrollHeight;
@@ -13733,6 +13755,29 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media(max-width:700px){#scratchFab{bottom:auto!important;top:58%!important;right:6px!important;transform:scale(.85);transform-origin:right center;opacity:.92}
 .svsl-pager{position:sticky;bottom:0;background:#fff;z-index:5;margin-bottom:4px}}
 @media(max-width:700px){.pdj0c{flex-direction:column!important;align-items:stretch!important;max-width:100%}.pdj0t{max-width:100%;overflow-x:auto;flex-direction:column!important}.pdj0t table{font-size:.8rem;margin:0 auto}.pdj0t td,.pdj0t th{padding:3px 4px!important}.pdj0t .sv-in{width:52px!important;min-width:0!important;font-size:1rem!important}.pdj0t .sv-slot{min-width:0!important}.pdclr{flex-wrap:wrap!important;justify-content:center}}
+/* ===== 개념 도구 마무리(정리) 화면 공통 배치 ===== */
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main:has(>div>.ufL){justify-content:center;align-items:stretch}}
+.svsl-tc.svsl-fin .svsl-main>div.ufin.ufin.ufin.ufin{display:flex!important;flex-direction:row!important;gap:18px;align-items:center;max-width:none!important;margin:0 auto!important;box-sizing:border-box;grid-template-columns:none!important}
+.svsl-tc.svsl-fin:has(.ufsteps) .stage-head .anmis{display:none!important}
+.ufin>.ufL{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.ufin.ufin-fm>.ufL{flex:1 1 0}.ufin.ufin-fm>.fmcard{flex:1.45 1 0;min-width:0;margin:0!important;display:flex;flex-direction:column;justify-content:center}
+.ufin>.ufL>.t11steps{display:none!important}
+.ufin .ufsteps{background:#f0f9ff;border:3px solid #7dd3fc;border-radius:20px;padding:10px 14px;box-shadow:0 4px 0 #bae6fd}
+.ufin .ufst-h{font-weight:900;color:#0369a1;font-size:1rem;margin-bottom:8px}
+.ufin .ufst-r{display:flex;gap:10px;flex-wrap:wrap}
+.ufin .ufst{flex:1 1 140px;display:flex;align-items:center;gap:8px;background:#fff;border:2.5px solid #38bdf8;border-radius:14px;padding:8px 10px;font-weight:900;font-size:1rem;color:#0c4a6e;min-width:0;word-break:keep-all}
+.ufin .ufst>b{flex:none;width:30px;height:30px;border-radius:50%;background:#0284c7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.ufin .ufst>span{flex:1;min-width:0}.ufin .ufst>i{flex:none;font-style:normal;color:#16a34a;font-size:1.15rem}
+.svsl-tc.svsl-fin .ufin .andone{margin:0!important;width:auto!important;max-width:none!important;font-size:1.3em;padding:18px 22px}
+.svsl-tc.svsl-fin .ufin .andone .svsum{max-width:none!important;width:auto!important}
+.svsl-tc.svsl-fin .ufin .rpbar{margin:0!important;justify-content:center}
+@media(max-width:899px){.svsl-tc.svsl-fin .svsl-main>div.ufin.ufin.ufin.ufin{flex-direction:column!important;width:100%!important;max-width:none!important}.ufin>.ufL,.ufin.ufin-fm>.fmcard{flex:none!important;width:100%;align-self:stretch}.ufin .ufst-r{grid-template-columns:repeat(min(var(--ufn,3),2),minmax(0,1fr))!important}}
+@media(max-width:600px){.ufin .ufst-r{grid-template-columns:minmax(0,1fr)!important}.svsl-tc.svsl-fin .ufin .andone{font-size:1.05em;padding:12px 14px}}
+.andone .usym.usym{font-style:normal;display:inline!important;width:auto!important;min-width:0!important;height:auto!important;border:0!important;margin:0!important;box-shadow:none!important;vertical-align:baseline!important;padding:0 .12em;border-radius:.25em;line-height:1.1}.andone .usym.sq{color:#2563eb;background:#dbeafe}.andone .usym.tr{color:#ea580c;background:#ffedd5}
+.ufin>.ufL>.ufwrap{display:contents!important}.ufin .ufL .t11steps{display:none!important}
+.ufin .ufst-r{display:grid!important;grid-template-columns:repeat(var(--ufn,3),minmax(0,1fr))}
+@media(max-width:899px){.svsl-tc.svsl-fin .svsl-main:has(.ufin){justify-content:flex-start!important}}
+@media(min-width:900px){.svsl-tc.svsl-fin .svsl-main>div.ufig.ufig.ufig{grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr)!important;gap:16px!important}}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
@@ -13760,7 +13805,7 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   try { const s = document.createElement('style'); s.textContent = '.uni-glow{filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 12px #f59e0b);animation:uniGlow 1s ease-in-out infinite alternate;pointer-events:none}@keyframes uniGlow{from{stroke-opacity:.55}to{stroke-opacity:1}}'; document.head.appendChild(s); } catch (e) {} })();
 /* 위로 올린 안내 띠(.uni-cap) 높이만큼 그림 칸을 줄여 화면 안에 다 들어오게 해요 (데스크톱) */
 (function () {
-  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main').forEach(main => {
+  function capFit() { if (innerWidth < 900) return; document.querySelectorAll('.svsl-tc>.svsl-main:not(:has(.ufin,.ufig))').forEach(main => {
     const cap = main.querySelector(':scope>.uni-cap'); if (!cap) return;
     const inner = [...main.children].find(e => e !== cap && e.getClientRects().length); if (!inner) return;
     const avail = main.clientHeight - cap.offsetHeight - 14, h = inner.getBoundingClientRect().height; if (avail < 120 || h <= avail + 1) return;
@@ -13817,6 +13862,54 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   const fix = () => { try { if (typeof LAIR === 'undefined' || !LAIR.length) return; const n = LAIR.length;
     document.querySelectorAll('ul.ritems li, .ritems li, .rp-items li').forEach(li => { const w = document.createTreeWalker(li, NodeFilter.SHOW_TEXT); let t; while ((t = w.nextNode())) { if (/미니게임 \d+종/.test(t.nodeValue) && !/미니게임 \d+종/.test(t.nodeValue.replace(/미니게임 \d+종/, '')) && !t.nodeValue.includes('미니게임 ' + n + '종')) t.nodeValue = t.nodeValue.replace(/미니게임 \d+종/, '미니게임 ' + n + '종'); } }); } catch (e) {} };
   try { new MutationObserver(() => { clearTimeout(fix.t); fix.t = setTimeout(fix, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
+/* ===== 개념 도구 마무리(정리) 화면 공통 배치 (4·6학년 모든 도구 엔진) =====
+   [왼쪽: 오늘 익힌 단계 카드 + 큰 정리 + 다시 하기] [오른쪽: 식으로 정리(FM) 카드] — 식 카드가 없으면 한 칸 가득.
+   그다음 칸 높이에 맞춰 통째로 키워(최대 1.8배) 빈 곳이 남지 않게 해요. */
+(function () { if (window.__uniFin) return; window.__uniFin = 1;
+  const clean = t => t.replace(/^[\s✅✔️☑️🔒⬜]+/u, '').replace(/^\d+\s*[.)]\s*/, '').trim();
+  function build(card) {
+    const main = card.querySelector(':scope>.svsl-main'); if (!main) return null;
+    const inner = [...main.children].find(e => e.querySelector && (e.matches('.andone') ? false : e.querySelector('.andone'))); if (!inner) return null;
+    if (inner.querySelector(':scope>.gbwrap,:scope>svg,:scope>.anfig')) { inner.classList.add('ufig'); return { main, inner }; } /* 그림을 남기는 도구: 배치는 그대로, 크기만 맞춰요 */
+    inner.classList.add('ufin');
+    let L = inner.querySelector(':scope>.ufL');
+    const fm = inner.querySelector('.fmcard');
+    if (!L) { L = document.createElement('div'); L.className = 'ufL'; inner.prepend(L); }
+    [...inner.children].forEach(c => { if (c !== L && c !== fm) L.appendChild(c); });
+    [...L.children].forEach(c => { if (c.tagName === 'DIV' && !c.matches('.andone,.rpbar,.ufsteps,.fmcard') && c.querySelector(':scope>.andone')) c.classList.add('ufwrap'); });
+    const rps = [...L.querySelectorAll(':scope>.rpbar,:scope>.ufwrap>.rpbar')]; rps.forEach((r, i) => { r.style.display = rps.slice(0, i).some(x => x.textContent === r.textContent) ? 'none' : ''; });
+    inner.classList.toggle('ufin-fm', !!fm); if (fm && (fm.parentElement !== inner || fm.previousElementSibling !== L)) inner.appendChild(fm);
+    /* 기호 ■·▲ 를 또렷한 색 기호로 */
+    L.querySelectorAll('.andone').forEach(a => { if (a.dataset.usym) return; a.dataset.usym = 1; const w = document.createTreeWalker(a, NodeFilter.SHOW_TEXT), ns = []; let t; while ((t = w.nextNode())) if (/[■▲]/.test(t.nodeValue)) ns.push(t);
+      ns.forEach(t => { const sp = document.createElement('span'); sp.innerHTML = t.nodeValue.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/■/g, '<i class="usym sq">■</i>').replace(/▲/g, '<i class="usym tr">▲</i>'); t.replaceWith(...sp.childNodes); }); });
+    /* 단계 카드 */
+    let src = [...card.querySelectorAll('.stage-head .anmis>span')]; if (!src.length) src = [...L.querySelectorAll('.t11steps>span')];
+    const txt = src.map(s => clean(s.textContent)).filter(Boolean), key = txt.join('|');
+    let st = L.querySelector(':scope>.ufsteps');
+    if (txt.length && (!st || st.dataset.k !== key)) { if (st) st.remove(); st = document.createElement('div'); st.className = 'ufsteps'; st.dataset.k = key;
+      st.innerHTML = '<div class="ufst-h">🧭 오늘 익힌 단계</div><div class="ufst-r" style="--ufn:' + (txt.length > 3 ? 2 : txt.length) + '">' + txt.map((t, i) => `<div class="ufst"><b>${i + 1}</b><span>${t}</span><i>✔</i></div>`).join('') + '</div>'; L.prepend(st); }
+    return { main, inner };
+  }
+  function fit(o) { const { main, inner } = o; inner.style.zoom = 1; inner.style.removeProperty('width');
+    if (innerWidth < 700) return;
+    const cap = main.querySelector(':scope>.uni-cap'); const aw = main.clientWidth - 8, ah = main.clientHeight - (cap && cap.getClientRects().length ? cap.offsetHeight + 10 : 0) - 12; if (ah < 150) return;
+    const set = z => { inner.style.zoom = z; inner.style.setProperty('width', (aw / z) + 'px', 'important'); return inner.getBoundingClientRect().height; };
+    let lo = .55, hi = 1.8; if (set(hi) <= ah) return; if (set(1) <= ah) lo = 1; else hi = 1;
+    for (let k = 0; k < 7; k++) { const m = (lo + hi) / 2; if (set(m) <= ah) lo = m; else hi = m; } set(lo); }
+  let q = 0, busy = 0;
+  function run() { if (busy) return; busy = 1; try { document.querySelectorAll('.svsl-tc.svsl-fin').forEach(c => { const o = build(c); if (o) fit(o); }); } catch (e) {} setTimeout(() => { busy = 0; }, 0); }
+  try { new MutationObserver(() => { if (q || busy) return; q = setTimeout(() => { q = 0; run(); }, 90); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  addEventListener('resize', () => { clearTimeout(run.t); clearTimeout(run.t2); run.t = setTimeout(run, 150); run.t2 = setTimeout(run, 500); }); window.__ufin = run;
+})();
+/* 도구 카드 머리: 4학년도 6학년처럼 왼쪽 동그라미에 그 도구의 악당 얼굴, 도구 그림(이모지)은 제목 앞으로 */
+(function () { if (window.__uniHeadV) return; window.__uniHeadV = 1;
+  function fix() { document.querySelectorAll('.svsl-tc>.stage-head>.ti, #toolBody .stage-head>.ti').forEach(ti => { if (ti.dataset.uv || ti.querySelector('img,svg,[role=img]')) return;
+    const hb = document.querySelector('#s1body .hub [data-act=tool].on .ti'); if (!hb) return; const src = hb.querySelector('img,svg') || hb.querySelector('[role=img]'); if (!src) return;
+    const em = ti.textContent.trim(), h2 = ti.parentElement.querySelector('.h2'); ti.dataset.uv = 1;
+    ti.innerHTML = src.tagName === 'SPAN' ? `<span style="font-size:30px;line-height:1">${src.textContent}</span>` : src.outerHTML.replace(/width="\d+"/, 'width="36"').replace(/height="\d+"/, 'height="36"');
+    const g = ti.querySelector('svg,img'); if (g) { g.style.width = '36px'; g.style.height = '36px'; }
+    if (em && h2 && !h2.textContent.trim().startsWith(em)) h2.insertAdjacentText('afterbegin', em + ' '); }); }
+  let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; fix(); }, 60); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
