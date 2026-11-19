@@ -6428,7 +6428,7 @@ genParts = function () {
   const M2 = slPlan('dodu', 2, 6, { cols: 12, cell: 23 });
   P.b2 = { key: 'b2', label: '기본 문제 2 · 밀기한 방향과 거리', choice: true, write: false, choices: slOpts(M2.dir, M2.n), ans: slPlanSay(M2),
     text: '도형 <b>가</b>를 밀어서 도형 <b>나</b>의 자리로 옮겼어요. 어느 쪽으로 몇 cm 밀었을까요? (모눈 한 칸 = 1cm)<div class="afw">'
-      + slPlanFig(M2) + '</div>',
+      + slPlanFig(M2, { arrow: false }) + '</div>',
     hint: '가의 꼭짓점 하나를 골라 나의 같은 꼭짓점까지 화살표를 그려 보고, 지나간 모눈 칸 수를 세어요.',
     ok: '가에서 나로 <b>' + slPlanSay(M2) + '</b> 밀었어요. 화살표는 가에서 나로 향하니 방향을 거꾸로 말하지 않도록 조심해요!' };
   /* b3 · 칸 수 → cm (오개념: 칸이 아니라 선을 센다) */
@@ -6690,8 +6690,8 @@ function slFindQ(two) {
 BANK[1] = [
   () => { const M = slPlan('dodu', 2, 6, { cols: 11, cell: 20 });
     return mkI('도형 가를 밀어서 도형 나의 자리로 옮겼어요. 어느 쪽으로 몇 cm 밀었을까요? (모눈 한 칸 = 1cm)',
-      slPlanFig(M), slPlanSay(M), slOpts(M.dir, M.n).filter(x => x !== slPlanSay(M)),
-      '화살표가 지나간 모눈 칸을 세면 ' + slPlanSay(M) + '예요.'); },
+      slPlanFig(M, { arrow: false }), slPlanSay(M), slOpts(M.dir, M.n).filter(x => x !== slPlanSay(M)),
+      '가의 꼭짓점이 나의 같은 꼭짓점까지 움직인 방향과 칸 수를 세면 ' + slPlanSay(M) + '예요.'); },
   () => mkI('도형을 밀면 무엇이 바뀔까요?', '', '위치', ['모양', '크기', '변의 수'], '밀기를 하면 위치만 바뀌고 모양과 크기는 변하지 않아요.'),
   () => mkI('도형을 밀었을 때 변하지 않는 것을 바르게 말한 것은 어느 것일까요?', '', '모양과 크기', ['위치', '위치와 모양', '방향과 위치'], '밀기는 위치만 바꾸므로 모양과 크기는 그대로예요.'),
   () => { const M = slPlan('tri', 3, 7, { cols: 13, cell: 20 }), n = M.n;
@@ -6700,7 +6700,7 @@ BANK[1] = [
       n + 'cm', [(n - 1) + 'cm', (n + 1) + 'cm', (n * 2) + 'cm'], '꼭짓점이 ' + n + '칸 움직였으니 ' + n + 'cm예요. (선이 아니라 칸을 세요)'); },
   () => { const M = slPlan('key', 2, 5, { cols: 11, cell: 20 });
     return mkI('ㄱ자 조각을 밀었어요. 밀기한 방향은 어느 쪽일까요?',
-      slPlanFig(M),
+      slPlanFig(M, { arrow: false }),
       SL_DNM[M.dir], SL_DKEYS.filter(x => x !== M.dir).map(x => SL_DNM[x]), '가에서 나로 향하는 방향이 ' + SL_DNM[M.dir] + '이에요.'); },
   () => { const k = pick(['flipx', 'turn', 'grow']), M = slPlan('flag', 3, 5, { cols: 11, cell: 20 });
     return mkI('그림처럼 도형을 움직였어요. 이것은 밀기일까요?',
@@ -6723,7 +6723,7 @@ BANK[2] = [
       '밀었던 방향의 반대쪽으로 같은 거리만큼 밀면 처음 자리로 돌아와요.'); },
   () => { const M = slPlan('house', 2, 6, { cols: 12, cell: 20 }), d = M.dir, n = M.n;
     return mkI('도형 나를 다시 도형 가의 자리로 옮기려면 어느 쪽으로 몇 cm 밀어야 할까요?',
-      slPlanFig(M),
+      slPlanFig(M, { arrow: false }),
       slSay(slBack(d), n), slOpts(d, n).filter(x => x !== slSay(slBack(d), n)).slice(0, 3),
       '가에서 나로 ' + slSay(d, n) + ' 밀었으니, 되돌리려면 ' + slSay(slBack(d), n) + ' 밀어요.'); },
   () => { const k = pick(['flipx', 'flipy', 'turn']), M = slPlan('key', 3, 5, { cols: 10, cell: 18 });
@@ -6777,7 +6777,7 @@ BANK[3] = [
       (n - m) + 'cm', [(n + m) + 'cm', n + 'cm', m + 'cm'], n + ' − ' + m + ' = ' + (n - m) + 'cm예요.', true); },
   () => { const M = slPlan('house', 2, 5, { cols: 12, cell: 20 });
     return mkI('그림을 보고 밀기한 방향과 거리를 구하세요. (모눈 한 칸 = 1cm)',
-      slPlanFig(M, { cm: true }),
+      slPlanFig(M, { cm: true, arrow: false }),
       slPlanSay(M), slOpts(M.dir, M.n).filter(x => x !== slPlanSay(M)), '대응하는 꼭짓점을 찾아 칸 수를 세면 ' + slPlanSay(M) + '예요.'); },
   () => mkI('조각을 밀어서는 빈 곳에 꼭 맞출 수 없었어요. 그 까닭으로 알맞은 것은 어느 것일까요?', '',
     '밀기는 놓인 방향을 바꿀 수 없기 때문', ['밀기는 크기를 바꾸기 때문', '조각이 더 크기 때문', '모눈 칸이 다르기 때문'],
@@ -7590,7 +7590,7 @@ buildS1Sheet = function (c) {
     h += '<div class="p-sec">② 기본 문제</div>';
     const M1 = slPlan('dodu', 2, 5, { cols: 12, cell: 24 });
     h += pQ(++no, '도형 가를 밀어서 도형 나의 자리로 옮겼어요. 어느 쪽으로 몇 cm 밀었는지 쓰세요. (모눈 한 칸 = 1cm)',
-      pFig(slPlanFig(M1, { cm: true })) + '<div class="p-ans2">답: ' + bl('w3') + '으로 ' + bl('w3') + 'cm</div>');
+      pFig(slPlanFig(M1, { cm: true, arrow: false })) + '<div class="p-ans2">답: ' + bl('w3') + '으로 ' + bl('w3') + 'cm</div>');
     keys.push([no, slPlanSay(M1)]);
     h += pQ(++no, '도형을 밀었을 때 바뀌는 것과 바뀌지 않는 것을 각각 쓰세요.',
       '<div class="p-ans2">바뀌는 것: ' + bl('w6') + ' / 바뀌지 않는 것: ' + bl('w8') + '</div>');
@@ -7606,7 +7606,7 @@ buildS1Sheet = function (c) {
     keys.push([no, '왼쪽이 밀기 — 오른쪽은 밀기가 아님(놓인 방향이 달라짐)']);
     const M5 = slPlan('key', 2, 5, { cols: 12, cell: 24 });
     h += pQ(++no, '도형 나를 도형 가의 자리로 되돌리려면 어느 쪽으로 몇 cm 밀어야 할까요?',
-      pFig(slPlanFig(M5)) + '<div class="p-ans2">답: ' + bl('w3') + '으로 ' + bl('w3') + 'cm</div>');
+      pFig(slPlanFig(M5, { arrow: false })) + '<div class="p-ans2">답: ' + bl('w3') + '으로 ' + bl('w3') + 'cm</div>');
     keys.push([no, slSay(slBack(M5.dir), M5.n)]);
     const d6 = pick(SL_DKEYS), n6 = rnd(3, 5);
     h += pQ(++no, '모눈종이에 그려진 도형을 ' + slSay(d6, n6) + ' 밀어서 그려 보세요.',
@@ -8307,7 +8307,7 @@ const CLS = (() => {
     };
   }
   /* ---------- 👩‍🏫 내 반 설정 (교사용) ---------- */
-  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['4단원 2차시 · 평면도형 뒤집기', '4-1-4-2-스토리모드.html'], ['4단원 3차시 · 평면도형 돌리기', '4-1-4-3-스토리모드.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
+  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['4단원 2차시 · 평면도형 뒤집기', '4-1-4-2-스토리모드.html'], ['4단원 3차시 · 평면도형 돌리기', '4-1-4-3-스토리모드.html'], ['4단원 마무리', '4-1-4-U-단원마무리.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
   const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
   function linkFor(file, url, cls) { const q = new URLSearchParams(); if (url) q.set('webhook', url); if (cls) q.set('class', cls); return base() + encodeURI(file) + '?' + q.toString(); }
   function ov() { let o = document.getElementById('clsOv'); if (!o) { o = document.createElement('div'); o.id = 'clsOv'; o.className = 'wnov hidden'; document.body.appendChild(o); o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }); } return o; }
@@ -11689,6 +11689,12 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   (document.head || document.documentElement).appendChild(st);
   let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; add(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
 })();
+
+/* 결과 항목의 「미니게임 N종」을 실제 게임 수에 맞춰요 */
+(function () { if (window.__uniLairN) return; window.__uniLairN = 1;
+  const fix = () => { try { if (typeof LAIR === 'undefined' || !LAIR.length) return; const n = LAIR.length;
+    document.querySelectorAll('ul.ritems li, .ritems li, .rp-items li').forEach(li => { const w = document.createTreeWalker(li, NodeFilter.SHOW_TEXT); let t; while ((t = w.nextNode())) { if (/미니게임 \d+종/.test(t.nodeValue) && !/미니게임 \d+종/.test(t.nodeValue.replace(/미니게임 \d+종/, '')) && !t.nodeValue.includes('미니게임 ' + n + '종')) t.nodeValue = t.nodeValue.replace(/미니게임 \d+종/, '미니게임 ' + n + '종'); } }); } catch (e) {} };
+  try { new MutationObserver(() => { clearTimeout(fix.t); fix.t = setTimeout(fix, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],

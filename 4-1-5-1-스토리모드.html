@@ -7620,7 +7620,7 @@ const CLS = (() => {
     };
   }
   /* ---------- 👩‍🏫 내 반 설정 (교사용) ---------- */
-  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['4단원 2차시 · 평면도형 뒤집기', '4-1-4-2-스토리모드.html'], ['4단원 3차시 · 평면도형 돌리기', '4-1-4-3-스토리모드.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
+  const FILES = [['1차시 · 10000 알아보기', '4-1-1-1-스토리모드.html'], ['2차시 · 다섯 자리 수와 십만·백만·천만', '4-1-1-2-스토리모드.html'], ['3차시 · 억과 조', '4-1-1-3-스토리모드.html'], ['4차시 · 뛰어 세기', '4-1-1-4-스토리모드.html'], ['5차시 · 수의 크기 비교', '4-1-1-5-스토리모드.html'], ['1단원 마무리', '4-1-1-U-단원마무리.html'], ['2단원 1차시 · 각의 크기 비교', '4-1-2-1-스토리모드.html'], ['2단원 2차시 · 각도기와 1°', '4-1-2-2-스토리모드.html'], ['2단원 3차시 · 예각과 둔각', '4-1-2-3-스토리모드.html'], ['2단원 4차시 · 각도의 합과 차', '4-1-2-4-스토리모드.html'], ['2단원 5차시 · 삼각형의 세 각의 합', '4-1-2-5-스토리모드.html'], ['2단원 6차시 · 사각형의 네 각의 합', '4-1-2-6-스토리모드.html'], ['3단원 1차시 · (세 자리 수)×(몇십)', '4-1-3-1-스토리모드.html'], ['3단원 2차시 · (세 자리 수)×(몇십몇)', '4-1-3-2-스토리모드.html'], ['3단원 3차시 · 몇십으로 나누기', '4-1-3-3-스토리모드.html'], ['3단원 4차시 · 몫이 한 자리 수', '4-1-3-4-스토리모드.html'], ['3단원 5차시 · 몫이 두 자리 수', '4-1-3-5-스토리모드.html'], ['3단원 6차시 · 어림셈 활용', '4-1-3-6-스토리모드.html'], ['3단원 마무리', '4-1-3-U-단원마무리.html'], ['4단원 1차시 · 평면도형 밀기', '4-1-4-1-스토리모드.html'], ['4단원 2차시 · 평면도형 뒤집기', '4-1-4-2-스토리모드.html'], ['4단원 3차시 · 평면도형 돌리기', '4-1-4-3-스토리모드.html'], ['4단원 마무리', '4-1-4-U-단원마무리.html'], ['5단원 1차시 · 막대그래프', '4-1-5-1-스토리모드.html'], ['6단원 1차시 · 수의 배열에서 규칙 찾기', '4-1-6-1-스토리모드.html']];
   const base = () => location.href.split('?')[0].split('#')[0].replace(/[^/]*$/, '');
   function linkFor(file, url, cls) { const q = new URLSearchParams(); if (url) q.set('webhook', url); if (cls) q.set('class', cls); return base() + encodeURI(file) + '?' + q.toString(); }
   function ov() { let o = document.getElementById('clsOv'); if (!o) { o = document.createElement('div'); o.id = 'clsOv'; o.className = 'wnov hidden'; document.body.appendChild(o); o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }); } return o; }
@@ -11221,6 +11221,12 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
   (document.head || document.documentElement).appendChild(st);
   let q = 0; try { new MutationObserver(() => { if (q) return; q = setTimeout(() => { q = 0; add(); }, 120); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
 })();
+
+/* 결과 항목의 「미니게임 N종」을 실제 게임 수에 맞춰요 */
+(function () { if (window.__uniLairN) return; window.__uniLairN = 1;
+  const fix = () => { try { if (typeof LAIR === 'undefined' || !LAIR.length) return; const n = LAIR.length;
+    document.querySelectorAll('ul.ritems li, .ritems li, .rp-items li').forEach(li => { const w = document.createTreeWalker(li, NodeFilter.SHOW_TEXT); let t; while ((t = w.nextNode())) { if (/미니게임 \d+종/.test(t.nodeValue) && !/미니게임 \d+종/.test(t.nodeValue.replace(/미니게임 \d+종/, '')) && !t.nodeValue.includes('미니게임 ' + n + '종')) t.nodeValue = t.nodeValue.replace(/미니게임 \d+종/, '미니게임 ' + n + '종'); } }); } catch (e) {} };
+  try { new MutationObserver(() => { clearTimeout(fix.t); fix.t = setTimeout(fix, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} })();
 </script><script>/* 게임별 효과 테마: [성공 때 터지고 날아가는 것, 실패 때 나오는 것, 성공 도장 글자] */
 window.GFX_T = {
  'tilt':['🎯✨','💨','명중!'],'mixup':['🛗⭐','🔻','도착!'],'tetris':['🧱✨','💥','한 줄 완성!'],'tycoon':['🚀💰','💸','투자 성공!'],
