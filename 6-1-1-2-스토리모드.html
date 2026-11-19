@@ -6963,7 +6963,7 @@ const MGX = (() => {
     el.innerHTML = g.d.view(r) + (g.res ? `<div class="qzex ${g.res.ok ? 'ok' : 'no'}">${g.res.ok ? '✅' : '❌'} ${g.res.msg}</div>` : r.tip ? `<div class="mgxtip">${r.tip}</div>` : ''); }
   function end(g, ok, msg, log) { const r = g.r; if (r.done) return; r.done = true; r.tip = ''; g.res = { ok, msg }; let p = 0;
     if (ok) { p = vgGood(g.d.pts || 12, [3, (g.d.pts || 12) + 4]); try { Sound.correct(); } catch (e) {} } else { vgBad(4, `${g.d.name}: ${log || ''}`); try { Sound.wrong(); } catch (e) {} }
-    vgHud(); paint(g); if (ok) vgPop('#mgxStage', '+' + p, true); g.tm = setTimeout(() => round(g), ok ? 1500 : 3200); }
+    vgHud(); paint(g); if (ok) vgPop('#mgxStage', '+' + p, true); g.tm = setTimeout(() => round(g), ok ? (r.wr ? 2800 : 1500) : 3200); }
   function slip(g, msg, log) { vgBad(4, `${g.d.name}: ${log || String(msg).replace(/<[^>]+>/g, '')}`); try { Sound.wrong(); } catch (e) {} vgHud(); g.r.tip = '❗ ' + msg; }
   const api = g => ({ end: (ok, msg, log) => end(g, ok, msg, log), slip: (msg, log) => slip(g, msg, log), pop: () => { try { Sound.pop(); } catch (e) {} } });
   const cur = () => { try { return onGame(VG.id) ? G[VG.id] : null; } catch (e) { return null; } };
