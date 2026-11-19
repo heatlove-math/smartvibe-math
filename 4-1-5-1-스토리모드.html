@@ -4051,7 +4051,7 @@ function init() {
   }, 500);
 }
 /* =====================================================================
-   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 6개·기본 문제·다크몽 보스전)
+   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 4개·기본 문제·다크몽 보스전)
    보석은 학번별로 이 기기에 저장돼요. (제출하면 시트 '보석현황'에도 기록)
    ===================================================================== */
 CONFIG.LESSON_ID = CONFIG.LESSON_ID || '4-1-5-1';
@@ -4135,7 +4135,7 @@ const ST_AREA = { dark: '수학 세계 전체', tilt: '수와 연산', mixup: '�
 const ST_VK = ['dark', 'tilt', 'mixup', 'clock', 'half'];
 const ST_SEAL = { tilt: '네 자리 끊기의 자물쇠', mixup: '자릿값의 봉인', clock: '뛰어 세기의 봉인', half: '10장 묶기의 봉인', dark: '조의 문 봉인' };
 const CHAPTERS = [
-  { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 6개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
+  { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 4개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '삐딱이의 함정',     sub: '기본 문제 4개 · 억과 조 읽고 쓰기',        go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '다크몽 보스전',     sub: '방어막 3겹 · 실생활 큰 수 문제 3개',        go: ['s1', 'jump'] },
   { n: 4, v: 'mixup', icon: '🎮', title: '악당 소굴',         sub: '문제은행 · 미니게임 2종 · 수호석 경매전', go: ['s2', 'drill'] },
@@ -9427,6 +9427,50 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .foldbox svg{width:min(100%,360px)!important;height:auto!important}
 .gkprops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;margin:10px 0}.gkprops .btn{min-height:50px;font-size:1.08rem;white-space:normal;line-height:1.35;text-align:left;justify-content:flex-start}
 .ckgrid2 .ckzone .gkin{min-height:96px}.ckgrid2.gkz2{grid-template-columns:1fr 1fr!important;width:100%;align-self:stretch}
+
+/* v46: 표는 머리칸까지 모든 칸에 선 */
+.cktable th{border:2px solid #94a3b8;background:#e0e7ff;font-weight:900;padding:6px 12px;text-align:center}.cktable td{border-color:#94a3b8}
+/* ✋ M4 · 4학년 직접 조작 키트 — 그림이 칸을 가득, 오른쪽은 좁은 값 칸 */
+body.svsl-on .svsl-tc .svsl-main>div:has(>.m4p){align-self:stretch;flex:1 1 100%;width:100%!important;max-width:none!important;min-width:0;min-height:0;align-items:stretch!important;gap:0}
+body.svsl-land .svsl-tc .svsl-main>div:has(>.m4p)>.m4p{flex:1 1 auto;min-height:0}
+.m4p{--m4z:1;display:flex;gap:14px;align-items:stretch;width:100%;box-sizing:border-box}
+body.svsl-land .m4p{height:100%}
+.m4fig{flex:2.1 1 0;min-width:0;min-height:0;height:clamp(300px,56vh,680px);position:relative;box-sizing:border-box;border:3px dashed #f59e0b;border-radius:18px;background:#fffbeb;padding:6px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.m4p.wide .m4fig{flex:3 1 0}
+body.svsl-land .m4fig{height:auto;align-self:stretch}
+.m4p.done .m4fig{border-style:solid;border-color:#22c55e;background:#f0fdf4}
+.m4fig>svg{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;font-family:inherit;font-weight:900}
+.m4info{flex:1 1 0;min-width:0;min-height:0;max-width:380px;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:8px;overflow:hidden}
+.m4info>*{zoom:var(--m4z)}
+.m4info .mxrec,.m4info .row.mt-2{margin:0}
+body.svsl-port .m4p{flex-direction:column}body.svsl-port .m4fig{flex:none;height:clamp(260px,44vh,620px)}body.svsl-port .m4info{flex:none;max-width:none}
+@media(max-width:760px){.m4p{flex-direction:column}.m4fig{flex:none;height:clamp(240px,44vh,500px)}.m4info{flex:none;max-width:none}}
+/* 잡는 곳 */
+.m4h{cursor:grab;touch-action:none}.m4drag .m4h,.m4drag{cursor:grabbing!important}
+.m4hit{fill:#fff;fill-opacity:.001;stroke:none}
+.m4h:hover .m4hit{fill:#fde68a;fill-opacity:.28}
+.m4hand circle{fill:#fff7ed;stroke:#f97316;stroke-width:3.5}.m4hand path{fill:none;stroke:#f97316;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.m4hand .m4hi{font-size:19px}.m4hand .m4hl{font-size:17px;fill:#c2410c;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.m4hand.pulse circle{animation:m4pulse 1.3s ease-in-out infinite}.m4drag .m4hand.pulse circle{animation:none}
+@keyframes m4pulse{0%,100%{stroke-width:3.5}50%{stroke-width:7}}
+/* 오른쪽 값 칸 */
+.m4vol{background:#eff6ff;border:3px solid #93c5fd;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.m4vh{font-weight:900;color:#1d4ed8;font-size:1.05rem}
+.m4vr{display:flex;align-items:baseline;gap:8px;font-weight:900;color:#1e293b;font-size:1rem}.m4vr span{flex:1;min-width:0}.m4vr b{font-size:1.35rem;color:#0f172a}.m4vr em{font-style:normal;color:#64748b;font-size:.9rem}
+.m4vr.big b{font-size:2rem;color:#ea580c}.m4vr.ok b{color:#16a34a}.m4vr.bad b{color:#dc2626}
+.m4vol small{color:#475569;font-weight:800;font-size:.88rem;line-height:1.45;word-break:keep-all}
+.m4eq{background:#fff;border:3px solid #fcd34d;border-radius:16px;padding:10px 12px;font-weight:900;font-size:1.15rem;text-align:center;color:#1e293b;line-height:1.6;word-break:keep-all}.m4eq b{color:#ea580c}.m4eq.ok{border-color:#86efac;background:#f0fdf4}
+/* SVG 글자 */
+.m4fig svg text{font-family:inherit}
+.m4fig .tl{font-size:20px;fill:#334155}.m4fig .tb{font-size:26px;fill:#0f172a}.m4fig .ts{font-size:15px;fill:#64748b}.m4fig .tr{fill:#dc2626}.m4fig .tg{fill:#16a34a}.m4fig .to{fill:#ea580c}.m4fig .tw{fill:#fff}
+.m4fig .pop{animation:m4pop .35s ease}@keyframes m4pop{from{opacity:.2;transform:scale(.92)}to{opacity:1;transform:none}}
+.m4info>*{flex-shrink:0}
+.m4vr span{white-space:nowrap}.m4vr.big b{font-size:1.75rem}
+.m4vr.big{flex-direction:column;align-items:flex-start;gap:0}.m4vr.big b{font-size:1.6rem;line-height:1.15;word-break:break-all;max-width:100%}.m4vr.big b em{font-size:.5em;color:#64748b;font-style:normal}
+.m4vr.big b{white-space:nowrap;overflow:visible}
+/* 세로 화면(패드·폰): 넓은 칸(.wide)도 그림 높이를 지켜요 */
+body.svsl-port .m4p .m4fig{flex:none!important;height:clamp(300px,46vh,640px)}
+@media(max-width:760px){.m4p .m4fig{flex:none!important}}
 </style>
 <script>
 /* =====================================================================
@@ -9463,7 +9507,7 @@ const CK = (() => {
     if (s.i < n && !s.d) { const g = t.stages[s.i]; s.d = g.init ? g.init() : {}; }
     const steps = `<div class="t11steps">${t.stages.map((g, j) => `<span class="${(done && s.i >= n) || j < s.i ? 'ok' : j === s.i ? 'cur' : ''}">${(done && s.i >= n) || j < s.i ? '✅' : j === s.i ? '👉' : '⬜'} ${g.t}</span>`).join('')}</div>`;
     let body = '';
-    if (s.i >= n) body = `<div class="andone">🎖 봉인 해제! ${t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
+    if (s.i >= n) body = `<div class="andone">${typeof svSumHTML === 'function' ? svSumHTML('봉인 해제!', t.summary, t.name) : '🎖 봉인 해제! ' + t.summary}</div><div class="rpbar"><button class="btn btn-sub rpbtn" data-ck="re">🔄 도구 다시 조작해 보기</button><span>배지는 그대로예요. 마음껏 다시 해 봐요!</span></div>`;
     else { const g = t.stages[s.i], q = typeof g.q === 'function' ? g.q(s.d) : g.q;
       body = `<div class="ancap"><span class="ckno">${g.kind === 'check' ? '✔ 확인' : s.i + 1}</span> ${q}</div>` + g.view(s.d, k) + fb(s.fb)
         + (s.won ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 다시 조작해 보기</button><button class="btn btn-green btn-lg" data-ck="next">${s.i === n - 1 ? '🎖 봉인 풀기' : '다음 활동 ➜'}</button></div>` : (s.i > 0 || done ? `<div class="row mt-2" style="justify-content:center"><button class="btn btn-sub" data-ck="rs">🔄 이 활동 처음부터</button></div>` : '')); }
@@ -9599,36 +9643,215 @@ const CKS = {
       d.put[d.i] = x; d.i++; api.clear(); try { Sound.correct(); } catch (e) {} if (d.i >= o.vals.length) api.win(o.say()); } } }; }
 };
 
+/* 🖌 모눈 긁어 칠하기: [data-ck="cl"] 칸을 누른 채로 끌면 지나가는 칸이 모두 칠해져요(칠한 칸에서 시작하면 지워져요) */
+(() => { if (window.__ckPaint) return; window.__ckPaint = 1; let D = null, skip = false;
+  const cellAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest && e.closest('#toolBody [data-ck="cl"]'); };
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (!b || b.disabled) return; e.preventDefault();
+    D = { on: !b.classList.contains('on'), id: e.pointerId, done: new Set([b.dataset.v]) }; skip = true; b.click(); document.body.classList.add('ckpainting'); }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const b = cellAt(e.clientX, e.clientY); if (!b || b.disabled || D.done.has(b.dataset.v)) return; D.done.add(b.dataset.v);
+    if (b.classList.contains('on') !== D.on) { skip = true; b.click(); } }, { passive: false });
+  const up = () => { if (!D) return; D = null; document.body.classList.remove('ckpainting'); setTimeout(() => { skip = false; }, 0); };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  /* 손을 뗄 때 생기는 진짜 클릭은 무시(이미 칠했어요) */
+  document.addEventListener('click', e => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('#toolBody [data-ck="cl"]'); if (b && skip) { e.stopImmediatePropagation(); e.preventDefault(); skip = false; } }, true);
+  const st = document.createElement('style'); st.textContent = '#toolBody .rxg button{touch-action:none;cursor:crosshair}body.ckpainting,body.ckpainting *{user-select:none}.rxgtip{text-align:center;font-weight:800;color:#475569;margin-top:6px}'; document.head.appendChild(st); })();
+
+/* =====================================================================
+   ✋ M4 · 4학년 직접 조작 키트 (2026-11-19)
+   · 그림(SVG)이 도구 칸을 가득 채우고, 오른쪽 좁은 칸에 지금 값·기록을 보여요.
+   · 그림 속 물건(.m4h)을 잡고 끌면 그 방향으로 값이 바뀌어요 — 단추·키패드·정답 카드 없이.
+     .m4h: data-k(값 이름) data-v(지금 값) data-min data-max data-dx data-dy(끄는 방향) data-per(값 1만큼의 SVG 길이)
+     값이 바뀔 때마다 숨은 [data-ck=m4set]에 'k:값', 손을 떼면 'k:end'를 보내요 → stage.on['act:m4set'](d, 'k:값')
+   · 패드·폰: pointer capture 를 body 에 걸어 다시 그려져도 끊기지 않아요.
+   ===================================================================== */
+/* 받침에 따라 조사 고르기 (없는 차시용) */
+if (typeof jo === 'undefined') window.jo = (w, a, b) => { const c = String(w).replace(/<[^>]+>/g, '').trim().slice(-1), n = c.charCodeAt(0); if (n >= 0xAC00 && n <= 0xD7A3) return (n - 0xAC00) % 28 ? a : b; return '0136781'.includes(c) || /[LMN]/i.test(c) ? a : b; };
+const M4 = (() => {
+  if (!window.__m4Pull) { window.__m4Pull = 1; let D = null;
+    const send = v => { const b = document.querySelector('#toolBody [data-ck="m4set"]'); if (b) { b.dataset.v = v; b.click(); } };
+    document.addEventListener('pointerdown', e => { if (D || (e.button != null && e.button > 0)) return; const h = e.target.closest && e.target.closest('#toolBody .m4h'); if (!h) return; const sv = h.closest('svg'); if (!sv) return; e.preventDefault();
+      let s = 1; try { const r = sv.getBoundingClientRect(), vb = sv.viewBox.baseVal; if (vb && vb.width) s = Math.min(r.width / vb.width, r.height / vb.height) || 1; } catch (er) {}
+      D = { k: h.dataset.k, v0: +h.dataset.v, v: +h.dataset.v, min: +h.dataset.min, max: +h.dataset.max, ux: +h.dataset.dx || 0, uy: +h.dataset.dy || 0, per: Math.max(4, (+h.dataset.per || 40) * s), x: e.clientX, y: e.clientY, id: e.pointerId };
+      try { document.body.setPointerCapture(e.pointerId); } catch (er) {} document.body.classList.add('m4drag'); try { Sound.click(); } catch (er) {} }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const dx = e.clientX - D.x, dy = e.clientY - D.y;
+      const v = Math.max(D.min, Math.min(D.max, D.v0 + Math.round((dx * D.ux + dy * D.uy) / D.per))); if (v !== D.v) { D.v = v; send(D.k + ':' + v); try { Sound.pop(); } catch (er) {} } }, { passive: false });
+    const up = e => { if (!D || (e && e.pointerId != null && e.pointerId !== D.id)) return; try { document.body.releasePointerCapture(D.id); } catch (er) {} const k = D.k; D = null; document.body.classList.remove('m4drag'); send(k + ':end'); };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+    /* 오른쪽 칸 글자: 칸 높이에 맞춰 키우거나 줄여요 (단계마다 한 번 정하고 고정) */
+    const ZC = {}; const fit = () => { document.querySelectorAll('#toolBody .m4p').forEach(r => { const info = r.querySelector('.m4info'); if (!info || !info.children.length) return;
+      let key = ''; try { const k = state.s1.tool; key = [k, CK.S(k).i, r.dataset.ph || 0, innerWidth, innerHeight].join(':'); } catch (er) {}
+      const set = z => r.style.setProperty('--m4z', z.toFixed(2)), over = () => { const ks = [...info.children]; if (!ks.length) return false; const t = ks[0].getBoundingClientRect().top, bt = ks[ks.length - 1].getBoundingClientRect().bottom, r = info.getBoundingClientRect(); return bt - t > r.height + 2 || info.scrollHeight > info.clientHeight + 2 || [...info.querySelectorAll('.m4vr b')].some(b => b.scrollWidth > b.parentElement.clientWidth + 2); };
+      let z = ZC[key]; if (z == null) { z = 1; set(z); if (innerWidth > 760) { for (let i = 0; i < 10 && !over() && ([...info.children].reduce((a, c) => a + c.getBoundingClientRect().height, 0) < info.clientHeight * .7); i++) { z *= 1.07; set(z); } for (let i = 0; i < 14 && z > .6 && over(); i++) { z *= .94; set(z); } } if (key) ZC[key] = z; } else { set(z); for (let i = 0; i < 14 && z > .55 && over(); i++) { z *= .94; set(z); } } }); };
+    try { new MutationObserver(() => { clearTimeout(fit.t); fit.t = setTimeout(fit, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} addEventListener('resize', () => { for (const k in ZC) delete ZC[k]; fit(); }); }
+  const setBtn = '<button data-ck="m4set" data-v="" hidden></button>';
+  /* 칸 배치: [그림 | 오른쪽 좁은 칸] — 그림이 칸을 가득 채워요 */
+  const box = (fig, info, o = {}) => `<div class="m4p ${o.done ? 'done' : ''} ${o.wide ? 'wide' : ''}" data-svnofit="1" data-ph="${o.ph || 0}"><div class="m4fig">${fig}</div>${info ? `<div class="m4info">${info}</div>` : ''}${setBtn}</div>`;
+  const svg = (w, h, inner, cls) => `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" class="${cls || ''}">${inner}</svg>`;
+  /* 잡는 곳: 투명한 큰 사각형(손가락 크기 이상) + 보이는 손 표시 */
+  const grip = (k, v, min, max, dir, per, rects, hand) => `<g class="m4h" data-k="${k}" data-v="${v}" data-min="${min}" data-max="${max}" data-dx="${dir[0]}" data-dy="${dir[1]}" data-per="${per}">${rects.map(r => `<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" rx="${r[4] || 6}" class="m4hit"/>`).join('')}${hand || ''}</g>`;
+  /* 손 표시: 동그라미 + 끄는 방향 화살 + 짧은 말 */
+  const hand = (x, y, dir, lab, o = {}) => { const ang = Math.atan2(dir[1], dir[0]) * 180 / Math.PI, r = o.r || 18;
+    return `<g class="m4hand ${o.pulse === false ? '' : 'pulse'}" transform="translate(${x},${y})"><g transform="rotate(${ang.toFixed(1)})"><path d="M${r + 5},0h16m-7,-7l7,7l-7,7"/>${o.two ? `<path d="M${-r - 5},0h-16m7,-7l-7,7l7,7"/>` : ''}</g><circle r="${r}"/><text y="7" text-anchor="middle" class="m4hi">✋</text>${lab ? `<text x="${o.lx || 0}" y="${o.ly != null ? o.ly : r + 22}" text-anchor="${o.anc || 'middle'}" class="m4hl">${lab}</text>` : ''}</g>`; };
+  /* 오른쪽 칸 줄: [[이름, 값, 단위, 크게?]] */
+  const rows = (title, R, note) => `<div class="m4vol">${title ? `<div class="m4vh">${title}</div>` : ''}${R.map(r => { const len = String(r[1]).replace(/<[^>]+>/g, '').length, fs = r[3] && len > 6 ? ` style="font-size:${Math.max(1, 10.5 / len).toFixed(2)}rem"` : ''; return r[3] ? `<div class="m4vr big ${r[4] || ''}"><span>${r[0]}</span><b${fs}>${r[1]}<em> ${r[2] || ''}</em></b></div>` : `<div class="m4vr ${r[4] || ''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2] || ''}</em></div>`; }).join('')}${note ? `<small>${note}</small>` : ''}</div>`;
+  const eq = (h, cls) => `<div class="m4eq ${cls || ''}">${h}</div>`;
+  const F = n => Number(n).toLocaleString();
+  const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" class="${o.c || ''}" text-anchor="${o.a || 'middle'}" ${o.fs ? `font-size="${o.fs}"` : ''} ${o.fill ? `fill="${o.fill}"` : ''} ${o.w ? `font-weight="${o.w}"` : ''}>${s}</text>`;
+  const R = (x, y, w, h, fill, o = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx != null ? o.rx : 4}" fill="${fill}" ${o.st ? `stroke="${o.st}" stroke-width="${o.sw || 2}"` : ''} ${o.c ? `class="${o.c}"` : ''} ${o.op != null ? `opacity="${o.op}"` : ''} ${o.da ? `stroke-dasharray="${o.da}"` : ''}/>`;
+  const L = (x1, y1, x2, y2, st, sw, o = {}) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${st}" stroke-width="${sw || 2}" ${o.da ? `stroke-dasharray="${o.da}"` : ''} stroke-linecap="round"/>`;
+  /* 수 모형: 백(판) · 십(막대) · 일(낱개) — 크기 u (일 모형 한 변) */
+  const flat = (x, y, u, col) => { let s = R(x, y, u * 10, u * 10, col || '#fcd34d', { st: '#b45309', sw: 1.6, rx: 2 }); for (let i = 1; i < 10; i++) s += L(x + i * u, y, x + i * u, y + u * 10, '#d97706', .7) + L(x, y + i * u, x + u * 10, y + i * u, '#d97706', .7); return s; };
+  const rod = (x, y, u, col, vert) => { let s = vert ? R(x, y, u, u * 10, col || '#93c5fd', { st: '#1d4ed8', sw: 1.4, rx: 2 }) : R(x, y, u * 10, u, col || '#93c5fd', { st: '#1d4ed8', sw: 1.4, rx: 2 }); for (let i = 1; i < 10; i++) s += vert ? L(x, y + i * u, x + u, y + i * u, '#3b82f6', .7) : L(x + i * u, y, x + i * u, y + u, '#3b82f6', .7); return s; };
+  const one = (x, y, u, col) => R(x, y, u, u, col || '#f9a8d4', { st: '#be185d', sw: 1.2, rx: 2 });
+  return { box, svg, grip, hand, rows, eq, F, T, R, L, flat, rod, one, setBtn };
+})();
 
 
 
-/* 4-1-5-1 막대그래프 — 도구 4 「막대 길이로 많고 적음 비교」로 바꿔요 (나머지 도구는 그대로) */
+
+
+/* 4-1-5-1 막대그래프를 알아볼까요 — 개념 도구 4개 (M4 · 그래프에서 직접 조작, 수 읽기는 숫자 입력) */
 (function () {
-  const bar = (v, sc, mx, extra) => `<div style="display:flex;flex-direction:column-reverse;width:38px;border:2px solid #334155;border-bottom:3px solid #334155;border-radius:4px 4px 0 0;overflow:hidden;height:${mx / sc * 22}px;background:repeating-linear-gradient(0deg,transparent 0 21px,#e2e8f0 21px 22px)">${Array.from({ length: v / sc }, (_, j) => `<i style="display:block;height:22px;background:${extra != null && j >= extra ? '#f97316' : '#60a5fa'};border-top:1px solid #fff"></i>`).join('')}</div>`;
-  const graph = (D, sc, mx, used) => `<div style="display:flex;gap:14px;justify-content:center;align-items:flex-end;padding:8px;background:#fff;border:2px solid #e2e8f0;border-radius:12px">${D.map((d, i) => `<div style="text-align:center">${used && used.includes(i) ? `<div style="opacity:.35">${bar(d[1], sc, mx)}</div>` : `<span class="ckmb" data-dg="ck-bar" data-v="${i}">${bar(d[1], sc, mx)}</span>`}<div style="font-weight:900;font-size:.85rem">${d[0]}</div></div>`).join('')}<div style="font-size:.75rem;color:#64748b;align-self:flex-start">세로 눈금 한 칸 = ${sc}명</div></div>`;
-  const pair = (t, kind, D, sc, say) => { const mx = Math.max(...D.map(d => d[1]));
-    return { _ty: 'pair', _o: {}, t, kind, q: '그래프에서 <b>비교하고 싶은 막대 두 개</b>를 끌어 아래 비교대에 나란히 놓아요.',
-      init: () => ({ put: [null, null] }),
-      view: d => { const a = d.put[0], b = d.put[1], both = a != null && b != null, lo = both ? Math.min(D[a][1], D[b][1]) / sc : null;
-        return graph(D, sc, mx, d.put.filter(x => x != null)) + `<div class="ckgrid2 mt-2">${[0, 1].map(i => `<div class="ckzone" data-dz="ck-slot" data-i="${i}" style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:${mx / sc * 22 + 40}px">${d.put[i] != null ? bar(D[d.put[i]][1], sc, mx, both ? lo : null) + `<b>${D[d.put[i]][0]}</b>` : '<small>막대를 여기에</small>'}</div>`).join('')}</div>`
-          + (both ? `<div class="ckbig" style="font-size:1.05rem">주황색 칸 ${Math.abs(D[a][1] - D[b][1]) / sc}칸 → <b>${Math.abs(D[a][1] - D[b][1])}명</b> 차이</div>` : ''); },
-      on: { 'ck-bar:drop'(d, v, z, el, api) { if (z !== 'ck-slot') return; const i = +el.dataset.i; if (d.put.includes(+v)) return; d.put[i] = +v; try { Sound.pop(); } catch (e) {}
-        if (d.put.every(x => x != null)) { const [a, b] = d.put.map(x => D[x]); if (a[1] === b[1]) { api.say(true, `${a[0]}와(과) ${b[0]}의 막대 길이가 같아요. 다른 막대로도 비교해 보세요.`, true); d.put = [null, null]; return; }
-          const big = a[1] > b[1] ? a : b, sm = a[1] > b[1] ? b : a; api.win(say(big, sm)); } } } }; };
-  const rank = (t, kind, D, sc) => { const mx = Math.max(...D.map(d => d[1]));
-    return { _ty: 'rank', _o: { n: D.length }, t, kind, q: '막대를 끌어 <b>긴 막대부터</b> 1등 ~ 4등 자리에 차례로 세워요.',
-      init: () => ({ put: [] }),
-      view: d => graph(D, sc, mx, d.put) + `<div style="display:flex;gap:10px;justify-content:center;align-items:flex-end;margin-top:10px">${D.map((_, i) => `<div class="ckzone" ${i === d.put.length ? 'data-dz="ck-rank" data-i="0"' : ''} style="min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:${mx / sc * 22 + 40}px">${d.put[i] != null ? bar(D[d.put[i]][1], sc, mx) + `<b>${D[d.put[i]][0]}</b>` : `<small>${i + 1}등</small>`}</div>`).join('')}</div>`,
-      on: { 'ck-bar:drop'(d, v, z, el, api) { if (z !== 'ck-rank') return; const rest = D.map((x, i) => i).filter(i => !d.put.includes(i)), best = Math.max(...rest.map(i => D[i][1]));
-        if (D[+v][1] < best) { api.say(false, '남은 막대 중에서 <b>가장 긴 막대</b>를 먼저 세워요. 막대 끝의 높이를 견주어 보세요.', true); return; }
-        d.put.push(+v); api.clear(); try { Sound.pop(); } catch (e) {} if (d.put.length === D.length) api.win(`${d.put.map(i => `${D[i][0]}(${D[i][1]}명)`).join(' > ')}! 막대가 길수록 수가 많아서, 그래프만 보고도 많고 적음을 한눈에 비교할 수 있어요.`); } } }; };
-  const D1 = [['봄', 7], ['여름', 9], ['가을', 5], ['겨울', 3]], D2 = [['축구', 12], ['피구', 8], ['줄넘기', 6], ['달리기', 10]];
-  CK.replace({ k: 'compare', vk: 'half', icon: '📏', name: '막대 길이로 비교하기', short: '길이로 많고 적음', dnd: ['ck-bar'],
-    sub: '막대그래프에서는 <b>막대의 길이</b>로 많고 적음을 비교해요. 막대를 직접 옮겨 나란히 놓아 보세요.', taunt: '막대들을 뒤죽박죽 세워 놨지~', msg: '막대를 나란히 놓고 길이로 비교해 보자!',
-    summary: '막대그래프는 <b>막대가 길수록 수가 많아요</b>. 두 막대의 길이 차를 칸 수로 세고, 눈금 한 칸의 크기를 곱하면 몇 명 차이인지 알 수 있어요.',
-    stages: [pair('두 막대 비교', null, D1, 1, (b, s) => `<b>${b[0]}</b> 막대가 ${(b[1] - s[1])}칸 더 길어요. 눈금 한 칸이 1명이니 ${b[0]} 쪽이 <b>${b[1] - s[1]}명</b> 더 많아요.`),
-      rank('길이 순서대로', null, D1, 1),
-      pair('확인 (한 칸 = 2명)', 'check', D2, 2, (b, s) => `<b>${b[0]}</b> 막대가 ${(b[1] - s[1]) / 2}칸 더 길어요. 한 칸이 <b>2명</b>이니 ${(b[1] - s[1]) / 2} × 2 = <b>${b[1] - s[1]}명</b> 더 많아요.`)] });
+  const { T: TX, R: RC, L: LN } = M4;
+  const COL = ['#3b82f6', '#f97316', '#a855f7', '#22c55e', '#ef4444', '#0ea5e9'];
+  const sum = D => D.rows.reduce((a, r) => a + r[1], 0);
+  /* 오른쪽 칸의 작은 표 */
+  const tbl = (D, hl) => `<table class="m5t"><caption>${D.title}</caption><tr><th>${D.cat}</th>${D.rows.map((r, i) => `<td class="${hl && hl[i] ? hl[i] : ''}">${r[0]}</td>`).join('')}</tr><tr><th>${D.val}(${D.unit})</th>${D.rows.map((r, i) => `<td class="${hl && hl[i] ? hl[i] : ''}">${r[1]}</td>`).join('')}</tr></table>`;
+
+  /* ---------- 막대그래프 그리기 (세로 v / 가로 h) — 칸 안을 가득 채우는 큰 그림 ----------
+     o: { D, vals, step, T, dir, X, Y, W, H(그림 칸), cols, ok[], grip(키 접두), maxV } */
+  const geo = o => { const hz = o.dir === 'h', n = o.D.rows.length, top = o.T * o.step;
+    const lw = hz ? Math.max(...o.D.rows.map(r => r[0].length)) * 25 + 38 : 70;
+    const X = o.X + lw, Y = o.Y + 42, W = o.W - lw - (hz ? 44 : 24), H = o.H - 42 - (hz ? 58 : 66);
+    const vp = v => hz ? X + W * v / top : Y + H - H * v / top, cp = i => hz ? Y + H * (i + .5) / n : X + W * (i + .5) / n, cell = (hz ? W : H) / o.T;
+    return { hz, n, top, X, Y, W, H, vp, cp, cell, bw: Math.min(hz ? 54 : 90, (hz ? H : W) / n * .56) }; };
+  const chart = o => { const G = geo(o), D = o.D, vals = o.vals || D.rows.map(r => r[1]); let s = RC(G.X, G.Y, G.W, G.H, '#fff', { rx: 0 });
+    for (let t = 0; t <= o.T; t++) { const q = G.vp(t * o.step), lab = t * o.step;
+      s += G.hz ? LN(q, G.Y, q, G.Y + G.H, t % 5 ? '#e2e8f0' : '#cbd5e1', t % 5 ? 1.4 : 2) : LN(G.X, q, G.X + G.W, q, t % 5 ? '#e2e8f0' : '#cbd5e1', t % 5 ? 1.4 : 2);
+      if (!o.noNum) s += G.hz ? TX(q, G.Y + G.H + 28, lab, { fs: 23, fill: '#475569', w: 800 }) : TX(G.X - 10, q + 8, lab, { fs: 23, fill: '#475569', w: 800, a: 'end' }); }
+    D.rows.forEach((r, i) => { const c = G.cp(i), v = Math.min(vals[i], G.top), col = (o.cols && o.cols[i]) || COL[i % COL.length], ok = o.ok && o.ok[i];
+      if (v > 0) s += G.hz ? RC(G.X + 1, c - G.bw / 2, G.vp(v) - G.X - 1, G.bw, col, { rx: 4, st: ok ? '#15803d' : null, sw: 4 }) : RC(c - G.bw / 2, G.vp(v), G.bw, G.Y + G.H - G.vp(v) - 1, col, { rx: 4, st: ok ? '#15803d' : null, sw: 4 });
+      if (ok) s += G.hz ? TX(G.vp(v) + 12, c + 9, '✓', { fs: 26, fill: '#15803d', a: 'start' }) : TX(c, G.vp(v) - 10, '✓', { fs: 26, fill: '#15803d' });
+      const lfs = G.hz ? 25 : Math.max(14, Math.min(25, (G.W / G.n - 6) / Math.max(1, r[0].length) * 1.05)); s += G.hz ? TX(G.X - 24, c + 9, r[0], { fs: 25, fill: '#1e293b', w: 900, a: 'end' }) : TX(c, G.Y + G.H + 32, r[0], { fs: lfs, fill: '#1e293b', w: 900 }); });
+    s += LN(G.X, G.Y - 8, G.X, G.Y + G.H, '#0f172a', 3.5) + LN(G.X, G.Y + G.H, G.X + G.W + 8, G.Y + G.H, '#0f172a', 3.5);
+    s += G.hz ? TX(G.X - 12, G.Y - 12, `(${D.cat})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' }) + TX(G.X + G.W, G.Y + G.H + 56, `${D.val}(${D.unit})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' })
+      : TX(G.X - 6, G.Y - 18, `(${D.unit})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' }) + TX(G.X + G.W, G.Y + G.H + 60, `(${D.cat})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' });
+    return { s, G }; };
+  /* 막대마다 끝 손잡이: 값 = 칸 수 */
+  const barGrips = (o, G, vals, first) => o.D.rows.map((r, i) => { const c = G.cp(i), cells = Math.round(vals[i] / o.step), q = G.vp(Math.min(vals[i], G.top));
+    return M4.grip('b' + i, cells, 0, o.T, G.hz ? [1, 0] : [0, -1], G.cell, [G.hz ? [q - 34, c - G.bw / 2 - 8, 68, G.bw + 16] : [c - G.bw / 2 - 8, q - 34, G.bw + 16, 68]],
+      `<g transform="translate(${G.hz ? q : c},${G.hz ? c : q})"><circle r="15" fill="#fff" stroke="${COL[i % COL.length]}" stroke-width="5"/><circle r="5" fill="${COL[i % COL.length]}"/></g>`
+      + (i === first ? M4.hand(G.hz ? q + 40 : c + 46, G.hz ? c - 36 : q - 6, G.hz ? [1, 0] : [0, -1], G.hz ? '오른쪽으로' : '위로 끌어요', { two: true, r: 15, ly: G.hz ? -26 : 36 }) : '')); }).join('');
+
+
+  const inp = (i, v) => `<input class="m5in" data-i="${i}" inputmode="numeric" maxlength="3" value="${v == null ? '' : v}" oninput="this.value=this.value.replace(/\\D/g,'');try{CK.S(state.s1.tool).d.v[${i}]=this.value}catch(e){}">`;
+  const tblIn = (D, d, ok) => `<table class="m5t m5tv"><caption>${D.title}</caption><tr><th>${D.cat}</th><th>${D.val}(${D.unit})</th></tr>${D.rows.map((r, i) => `<tr><td>${r[0]}</td><td class="${ok && ok[i] ? 'ok' : ''}">${ok ? r[1] : inp(i, d.v[i])}</td></tr>`).join('')}</table>`;
+  /* 막대 누르기: 누른 막대 끝에서 세로 눈금까지 점선 */
+  const guide = (G, v, col) => { const q = G.vp(v); return LN(G.X, q, G.X + G.W, q, col || '#dc2626', 3, { da: '9 7' }) + `<circle cx="${G.X}" cy="${q}" r="9" fill="${col || '#dc2626'}"/>`; };
+  const tapGrips = (o, G, vals) => o.D.rows.map((r, i) => { const c = G.cp(i), q = G.vp(vals[i]); return M4.grip('r' + i, 0, 0, 0, [0, 1], 40, [[c - G.bw / 2 - 6, q - 10, G.bw + 12, G.Y + G.H - q + 10]]); }).join('');
+
+  /* ① 그래프 공장 — 막대를 눌러 눈금을 읽고 표에 수를 써요 */
+  const build = (t, kind, D, step, T) => { const o = { D, step, T, dir: 'v', X: 10, Y: 6, W: 930, H: 470 };
+    return { _ty: 'b51b', t, kind,
+      q: d => d.ok ? '완성!' : `표의 수가 지워졌어요. <b>막대를 누르면</b> 막대 끝에서 세로 눈금까지 점선이 그어져요. 눈금을 읽어 표의 빈칸에 수를 써요.${step > 1 ? ` (세로 눈금 한 칸 = <b>${step}${D.unit}</b>)` : ''}`,
+      init: () => ({ v: D.rows.map(() => ''), hl: null, ok: false }),
+      view: d => { const { s: s0, G } = chart(Object.assign({}, o, { ok: d.ok ? D.rows.map(() => true) : null }));
+        let s = s0; if (d.hl != null) s += guide(G, D.rows[d.hl][1]); if (!d.ok) s += tapGrips(o, G, D.rows.map(r => r[1]));
+        if (!d.ok && d.hl == null) { const c = G.cp(0), q = G.vp(D.rows[0][1]); s += M4.hand(c, q + 40, [0, -1], '막대를 눌러요', { ly: 44, pulse: true }); }
+        const info = tblIn(D, d, d.ok ? D.rows.map(() => true) : null) + (d.ok ? M4.eq(`막대의 <b>길이</b>가 조사한 <b>수</b>를 나타내요. 가로는 ${D.cat}, 세로는 ${D.val}(${D.unit})`, 'ok') : `<div class="m5tip">👆 막대를 눌러 점선이 닿는 눈금을 읽어요</div>${ckRow(ckBtn('b51b-ok', '✔ 확인', 'btn-green'))}`);
+        return M4.box(M4.svg(960, 480, s), info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v) { const [k, x] = v.split(':'); if (k[0] === 'r' && x === 'end') d.hl = +k.slice(1); },
+        'act:b51b-ok'(d, v, el, api) { const bad = D.rows.map((r, i) => +d.v[i] === r[1] ? -1 : i).filter(i => i >= 0);
+          if (!bad.length) { d.ok = true; api.win(`표를 모두 채웠어요! 막대그래프는 <b>막대의 길이</b>로 수를 나타내서 많고 적음을 한눈에 비교할 수 있어요. 가장 긴 막대는 <b>${D.rows[D.rows.reduce((b, r, i) => r[1] > D.rows[b][1] ? i : b, 0)][0]}</b>예요.`); }
+          else { d.hl = bad[0]; api.say(false, `${D.rows[bad[0]][0]} 칸을 다시 봐요. 점선이 닿는 눈금을 읽어요.${step > 1 ? ` 한 칸은 ${step}${D.unit}이에요.` : ''}`, true); } } },
+      _solve(d, on) { D.rows.forEach((r, i) => { d.v[i] = String(r[1]); }); on('act:b51b-ok', null, null); } }; };
+
+  /* ② 눈금 탐정 — 지워진 눈금: 0에서 표시된 수까지 칸 세기 → 한 칸의 크기 → 막대 읽기 */
+  const scale = (t, kind, D, step, T, mark, hi) => { const top = mark * step, o = { D, step, T, dir: 'v', X: 70, Y: 6, W: 870, H: 470 };
+    return { _ty: 'b51s', t, kind,
+      q: d => d.ok ? '완성!' : !d.found ? `시간도둑이 눈금 숫자를 지웠어요! 남은 수는 <b>0</b>과 <b>${top}</b>뿐이에요. 세로 눈금 옆 <b>주황 화살표</b>를 끌어 올리며 0에서 ${top}까지 <b>몇 칸</b>인지 세어 봐요.` : `한 칸의 크기를 찾았어요! 이제 빨간 표시가 있는 <b>${D.rows[hi][0]}</b> 막대가 몇 ${D.unit}인지 읽어 써요.`,
+      init: () => ({ c: 0, found: false, v: [''], ok: false }),
+      view: d => { const { s: s0, G } = chart(Object.assign({}, o, { noNum: true, cols: D.rows.map((r, i) => i === hi && d.found ? '#ef4444' : null) }));
+        let s = s0;
+        for (let k = 0; k <= T; k++) { const q = G.vp(k * step), show = k === 0 || k === mark || d.found; s += TX(G.X - 12, q + 8, show ? k * step : '?', { fs: 23, fill: show ? (k === mark ? '#b45309' : '#475569') : '#cbd5e1', w: 900, a: 'end' }); }
+        if (!d.found) { const q = G.vp(d.c * step); s += RC(G.X + 2, q, 24, G.Y + G.H - q, '#fed7aa', { op: .8, rx: 0 });
+          for (let k = 1; k <= d.c; k++) s += TX(G.X + 14, G.vp((k - .5) * step) + 6, k, { fs: 15, fill: '#9a3412', w: 900 });
+          s += M4.grip('c', d.c, 0, T, [0, -1], G.cell, [[G.X - 64, q - 30, 110, 60]], `<path d="M${G.X - 52},${q} l-26,-16 v32z" fill="#f97316"/>` + LN(G.X - 52, q, G.X + G.W, q, '#f97316', 3, { da: '8 6' }) + M4.hand(G.X - 90, q + 40, [0, -1], d.c ? '' : '위로', { ly: 40, r: 15 })); }
+        else s += guide(G, D.rows[hi][1]);
+        const info = M4.rows('🔍 눈금 탐정', [['0에서 ' + top + '까지', d.found ? mark : d.c, '칸', 1], ['한 칸', d.found ? step : '?', D.unit, 1, d.found ? 'ok' : '']], d.found ? '' : `주황 화살표를 ${top}이 적힌 눈금선까지 끌어요.`)
+          + (d.found ? M4.eq(`${mark}칸 = ${top}${D.unit} → 한 칸 = ${top} ÷ ${mark} = <b>${step}${D.unit}</b>`, 'ok') + (d.ok ? M4.eq(`${D.rows[hi][0]} ${D.rows[hi][1] / step}칸 × ${step} = <b>${D.rows[hi][1]}${D.unit}</b>`, 'ok') : `<div class="m5ask">${D.rows[hi][0]} = ${inp(0, d.v[0])} ${D.unit}</div>${ckRow(ckBtn('b51s-ok', '✔ 확인', 'btn-green'))}`) : '');
+        return M4.box(M4.svg(960, 480, s), info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (k !== 'c' || d.found) return; if (x !== 'end') { d.c = +x; api.clear(); return; }
+          if (d.c === mark) { d.found = true; api.say(true, `${mark}칸이 ${top}${D.unit}! 그러니 한 칸은 ${step}${D.unit}이에요.`); } else if (d.c) api.say(false, `지금 ${d.c}칸이에요. <b>${top}</b>이 적힌 눈금선까지 끌어 올려요.`, true); },
+        'act:b51s-ok'(d, v, el, api) { const n = +d.v[0], a = D.rows[hi][1];
+          if (n === a) { d.ok = true; api.win(`${D.rows[hi][0]} 막대는 ${a / step}칸, 한 칸이 ${step}${D.unit}이니 <b>${a}${D.unit}</b>예요. 막대그래프를 읽을 때는 먼저 <b>세로 눈금 한 칸의 크기</b>를 확인해요.`); }
+          else api.say(false, n === a / step ? `${n}은 칸 수예요! 한 칸이 ${step}${D.unit}이니 칸 수 × ${step}을 해요.` : `막대 끝에서 점선을 따라 눈금을 세어 봐요. 한 칸은 ${step}${D.unit}이에요.`, true); } },
+      _solve(d, on) { on('act:m4set', 'c:' + mark, null); on('act:m4set', 'c:end', null); d.v[0] = String(D.rows[hi][1]); on('act:b51s-ok', null, null); } }; };
+
+  /* ③ 가로·세로 바꾸기 — 세로 막대그래프를 보고 가로 막대그래프를 직접 그려요 */
+  const flip = (t, kind, D, step, T) => { const ov = { D, step, T, dir: 'v', X: 0, Y: 6, W: 400, H: 470 }, oh = { D, step, T, dir: 'h', X: 420, Y: 6, W: 530, H: 470 };
+    return { _ty: 'b51f', t, kind,
+      q: d => d.ok ? '완성!' : `뒤죽이가 "눕히면 다른 그래프야!"라고 우겨요. 왼쪽 세로 막대그래프와 <b>같은 자료</b>를 오른쪽에 <b>가로 막대그래프</b>로 그려요. 막대 끝 동그라미를 <b>오른쪽으로</b> 끌어요.`,
+      init: () => ({ v: D.rows.map(() => 0), ok: false }),
+      view: d => { const okm = D.rows.map((r, i) => d.v[i] === r[1]), a = chart(ov), b = chart(Object.assign({}, oh, { vals: d.v, ok: d.ok ? okm : null }));
+        const s = a.s + LN(410, 20, 410, 470, '#cbd5e1', 2, { da: '6 6' }) + b.s + (d.ok ? '' : barGrips(oh, b.G, d.v, d.v.every(x => !x) ? 0 : -1));
+        const info = M4.rows('🪞 세로 ↔ 가로', D.rows.map((r, i) => [r[0], `${d.v[i] / step}칸`, `/ ${r[1] / step}칸`, 0, okm[i] ? 'ok' : d.v[i] ? 'bad' : '']), '세로 막대의 칸 수만큼 가로 막대를 늘여요.')
+          + (d.ok ? M4.eq('막대 방향과 가로·세로가 바뀌어도<br><b>막대의 칸 수(나타내는 수)는 같아요</b>', 'ok') : '');
+        return M4.box(M4.svg(960, 480, s), info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (k[0] !== 'b') return; const i = +k.slice(1); if (x !== 'end') { d.v[i] = +x * step; api.clear(); return; }
+          if (D.rows.every((r, j) => d.v[j] === r[1])) { d.ok = true; api.win('같은 자료를 가로 막대그래프로 나타냈어요! 세로 막대그래프는 가로에 항목, 세로에 수를 / 가로 막대그래프는 세로에 항목, 가로에 수를 나타내요. 나타내는 수는 똑같아요.'); }
+          else if (d.v[i] && d.v[i] !== D.rows[i][1]) api.say(false, `${D.rows[i][0]}는 왼쪽 그래프에서 ${D.rows[i][1] / step}칸이에요. 지금은 ${d.v[i] / step}칸이에요.`, true); } },
+      _solve(d, on) { D.rows.forEach((r, i) => on('act:m4set', `b${i}:${r[1] / step}`, null)); on('act:m4set', 'b0:end', null); } }; };
+
+  /* ④ 막대 길이로 비교 — 비교선을 끌어 짧은 막대 끝에 맞추면 긴 막대의 남는 부분이 보여요 */
+  const compare = (t, kind, D, step, T, a, b) => { const o = { D, step, T, dir: 'v', X: 10, Y: 6, W: 930, H: 470 }, va = D.rows[a][1], vb = D.rows[b][1], df = va - vb;
+    return { _ty: 'b51c', t, kind,
+      q: d => d.ok ? '완성!' : `<b>${D.rows[a][0]}</b>는 <b>${D.rows[b][0]}</b>보다 몇 ${D.unit} 더 많을까요? 그래프 위 <b>보라 비교선</b>을 위아래로 끌어 <b>${D.rows[b][0]} 막대 끝</b>에 맞춰 봐요.`,
+      init: () => ({ c: T, ok: false }),
+      view: d => { const lv = d.c * step, { s: s0, G } = chart(Object.assign({}, o, { cols: D.rows.map((r, i) => i === a ? '#3b82f6' : i === b ? '#22c55e' : '#cbd5e1') })); let s = s0;
+        D.rows.forEach((r, i) => { if (r[1] > lv && (i === a || i === b)) { const c = G.cp(i), q1 = G.vp(r[1]), q0 = G.vp(lv); s += RC(c - G.bw / 2, q1, G.bw, q0 - q1, '#f97316', { rx: 3 }) + TX(c + G.bw / 2 + 8, (q0 + q1) / 2 + 8, `${(r[1] - lv) / step}칸`, { fs: 22, fill: '#c2410c', w: 900, a: 'start' }); } });
+        const q = G.vp(lv); s += LN(G.X, q, G.X + G.W, q, '#7c3aed', 4);
+        if (!d.ok) s += M4.grip('c', d.c, 0, T, [0, -1], G.cell, [[G.X, q - 28, G.W, 56]], M4.hand(G.X + G.W - 40, q, [0, -1], d.c === T ? '아래로 끌어요' : '', { two: d.c !== T, ly: 40, r: 15 }));
+        const info = M4.rows('📏 비교선', [['비교선', lv, D.unit, 1], [D.rows[a][0], va, D.unit], [D.rows[b][0], vb, D.unit]], '비교선 위로 남는 주황 부분이 차이예요.')
+          + (d.ok ? M4.eq(`주황 ${df / step}칸 × ${step}${D.unit} = <b>${df}${D.unit}</b> 더 많아요`, 'ok') : '');
+        return M4.box(M4.svg(960, 480, s), info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { const [k, x] = v.split(':'); if (k !== 'c') return; if (x !== 'end') { d.c = +x; api.clear(); return; }
+          if (d.c * step === vb) { d.ok = true; api.win(`${D.rows[b][0]} 막대 끝에 선을 맞추니 ${D.rows[a][0]} 막대가 <b>${df / step}칸</b> 더 길어요. 한 칸이 ${step}${D.unit}이니 <b>${df}${D.unit}</b> 더 많아요. 막대그래프는 길이로 많고 적음을 바로 비교할 수 있어요.`); }
+          else api.say(false, `비교선을 <b>${D.rows[b][0]}</b> 막대의 끝(윗면)에 딱 맞춰요.`, true); } },
+      _solve(d, on) { on('act:m4set', 'c:' + vb / step, null); on('act:m4set', 'c:end', null); } }; };
+  const st = document.createElement('style');
+  st.textContent = `.m5t{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden;font-weight:900;text-align:center;font-size:.95rem}.m5t caption{font-size:.85rem;color:#0f766e;padding:2px 0 4px;font-weight:900}
+  .m5t th,.m5t td{border:2px solid #cbd5e1;padding:4px 3px;word-break:keep-all}.m5t th{background:#f1f5f9;color:#334155;font-size:.82rem}.m5in{width:3.2em;font:inherit;font-weight:900;font-size:1.15rem;text-align:center;border:3px solid #f59e0b;border-radius:10px;padding:4px 2px;background:#fffbeb}.m5in:focus{outline:none;border-color:#2563eb;background:#fff}.m5tv td{padding:3px 6px}.m5tv td:first-child{background:#f8fafc}.m5tip{font-weight:900;color:#c2410c;text-align:center;font-size:.95rem}.m5ask{font-weight:900;font-size:1.3rem;text-align:center;display:flex;gap:6px;align-items:center;justify-content:center}.m5t td.ok{background:#dcfce7;color:#166534}`;
+  document.head.appendChild(st);
+
+
+  const BOOK = { title: '학급별 대출한 환경 관련 책의 수', cat: '학급', val: '책의 수', unit: '권', rows: [['1반', 9], ['2반', 4], ['3반', 10], ['4반', 7]] };
+  const CUP = { title: '일주일 동안 사용한 일회용품 수', cat: '종류', val: '일회용품 수', unit: '개', rows: [['종이컵', 10], ['빨대', 8], ['비닐봉지', 12], ['포크', 6]] };
+  const BUG = { title: '좋아하는 곤충별 학생 수', cat: '곤충', val: '학생 수', unit: '명', rows: [['장수풍뎅이', 12], ['매미', 8], ['무당벌레', 14], ['개미', 10], ['메뚜기', 4]] };
+  const SPORT = { title: '좋아하는 운동별 학생 수', cat: '운동', val: '학생 수', unit: '명', rows: [['축구', 35], ['줄넘기', 20], ['피구', 45], ['배드민턴', 15]] };
+  const VEG = { title: '기르고 싶어 하는 채소별 학생 수', cat: '채소', val: '학생 수', unit: '명', rows: [['오이', 90], ['상추', 70], ['가지', 50], ['토마토', 100], ['호박', 60]] };
+  const ACT = { title: '실천하는 환경 보호 활동별 학생 수', cat: '활동', val: '학생 수', unit: '명', rows: [['양치 컵', 12], ['분리 배출', 14], ['장바구니', 8], ['잔반 줄이기', 10]] };
+  const FRUIT = { title: '좋아하는 과일별 학생 수', cat: '과일', val: '학생 수', unit: '명', rows: [['사과', 5], ['배', 3], ['포도', 7], ['귤', 4]] };
+  const SEASON = { title: '좋아하는 계절별 학생 수', cat: '계절', val: '학생 수', unit: '명', rows: [['봄', 8], ['여름', 10], ['가을', 5], ['겨울', 3]] };
+  const GAME = { title: '체육대회에서 하고 싶은 종목별 학생 수', cat: '종목', val: '학생 수', unit: '명', rows: [['피구', 14], ['축구', 10], ['줄넘기', 6], ['이어달리기', 12]] };
+  CK.install([
+    { k: 'build', vk: 'tilt', icon: '⚙️', name: '그래프 공장', short: '막대 읽어 표 완성',
+      sub: '막대그래프의 <b>막대를 눌러</b> 눈금을 읽고, 지워진 표의 수를 채워요.', taunt: '숫자만 줄줄이 있어도 충분하잖아? 막대 따위 필요 없어!', msg: '막대를 읽어 표를 채워 보자!',
+      summary: '조사한 자료를 <b>막대 모양</b>으로 나타낸 그래프를 <b>막대그래프</b>라고 해요. 막대의 길이로 수를 나타내서 많고 적음을 한눈에 비교할 수 있어요.',
+      stages: [build('한 칸 1권', null, BOOK, 1, 12), build('한 칸 2개', 'check', CUP, 2, 7)] },
+    { k: 'scale', vk: 'clock', icon: '🔍', name: '눈금 탐정', short: '눈금 한 칸의 크기',
+      sub: '지워진 눈금에서 <b>칸을 직접 세어</b> 한 칸의 크기를 찾고, 막대가 나타내는 수를 읽어요.', taunt: '눈금 숫자를 다 지웠지! 이제 막대가 몇인지 모르겠지?', msg: '눈금 한 칸의 크기를 찾아 보자!',
+      summary: '막대그래프를 읽을 때는 먼저 <b>눈금 한 칸의 크기</b>를 확인해요. 막대가 나타내는 수 = <b>칸 수 × 한 칸의 크기</b>',
+      stages: [scale('한 칸 2명', null, BUG, 2, 8, 5, 2), scale('한 칸 5명', null, SPORT, 5, 10, 4, 2), scale('한 칸 10명', 'check', VEG, 10, 11, 5, 1)] },
+    { k: 'flip', vk: 'mixup', icon: '🪞', name: '가로·세로 바꾸기', short: '세로 ↔ 가로 막대',
+      sub: '세로 막대그래프를 보고 <b>같은 자료</b>를 가로 막대그래프로 직접 그려요.', taunt: '눕히면 다른 그래프야!', msg: '가로 막대그래프로 그려 보자!',
+      summary: '같은 자료를 <b>세로 막대그래프</b>로도, <b>가로 막대그래프</b>로도 나타낼 수 있어요. 막대의 방향이 달라도 나타내는 수는 같아요.',
+      stages: [flip('한 칸 2명', null, ACT, 2, 8), flip('한 칸 1명', 'check', FRUIT, 1, 8)] },
+    { k: 'compare', vk: 'half', icon: '📏', name: '막대 길이로 비교하기', short: '길이로 차이 보기',
+      sub: '<b>비교선</b>을 끌어 짧은 막대 끝에 맞추면 긴 막대가 얼마나 더 긴지 보여요.', taunt: '막대들을 뒤죽박죽 세워 놨지~', msg: '막대 길이로 비교해 보자!',
+      summary: '두 막대의 차이는 <b>남는 칸 수 × 한 칸의 크기</b>예요. 막대그래프는 막대 길이로 많고 적음과 차이를 한눈에 알 수 있어요.',
+      stages: [compare('한 칸 1명', null, SEASON, 1, 11, 1, 0), compare('한 칸 2명', 'check', GAME, 2, 8, 0, 3)] }
+  ]);
 })();
 
 </script>

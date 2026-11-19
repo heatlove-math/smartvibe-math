@@ -9651,7 +9651,7 @@ const M4 = (() => {
   /* ---------- 막대그래프 그리기 (세로 v / 가로 h) — 칸 안을 가득 채우는 큰 그림 ----------
      o: { D, vals, step, T, dir, X, Y, W, H(그림 칸), cols, ok[], grip(키 접두), maxV } */
   const geo = o => { const hz = o.dir === 'h', n = o.D.rows.length, top = o.T * o.step;
-    const lw = hz ? Math.max(...o.D.rows.map(r => r[0].length)) * 25 + 26 : 70;
+    const lw = hz ? Math.max(...o.D.rows.map(r => r[0].length)) * 25 + 38 : 70;
     const X = o.X + lw, Y = o.Y + 42, W = o.W - lw - (hz ? 44 : 24), H = o.H - 42 - (hz ? 58 : 66);
     const vp = v => hz ? X + W * v / top : Y + H - H * v / top, cp = i => hz ? Y + H * (i + .5) / n : X + W * (i + .5) / n, cell = (hz ? W : H) / o.T;
     return { hz, n, top, X, Y, W, H, vp, cp, cell, bw: Math.min(hz ? 54 : 90, (hz ? H : W) / n * .56) }; };
@@ -9662,7 +9662,7 @@ const M4 = (() => {
     D.rows.forEach((r, i) => { const c = G.cp(i), v = Math.min(vals[i], G.top), col = (o.cols && o.cols[i]) || COL[i % COL.length], ok = o.ok && o.ok[i];
       if (v > 0) s += G.hz ? RC(G.X + 1, c - G.bw / 2, G.vp(v) - G.X - 1, G.bw, col, { rx: 4, st: ok ? '#15803d' : null, sw: 4 }) : RC(c - G.bw / 2, G.vp(v), G.bw, G.Y + G.H - G.vp(v) - 1, col, { rx: 4, st: ok ? '#15803d' : null, sw: 4 });
       if (ok) s += G.hz ? TX(G.vp(v) + 12, c + 9, '✓', { fs: 26, fill: '#15803d', a: 'start' }) : TX(c, G.vp(v) - 10, '✓', { fs: 26, fill: '#15803d' });
-      s += G.hz ? TX(G.X - 12, c + 9, r[0], { fs: 25, fill: '#1e293b', w: 900, a: 'end' }) : TX(c, G.Y + G.H + 32, r[0], { fs: 25, fill: '#1e293b', w: 900 }); });
+      const lfs = G.hz ? 25 : Math.max(14, Math.min(25, (G.W / G.n - 6) / Math.max(1, r[0].length) * 1.05)); s += G.hz ? TX(G.X - 24, c + 9, r[0], { fs: 25, fill: '#1e293b', w: 900, a: 'end' }) : TX(c, G.Y + G.H + 32, r[0], { fs: lfs, fill: '#1e293b', w: 900 }); });
     s += LN(G.X, G.Y - 8, G.X, G.Y + G.H, '#0f172a', 3.5) + LN(G.X, G.Y + G.H, G.X + G.W + 8, G.Y + G.H, '#0f172a', 3.5);
     s += G.hz ? TX(G.X - 12, G.Y - 12, `(${D.cat})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' }) + TX(G.X + G.W, G.Y + G.H + 56, `${D.val}(${D.unit})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' })
       : TX(G.X - 6, G.Y - 18, `(${D.unit})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' }) + TX(G.X + G.W, G.Y + G.H + 60, `(${D.cat})`, { fs: 21, fill: '#0f766e', w: 900, a: 'end' });
