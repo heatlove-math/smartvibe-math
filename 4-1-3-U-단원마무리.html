@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SmartVibe | 십이지 수학탐험대 - 4학년 1학기 3단원 단원 마무리 (곱셈과 나눗셈 종합 복습) · 다크몽 최종 결전</title>
+<title>SmartVibe | 십이지 수학탐험대 - 4학년 1학기 3단원 단원 마무리 (곱셈과 나눗셈 종합 복습) · 반쪽이·다크몽 최종 결전</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -1560,7 +1560,7 @@ body.svsl-on #toolBody>.ucwrap+.card .choices{grid-template-columns:repeat(2,min
       <div style="flex:1;min-width:0;position:relative;z-index:1">
         <span class="chip">Powered by SmartVibe</span>
         <h1><span class="sv">SmartVibe</span> | 십이지 수학탐험대</h1>
-        <div class="lesson">4학년 1학기 · 3단원 곱셈과 나눗셈 · <b>단원 마무리 · 곱셈과 나눗셈을 알아볼까요</b> · ⚔️ 최종 결전 「곱셈 축제 폐막식 · 다크몽」</div>
+        <div class="lesson">4학년 1학기 · 3단원 곱셈과 나눗셈 · <b>단원 마무리 · 곱셈과 나눗셈을 알아볼까요</b> · ⚔️ 최종 결전 「곱셈 축제 폐막식 · 반쪽이」</div>
         <div class="parade" id="paradeTop" aria-hidden="true">🐭🐮🐯🐰🐲🐍🐴🐑🐵🐔🐶🐷</div>
         <div class="villainrow" id="hdrVillains"></div>
       </div>
@@ -1576,7 +1576,7 @@ body.svsl-on #toolBody>.ucwrap+.card .choices{grid-template-columns:repeat(2,min
     </div>
     <div class="say-row">
       <div id="sayAva"></div>
-      <div id="jaramSay" class="bubble">안녕! 나는 곱셈과 나눗셈 담당 달리야. 3단원에서 배운 걸 모두 꺼내서 다크몽을 물리치자!</div>
+      <div id="jaramSay" class="bubble">안녕! 나는 곱셈과 나눗셈 담당 달리야. 3단원에서 배운 걸 모두 꺼내서 반쪽이를 물리치자!</div>
     </div>
   </header>
 
@@ -2447,7 +2447,7 @@ function goStep(k, step) {
 const qHead = (no, color, text) => `<div class="qhead"><div class="qno" style="background:${color}">${no}</div><div class="qtext">${text}</div></div>`;
 
 /* =====================================================================
-   3단원 곱셈과 나눗셈 · 단원 마무리 (종합 복습 · 다크몽 최종 결전)
+   3단원 곱셈과 나눗셈 · 단원 마무리 (종합 복습 · 반쪽이 최종 결전)
    ===================================================================== */
 /* ---- 차시 목록: 진단·오답노트·복습 안내에 쓰여요. 파일 이름이 다르면 file만 고치세요. ---- */
 const LESSONS = [
@@ -2601,7 +2601,7 @@ function ubasicAll(P) { const N = Object.keys(UPOOL).map(Number).sort((a, b) => 
 const S1_STEPS = () => [
   ['concept', '개념 탐험', '🧭', 'CH.1 6대 개념 카드'],
   ['basic', '기본 문제', '✏️', 'CH.2 성취기준 확인'],
-  ['jump', '점프 문제', '⚔️', 'CH.3 다크몽 보스전'],
+  ['jump', '점프 문제', '⚔️', 'CH.3 반쪽이 보스전'],
   ['result', '결과', '🏆', '세트 1 결과']
 ];
 const BADGES = [
@@ -2670,7 +2670,7 @@ function award(id) {
   setTimeout(() => {
     toast(`🎖 배지 획득! (${BADGES.length}개 중 ${n}개) ${nm}`); FX.rain(n === BADGES.length ? 220 : 90);
     try { Sound.seal(); } catch (e) {}
-    if (n === BADGES.length) { say('핵심 개념 배지 완성! 다크몽의 방어막에 금이 갔어!'); mood('cheer', 3200); try { Sound.win(); } catch (e) {} }
+    if (n === BADGES.length) { say('핵심 개념 배지 완성! 반쪽이의 방어막에 금이 갔어!'); mood('cheer', 3200); try { Sound.win(); } catch (e) {} }
     renderBadges(); renderTool();
   }, 450);
 }
@@ -2752,7 +2752,7 @@ function genParts() {
 const BCOL = ['#2f9bf5', '#ff8a1f', '#12a578'];
 /* ---- 한 문제씩 보기 / 전체 보기 ---- */
 const QSETS = { basic: ['b1', 'b2', 'b3'], jump: ['j1', 'j2', 'j3'] };
-const QNEXT = { basic: ['jump', '⚔️ CH.3 다크몽 보스전 ➜'], jump: ['result', '세트 1 결과 보기 🏆'] };
+const QNEXT = { basic: ['jump', '⚔️ CH.3 반쪽이 보스전 ➜'], jump: ['result', '세트 1 결과 보기 🏆'] };
 function qView() { return state.qview || 'one'; }
 function qIdx(kind) { const st = state.s1; st.qi = st.qi || { basic: 0, jump: 0 }; return st.qi[kind]; }
 function qNavTop(kind) {
@@ -2784,9 +2784,9 @@ function renderS1Basic() {
   const card = (k, n) => `<div class="card qcard">${qHead(n + 1, BCOL[n], PARTS[k].text + ` <span class="qtag2">${chTag(PARTS[k].ch)}</span>`)}<div id="part-${k}" class="mt-2"></div></div>`;
   $('#s1body').innerHTML = `<div class="card">
       <div class="stage-head"><span class="ti" style="background:#fff0dc">${avatar(GUIDE(), 46, 'study')}</span>
-        <div><span class="stchap">CHAPTER 2</span><h2 class="h2">성취기준 확인 · 다크몽의 세 가지 함정</h2>
+        <div><span class="stchap">CHAPTER 2</span><h2 class="h2">성취기준 확인 · 반쪽이의 세 가지 함정</h2>
         <p class="sub" style="margin:3px 0 0">(세 자리 수)×(두 자리 수) · 몫과 나머지 · 몫이 두 자리 수인 나눗셈을 확인해요. 막히면 <b>💡 달리 힌트</b>를 눌러요. 3문제를 모두 풀면 <b>CH.3 보스전</b>이 열려요!</p></div></div>
-      ${vSay('dark', '나머지를 나누는 수보다 크게 써도 되겠지? 크크!')}${qNavTop('basic')}</div>`
+      ${vSay('half', '나머지를 나누는 수보다 크게 써도 되겠지? 크크!')}${qNavTop('basic')}</div>`
     + (all ? keys.map(card).join('') : card(keys[i], i)) + qNavBot('basic');
   keys.forEach(renderPart);
 }
@@ -2855,7 +2855,7 @@ function gradeWrite(key) {
 }
 
 /* =====================================================================
-   CH.3 점프 문제 · 다크몽 보스전 (실생활 융합)
+   CH.3 점프 문제 · 반쪽이 보스전 (실생활 융합)
    ===================================================================== */
 const BOSS_LINES = [
   '크하하! 곱셈 축제 마을의 결산 장부를 내가 모두 엉망으로 만들어 놓았다. 세 겹 방어막을 깨 보시지!',
@@ -2866,13 +2866,13 @@ const BOSS_LINES = [
 const J_NAMES = ['도전 1 · 쿠키 포장과 판매', '도전 2 · 부스 판매 금액 순위', '도전 3 · 나눗셈 비밀 금고'];
 const jOK = x => { const r = state.s1.rec[x]; return !!(r && r.solved); };
 function bossHead() {
-  const n = ['j1', 'j2', 'j3'].filter(jOK).length, pose = n >= 3 ? 'attack' : n >= 1 ? 'angry' : 'idle', V = VILLAINS.dark;
+  const n = ['j1', 'j2', 'j3'].filter(jOK).length, pose = n >= 3 ? 'attack' : n >= 1 ? 'angry' : 'idle', V = VILLAINS.half;
   return `<div id="bossWrap" class="card" style="border-color:${V.color}">
     <div class="row" style="align-items:flex-start">
-      <span class="${n >= 3 ? 'vwin' : ''}" style="display:inline-block">${avatar('dark', 96, pose)}</span>
+      <span class="${n >= 3 ? 'vwin' : ''}" style="display:inline-block">${avatar('half', 96, pose)}</span>
       <div style="flex:1;min-width:210px">
-        <div class="fun" style="font-size:1.35rem;color:${V.color}">⚔️ 보스전 · 다크몽의 세 겹 방어막</div>
-        <div class="vbub mt-1" style="--vc:${V.color}"><b>다크몽</b> ${esc(BOSS_LINES[n])}</div>
+        <div class="fun" style="font-size:1.35rem;color:${V.color}">⚔️ 보스전 · 반쪽이의 세 겹 방어막</div>
+        <div class="vbub mt-1" style="--vc:${V.color}"><b>반쪽이</b> ${esc(BOSS_LINES[n])}</div>
         <div class="vhp"><i style="width:${(3 - n) / 3 * 100}%"></i><span>방어막 3겹 중 ${3 - n}겹 남음</span></div>
         <div class="shield">${[0, 1, 2].map(i => `<i class="${i < n ? 'off' : ''}"></i>`).join('')}</div>
       </div></div>
@@ -2882,7 +2882,7 @@ function bossCheck() {
   const st = state.s1;
   if (['j1', 'j2', 'j3'].every(jOK) && !st.bossWon) {
     st.bossWon = true; FX.rain(240); try { Sound.shield(); setTimeout(() => Sound.win(), 420); } catch (e) {} mood('cheer', 3400);
-    toast('⚔️ 다크몽의 방어막 3겹 파괴!'); say('방어막을 모두 깼어! 이제 세트 2 왕중왕전에서 마지막 승부야!');
+    toast('⚔️ 반쪽이의 방어막 3겹 파괴!'); say('방어막을 모두 깼어! 이제 세트 2 왕중왕전에서 마지막 승부야!');
   }
 }
 function bossRefresh() { const el = $('#bossWrap'); if (el) el.outerHTML = bossHead(); bossCheck(); }
@@ -2924,7 +2924,7 @@ function genJ2() {
     const L = shuffle(items).map((it, i) => ({ id: i, ic: NATIONS[i][0], nm: NATIONS[i][1], v: it.v, e: `${it.a}원 × ${it.b}개` }));
     const order = L.slice().sort((x, y) => y.v - x.v).map(x => x.id);
     return { key: 'j2', ch: 2, area: 'mtt', label: '보스전 2 · 부스 판매 금액 순위 서술', items: L, order,
-      text: '축제 다섯 부스의 하루 판매 기록이에요. 다크몽이 금액을 <b>곱셈식</b>으로만 남겨 놓았어요. ① 판매 금액이 <b>많은 부스부터</b> 차례로 눌러 순위를 세우고, ② <b>어떻게 비교했는지</b> 손글씨로 설명해 보세요.',
+      text: '축제 다섯 부스의 하루 판매 기록이에요. 반쪽이가 금액을 <b>곱셈식</b>으로만 남겨 놓았어요. ① 판매 금액이 <b>많은 부스부터</b> 차례로 눌러 순위를 세우고, ② <b>어떻게 비교했는지</b> 손글씨로 설명해 보세요.',
       qtext: '다섯 부스의 판매 금액(곱셈식)을 많은 순서대로 세우고 비교 방법 설명하기',
       hint: '어림하면 비슷해 보이는 부스가 있어요! 어림으로 대강 순서를 짐작한 뒤, 가까운 것끼리는 곱을 정확히 계산해 비교해요.',
       ansText: order.map(id => L[id].nm).join(' > '),
@@ -2983,7 +2983,7 @@ function genJ3() {
       { t: '맨 앞자리 숫자는 0이 아니에요.', f: d => d[0] !== 0 }
     ].map(c => Object.assign(c, { t: c.t.replace(/(\d+)\(으\)로/g, (m, n) => n + JS(n, '으로', '로')) }));
     return { key: 'j3', ch: 4, area: 'd1', label: '보스전 3 · 나눗셈 비밀 금고', conds, ans: dig.join(''), dig, a, b,
-      text: `다크몽의 금고 비밀번호는 <b>다섯 자리 수</b>예요. 칸을 누르고 아래 숫자를 골라 조건 <b>${conds.length}개를 모두</b> 만족하는 비밀번호를 만들어요.`,
+      text: `반쪽이의 금고 비밀번호는 <b>다섯 자리 수</b>예요. 칸을 누르고 아래 숫자를 골라 조건 <b>${conds.length}개를 모두</b> 만족하는 비밀번호를 만들어요.`,
       qtext: '나눗셈의 검산과 몫을 이용해 다섯 자리 비밀번호 만들기',
       hint: `앞 세 자리는 검산식 ${a.D} × ${a.q} + ${a.r}${JS(a.r, '으로', '로')} 구해요. 뒤 두 자리는 ${b.N} ÷ ${b.D}의 몫이에요. 앞 두 자리 ${Math.floor(b.N / 10)}부터 나눠 봐요!`,
       ok: `앞 세 자리 ${a.D} × ${a.q} + ${a.r} = ${a.N}, 뒤 두 자리 ${b.N} ÷ ${b.D} = ${b.q} … ${b.r} → 비밀번호 ${dig.join('')}` };
@@ -3732,9 +3732,9 @@ function renderReport() {
   const stars = u.score >= 90 ? 3 : u.score >= 60 ? 2 : u.score > 0 ? 1 : 0;
   body.innerHTML = `<div class="card center rp-head">
       <div class="text-xs font-black" style="color:#ea580c">SmartVibe | 십이지 수학탐험대 · Powered by SmartVibe</div>
-      <div class="row" style="justify-content:center;gap:10px;margin-top:6px">${JARAM(92)}<span class="${p.dark ? 'vflee' : ''}" style="display:inline-block">${avatar('dark', 84, p.dark ? 'attack' : 'angry')}</span></div>
+      <div class="row" style="justify-content:center;gap:10px;margin-top:6px">${JARAM(92)}<span class="${p.dark ? 'vflee' : ''}" style="display:inline-block">${avatar('half', 84, p.dark ? 'attack' : 'angry')}</span></div>
       <h2 class="h2 mt-2">📜 3단원 곱셈과 나눗셈 · 단원 보고서</h2>
-      <div class="font-bold muted">${p.dark ? '다크몽 퇴치 완료! 곱셈 축제 마을을 되찾았어요.' : `다크몽 HP ${p.darkHp} — 남은 활동을 끝내면 최종 퇴치!`}</div>
+      <div class="font-bold muted">${p.dark ? '반쪽이 퇴치 완료! 곱셈 축제 마을을 되찾았어요.' : `반쪽이 HP ${p.darkHp} — 남은 활동을 끝내면 최종 퇴치!`}</div>
       <div class="stars mt-2">${[0, 1, 2].map(i => `<span style="animation-delay:${i * 0.18}s">${i < stars ? '⭐' : '☆'}</span>`).join('')}</div>
       <div class="score-big" id="resScore">0<span style="font-size:1.6rem">점</span></div>
       <div class="rpstat"><span>📘 세트 1 <b>${u.s1}점</b></span><span>🎮 세트 2 <b>${u.s2}점</b></span><span>⏱ <b>${fmtTime(u.elapsed)}</b></span><span>📝 오답 <b>${u.wn.length}개</b></span><span>${gem ? '💎 수호 보석 <b>획득</b>' : '💎 수호 보석 <b>미획득</b>'}</span></div>
@@ -3872,7 +3872,7 @@ function buildS1Sheet(c) {
     B.forEach(([t, a, ch]) => { h += pQ(++no, t, `<div class="p-ans2">식: ${bl('w6')} 답: ${bl('w4')}</div>`, ch + '차시'); keys.push([no, a]); });
   }
   if (c.jump) {
-    h += `<div class="p-sec">③ 실생활 융합 문제 (다크몽 보스전)</div>`;
+    h += `<div class="p-sec">③ 실생활 융합 문제 (반쪽이 보스전)</div>`;
     h += pQ(++no, '쿠키 452개를 한 봉지에 18개씩 담아 한 봉지에 650원씩 팔아요. 다 담은 봉지를 모두 팔면 얼마를 받을까요? (남는 쿠키는 팔지 않아요)', `<div class="p-work">풀이</div>`, '🍪 쿠키'); keys.push([no, '452 ÷ 18 = 25 … 2 → 25봉지, 650 × 25 = 16,250(원)']);
     h += pQ(++no, '네 부스의 판매 금액 ㉠ 385원 × 42개 ㉡ 412원 × 39개 ㉢ 296원 × 55개 ㉣ 520원 × 30개 를 많은 부스부터 쓰고 비교한 방법을 설명하세요.', `<div class="p-work tall">풀이</div>`, '💰 판매 금액'); keys.push([no, '㉢ 16,280 &gt; ㉠ 16,170 &gt; ㉡ 16,068 &gt; ㉣ 15,600 (어림하면 모두 약 16,000으로 비슷해서 정확히 계산해 비교해요)']);
     h += pQ(++no, '다섯 자리 비밀번호를 구하세요. ① 앞의 세 자리 수를 23으로 나누면 몫이 8, 나머지가 6이에요. ② 뒤의 두 자리 수는 745 ÷ 31의 몫이에요.', `<div class="p-ans2">답: ${bl('w6')}</div>`, '🔐 금고'); keys.push([no, '19024 (23 × 8 + 6 = 190, 745 ÷ 31 = 24 … 1)']);
@@ -4152,7 +4152,7 @@ function init() {
   preloadChar(GUIDE());
   ['tilt', 'half', 'mixup', 'clock', 'dark'].forEach(k => preloadVillain(k));  /* 이번 차시 악당 그림 미리 불러오기 */
   const gc = CHARS[GUIDE()];
-  $('#jaramSay').textContent = `안녕! 나는 ${gc.area ? gc.area + ' 담당 ' : ''}${gc.name}${hasJong(gc.name) ? '이야' : '야'}. 드디어 곱셈 축제의 폐막식이야. 3단원에서 배운 걸 모두 꺼내 다크몽을 물리치자!`;
+  $('#jaramSay').textContent = `안녕! 나는 ${gc.area ? gc.area + ' 담당 ' : ''}${gc.name}${hasJong(gc.name) ? '이야' : '야'}. 드디어 곱셈 축제의 폐막식이야. 3단원에서 배운 걸 모두 꺼내 반쪽이를 물리치자!`;
   const parade = (px, pose, btn) => CHAR_KEYS.map((k, i) => `<${btn ? 'button' : 'span'} class="pc" style="--i:${i}" title="${esc(CHARS[k].name)}"${btn ? ` data-act="parade" data-v="${k}" aria-label="${esc(CHARS[k].name)}"` : ''}>${avatar(k, px, pose)}</${btn ? 'button' : 'span'}>`).join('');
   $('#paradeTop').innerHTML = parade(26, 'idle'); $('#paradeFoot').innerHTML = parade(48, 'wait', true);
   $('#hdrVillains').innerHTML = `<span class="vtag" style="color:#b91c1c">😈 최종 보스</span>` +
@@ -4260,75 +4260,75 @@ setInterval(() => { try { Gems.tick(); } catch (e) {} }, 600);
    ===================================================================== */
 const ST_AREA = { dark: '수학 세계 전체', tilt: '수와 연산', mixup: '도형과 공간', clock: '시간과 달력', half: '분수와 소수' };
 const ST_VK = ['dark', 'tilt', 'half', 'mixup', 'clock'];
-const ST_SEAL = { dark: '곱셈 축제 마을의 마지막 결전', tilt: 'EP.1·3에서 봉인', half: 'EP.2·5에서 봉인', mixup: 'EP.4에서 봉인', clock: 'EP.6에서 봉인' };
+const ST_SEAL = { dark: '4학년 최종 대장 · 왕중왕전에 합류', tilt: 'EP.1·3에서 봉인', half: '축제 성의 주인 · 마지막 결전', mixup: 'EP.4에서 봉인', clock: 'EP.6에서 봉인' };
 const CHAPTERS = [
-  { n: 1, v: 'dark', icon: '🧭', title: '6대 개념 카드',   sub: '곱셈·나눗셈·어림셈 종합 복습',        go: ['s1', 'concept'] },
-  { n: 2, v: 'dark', icon: '✏️', title: '성취기준 확인',   sub: '기본 문제 3개 · 달리 힌트',          go: ['s1', 'basic'] },
-  { n: 3, v: 'dark', icon: '⚔️', title: '다크몽 보스전',   sub: '쿠키 포장 · 판매 금액 · 비밀 금고',   go: ['s1', 'jump'] },
-  { n: 4, v: 'dark', icon: '👑', title: '왕중왕전',       sub: '단원 평가 · 게임 12개 도전과 경쟁',   go: ['s2', 'drill'] },
-  { n: 5, v: 'dark', icon: '📜', title: '단원 보고서',     sub: '차시 진단 · 오답노트 · 수호 보석',    go: ['s2', 'result'] }
+  { n: 1, v: 'half', icon: '🧭', title: '6대 개념 카드',   sub: '곱셈·나눗셈·어림셈 종합 복습',        go: ['s1', 'concept'] },
+  { n: 2, v: 'half', icon: '✏️', title: '성취기준 확인',   sub: '기본 문제 3개 · 달리 힌트',          go: ['s1', 'basic'] },
+  { n: 3, v: 'half', icon: '⚔️', title: '반쪽이 보스전',   sub: '쿠키 포장 · 판매 금액 · 비밀 금고',   go: ['s1', 'jump'] },
+  { n: 4, v: 'half', icon: '👑', title: '왕중왕전',       sub: '단원 평가 · 게임 12개 도전과 경쟁',   go: ['s2', 'drill'] },
+  { n: 5, v: 'half', icon: '📜', title: '단원 보고서',     sub: '차시 진단 · 오답노트 · 수호 보석',    go: ['s2', 'result'] }
 ];
 const STEP_CH = { 's1:concept': 1, 's1:basic': 2, 's1:jump': 3, 's1:result': 3, 's2:drill': 4, 's2:game': 4, 's2:board': 4, 's2:arena': 4, 's2:result': 5 };
-const ST_TOOLV = { mt: 'dark', mtt: 'dark', dt: 'dark', d1: 'dark', d2: 'dark', est: 'dark' };
+const ST_TOOLV = { mt: 'half', mtt: 'half', dt: 'half', d1: 'half', d2: 'half', est: 'half' };
 const V_TAUNT = {
-  dark: ['곱하는 수가 몇십이면 0은 버려도 되지 않나? 크크.', '나머지가 나누는 수보다 커도 괜찮잖아?', '몫이 몇 자리인지는 아무도 모를걸!', '대충 어림하면 다 모자라 보이지!'],
-  tilt: ['…'], mixup: ['…'], clock: ['…'], half: ['…']
+  half: ['곱하는 수가 몇십이면 0은 버려도 되지 않나? 크크.', '나머지가 나누는 수보다 커도 괜찮잖아?', '몫이 몇 자리인지는 아무도 모를걸!', '대충 어림하면 다 모자라 보이지!'],
+  tilt: ['…'], mixup: ['…'], clock: ['…'], dark: ['…']
 };
 const V_HIT = {
-  dark: ['윽! 0의 개수까지 정확하잖아?!', '크윽… 검산까지 했다고?', '내 방어막에 금이…!', '몫의 자리를 한눈에 알아보다니!'],
-  tilt: ['…'], mixup: ['…'], clock: ['…'], half: ['…']
+  half: ['윽! 0의 개수까지 정확하잖아?!', '크윽… 검산까지 했다고?', '내 방어막에 금이…!', '몫의 자리를 한눈에 알아보다니!'],
+  tilt: ['…'], mixup: ['…'], clock: ['…'], dark: ['…']
 };
 const BEATS = {
   prologue: {
-    cap: 'FINAL · 3단원 최종 결전', ttl: '곱셈 축제의 폐막식, 다크몽의 습격', v: 'dark', pose: 'happy',
+    cap: 'FINAL · 3단원 최종 결전', ttl: '곱셈 축제의 폐막식, 반쪽이의 습격', v: 'half', pose: 'happy',
     lines: [
       { w: 'narr', t: '축제 마당, 풍선 부스, 쿠키 부스, 책 나눔 부스, 기념품 가게까지. 탐험대는 곱셈 축제 마을의 여섯 곳을 모두 지켜 냈다. 이제 <b>폐막식</b>만 남았다.' },
-      { w: 'dark', p: 'happy', t: '크하하! 부하들은 졌지만 나는 다르다! 축제 <b>결산 장부</b>의 곱셈과 나눗셈을 모두 엉망으로 만들어 놓았지. 3단원을 다 기억하고 있을까?' },
-      { w: 'guide', p: 'determined', t: '우리는 여섯 번의 모험을 다 해냈어! <b>곱셈, 몫과 나머지, 어림셈</b>까지 모두 꺼내서 다크몽을 물리치자! 출전!' }
+      { w: 'half', p: 'happy', t: '크하하! 다크몽 님이 맡기신 곳은 내가 지킨다! 축제 <b>결산 장부</b>의 곱셈과 나눗셈을 모두 엉망으로 만들어 놓았지. 3단원을 다 기억하고 있을까?' },
+      { w: 'guide', p: 'determined', t: '우리는 여섯 번의 모험을 다 해냈어! <b>곱셈, 몫과 나머지, 어림셈</b>까지 모두 꺼내서 반쪽이를 물리치자! 출전!' }
     ],
     btns: [{ t: '⚔️ 최종 결전 출전', act: 'go', to: ['s1', 'concept'] }, { t: '😈 악당 보기', c: 'btn-sub', act: 'scene', to: 'villains' }]
   },
   villains: {
-    cap: 'CHARACTER', ttl: '다크몽과 곱셈 축제의 악당들', cards: true,
+    cap: 'CHARACTER', ttl: '곱셈 축제 마을의 악당들', cards: true,
     btns: [{ t: '스토리로 돌아가기', act: 'scene', to: 'prologue' }, { t: '닫기', c: 'btn-sub', act: 'close' }]
   },
   ch1: {
-    cap: 'CHAPTER 1 CLEAR', ttl: '6대 핵심 개념 복원!', v: 'dark', pose: 'angry',
+    cap: 'CHAPTER 1 CLEAR', ttl: '6대 핵심 개념 복원!', v: 'half', pose: 'angry',
     lines: [
-      { w: 'dark', p: 'angry', t: '곱셈도, 몫과 나머지도, 어림셈까지… 하나도 안 잊어버렸다고?!' },
+      { w: 'half', p: 'angry', t: '곱셈도, 몫과 나머지도, 어림셈까지… 하나도 안 잊어버렸다고?!' },
       { w: 'guide', p: 'happy', t: '배지 6개 완성! 이제 성취기준 확인 문제로 가자!' }
     ],
     btns: [{ t: '✏️ CH.2 기본 문제로 ➜', act: 'go', to: ['s1', 'basic'] }, { t: '닫기', c: 'btn-sub', act: 'close' }]
   },
   ch2: {
-    cap: 'CHAPTER 2 CLEAR', ttl: '다크몽의 함정 돌파!', v: 'dark', pose: 'angry',
+    cap: 'CHAPTER 2 CLEAR', ttl: '반쪽이의 함정 돌파!', v: 'half', pose: 'angry',
     lines: [
-      { w: 'dark', p: 'angry', t: '나머지를 틀리게 하려 했는데…! 좋다, 내 세 겹 방어막을 깨 보시지!' },
+      { w: 'half', p: 'angry', t: '나머지를 틀리게 하려 했는데…! 좋다, 내 세 겹 방어막을 깨 보시지!' },
       { w: 'guide', p: 'determined', t: '쿠키 포장, 부스 판매 금액, 비밀 금고로 승부야!' }
     ],
     btns: [{ t: '⚔️ CH.3 보스전으로 ➜', act: 'go', to: ['s1', 'jump'] }, { t: '닫기', c: 'btn-sub', act: 'close' }]
   },
   ch3: {
-    cap: 'BOSS SHIELD BREAK', ttl: '방어막 3겹 파괴!', v: 'dark', pose: 'attack',
+    cap: 'BOSS SHIELD BREAK', ttl: '방어막 3겹 파괴!', v: 'half', pose: 'attack',
     lines: [
-      { w: 'dark', p: 'attack', t: '크윽! 쿠키도, 판매 금액도, 금고 비밀번호까지…! 하지만 왕중왕전에서 마지막 승부다!' },
-      { w: 'guide', p: 'cheer', t: '세트 2로 가자! 단원 평가로 실력을 확인하고, 왕중왕전에서 여섯 차시의 게임으로 다크몽을 끝까지 몰아붙이자!' }
+      { w: 'half', p: 'attack', t: '크윽! 쿠키도, 판매 금액도, 금고 비밀번호까지…! 하지만 왕중왕전에서 마지막 승부다!' },
+      { w: 'guide', p: 'cheer', t: '세트 2로 가자! 단원 평가로 실력을 확인하고, 왕중왕전에서 여섯 차시의 게임으로 반쪽이를 끝까지 몰아붙이자!' }
     ],
     btns: [{ t: '👑 CH.4 왕중왕전으로 ➜', act: 'go', to: ['s2', 'drill'] }, { t: '세트 1 결과', c: 'btn-sub', act: 'go', to: ['s1', 'result'] }]
   },
   ch4: {
-    cap: 'CHAPTER 4 CLEAR', ttl: '다크몽, 마지막 힘을 잃다!', v: 'dark', pose: 'angry',
+    cap: 'CHAPTER 4 CLEAR', ttl: '반쪽이, 마지막 힘을 잃다!', v: 'half', pose: 'angry',
     lines: [
-      { w: 'dark', p: 'angry', t: '미니게임도… 보드게임도… 여섯 차시를 모두…! 이, 이럴 수가!' },
+      { w: 'half', p: 'angry', t: '미니게임도… 보드게임도… 여섯 차시를 모두…! 이, 이럴 수가!' },
       { w: 'guide', p: 'determined', t: '이제 단원 보고서를 완성하면 곱셈 축제 마을을 완전히 되찾을 수 있어!' }
     ],
     btns: [{ t: '📜 CH.5 단원 보고서 ➜', act: 'go', to: ['s2', 'result'] }, { t: '닫기', c: 'btn-sub', act: 'close' }]
   },
   final: {
-    cap: 'ENDING · 3단원 완결', ttl: '다크몽 퇴치! 곱셈 축제 대성공', v: 'dark', pose: 'attack', flee: true,
+    cap: 'ENDING · 3단원 완결', ttl: '반쪽이 퇴치! 곱셈 축제 대성공', v: 'half', pose: 'attack', flee: true,
     lines: [
-      { w: 'dark', p: 'attack', t: '으악! 곱셈도 나눗셈도 어림셈도 척척이라니! 다음 평면도형 단원에서 다시 만나자!' },
-      { w: 'narr', t: '다크몽이 달아나자, 여섯 부스에서 모은 <b>수호 조각</b>들이 빛을 내며 하나로 모이기 시작했다. 폐막식 불꽃놀이가 하늘을 수놓았다.' },
+      { w: 'half', p: 'attack', t: '으악! 곱셈도 나눗셈도 어림셈도 척척이라니! 다음 평면도형 단원에서 다시 만나자!' },
+      { w: 'narr', t: '반쪽이가 달아나자, 여섯 부스에서 모은 <b>수호 조각</b>들이 빛을 내며 하나로 모이기 시작했다. 폐막식 불꽃놀이가 하늘을 수놓았다.' },
       { w: 'guide', p: 'celebrate', t: '우리가 해냈어! <b>곱셈과 나눗셈 수호 보석</b>을 완성하자! 다음은 4단원 <b>평면도형의 이동</b>이야!' }
     ],
     btns: [{ t: '💎 수호 보석 합치기', act: 'gem' }, { t: '📜 단원 보고서', c: 'btn-sub', act: 'go', to: ['s2', 'result'] }]
@@ -4427,13 +4427,13 @@ const Story = {
     const M = {
       's1:concept': '카드를 넘기며 1~6차시를 떠올리고, 확인 문제로 핵심 개념 배지 6개를 모으자!',
       's1:basic': '성취기준 확인 3문제! 막히면 달리 힌트를 눌러요.',
-      's1:jump': '다크몽의 세 겹 방어막 — 쿠키 포장 · 판매 금액 · 비밀 금고!',
+      's1:jump': '반쪽이의 세 겹 방어막 — 쿠키 포장 · 판매 금액 · 비밀 금고!',
       's1:result': '세트 1 결과를 확인하고 세트 2 최종 결전으로!',
       's2:drill': '단원 평가 12문항으로 차시별 실력을 진단하자!',
       's2:arena': '왕중왕전 — 차시마다 했던 게임에 도전하고 우리 반 기록과 겨뤄요!',
       's2:result': '단원 보고서 — 차시 진단 · 오답노트 · 제출 · 인쇄!'
     };
-    return { v: 'dark', m: M[tab + ':' + step] || '' };
+    return { v: 'half', m: M[tab + ':' + step] || '' };
   },
   curCh() { const p = this.prog(), i = STEP_CH[state.tab + ':' + ((state[state.tab] || {}).step || 'concept')] || 1; return { i, p }; },
   face(k, px, pose) { return `<span class="stav-box" style="width:${px}px;height:${px}px">${avatar(k, px, pose)}</span>`; },
@@ -4600,7 +4600,7 @@ const _st_init = init;
 init = function () { _st_init(); try { Story.boot(); } catch (e) {} };
 /* =====================================================================
    🏁 단원 마무리 전용 기능
-   · 스토리 HUD 배치(왼쪽 SmartVibe·달리 / 가운데 다크몽 HP / 오른쪽 도구)
+   · 스토리 HUD 배치(왼쪽 SmartVibe·달리 / 가운데 반쪽이 HP / 오른쪽 도구)
    · 삐딱이 도망 연출 · 곱셈과 나눗셈 수호 보석 합치기
    · 단원 보고서 제출(JSON) · 오답노트 & 평가 리포트 A4 인쇄 · 4단원 연속 출전
    ===================================================================== */
@@ -4610,7 +4610,7 @@ CONFIG.UNIT_ID = '4-1-3';
 /* ---- 스토리 HUD ---- */
 Story.paint = function (hit) {
   const hud = $('#storyHud'); if (!hud) return;
-  const { i, p } = this.curCh(), ch = CHAPTERS[i - 1], sv = this.stepV(), V = VILLAINS.dark, hp = p.tiltHp, down = p.tilt;
+  const { i, p } = this.curCh(), ch = CHAPTERS[i - 1], sv = this.stepV(), V = VILLAINS.half, hp = p.tiltHp, down = p.tilt;
   if (!this.bubble) { const dk = down ? 'd' : 'a'; if (this._dk !== dk || Date.now() - (this._dt || 0) > 9000) { this._dk = dk; this._dt = Date.now(); this._dm = down ? pick(V_HIT.dark) : pick(V_TAUNT.dark); } }
   const msg = this.bubble || this._dm || '', muted = (() => { try { return Sound.isMuted(); } catch (e) { return false; } })();
   const sig = [i, sv.m, hp, msg, p.ch.join(''), muted].join('|'); if (!hit && sig === this._sig) return; this._sig = sig;
@@ -4619,7 +4619,7 @@ Story.paint = function (hit) {
     </div>
     <div class="uhud">
       <div class="uh-me">${avatar(GUIDE(), 54, down ? 'celebrate' : 'determined')}<div><div class="uh-brand">Powered by <b>SmartVibe</b></div><div class="uh-nm">${esc(CHARS[GUIDE()].name)} · 곱셈과 나눗셈 리더</div></div></div>
-      <div class="sth-boss ${hit ? 'hit' : ''} ${down ? 'down' : ''}">${this.face('dark', 60, down ? 'attack' : hit ? 'angry' : 'idle')}
+      <div class="sth-boss ${hit ? 'hit' : ''} ${down ? 'down' : ''}">${this.face('half', 60, down ? 'attack' : hit ? 'angry' : 'idle')}
         <div style="flex:none;width:130px"><div class="sth-nm">${esc(V.name)} <span class="text-xs">대장</span></div><div class="sthp"><i style="width:${hp}%"></i></div><div class="sthp-n">${down ? '퇴치!' : 'HP ' + hp + ' / 100'}</div></div>
         <div class="sth-bub">${esc(msg)}</div></div>
       <div class="uh-tools"><button class="sth-btn" data-st="replay">📖 스토리</button><button class="sth-btn" data-act="scratch-toggle">📝 연습장</button><button class="sth-btn" data-act="mute">${muted ? '🔇' : '🔊'} 소리</button><button class="sth-btn" data-act="fullscreen">⛶ 전체</button></div>
@@ -4741,7 +4741,7 @@ function buildReportSheets(c) {
   const head = (t, sub) => `<div class="p-head"><div class="p-brand">SmartVibe | 십이지 수학탐험대 · Powered by SmartVibe</div><div class="p-title">${t}</div><div class="p-sub">${sub}</div>${idRow}</div>`;
   let h = '';
   if (c.report) {
-    h += `<div class="sheet">` + head('📜 3단원 곱셈과 나눗셈 · 종합 평가 리포트', '4학년 1학기 3단원 단원 마무리 · 다크몽 최종 결전')
+    h += `<div class="sheet">` + head('📜 3단원 곱셈과 나눗셈 · 종합 평가 리포트', '4학년 1학기 3단원 단원 마무리 · 반쪽이 최종 결전')
       + `<div class="p-info">세트 1 종합 복습 <b>${u.s1}점</b> · 세트 2 최종 결전 <b>${u.s2}점</b> · 소요 시간 ${fmtTime(u.elapsed)} · 오답 ${u.wn.length}개 · 수호 보석 ${UnitGem.has() ? '획득' : '미획득'}</div>`
       + `<div class="p-sec">① 영역별 강점·약점</div><table class="p-keytbl"><tr><th style="width:34%">영역</th><th style="width:16%">정답</th><th>정답률</th><th style="width:18%">진단</th></tr>`
       + u.da.map(a => { const p = a.rate === null ? null : Math.round(a.rate * 100), st = a.rate === null ? 'none' : a.rate >= 0.8 ? 'good' : a.rate >= 0.5 ? 'mid' : 'low';
@@ -5995,7 +5995,7 @@ window.SV_LF={
  "target": "3단원에서 배운 곱셈과 나눗셈의 계산 방법과 어림셈을 이용하여 생활 속 문제를 해결할 수 있다.",
  "title": "🎆 3단원 복습 · 곱셈 축제 결산 장부",
  "sub": "3단원 마무리 · 복습 문제",
- "problem": "곱셈 축제가 끝나고 <b>「축제 결산 장부」</b>를 정리해요. 풍선 부스, 입장권, 사탕 봉지, 쿠키 봉지, 책 나눔, 기념품까지 곱셈과 나눗셈이 가득해요. 그런데 다크몽이 장부의 수를 모두 🔒로 잠가 버렸어요. 3단원에서 배운 것을 하나씩 꺼내 써야 장부를 완성할 수 있어요.",
+ "problem": "곱셈 축제가 끝나고 <b>「축제 결산 장부」</b>를 정리해요. 풍선 부스, 입장권, 사탕 봉지, 쿠키 봉지, 책 나눔, 기념품까지 곱셈과 나눗셈이 가득해요. 그런데 반쪽이가 장부의 수를 모두 🔒로 잠가 버렸어요. 3단원에서 배운 것을 하나씩 꺼내 써야 장부를 완성할 수 있어요.",
  "placeholder": "예: 곱셈, 몫과 나머지, 어림셈을 써야 할 것 같아요.",
  "keywords": [
   {"k": ["곱", "×"], "t": "곱셈"},
@@ -6005,7 +6005,7 @@ window.SV_LF={
  ],
  "prologue": [
   {"w": "narr", "t": "3단원 「곱셈과 나눗셈」의 마지막 시간! 곱셈 축제의 <b>결산 장부</b>를 정리해요."},
-  {"w": "dark", "p": "happy", "t": "크하하! 장부의 수를 모두 잠가 버렸다! 3단원에서 배운 걸 <b>다</b> 기억해야 풀 수 있을걸?"},
+  {"w": "half", "p": "happy", "t": "크하하! 장부의 수를 모두 잠가 버렸다! 3단원에서 배운 걸 <b>다</b> 기억해야 풀 수 있을걸?"},
   {"w": "guide", "p": "determined", "t": "좋아, 차시마다 무엇을 배웠는지 하나씩 떠올리면서 잠긴 장부를 완성해 보자!"}
  ],
  "j0": {
@@ -6041,7 +6041,7 @@ window.SV_LF.j0.board=function(H){const t=s=>`<span class="sv-rtag">${s}</span>`
 <div class="sv-paper-t sv-urow" style="font-size:1rem">${t('6차시')}🔑 498원짜리 열쇠고리 39개를 20,000원으로 살 수 있을까요? <span class="sv-row" style="display:inline-flex;margin:0">${H.pick(5,'살 수 있어요')}${H.pick(5,'살 수 없어요')}</span></div></div>`};
 window.SV_LF.j1Hint=function(){return false;};
 
-/*HERO*/window.SV_LF.hero={"title": ["3단원 복습!", "결산 장부가 잠겼어!"], "speaker": "horse", "speakerName": "달리", "speech": "3단원 「곱셈과 나눗셈」 마지막 시간이야! 축제 결산 장부를 정리해야 하는데, 다크몽이 장부의 수를 몽땅 잠가 버렸어. 지금까지 배운 <b>(세 자리)×(두 자리), 몫과 나머지, 몫이 두 자리 수인 나눗셈, 어림셈</b>을 모두 꺼내 써야 해. 하나씩 떠올려 볼까?", "villain": "다크몽", "vkey": "dark", "villainSub": "수학 세계를 노리는 악당 대장", "object": "🎆 곱셈 축제 결산 장부<div class=\"svh-seals\"><span>🔒</span><span>🔒</span><span>🔒</span><span>🔒</span><span>🔒</span><span>🔒</span></div>"};
+/*HERO*/window.SV_LF.hero={"title": ["3단원 복습!", "결산 장부가 잠겼어!"], "speaker": "horse", "speakerName": "달리", "speech": "3단원 「곱셈과 나눗셈」 마지막 시간이야! 축제 결산 장부를 정리해야 하는데, 반쪽이가 장부의 수를 몽땅 잠가 버렸어. 지금까지 배운 <b>(세 자리)×(두 자리), 몫과 나머지, 몫이 두 자리 수인 나눗셈, 어림셈</b>을 모두 꺼내 써야 해. 하나씩 떠올려 볼까?", "villain": "반쪽이", "vkey": "half", "villainSub": "다크몽의 사천왕 · 몫과 나머지를 헷갈리게 하는 악당", "object": "🎆 곱셈 축제 결산 장부<div class=\"svh-seals\"><span>🔒</span><span>🔒</span><span>🔒</span><span>🔒</span><span>🔒</span><span>🔒</span></div>"};
 
 /*SCR*/window.SV_LF.j0.scratch={"expr": "250 × 40 = ▢\n785 × 36 = 785 × 6 + 785 × 30 = ▢ + ▢ = ▢\n275 ÷ 30 = ▢ … ▢\n185 ÷ 23 = ▢ … ▢\n437 ÷ 18 = ▢ … ▢\n498 → 약 ▢, 39 → 약 ▢ → ▢ × ▢ = ▢"};
 
@@ -8908,7 +8908,7 @@ window.SV_ARENA={"u":"4-1-3-U","unit":"3단원 「곱셈과 나눗셈」","games
 })();
 
 </script><!--ARHUB-END-->
-<!--FLOWU-START--><style>/* 단원 마무리 새 순서: 단원 평가 하 · 중 · 상 화면 */
+<script>/*VSWAP3*/</script><!--FLOWU-START--><style>/* 단원 마무리 새 순서: 단원 평가 하 · 중 · 상 화면 */
 .fu-menu .gates{grid-template-columns:repeat(3,minmax(0,1fr))}
 .fu-fin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px 26px;align-items:center}
 .fu-fin .fu-finb{grid-column:1/-1;flex-wrap:wrap;gap:8px;margin-top:8px}
@@ -8954,6 +8954,69 @@ window.SV_ARENA={"u":"4-1-3-U","unit":"3단원 「곱셈과 나눗셈」","games
   body.svsl-on #s2body .card:has(.ucrec){justify-content:center}body.svsl-on #s2body .card:has(.ucrec)>*{flex:none}}
 @media(min-width:1000px) and (min-height:860px){.ucrow{padding:10px 12px;font-size:1.15rem;margin:8px 0}.ucrow .ucr-s{font-size:1rem}body.svsl-on #s2body .rp-head .score-big{font-size:6rem}body.svsl-on #s2body .rp-head .stars{font-size:3.4rem}}
 @media(min-width:1600px) and (min-height:900px){body.svsl-on #s2body .card.rp-head>*,body.svsl-on #s2body .card:has(.ucrec)>*{zoom:1.28}}
+/* 👑 학년 최종 대장 */
+.gbx{position:relative;display:inline-block;vertical-align:middle;line-height:0}
+.gbx>img,.gbx>svg:not(.gbcr){width:100%!important;height:100%!important;object-fit:contain}
+.gbx .gbcr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.gbx.gbs2>img,.gbx.gbs2>svg:not(.gbcr){filter:saturate(.85)}
+.gbx.gbs3>img,.gbx.gbs3>svg:not(.gbcr){filter:saturate(.65) brightness(.95)}
+.gbx.gbs4>img,.gbx.gbs4>svg:not(.gbcr){filter:grayscale(.6);opacity:.85}
+/* 도전장: 단원 악당 뒤의 대장 그림자 */
+.fuchL{position:relative}
+.gbsh{position:absolute;right:-6px;top:-8px;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.9;filter:drop-shadow(0 0 10px rgba(0,0,0,.55));pointer-events:none;z-index:2}
+.gbsh .gbx{filter:brightness(.55) saturate(.6)}
+.gbsh span{font-size:.72rem;font-weight:900;color:#fde68a;background:rgba(15,23,42,.75);border-radius:999px;padding:1px 8px;line-height:1.4}
+.gbsay{display:flex;gap:8px;align-items:center;margin:8px 0 2px;padding:7px 10px;border-radius:14px;background:rgba(15,23,42,.55);border:1.5px solid rgba(253,230,138,.6);color:#fef3c7;font-size:.9rem;line-height:1.45;text-align:left}
+.gbsay small{display:block;font-size:.68rem;font-weight:900;color:#fde68a;opacity:.9}
+.gbsay b{color:#fde047;margin-right:4px}
+.gbsay .gbav{flex:none;line-height:0}
+/* 왕중왕전 2:1 */
+.gbh{color:#7c2d12}
+.gbvs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px 10px;align-items:center;margin:8px 0 10px;padding:10px 12px;border-radius:16px;background:linear-gradient(90deg,#fff1f2,#fef3c7 50%,#e0e7ff);border:2px solid #fca5a5}
+.gbvs .gbf{display:flex;gap:8px;align-items:center;min-width:0}
+.gbvs .gbf.boss{flex-direction:row-reverse;text-align:right}
+.gbvs .gbav{flex:none;line-height:0}
+.gbvs .gbko{filter:grayscale(1);opacity:.6;transform:rotate(-12deg)}
+.gbvs .gbm{flex:1;min-width:0}
+.gbvs .gbm b{display:block;font-size:1rem;font-weight:900;color:#1f2937}
+.gbvs .gbm small{display:block;font-size:.7rem;font-weight:800;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbhp{position:relative;height:16px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:3px;border:1.5px solid #9ca3af}
+.gbhp i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:999px;transition:width .6s}
+.gbhp.b i{left:auto;right:0;background:linear-gradient(90deg,#6366f1,#1d4ed8)}
+.gbhp span{position:relative;display:block;text-align:center;font-size:.68rem;font-weight:900;line-height:13px;color:#111827}
+.gbx2{font-size:1.25rem;font-weight:900;color:#b91c1c;background:#fff;border:2px solid #fca5a5;border-radius:12px;padding:2px 8px}
+.gbline{grid-column:1/-1;text-align:center;font-size:.86rem;font-weight:800;color:#312e81;background:rgba(255,255,255,.7);border-radius:10px;padding:4px 8px}
+.gbvs.down{border-color:#86efac;background:linear-gradient(90deg,#f0fdf4,#fef9c3 50%,#eef2ff)}
+/* 결과 */
+.gbres{display:flex;gap:10px;align-items:center;justify-content:center;margin:8px auto 0;max-width:560px;padding:8px 12px;border-radius:14px;background:#eef2ff;border:2px dashed #818cf8;font-size:.9rem;font-weight:700;color:#312e81;text-align:left;line-height:1.45}
+.gbres.ok{background:#f0fdf4;border-color:#4ade80;color:#14532d}
+.gbres .gbav{flex:none;line-height:0}
+@media(max-width:600px){
+  .gbvs:not(.gbnar){grid-template-columns:1fr;padding:8px}
+  .gbvs:not(.gbnar) .gbf.boss{flex-direction:row;text-align:left}
+  .gbvs:not(.gbnar) .gbhp.b i{left:0;right:auto}
+  .gbx2{justify-self:center;font-size:.95rem;padding:0 6px}
+  .gbvs.gbnar{gap:4px 6px;padding:8px}
+  .gbvs.gbnar .gbf{flex-direction:column;align-items:center;text-align:center;gap:2px}
+  .gbvs.gbnar .gbm{width:100%}
+  .gbvs.gbnar .gbline{font-size:.8rem}
+  .gbsh{right:-2px;top:-4px}
+  .gbsh .gbx{width:70px!important;height:70px!important}
+}
+/* 새 왕중왕전 화면(uar) — 성문 양옆의 두 악당 */
+.uar-gates.gbon .uar-torch{display:none}
+.gbfl{position:absolute;top:0;width:150px;display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2;text-align:center}
+.gbfl.l{left:14px}.gbfl.r{right:14px}
+.gbfl .gbav{line-height:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.gbfl>b{font-size:.86rem;font-weight:900;color:#fff;background:rgba(30,27,75,.82);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.gbfl .gbhp{width:130px;margin-top:2px}
+.gbfl.r .gbhp i{left:0;right:auto}
+.gbbub{position:absolute;right:100%;top:6px;margin-right:2px;width:160px;padding:6px 9px;border-radius:12px;background:#fff;border:2px solid #6366f1;font-size:.74rem;font-weight:800;color:#312e81;line-height:1.35;text-align:left;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.gbbub:after{content:'';position:absolute;right:-8px;top:14px;border:6px solid transparent;border-left-color:#6366f1}
+.gbem{font-style:normal;font-weight:900;color:#b91c1c}.gbem.b{color:#1d4ed8}
+.gbvs.gbnar{display:none;margin:6px 10px 8px}
+@media(max-width:1300px){.gbbub{display:none}}
+@media(max-width:900px){.gbfl{display:none}.gbvs.gbnar{display:grid}}
 </style><script>
 /* =====================================================================
    🧭 단원 마무리 새 순서 (6학년 1학기 · SV_LF.flowU)
@@ -9115,8 +9178,8 @@ window.SV_ARENA={"u":"4-1-3-U","unit":"3단원 「곱셈과 나눗셈」","games
   if (!(window.SV_LF && SV_LF.flowU) || window.__UCASTLE) return; window.__UCASTLE = 1;
   const T = f => { try { return f(); } catch (e) { return undefined; } };
   const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
-  const CASTLE = { '4-1-1': '삐딱이의 수의 탑', '4-1-2': '뒤죽이의 각도 성', '4-1-3': '다크몽의 축제 성', '4-1-4': '다크몽의 거울 성', '4-1-5': '뒤죽이의 그래프 성', '4-1-6': '시간도둑의 규칙 성',
-    '6-1-1': '디바이드의 분수 성', '6-1-2': '폴리곤의 입체 성', '6-1-3': '데시말의 소수 성', '6-1-4': '라티오의 비율 성', '6-1-5': '차트 마스터의 그래프 성', '6-1-6': '큐브의 부피 성' };
+  const CASTLE = { '4-1-1': '삐딱이의 수의 탑', '4-1-2': '뒤죽이의 각도 성', '4-1-3': '반쪽이의 축제 성', '4-1-4': '뒤죽이의 거울 성', '4-1-5': '뒤죽이의 그래프 성', '4-1-6': '시간도둑의 규칙 성',
+    '6-1-1': '디바이드의 분수 성', '6-1-2': '폴리곤의 입체 성', '6-1-3': '데시말의 소수 성', '6-1-4': '라티오의 비율 성', '6-1-5': '차트 마스터의 그래프 성', '6-1-6': '볼륨 킹의 부피 성' };
   const P = UID.split('-'), GR = P[0], UN = P[2], CS = CASTLE[UID] || '보스 성';
   const UNM = T(() => (String(SV_LF.review.title).match(/「[^」]+」/) || [''])[0]) || '';
   window.UCASTLE = { name: CS, title: `${UN}단원 마무리 · ${CS} 탈환전` };
@@ -9180,6 +9243,125 @@ window.SV_ARENA={"u":"4-1-3-U","unit":"3단원 「곱셈과 나눗셈」","games
   function run() { T(head); T(gates); T(fin); T(result); }
   try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
   setTimeout(run, 300);
+})();
+
+/* =====================================================================
+   👑 학년 최종 대장 — 모든 단원 마무리 공통 (11-20 기준)
+     학년마다 최종 대장은 한 명: 4학년 다크몽 · 5학년 베일 · 6학년 메트릭
+     ① 도전장: 단원 악당 뒤에 대장의 그림자 + 한마디
+     ② 왕중왕전: 단원 악당 + 최종 대장 2:1 결전 (HP 줄 2개)
+     ③ 결과·엔딩: 대장은 힘이 약해진 채 물러나며 다음 단원을 예고
+     대장의 약해지는 정도(0~4)는 학년 전체에 걸쳐 쌓여요:
+       1학기 3단원 뒤 조금 상함(1) → 1학기 끝 절반(2) → 2학기 3단원 뒤 거의(3) → 학년 최종 결전(4)
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__GBOSS) return; window.__GBOSS = 1;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
+  const P = UID.split('-'), GR = P[0], SEM = +P[1] || 1, UN = +P[2] || 1;
+  const CFG = {
+    '4': { k: 'dark', name: '다크몽', ttl: '4학년 최종 대장', part: '그림자 갑옷', col: '#6d28d9' },
+    '5': { k: 'gboss', name: '베일', ttl: '5학년 최종 대장', part: '장막', col: '#0f766e', img: 'veil' },
+    '6': { k: 'gboss', name: '메트릭', ttl: '6학년 최종 대장', part: '계측 코어', col: '#1d4ed8' }
+  };
+  const B = CFG[GR]; if (!B) return;
+  const hasJ = s => { const c = String(s).charCodeAt(String(s).length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
+  const J = (s, a, b) => s + (hasJ(s) ? a : b);
+  /* 약해지는 단계 */
+  const after = u => SEM === 1 ? (u >= 6 ? 2 : u >= 3 ? 1 : 0) : (u >= 6 ? 4 : u >= 3 ? 3 : 2);
+  const ST0 = after(UN - 1 < 1 && SEM === 1 ? 0 : UN - 1), ST1 = after(UN);
+  const won = () => !!T(() => Story.prog().tilt);
+  const stage = () => (won() ? ST1 : ST0);
+  const crk = () => Math.min(4, (SEM - 1) * 6 + (won() ? UN : UN - 1));   // 금 줄 수 = 학년에서 끝낸 단원 수(최대 4줄)
+  const STN = ['온전함', '조금 상함', '절반', '거의 벗겨짐', '완전히 벗겨짐'];
+  const LAST = UN >= 6;   // 학기 마지막 단원
+
+  /* ---------- 대장 그림: 시트 그림이 오기 전까지 쓰는 임시 그림 ---------- */
+  function metricSvg(px, pose) {
+    const red = /angry|attack/.test(pose || ''), eye = red ? '#f43f5e' : '#22d3ee', id = 'gbm' + Math.random().toString(36).slice(2, 7);
+    const ticks = Array.from({ length: 9 }, (_, i) => { const a = Math.PI * (1.12 + i * .095), r1 = 17, r2 = i % 2 ? 13.5 : 12; return `<path d="M${50 + r1 * Math.cos(a)} ${50 + r1 * Math.sin(a)}L${50 + r2 * Math.cos(a)} ${50 + r2 * Math.sin(a)}"/>`; }).join('');
+    return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" class="gbmetric" aria-label="메트릭"><defs><radialGradient id="${id}h" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient></defs>
+      <path d="M14 98c3-20 16-30 36-30s33 10 36 30z" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><path d="M38 70l12 14 12-14" fill="#facc15" stroke="#a16207" stroke-width="1.5"/>
+      <rect x="27" y="10" width="46" height="9" rx="2" fill="#facc15" stroke="#a16207" stroke-width="1.5"/><g stroke="#a16207" stroke-width="1.2">${[31, 35, 39, 43, 47, 51, 55, 59, 63, 67].map((x, i) => `<path d="M${x} 10v${i % 2 ? 3 : 5}"/>`).join('')}</g>
+      <circle cx="50" cy="44" r="27" fill="url(#${id}h)" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M31 50a19 19 0 0 1 38 0" fill="#e0f2fe" stroke="#0f172a" stroke-width="1.8"/><g stroke="#0f172a" stroke-width="1.4">${ticks}</g>
+      <path d="M50 50L${red ? 62 : 58} ${red ? 36 : 38}" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round"/><circle cx="50" cy="50" r="2.6" fill="#0f172a"/>
+      <path d="M33 57h12M55 57h12" stroke="${eye}" stroke-width="4" stroke-linecap="round"/><path d="M33 57h12M55 57h12" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
+      <path d="M42 64q8 ${red ? -3 : 4} 16 0" fill="none" stroke="#e0f2fe" stroke-width="2" stroke-linecap="round"/></svg>`;
+  }
+  function cracks(st) {
+    if (!st) return '';
+    const L = [`<path d="M30 30l7 9-4 7 6 9"/>`, `<path d="M68 26l-5 10 6 6-3 10"/>`, `<path d="M45 60l6 7-5 6 4 8"/><path d="M22 58l8 3 3 8"/>`, `<path d="M74 52l-7 6 2 9-6 6"/><path d="M52 18l-2 9 5 5"/>`];
+    const chip = st >= 2 ? `<g fill="#1e1b4b" opacity=".85"><path d="M12 80l6-4 3 6z"/><path d="M84 84l5-6 3 7z"/>${st >= 3 ? '<path d="M20 90l6-3 1 6z"/><path d="M76 92l4-5 4 5z"/>' : ''}</g>` : '';
+    return `<svg class="gbcr" viewBox="0 0 100 100"><g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".9">${L.slice(0, st).join('')}</g><g fill="none" stroke="#111827" stroke-width="1.3" stroke-linecap="round">${L.slice(0, st).join('')}</g>${chip}</svg>`;
+  }
+  const av0 = T(() => avatar);
+  if (typeof av0 === 'function') {
+    if (B.k === 'gboss') T(() => { VILLAINS.gboss = { name: B.name, role: B.ttl + ' · 단원마다 간부 뒤에서 힘을 실어 주는 대장', emoji: '👑', color: B.col, bg: '#e0e7ff' };
+      if (typeof ST_AREA !== 'undefined') ST_AREA.gboss = GR + '학년 전체'; if (typeof ST_VK !== 'undefined' && !ST_VK.includes('gboss')) ST_VK.unshift('gboss'); });
+    avatar = function (key, px, pose) {
+      if (key !== B.k) return av0(key, px, pose);
+      let inner;
+      if (B.k === 'gboss') { const g = B.img && T(() => G56.src(B.img, pose === 'attack' ? 'angry' : pose || 'idle')); inner = g ? `<img src="${g}" alt="${B.name}" style="width:${px}px;height:${px}px;object-fit:contain">` : metricSvg(px, pose); }
+      else inner = av0(key, px, pose);
+      return `<span class="gbx gbs${stage()}" style="width:${px}px;height:${px}px" title="${B.name} · ${B.part} ${STN[stage()]}">${inner}${cracks(crk())}</span>`;
+    };
+  }
+  const BA = (px, pose) => avatar(B.k, px, pose);
+
+  /* ---------- 대사 ---------- */
+  const vk = T(() => BEATS.prologue.v) || 'dark', vn = T(() => VILLAINS[vk].name) || '악당';
+  const PT = B.part;
+  const LN = {
+    pro: `${J(vn, '이', '가')} 지면 내가 직접 나선다. <b>왕중왕전</b>에서 기다리마!`,
+    a0: `${vn} 혼자로는 부족하겠지? 내 ${PT}의 힘을 빌려주마. 2:1로 덤벼 봐라!`,
+    a1: `흥, 제법이군. 하지만 내 ${J(PT, '은', '는')} 아직 끄떡없다!`,
+    a2: `크윽… ${PT}에 금이…! 이번만은 물러나 주지.`,
+    fin: LAST && SEM === 1 ? `${J(PT, '이', '가')} 절반이나…! 2학기에는 더 강한 힘으로 돌아오겠다!` : LAST ? `내 ${J(PT, '이', '가')}… 모두…! 이, 이럴 수가!` : `${PT} 한 조각을 잃었군… 다음 단원에서 두고 보자!`
+  };
+  T(() => { const f = BEATS.final; if (!f || f.__gb) return; f.__gb = 1; const gi = f.lines.map(l => l.w).lastIndexOf('guide');
+    const add = [{ w: B.k, p: 'angry', t: LN.fin }, { w: 'narr', t: `${B.ttl} <b>${B.name}</b>의 ${PT}에 금이 갔다. ${LAST && SEM === 1 ? '힘이 절반으로 줄어든 채 어둠 속으로 사라졌다.' : '대장은 약해진 채 물러났다.'}` }];
+    f.lines.splice(gi < 0 ? f.lines.length : gi, 0, ...add); });
+  T(() => { const c = BEATS.ch3; if (!c || c.__gb) return; c.__gb = 1; c.lines.splice(1, 0, { w: B.k, p: 'angry', t: LN.a2 }); });
+
+  /* ---------- ① 도전장 ---------- */
+  function chal() { const f = document.querySelector('#stBox .fuch'); if (!f || f.querySelector('.gbch')) return;
+    const L = f.querySelector('.fuchL'); if (L) L.insertAdjacentHTML('beforeend', `<div class="gbch gbsh">${BA(110, 'happy')}<span>👑 ${B.name}</span></div>`);
+    const b = f.querySelector('.fuchB'); if (b) b.insertAdjacentHTML('afterend', `<div class="gbsay gbch"><span class="gbav">${BA(40, 'happy')}</span><div><small>${B.ttl}</small><b>${B.name}</b> ${LN.pro}</div></div>`); }
+  /* ---------- ② 왕중왕전 2:1 ---------- */
+  function arena() { const w = document.querySelector('#s2body .arwrap'); if (!w || w.querySelector('.gbvs,.gbfl')) return;
+    const G = T(() => SV_ARENA.games) || [], best = g => +(T(() => localStorage.getItem('svarena:' + g.lid + ':' + g.id)) || 0);
+    const n = G.length || 1, pl = G.filter(g => best(g) > 0).length, cr = G.filter(g => best(g) >= 80).length;
+    const vHP = Math.max(0, 100 - Math.round(pl / n * 100)), bHP = Math.max(0, 100 - Math.round(pl / n * 60 + cr / n * 40));
+    const line = pl >= n ? LN.a2 : pl ? LN.a1 : LN.a0, down = pl >= n;
+    const foe = (side) => side === 'l'
+      ? `<div class="gbfl l"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 74, down ? 'attack' : 'angry')}</span><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div>`
+      : `<div class="gbfl r"><span class="gbav">${BA(78, down ? 'angry' : 'happy')}</span><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div>`;
+    const uar = w.querySelector('.uar');
+    if (uar) {   /* 새 왕중왕전 화면: 넓은 화면은 성문 양옆에, 좁은 화면은 머리 아래 띠로 */
+      const sm = uar.querySelector('.uar-title small'); if (sm) sm.innerHTML = `⚔️ <em class="gbem">${vn}</em> + <em class="gbem b">👑 ${B.name}</em> 2:1 결전! 게임을 깰수록 둘의 힘이 줄어요`;
+      const g = uar.querySelector('.uar-gates'); if (g) { g.classList.add('gbon'); g.insertAdjacentHTML('afterbegin', foe('l')); g.insertAdjacentHTML('beforeend', foe('r')); }
+      const hero = uar.querySelector('.uar-hero'); if (hero) hero.insertAdjacentHTML('afterend', `<div class="gbvs gbnar ${down ? 'down' : ''}">
+        <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 46, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
+        <b class="gbx2">2 : 1</b>
+        <div class="gbf boss"><span class="gbav">${BA(50, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
+        <div class="gbline">“${line}”</div></div>`);
+      const say = uar.querySelector('.gbfl.r'); if (say) say.insertAdjacentHTML('beforeend', `<div class="gbbub">${line}</div>`);
+      return;
+    }
+    const h2 = w.querySelector('.stage-head h2'); if (h2) h2.innerHTML = `왕중왕전 · <span class="gbh">${vn} + ${B.name} 2:1 결전</span>`;
+    const hd = w.querySelector('.stage-head'); if (!hd) return;
+    hd.insertAdjacentHTML('afterend', `<div class="gbvs ${down ? 'down' : ''}">
+      <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 54, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><small>${T(() => SV_LF.hero.villainSub) || '단원 악당'}</small><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
+      <b class="gbx2">2 : 1</b>
+      <div class="gbf boss"><span class="gbav">${BA(58, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><small>${B.ttl} · ${PT} ${STN[stage()]}</small><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
+      <div class="gbline">“${line}”</div></div>`); }
+  /* ---------- ③ 결과 ---------- */
+  function result() { const s = document.querySelector('#s2body .ucseal'); if (!s || document.querySelector('#s2body .gbres')) return; const ok = won();
+    s.insertAdjacentHTML('afterend', `<div class="gbres ${ok ? 'ok' : ''}"><span class="gbav">${BA(46, ok ? 'angry' : 'happy')}</span><div><b>👑 ${B.ttl} ${B.name}</b><br>${ok ? `${PT}에 금이 간 채 물러났어요. ${LAST && SEM === 1 ? '2학기에 다시 나타날 거예요!' : LAST ? '학년 최종 결전 승리!' : '다음 단원에서 또 만나요.'}` : '왕중왕전에서 단원 악당과 함께 기다리고 있어요.'}</div></div>`); }
+  function run() { T(chal); T(arena); T(result); }
+  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  setTimeout(run, 350);
 })();
 
 </script><!--FLOWU-END-->

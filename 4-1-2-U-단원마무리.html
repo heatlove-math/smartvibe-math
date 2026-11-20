@@ -8823,6 +8823,69 @@ window.SV_ARENA={"u":"4-1-2-U","unit":"2단원 「각도」","games":[
   body.svsl-on #s2body .card:has(.ucrec){justify-content:center}body.svsl-on #s2body .card:has(.ucrec)>*{flex:none}}
 @media(min-width:1000px) and (min-height:860px){.ucrow{padding:10px 12px;font-size:1.15rem;margin:8px 0}.ucrow .ucr-s{font-size:1rem}body.svsl-on #s2body .rp-head .score-big{font-size:6rem}body.svsl-on #s2body .rp-head .stars{font-size:3.4rem}}
 @media(min-width:1600px) and (min-height:900px){body.svsl-on #s2body .card.rp-head>*,body.svsl-on #s2body .card:has(.ucrec)>*{zoom:1.28}}
+/* 👑 학년 최종 대장 */
+.gbx{position:relative;display:inline-block;vertical-align:middle;line-height:0}
+.gbx>img,.gbx>svg:not(.gbcr){width:100%!important;height:100%!important;object-fit:contain}
+.gbx .gbcr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.gbx.gbs2>img,.gbx.gbs2>svg:not(.gbcr){filter:saturate(.85)}
+.gbx.gbs3>img,.gbx.gbs3>svg:not(.gbcr){filter:saturate(.65) brightness(.95)}
+.gbx.gbs4>img,.gbx.gbs4>svg:not(.gbcr){filter:grayscale(.6);opacity:.85}
+/* 도전장: 단원 악당 뒤의 대장 그림자 */
+.fuchL{position:relative}
+.gbsh{position:absolute;right:-6px;top:-8px;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.9;filter:drop-shadow(0 0 10px rgba(0,0,0,.55));pointer-events:none;z-index:2}
+.gbsh .gbx{filter:brightness(.55) saturate(.6)}
+.gbsh span{font-size:.72rem;font-weight:900;color:#fde68a;background:rgba(15,23,42,.75);border-radius:999px;padding:1px 8px;line-height:1.4}
+.gbsay{display:flex;gap:8px;align-items:center;margin:8px 0 2px;padding:7px 10px;border-radius:14px;background:rgba(15,23,42,.55);border:1.5px solid rgba(253,230,138,.6);color:#fef3c7;font-size:.9rem;line-height:1.45;text-align:left}
+.gbsay small{display:block;font-size:.68rem;font-weight:900;color:#fde68a;opacity:.9}
+.gbsay b{color:#fde047;margin-right:4px}
+.gbsay .gbav{flex:none;line-height:0}
+/* 왕중왕전 2:1 */
+.gbh{color:#7c2d12}
+.gbvs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px 10px;align-items:center;margin:8px 0 10px;padding:10px 12px;border-radius:16px;background:linear-gradient(90deg,#fff1f2,#fef3c7 50%,#e0e7ff);border:2px solid #fca5a5}
+.gbvs .gbf{display:flex;gap:8px;align-items:center;min-width:0}
+.gbvs .gbf.boss{flex-direction:row-reverse;text-align:right}
+.gbvs .gbav{flex:none;line-height:0}
+.gbvs .gbko{filter:grayscale(1);opacity:.6;transform:rotate(-12deg)}
+.gbvs .gbm{flex:1;min-width:0}
+.gbvs .gbm b{display:block;font-size:1rem;font-weight:900;color:#1f2937}
+.gbvs .gbm small{display:block;font-size:.7rem;font-weight:800;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbhp{position:relative;height:16px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:3px;border:1.5px solid #9ca3af}
+.gbhp i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:999px;transition:width .6s}
+.gbhp.b i{left:auto;right:0;background:linear-gradient(90deg,#6366f1,#1d4ed8)}
+.gbhp span{position:relative;display:block;text-align:center;font-size:.68rem;font-weight:900;line-height:13px;color:#111827}
+.gbx2{font-size:1.25rem;font-weight:900;color:#b91c1c;background:#fff;border:2px solid #fca5a5;border-radius:12px;padding:2px 8px}
+.gbline{grid-column:1/-1;text-align:center;font-size:.86rem;font-weight:800;color:#312e81;background:rgba(255,255,255,.7);border-radius:10px;padding:4px 8px}
+.gbvs.down{border-color:#86efac;background:linear-gradient(90deg,#f0fdf4,#fef9c3 50%,#eef2ff)}
+/* 결과 */
+.gbres{display:flex;gap:10px;align-items:center;justify-content:center;margin:8px auto 0;max-width:560px;padding:8px 12px;border-radius:14px;background:#eef2ff;border:2px dashed #818cf8;font-size:.9rem;font-weight:700;color:#312e81;text-align:left;line-height:1.45}
+.gbres.ok{background:#f0fdf4;border-color:#4ade80;color:#14532d}
+.gbres .gbav{flex:none;line-height:0}
+@media(max-width:600px){
+  .gbvs:not(.gbnar){grid-template-columns:1fr;padding:8px}
+  .gbvs:not(.gbnar) .gbf.boss{flex-direction:row;text-align:left}
+  .gbvs:not(.gbnar) .gbhp.b i{left:0;right:auto}
+  .gbx2{justify-self:center;font-size:.95rem;padding:0 6px}
+  .gbvs.gbnar{gap:4px 6px;padding:8px}
+  .gbvs.gbnar .gbf{flex-direction:column;align-items:center;text-align:center;gap:2px}
+  .gbvs.gbnar .gbm{width:100%}
+  .gbvs.gbnar .gbline{font-size:.8rem}
+  .gbsh{right:-2px;top:-4px}
+  .gbsh .gbx{width:70px!important;height:70px!important}
+}
+/* 새 왕중왕전 화면(uar) — 성문 양옆의 두 악당 */
+.uar-gates.gbon .uar-torch{display:none}
+.gbfl{position:absolute;top:0;width:150px;display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2;text-align:center}
+.gbfl.l{left:14px}.gbfl.r{right:14px}
+.gbfl .gbav{line-height:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.gbfl>b{font-size:.86rem;font-weight:900;color:#fff;background:rgba(30,27,75,.82);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.gbfl .gbhp{width:130px;margin-top:2px}
+.gbfl.r .gbhp i{left:0;right:auto}
+.gbbub{position:absolute;right:100%;top:6px;margin-right:2px;width:160px;padding:6px 9px;border-radius:12px;background:#fff;border:2px solid #6366f1;font-size:.74rem;font-weight:800;color:#312e81;line-height:1.35;text-align:left;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.gbbub:after{content:'';position:absolute;right:-8px;top:14px;border:6px solid transparent;border-left-color:#6366f1}
+.gbem{font-style:normal;font-weight:900;color:#b91c1c}.gbem.b{color:#1d4ed8}
+.gbvs.gbnar{display:none;margin:6px 10px 8px}
+@media(max-width:1300px){.gbbub{display:none}}
+@media(max-width:900px){.gbfl{display:none}.gbvs.gbnar{display:grid}}
 </style><script>
 /* =====================================================================
    🧭 단원 마무리 새 순서 (6학년 1학기 · SV_LF.flowU)
@@ -8984,8 +9047,8 @@ window.SV_ARENA={"u":"4-1-2-U","unit":"2단원 「각도」","games":[
   if (!(window.SV_LF && SV_LF.flowU) || window.__UCASTLE) return; window.__UCASTLE = 1;
   const T = f => { try { return f(); } catch (e) { return undefined; } };
   const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
-  const CASTLE = { '4-1-1': '삐딱이의 수의 탑', '4-1-2': '뒤죽이의 각도 성', '4-1-3': '다크몽의 축제 성', '4-1-4': '다크몽의 거울 성', '4-1-5': '뒤죽이의 그래프 성', '4-1-6': '시간도둑의 규칙 성',
-    '6-1-1': '디바이드의 분수 성', '6-1-2': '폴리곤의 입체 성', '6-1-3': '데시말의 소수 성', '6-1-4': '라티오의 비율 성', '6-1-5': '차트 마스터의 그래프 성', '6-1-6': '큐브의 부피 성' };
+  const CASTLE = { '4-1-1': '삐딱이의 수의 탑', '4-1-2': '뒤죽이의 각도 성', '4-1-3': '반쪽이의 축제 성', '4-1-4': '뒤죽이의 거울 성', '4-1-5': '뒤죽이의 그래프 성', '4-1-6': '시간도둑의 규칙 성',
+    '6-1-1': '디바이드의 분수 성', '6-1-2': '폴리곤의 입체 성', '6-1-3': '데시말의 소수 성', '6-1-4': '라티오의 비율 성', '6-1-5': '차트 마스터의 그래프 성', '6-1-6': '볼륨 킹의 부피 성' };
   const P = UID.split('-'), GR = P[0], UN = P[2], CS = CASTLE[UID] || '보스 성';
   const UNM = T(() => (String(SV_LF.review.title).match(/「[^」]+」/) || [''])[0]) || '';
   window.UCASTLE = { name: CS, title: `${UN}단원 마무리 · ${CS} 탈환전` };
@@ -9049,6 +9112,125 @@ window.SV_ARENA={"u":"4-1-2-U","unit":"2단원 「각도」","games":[
   function run() { T(head); T(gates); T(fin); T(result); }
   try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
   setTimeout(run, 300);
+})();
+
+/* =====================================================================
+   👑 학년 최종 대장 — 모든 단원 마무리 공통 (11-20 기준)
+     학년마다 최종 대장은 한 명: 4학년 다크몽 · 5학년 베일 · 6학년 메트릭
+     ① 도전장: 단원 악당 뒤에 대장의 그림자 + 한마디
+     ② 왕중왕전: 단원 악당 + 최종 대장 2:1 결전 (HP 줄 2개)
+     ③ 결과·엔딩: 대장은 힘이 약해진 채 물러나며 다음 단원을 예고
+     대장의 약해지는 정도(0~4)는 학년 전체에 걸쳐 쌓여요:
+       1학기 3단원 뒤 조금 상함(1) → 1학기 끝 절반(2) → 2학기 3단원 뒤 거의(3) → 학년 최종 결전(4)
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__GBOSS) return; window.__GBOSS = 1;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
+  const P = UID.split('-'), GR = P[0], SEM = +P[1] || 1, UN = +P[2] || 1;
+  const CFG = {
+    '4': { k: 'dark', name: '다크몽', ttl: '4학년 최종 대장', part: '그림자 갑옷', col: '#6d28d9' },
+    '5': { k: 'gboss', name: '베일', ttl: '5학년 최종 대장', part: '장막', col: '#0f766e', img: 'veil' },
+    '6': { k: 'gboss', name: '메트릭', ttl: '6학년 최종 대장', part: '계측 코어', col: '#1d4ed8' }
+  };
+  const B = CFG[GR]; if (!B) return;
+  const hasJ = s => { const c = String(s).charCodeAt(String(s).length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
+  const J = (s, a, b) => s + (hasJ(s) ? a : b);
+  /* 약해지는 단계 */
+  const after = u => SEM === 1 ? (u >= 6 ? 2 : u >= 3 ? 1 : 0) : (u >= 6 ? 4 : u >= 3 ? 3 : 2);
+  const ST0 = after(UN - 1 < 1 && SEM === 1 ? 0 : UN - 1), ST1 = after(UN);
+  const won = () => !!T(() => Story.prog().tilt);
+  const stage = () => (won() ? ST1 : ST0);
+  const crk = () => Math.min(4, (SEM - 1) * 6 + (won() ? UN : UN - 1));   // 금 줄 수 = 학년에서 끝낸 단원 수(최대 4줄)
+  const STN = ['온전함', '조금 상함', '절반', '거의 벗겨짐', '완전히 벗겨짐'];
+  const LAST = UN >= 6;   // 학기 마지막 단원
+
+  /* ---------- 대장 그림: 시트 그림이 오기 전까지 쓰는 임시 그림 ---------- */
+  function metricSvg(px, pose) {
+    const red = /angry|attack/.test(pose || ''), eye = red ? '#f43f5e' : '#22d3ee', id = 'gbm' + Math.random().toString(36).slice(2, 7);
+    const ticks = Array.from({ length: 9 }, (_, i) => { const a = Math.PI * (1.12 + i * .095), r1 = 17, r2 = i % 2 ? 13.5 : 12; return `<path d="M${50 + r1 * Math.cos(a)} ${50 + r1 * Math.sin(a)}L${50 + r2 * Math.cos(a)} ${50 + r2 * Math.sin(a)}"/>`; }).join('');
+    return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" class="gbmetric" aria-label="메트릭"><defs><radialGradient id="${id}h" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient></defs>
+      <path d="M14 98c3-20 16-30 36-30s33 10 36 30z" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><path d="M38 70l12 14 12-14" fill="#facc15" stroke="#a16207" stroke-width="1.5"/>
+      <rect x="27" y="10" width="46" height="9" rx="2" fill="#facc15" stroke="#a16207" stroke-width="1.5"/><g stroke="#a16207" stroke-width="1.2">${[31, 35, 39, 43, 47, 51, 55, 59, 63, 67].map((x, i) => `<path d="M${x} 10v${i % 2 ? 3 : 5}"/>`).join('')}</g>
+      <circle cx="50" cy="44" r="27" fill="url(#${id}h)" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M31 50a19 19 0 0 1 38 0" fill="#e0f2fe" stroke="#0f172a" stroke-width="1.8"/><g stroke="#0f172a" stroke-width="1.4">${ticks}</g>
+      <path d="M50 50L${red ? 62 : 58} ${red ? 36 : 38}" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round"/><circle cx="50" cy="50" r="2.6" fill="#0f172a"/>
+      <path d="M33 57h12M55 57h12" stroke="${eye}" stroke-width="4" stroke-linecap="round"/><path d="M33 57h12M55 57h12" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
+      <path d="M42 64q8 ${red ? -3 : 4} 16 0" fill="none" stroke="#e0f2fe" stroke-width="2" stroke-linecap="round"/></svg>`;
+  }
+  function cracks(st) {
+    if (!st) return '';
+    const L = [`<path d="M30 30l7 9-4 7 6 9"/>`, `<path d="M68 26l-5 10 6 6-3 10"/>`, `<path d="M45 60l6 7-5 6 4 8"/><path d="M22 58l8 3 3 8"/>`, `<path d="M74 52l-7 6 2 9-6 6"/><path d="M52 18l-2 9 5 5"/>`];
+    const chip = st >= 2 ? `<g fill="#1e1b4b" opacity=".85"><path d="M12 80l6-4 3 6z"/><path d="M84 84l5-6 3 7z"/>${st >= 3 ? '<path d="M20 90l6-3 1 6z"/><path d="M76 92l4-5 4 5z"/>' : ''}</g>` : '';
+    return `<svg class="gbcr" viewBox="0 0 100 100"><g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".9">${L.slice(0, st).join('')}</g><g fill="none" stroke="#111827" stroke-width="1.3" stroke-linecap="round">${L.slice(0, st).join('')}</g>${chip}</svg>`;
+  }
+  const av0 = T(() => avatar);
+  if (typeof av0 === 'function') {
+    if (B.k === 'gboss') T(() => { VILLAINS.gboss = { name: B.name, role: B.ttl + ' · 단원마다 간부 뒤에서 힘을 실어 주는 대장', emoji: '👑', color: B.col, bg: '#e0e7ff' };
+      if (typeof ST_AREA !== 'undefined') ST_AREA.gboss = GR + '학년 전체'; if (typeof ST_VK !== 'undefined' && !ST_VK.includes('gboss')) ST_VK.unshift('gboss'); });
+    avatar = function (key, px, pose) {
+      if (key !== B.k) return av0(key, px, pose);
+      let inner;
+      if (B.k === 'gboss') { const g = B.img && T(() => G56.src(B.img, pose === 'attack' ? 'angry' : pose || 'idle')); inner = g ? `<img src="${g}" alt="${B.name}" style="width:${px}px;height:${px}px;object-fit:contain">` : metricSvg(px, pose); }
+      else inner = av0(key, px, pose);
+      return `<span class="gbx gbs${stage()}" style="width:${px}px;height:${px}px" title="${B.name} · ${B.part} ${STN[stage()]}">${inner}${cracks(crk())}</span>`;
+    };
+  }
+  const BA = (px, pose) => avatar(B.k, px, pose);
+
+  /* ---------- 대사 ---------- */
+  const vk = T(() => BEATS.prologue.v) || 'dark', vn = T(() => VILLAINS[vk].name) || '악당';
+  const PT = B.part;
+  const LN = {
+    pro: `${J(vn, '이', '가')} 지면 내가 직접 나선다. <b>왕중왕전</b>에서 기다리마!`,
+    a0: `${vn} 혼자로는 부족하겠지? 내 ${PT}의 힘을 빌려주마. 2:1로 덤벼 봐라!`,
+    a1: `흥, 제법이군. 하지만 내 ${J(PT, '은', '는')} 아직 끄떡없다!`,
+    a2: `크윽… ${PT}에 금이…! 이번만은 물러나 주지.`,
+    fin: LAST && SEM === 1 ? `${J(PT, '이', '가')} 절반이나…! 2학기에는 더 강한 힘으로 돌아오겠다!` : LAST ? `내 ${J(PT, '이', '가')}… 모두…! 이, 이럴 수가!` : `${PT} 한 조각을 잃었군… 다음 단원에서 두고 보자!`
+  };
+  T(() => { const f = BEATS.final; if (!f || f.__gb) return; f.__gb = 1; const gi = f.lines.map(l => l.w).lastIndexOf('guide');
+    const add = [{ w: B.k, p: 'angry', t: LN.fin }, { w: 'narr', t: `${B.ttl} <b>${B.name}</b>의 ${PT}에 금이 갔다. ${LAST && SEM === 1 ? '힘이 절반으로 줄어든 채 어둠 속으로 사라졌다.' : '대장은 약해진 채 물러났다.'}` }];
+    f.lines.splice(gi < 0 ? f.lines.length : gi, 0, ...add); });
+  T(() => { const c = BEATS.ch3; if (!c || c.__gb) return; c.__gb = 1; c.lines.splice(1, 0, { w: B.k, p: 'angry', t: LN.a2 }); });
+
+  /* ---------- ① 도전장 ---------- */
+  function chal() { const f = document.querySelector('#stBox .fuch'); if (!f || f.querySelector('.gbch')) return;
+    const L = f.querySelector('.fuchL'); if (L) L.insertAdjacentHTML('beforeend', `<div class="gbch gbsh">${BA(110, 'happy')}<span>👑 ${B.name}</span></div>`);
+    const b = f.querySelector('.fuchB'); if (b) b.insertAdjacentHTML('afterend', `<div class="gbsay gbch"><span class="gbav">${BA(40, 'happy')}</span><div><small>${B.ttl}</small><b>${B.name}</b> ${LN.pro}</div></div>`); }
+  /* ---------- ② 왕중왕전 2:1 ---------- */
+  function arena() { const w = document.querySelector('#s2body .arwrap'); if (!w || w.querySelector('.gbvs,.gbfl')) return;
+    const G = T(() => SV_ARENA.games) || [], best = g => +(T(() => localStorage.getItem('svarena:' + g.lid + ':' + g.id)) || 0);
+    const n = G.length || 1, pl = G.filter(g => best(g) > 0).length, cr = G.filter(g => best(g) >= 80).length;
+    const vHP = Math.max(0, 100 - Math.round(pl / n * 100)), bHP = Math.max(0, 100 - Math.round(pl / n * 60 + cr / n * 40));
+    const line = pl >= n ? LN.a2 : pl ? LN.a1 : LN.a0, down = pl >= n;
+    const foe = (side) => side === 'l'
+      ? `<div class="gbfl l"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 74, down ? 'attack' : 'angry')}</span><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div>`
+      : `<div class="gbfl r"><span class="gbav">${BA(78, down ? 'angry' : 'happy')}</span><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div>`;
+    const uar = w.querySelector('.uar');
+    if (uar) {   /* 새 왕중왕전 화면: 넓은 화면은 성문 양옆에, 좁은 화면은 머리 아래 띠로 */
+      const sm = uar.querySelector('.uar-title small'); if (sm) sm.innerHTML = `⚔️ <em class="gbem">${vn}</em> + <em class="gbem b">👑 ${B.name}</em> 2:1 결전! 게임을 깰수록 둘의 힘이 줄어요`;
+      const g = uar.querySelector('.uar-gates'); if (g) { g.classList.add('gbon'); g.insertAdjacentHTML('afterbegin', foe('l')); g.insertAdjacentHTML('beforeend', foe('r')); }
+      const hero = uar.querySelector('.uar-hero'); if (hero) hero.insertAdjacentHTML('afterend', `<div class="gbvs gbnar ${down ? 'down' : ''}">
+        <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 46, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
+        <b class="gbx2">2 : 1</b>
+        <div class="gbf boss"><span class="gbav">${BA(50, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
+        <div class="gbline">“${line}”</div></div>`);
+      const say = uar.querySelector('.gbfl.r'); if (say) say.insertAdjacentHTML('beforeend', `<div class="gbbub">${line}</div>`);
+      return;
+    }
+    const h2 = w.querySelector('.stage-head h2'); if (h2) h2.innerHTML = `왕중왕전 · <span class="gbh">${vn} + ${B.name} 2:1 결전</span>`;
+    const hd = w.querySelector('.stage-head'); if (!hd) return;
+    hd.insertAdjacentHTML('afterend', `<div class="gbvs ${down ? 'down' : ''}">
+      <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 54, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><small>${T(() => SV_LF.hero.villainSub) || '단원 악당'}</small><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
+      <b class="gbx2">2 : 1</b>
+      <div class="gbf boss"><span class="gbav">${BA(58, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><small>${B.ttl} · ${PT} ${STN[stage()]}</small><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
+      <div class="gbline">“${line}”</div></div>`); }
+  /* ---------- ③ 결과 ---------- */
+  function result() { const s = document.querySelector('#s2body .ucseal'); if (!s || document.querySelector('#s2body .gbres')) return; const ok = won();
+    s.insertAdjacentHTML('afterend', `<div class="gbres ${ok ? 'ok' : ''}"><span class="gbav">${BA(46, ok ? 'angry' : 'happy')}</span><div><b>👑 ${B.ttl} ${B.name}</b><br>${ok ? `${PT}에 금이 간 채 물러났어요. ${LAST && SEM === 1 ? '2학기에 다시 나타날 거예요!' : LAST ? '학년 최종 결전 승리!' : '다음 단원에서 또 만나요.'}` : '왕중왕전에서 단원 악당과 함께 기다리고 있어요.'}</div></div>`); }
+  function run() { T(chal); T(arena); T(result); }
+  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  setTimeout(run, 350);
 })();
 
 </script><!--FLOWU-END-->
