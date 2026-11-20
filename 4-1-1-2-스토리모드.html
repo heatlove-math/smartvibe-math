@@ -9771,7 +9771,8 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 .fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
 .fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
 .fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
-.fmops{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmop{border:2px solid #c4b5fd;background:#fff;border-radius:10px;padding:3px 12px;font-weight:900;font-size:1rem;cursor:pointer}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
+.fmops{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.fmop{border:2.5px solid #c4b5fd;background:#fff;border-radius:12px;min-height:46px;min-width:64px;padding:6px 16px;font-weight:900;font-size:1.08rem;cursor:pointer;box-shadow:0 3px 0 #ddd6fe;touch-action:manipulation}
+.fmop:active{transform:translateY(2px);box-shadow:none}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
 @keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
 .fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
@@ -9783,6 +9784,11 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 .fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
 .fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
 .fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}
+
+.fmf .fmin{width:5.2em;font:inherit;font-weight:900;font-size:1em;text-align:center;border:3px dashed #8b5cf6;border-radius:10px;padding:2px 6px;margin:0 4px;background:#faf5ff;color:#4c1d95;outline:none}
+.fmf .fmin:focus{border-style:solid;background:#fff;box-shadow:0 0 0 4px #ddd6fe}
+.fmf .fmin.no{border-color:#ef4444;animation:fmsh .4s}@keyframes fmsh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fmf .fmchk{font:inherit;font-weight:900;font-size:.85em;margin-left:6px;border:0;border-radius:10px;padding:4px 14px;background:#7c3aed;color:#fff;box-shadow:0 3px 0 #5b21b6;cursor:pointer;vertical-align:middle}
 </style><script>
 /* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
 (function () {
@@ -9833,13 +9839,16 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
   const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
   const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
   const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
+  const MIX = (a, k) => { let h = 7; for (const c of String(k)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  const NUM = x => /^[\d,]+$/.test(String(x));
   function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
   function html(k) {
     const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
     let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
     R.forEach((r, i) => { const v = S.a[i], on = i === nx;
       h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
-        + '<div class="fmf">' + slot(r[1], v) + (on ? '<div class="fmops">' + r[3].map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '') + '</div></div>'; });
+        + '<div class="fmf">' + (on && NUM(r[2]) ? r[1].replace('{?}', '<input class="fmin" data-fmi="' + i + '" inputmode="numeric" autocomplete="off" placeholder="?" aria-label="빈칸에 알맞은 수">') + '<button type="button" class="fmchk" data-fmi="' + i + '">확인</button>'
+          : slot(r[1], v) + (on ? '<div class="fmops">' + MIX(r[3], r[1]).map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '')) + '</div></div>'; });
     h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
     return h;
   }
@@ -9852,14 +9861,17 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
     const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
     if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
   }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('.fmop'); if (!b) return; const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
-    if (String(b.dataset.fmv) === String(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
+  const norm = x => String(x).replace(/[\s,]/g, '');
+  function answer(b, val) { const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
+    if (val === '') { const f = card.querySelector('.fmin'); if (f) f.focus(); return; }
+    if (norm(val) === norm(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
       S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
       try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
-    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); }
-    try { touch('s1'); } catch (er) {} inject();
-  });
+    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); const f = b.closest('.fmf') && b.closest('.fmf').querySelector('.fmin'); if (f) { f.classList.add('no'); setTimeout(() => f.classList.remove('no'), 500); } }
+    try { touch('s1'); } catch (er) {} inject(); if (!S.done) setTimeout(() => { const f = document.querySelector('.fmcard .fmin'); if (f) f.focus(); }, 30); }
+  document.addEventListener('click', e => { const b = e.target.closest('.fmop,.fmchk'); if (!b) return; if (b.classList.contains('fmop')) return answer(b, b.dataset.fmv);
+    const f = b.closest('.fmf').querySelector('.fmin'); answer(b, f ? f.value.trim() : ''); });
+  document.addEventListener('keydown', e => { const f = e.target.closest && e.target.closest('.fmin'); if (!f || e.key !== 'Enter') return; e.preventDefault(); answer(f, f.value.trim()); });
   let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
   const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
@@ -9877,11 +9889,11 @@ window.SV_FM = {
  pv: { name: '자릿값 판에 수 만들기', t: '자리 숫자 × 자릿값', rows: [
   [FMP.pv([['만', 3], ['천', 5], ['백', 0], ['십', 2], ['일', 7]]), '30000 + 5000 + 20 + 7 = {?}', '35027', ['35027', '3527', '350027']],
   [FMP.pv([['십만', 4], ['만', 2], ['천', 0], ['백', 0], ['십', 0], ['일', 0]]), '400000 + 20000 = {?}', '420000', ['42000', '420000', '4200000']]],
-  rule: ['수 = 각 자리 숫자 × 그 자리의 {?}을 모두 더한 것', '자릿값', ['자릿값', '개수', '숫자']], sum: '각 자리 숫자가 나타내는 값을 더하면 그 수가 돼요.' },
+  rule: ['수 = 각 자리 숫자 × 그 자리의 {?}을 모두 더한 것', '자릿값', ['자릿값', '개수', '숫자', '크기']], sum: '각 자리 숫자가 나타내는 값을 더하면 그 수가 돼요.' },
  val: { name: '숫자의 값 돋보기', t: '같은 숫자, 다른 값', rows: [
   [FMP.pv([['만', 4], ['천', 7, 1], ['백', 3], ['십', 1], ['일', 5]]), '47315에서 7은 {?}을 나타내요.', '7000', ['7', '700', '7000']],
   [FMP.pv([['백만', 7, 1], ['십만', 0], ['만', 7], ['천', 0], ['백', 0], ['십', 0], ['일', 0]]), '7070000에서 앞의 7은 {?}', '7000000', ['70000', '700000', '7000000']]],
-  rule: ['같은 숫자라도 놓인 {?}가 다르면 나타내는 값이 달라요.', '자리', ['자리', '색', '크기']], sum: '숫자가 나타내는 값은 그 숫자가 놓인 자리에 따라 정해져요.' },
+  rule: ['같은 숫자라도 놓인 {?}가 다르면 나타내는 값이 달라요.', '자리', ['자리', '색', '크기', '모양']], sum: '숫자가 나타내는 값은 그 숫자가 놓인 자리에 따라 정해져요.' },
  ten: { name: '10개 묶어 다음 자리로', t: '10배가 되면?', rows: [
   [FMP.seq(['1만', '10만'], '×10'), '10000 × 10 = {?} (십만)', '100000', ['100000', '1000000', '10000']],
   [FMP.seq(['10만', '100만', '1000만'], '×10'), '1000000 × 10 = {?} (천만)', '10000000', ['10000000', '1000000', '100000000']]],

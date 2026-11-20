@@ -9136,137 +9136,6 @@ SVBG.A.lvNote = '단계에 따라 손에 드는 각 카드가 달라요 · 🌱 
 })();
 
 </script><!--JO-END-->
-<!--FM-START--><style>.fmcard{margin-top:12px!important;border:3px solid #a78bfa!important;background:linear-gradient(180deg,#faf5ff,#fff)!important;padding:12px 14px!important;text-align:left}
-.fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
-.fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
-.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
-.fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
-.fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
-.fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
-.fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
-.fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
-.fmops{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmop{border:2px solid #c4b5fd;background:#fff;border-radius:10px;padding:3px 12px;font-weight:900;font-size:1rem;cursor:pointer}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
-@keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
-.fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
-.fmseq{display:flex;align-items:center;flex-wrap:wrap;gap:3px;font-weight:900;font-size:.85rem}.fmseq b{border:2px solid #60a5fa;border-radius:6px;padding:1px 6px;background:#eff6ff}.fmseq i{color:#ea580c;font-style:normal}
-.fmgr{border-collapse:collapse}.fmgr td{border:1.5px solid #93c5fd;padding:2px 6px;font-weight:900;font-size:.8rem;text-align:center}
-.fmbox{border-radius:10px;padding:6px 10px;font-weight:900;font-size:.95rem;text-align:center;border:2px solid #cbd5e1}
-@media(max-width:700px){.fmrows{grid-template-columns:minmax(0,1fr)}.fmf{font-size:1rem}}
-.fmp-t{break-inside:avoid;margin:6px 0 10px}.fmp-r{display:flex;align-items:center;gap:10px;margin:5px 0 5px 10px;break-inside:avoid}.fmp-pic{flex:none;max-width:44%}.fmp-pic svg{max-width:100%;height:auto}
-.fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
-.fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
-</style><script>
-/* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
-(function () {
-  if (window.__FM) return; window.__FM = 1;
-  const SV = n => '<svg viewBox="0 0 ' + n[0] + ' ' + n[1] + '" width="' + n[0] + '" height="' + n[1] + '" class="fmsvg">';
-  const T = (x, y, t, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || 'middle') + '" font-size="' + (o.s || 13) + '" font-weight="900" fill="' + (o.c || '#334155') + '">' + t + '</text>'; };
-  const rad = d => d * Math.PI / 180;
-  const P = window.FMP = {
-    blk: (lab, n, col, w) => '<div class="fmblk">' + Array.from({ length: n }, () => '<span style="background:' + (col || '#dbeafe') + ';min-width:' + (w || 34) + 'px">' + lab + '</span>').join('') + '</div>',
-    pv: cols => '<table class="fmpv"><tr>' + cols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr><tr>' + cols.map(c => '<td' + (c[2] ? ' class="hl"' : '') + '>' + c[1] + '</td>').join('') + '</tr></table>',
-    seq: (a, op) => '<div class="fmseq">' + a.map((x, i) => (i ? '<i>' + (op || '→') + '</i>' : '') + '<b>' + x + '</b>').join('') + '</div>',
-    nl: (labs, jump) => { const W = 230, n = labs.length, g = (W - 30) / (n - 1); let s = SV([W, 62]) + '<line x1="10" y1="44" x2="' + (W - 6) + '" y2="44" stroke="#475569" stroke-width="2"/>';
-      labs.forEach((l, i) => { const x = 15 + i * g; s += '<line x1="' + x + '" y1="38" x2="' + x + '" y2="50" stroke="#475569" stroke-width="2"/>' + T(x, 60, l, { s: 10 }); if (i && jump) s += '<path d="M' + (x - g + 3) + ' 36 Q' + (x - g / 2) + ' 8 ' + (x - 3) + ' 36" fill="none" stroke="#ea580c" stroke-width="2"/>' + T(x - g / 2, 16, jump, { s: 10, c: '#ea580c' }); });
-      return s + '</svg>'; },
-    ang: (d, o) => { o = o || {}; const W = 150, H = d > 95 ? 92 : 100, cx = d > 95 ? 80 : 20, cy = H - 14, L = 110 * (o.k || 1), r = 26;
-      const x2 = cx + L * Math.cos(rad(d)), y2 = cy - L * Math.sin(rad(d)) * (d > 95 ? .75 : 1);
-      let s = SV([W + (d > 95 ? 0 : 0), H]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + Math.min(W - 4, cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#1d4ed8" stroke-width="3"/>';
-      s += d === 90 ? '<path d="M' + (cx + 14) + ' ' + cy + ' v-14 h-14" fill="none" stroke="#ea580c" stroke-width="2"/>' : '<path d="M' + (cx + r) + ' ' + cy + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d))) + ' ' + (cy - r * Math.sin(rad(d)) * (d > 95 ? .75 : 1)) + '" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>';
-      if (o.lab !== false) s += T(cx + 40 * Math.cos(rad(d / 2)) + 4, cy - 34 * Math.sin(rad(d / 2)), o.lab || d + '°', { s: 12, c: '#c2410c' });
-      return s + '</svg>'; },
-    two: (a, b, o) => { o = o || {}; const cx = 75, cy = 88, L = 70; let s = SV([160, 100]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/>';
-      [a, a + b].forEach(d => { s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L * Math.cos(rad(d))) + '" y2="' + (cy - L * Math.sin(rad(d))) + '" stroke="#1d4ed8" stroke-width="3"/>'; });
-      const arc = (d0, d1, r, c) => '<path d="M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(rad(d0))) + ' ' + (cy - r * Math.sin(rad(d0))) + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d1))) + ' ' + (cy - r * Math.sin(rad(d1))) + 'Z" fill="' + c + '" opacity=".55"/>';
-      s += arc(0, a, 30, '#c4b5fd') + arc(a, a + b, 30, '#fdba74') + T(cx + 44 * Math.cos(rad(a / 2)), cy - 40 * Math.sin(rad(a / 2)) + 4, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx + 46 * Math.cos(rad(a + b / 2)), cy - 44 * Math.sin(rad(a + b / 2)) + 4, o.lb || b + '°', { s: 11, c: '#c2410c' });
-      return s + '</svg>'; },
-    line: (a, o) => { o = o || {}; const cx = 80, cy = 70; let s = SV([160, 80]) + '<line x1="6" y1="' + cy + '" x2="154" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 70 * Math.cos(rad(a))) + '" y2="' + (cy - 60 * Math.sin(rad(a))) + '" stroke="#1d4ed8" stroke-width="3"/>';
-      return s + T(cx + 36 * Math.cos(rad(a / 2)) + 6, cy - 14, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx - 34, cy - 14, o.lb || '?', { s: 11, c: '#c2410c' }) + '</svg>'; },
-    tri: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [60, 12]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/>';
-      const at = [[30, 80], [128, 80], [62, 34]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#c2410c' }); }); return s + '</svg>'; },
-    quad: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [134, 18], [38, 10]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>' + (o.diag ? '<line x1="14" y1="86" x2="134" y2="18" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>' : '');
-      const at = [[32, 80], [130, 80], [122, 32], [46, 26]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#15803d' }); }); return s + '</svg>'; },
-    push: (dx, dy) => { const c = 14, W = 12 * c, H = 7 * c; let s = SV([W, H]); for (let x = 0; x <= 12; x++) s += '<line x1="' + x * c + '" y1="0" x2="' + x * c + '" y2="' + H + '" stroke="#e2e8f0"/>'; for (let y = 0; y <= 7; y++) s += '<line x1="0" y1="' + y * c + '" x2="' + W + '" y2="' + y * c + '" stroke="#e2e8f0"/>';
-      const ox = dx >= 0 ? 1 : 8, oy = dy >= 0 ? 1 : 4, tri = (x, y, f, l, d) => '<polygon points="' + [[x, y], [x, y + 2], [x + 3, y + 2]].map(q => q[0] * c + ',' + q[1] * c).join(' ') + '" fill="' + f + '" stroke="' + l + '" stroke-width="2"' + (d ? ' stroke-dasharray="4 3"' : '') + '/>';
-      return s + tri(ox, oy, '#f1f5f9', '#94a3b8', 1) + tri(ox + dx, oy + dy, '#bfdbfe', '#1d4ed8') + '<line x1="' + ox * c + '" y1="' + oy * c + '" x2="' + (ox + dx) * c + '" y2="' + (oy + dy) * c + '" stroke="#ea580c" stroke-width="2" marker-end="url(#fmA)"/><defs><marker id="fmA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#ea580c"/></marker></defs></svg>'; },
-    bars: (v, step, o) => { o = o || {}; const n = v.length, W = 40 + n * 34, H = 110, top = Math.max(...v) / step, k = 80 / Math.max(top, 1); let s = SV([W, H]) + '<line x1="30" y1="96" x2="' + (W - 4) + '" y2="96" stroke="#475569" stroke-width="2"/><line x1="30" y1="96" x2="30" y2="8" stroke="#475569" stroke-width="2"/>';
-      for (let i = 0; i <= top; i++) s += '<line x1="30" y1="' + (96 - i * k) + '" x2="' + (W - 4) + '" y2="' + (96 - i * k) + '" stroke="#e2e8f0"/>' + (o.nolab ? '' : T(24, 100 - i * k, i * step, { s: 9, a: 'end' }));
-      v.forEach((x, i) => { const h = x / step * k; s += '<rect x="' + (40 + i * 34) + '" y="' + (96 - h) + '" width="22" height="' + h + '" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399', '#f472b6'][i % 5] + '"/>'; });
-      return s + '</svg>'; },
-    hbars: (v, step) => { const n = v.length, H = 20 + n * 22, top = Math.max(...v) / step, k = 110 / top; let s = SV([150, H]) + '<line x1="20" y1="4" x2="20" y2="' + (H - 6) + '" stroke="#475569" stroke-width="2"/>';
-      v.forEach((x, i) => { s += '<rect x="20" y="' + (8 + i * 22) + '" width="' + x / step * k + '" height="14" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399'][i % 4] + '"/>'; }); return s + '</svg>'; },
-    clock: h => { const cx = 50, cy = 50; let s = SV([100, 100]) + '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#334155" stroke-width="3"/>';
-      for (let i = 1; i <= 12; i++) s += T(cx + 34 * Math.sin(rad(i * 30)), cy - 34 * Math.cos(rad(i * 30)) + 4, i, { s: 10 });
-      return s + '<line x1="50" y1="50" x2="50" y2="14" stroke="#1d4ed8" stroke-width="3"/><line x1="50" y1="50" x2="' + (cx + 24 * Math.sin(rad(h * 30))) + '" y2="' + (cy - 24 * Math.cos(rad(h * 30))) + '" stroke="#dc2626" stroke-width="4"/></svg>'; },
-    grid: (rows, hl) => '<table class="fmgr">' + rows.map((r, i) => '<tr>' + r.map((x, j) => '<td' + (hl && hl.some(q => q[0] === i && q[1] === j) ? ' class="hl"' : '') + '>' + x + '</td>').join('') + '</tr>').join('') + '</table>',
-    box: (t, c) => '<div class="fmbox" style="background:' + (c || '#f1f5f9') + '">' + t + '</div>'
-  };
-  const D = () => window.SV_FM || null;
-  const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
-  const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
-  const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
-  function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
-  function html(k) {
-    const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
-    let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
-    R.forEach((r, i) => { const v = S.a[i], on = i === nx;
-      h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
-        + '<div class="fmf">' + slot(r[1], v) + (on ? '<div class="fmops">' + r[3].map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '') + '</div></div>'; });
-    h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
-    return h;
-  }
-  function inject() {
-    if (!D()) return; const k = curTool(); if (!k || !D()[k]) return;
-    const card = document.querySelector('.svsl-tc') || document.querySelector('#toolBody > .antool, #toolBody > .card') || [...document.querySelectorAll('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head'));
-    if (!card) return; const done = card.querySelector('.andone'); const old = card.querySelector('.fmcard');
-    if (!done) { if (old) old.remove(); return; }
-    if (old && old.dataset.fm === k && old.dataset.v === JSON.stringify(ST(k))) return;
-    const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
-    if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('.fmop'); if (!b) return; const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
-    if (String(b.dataset.fmv) === String(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
-      S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
-      try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
-    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); }
-    try { touch('s1'); } catch (er) {} inject();
-  });
-  let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
-  const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
-  /* 인쇄 ① 개념 정리: [그림 | 식(빈 상자)] */
-  window.FM_PRINT = function () {
-    const F = D(); if (!F) return null; const keys = Object.keys(F); let h = '<div class="fmp">', ans = [];
-    keys.forEach((k, ti) => { const t = F[k]; h += '<div class="fmp-t"><b>' + (ti + 1) + '. ' + (t.name || t.t || '') + '</b>';
-      rowsOf(t).forEach((r, i) => { h += '<div class="fmp-r">' + (r[0] != null ? '<div class="fmp-pic">' + r[0] + '</div><div class="fmp-ar">➜</div>' : '<div class="fmp-rl">🔑</div>') + '<div class="fmp-f">' + r[1].replace('{?}', '<span class="fmp-b"></span>') + '</div></div>'; });
-      h += '</div>'; ans.push((ti + 1) + '. ' + rowsOf(t).map(r => r[2]).join(' / ')); });
-    return { html: h + '</div>', key: ans.join('<br>') };
-  };
-})();
-
-window.SV_FM = {
- fan: { name: '변 늘이고 줄이기', t: '각의 크기는 무엇으로?', rows: [
-  [FMP.ang(40, { lab: '가' }) + FMP.ang(40, { lab: '나', k: .55 }), '변의 길이가 달라도 가와 나의 크기는 {?}', '같아요', ['같아요', '가가 커요', '나가 커요']],
-  [FMP.ang(30, { lab: '가' }) + FMP.ang(70, { lab: '나', k: .55 }), '변이 짧아도 더 벌어진 {?}가 더 큰 각', '나', ['가', '나']]],
-  rule: ['각의 크기는 변의 길이와 상관없이 두 변이 {?} 정도로 정해져요.', '벌어진', ['벌어진', '긴', '굵은']], sum: '두 변이 많이 벌어질수록 큰 각이에요.' },
- trace: { name: '투명 종이 겹치기', t: '겹쳐 비교', rows: [
-  [FMP.two(35, 25, { la: '가', lb: '+' }), '가를 나에 겹쳤더니 나가 삐져나왔어요 → 나 {?} 가', '>', ['>', '<', '=']],
-  [FMP.ang(50, { lab: '꼭 맞음' }), '꼭 맞게 겹쳐지면 두 각의 크기는 {?}', '같아요', ['같아요', '달라요']]],
-  rule: ['꼭짓점과 한 변을 맞춰 겹친 뒤 {?} 쪽 각이 더 커요.', '삐져나온', ['삐져나온', '가려진', '짧은']], sum: '투명 종이로 겹치면 직접 비교할 수 있어요.' },
- unit: { name: '단위 조각 채우기', t: '조각 수 세기', rows: [
-  [FMP.blk('조각', 4, '#fed7aa', 34) + FMP.blk('조각', 3, '#bfdbfe', 34), '가 4조각, 나 3조각 → 가가 {?}조각만큼 더 커요.', '1', ['1', '3', '7']],
-  [FMP.blk('조각', 5, '#fed7aa', 34), '조각 5개 각 {?} 조각 3개 각', '>', ['>', '<', '=']]],
-  rule: ['같은 크기 조각의 {?}가 많을수록 큰 각이에요.', '개수', ['개수', '색', '모양']], sum: '단위 조각으로 채우면 얼마나 더 큰지 수로 말할 수 있어요.' },
- ruler: { name: '서로 다른 눈금', t: '단위가 다르면?', rows: [
-  [FMP.box('직각 = 3칸 눈금'), '도하 눈금(직각 3칸)으로 2칸인 각 = 유주 눈금(직각 6칸)으로 {?}칸', '4', ['2', '4', '6']],
-  [FMP.box('직각 = 6칸 눈금'), '유주 눈금 6칸 = 도하 눈금 {?}칸', '3', ['3', '6', '12']]],
-  rule: ['각의 크기를 바르게 비교하려면 모두 같은 {?}를 써야 해요.', '단위', ['단위', '색', '종이']], sum: '그래서 모두가 함께 쓰는 단위(다음 시간: 1°)가 필요해요.' }
-};
-
-</script><!--FM-END-->
 <!--NET-START--><style>.svnet-card{border:2.5px dashed #a78bfa;border-radius:16px;padding:10px 14px;margin:10px 0;background:#faf5ff}
 .svnet-link{display:flex;gap:6px;margin:8px 0}.svnet-link input{flex:1;min-width:0;border:2px solid #c4b5fd;border-radius:10px;padding:6px 8px;font-size:.8rem}
 .svnet-pl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 12px}.svnet-pl>div{border:2px solid #e9d5ff;border-radius:12px;padding:6px 10px;font-weight:800;background:#fff}.svnet-pl>div.me{border-color:#7c3aed;background:#f5f3ff}
@@ -9433,6 +9302,150 @@ html body button#scratchFab#scratchFab::before{content:'📝';font-size:1.35rem;
 })();
 
 </script><!--FR-END-->
+<!--FM-START--><style>.fmcard{margin-top:12px!important;border:3px solid #a78bfa!important;background:linear-gradient(180deg,#faf5ff,#fff)!important;padding:12px 14px!important;text-align:left}
+.fmhd{font-weight:900;font-size:1.15rem;color:#6d28d9;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fmhd small{color:#64748b;font-size:.8rem}.fmhd .anpill{margin-left:auto}
+.fmrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.fmrow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e9d5ff;border-radius:14px;padding:8px 10px;min-width:0}
+.fmrow.rule{grid-column:1/-1;background:#fef9c3;border-color:#fde047}.fmrow.on{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.fmpic{flex:none;display:flex;align-items:center;justify-content:center;max-width:46%}.fmpic svg{max-width:100%;height:auto}
+.fmarr{color:#7c3aed;font-weight:900;font-size:1.2rem}.fmrl{font-weight:900;color:#a16207;flex:none}
+.fmf{font-weight:900;font-size:1.12rem;line-height:1.6;min-width:0;flex:1}
+.fmslot{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:2.5px dashed #7c3aed;border-radius:8px;text-align:center;color:#7c3aed;background:#f5f3ff}
+.fmslot.ok{border-style:solid;border-color:#16a34a;color:#15803d;background:#dcfce7}
+.fmops{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.fmop{border:2.5px solid #c4b5fd;background:#fff;border-radius:12px;min-height:46px;min-width:64px;padding:6px 16px;font-weight:900;font-size:1.08rem;cursor:pointer;box-shadow:0 3px 0 #ddd6fe;touch-action:manipulation}
+.fmop:active{transform:translateY(2px);box-shadow:none}.fmop:hover{background:#f5f3ff}.fmop.no{animation:fmShake .4s;border-color:#ef4444;background:#fee2e2}
+@keyframes fmShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fmblk{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}.fmblk span{border:1.5px solid #64748b;border-radius:4px;font-size:.7rem;font-weight:900;text-align:center;padding:1px 3px}
+.fmpv{border-collapse:collapse;font-weight:900}.fmpv th,.fmpv td{border:1.5px solid #94a3b8;padding:2px 7px;font-size:.8rem;text-align:center}.fmpv th{background:#f1f5f9}.fmpv td.hl,.fmgr td.hl{background:#fde68a}
+.fmseq{display:flex;align-items:center;flex-wrap:wrap;gap:3px;font-weight:900;font-size:.85rem}.fmseq b{border:2px solid #60a5fa;border-radius:6px;padding:1px 6px;background:#eff6ff}.fmseq i{color:#ea580c;font-style:normal}
+.fmgr{border-collapse:collapse}.fmgr td{border:1.5px solid #93c5fd;padding:2px 6px;font-weight:900;font-size:.8rem;text-align:center}
+.fmbox{border-radius:10px;padding:6px 10px;font-weight:900;font-size:.95rem;text-align:center;border:2px solid #cbd5e1}
+@media(max-width:700px){.fmrows{grid-template-columns:minmax(0,1fr)}.fmf{font-size:1rem}}
+.fmp-t{break-inside:avoid;margin:6px 0 10px}.fmp-r{display:flex;align-items:center;gap:10px;margin:5px 0 5px 10px;break-inside:avoid}.fmp-pic{flex:none;max-width:44%}.fmp-pic svg{max-width:100%;height:auto}
+.fmp-ar{font-weight:900;color:#6d28d9}.fmp-f{font-weight:800}.fmp-b{display:inline-block;width:64px;height:22px;border:1.8px solid #334155;border-radius:4px;vertical-align:middle;margin:0 4px}.fmp-rl{font-weight:900}
+.fmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
+.fmrow>*{min-width:0;overflow-wrap:anywhere;word-break:keep-all}@media(max-width:900px){.fmrows{grid-template-columns:1fr}}
+
+.fmf .fmin{width:5.2em;font:inherit;font-weight:900;font-size:1em;text-align:center;border:3px dashed #8b5cf6;border-radius:10px;padding:2px 6px;margin:0 4px;background:#faf5ff;color:#4c1d95;outline:none}
+.fmf .fmin:focus{border-style:solid;background:#fff;box-shadow:0 0 0 4px #ddd6fe}
+.fmf .fmin.no{border-color:#ef4444;animation:fmsh .4s}@keyframes fmsh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fmf .fmchk{font:inherit;font-weight:900;font-size:.85em;margin-left:6px;border:0;border-radius:10px;padding:4px 14px;background:#7c3aed;color:#fff;box-shadow:0 3px 0 #5b21b6;cursor:pointer;vertical-align:middle}
+</style><script>
+/* 📐 식으로 정리해요 — 도구를 끝내면 [그림 → 식] 빈칸을 채워 개념을 형식화해요. 인쇄 학습지 ① 개념 정리도 같은 내용으로 만들어요. */
+(function () {
+  if (window.__FM) return; window.__FM = 1;
+  const SV = n => '<svg viewBox="0 0 ' + n[0] + ' ' + n[1] + '" width="' + n[0] + '" height="' + n[1] + '" class="fmsvg">';
+  const T = (x, y, t, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || 'middle') + '" font-size="' + (o.s || 13) + '" font-weight="900" fill="' + (o.c || '#334155') + '">' + t + '</text>'; };
+  const rad = d => d * Math.PI / 180;
+  const P = window.FMP = {
+    blk: (lab, n, col, w) => '<div class="fmblk">' + Array.from({ length: n }, () => '<span style="background:' + (col || '#dbeafe') + ';min-width:' + (w || 34) + 'px">' + lab + '</span>').join('') + '</div>',
+    pv: cols => '<table class="fmpv"><tr>' + cols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr><tr>' + cols.map(c => '<td' + (c[2] ? ' class="hl"' : '') + '>' + c[1] + '</td>').join('') + '</tr></table>',
+    seq: (a, op) => '<div class="fmseq">' + a.map((x, i) => (i ? '<i>' + (op || '→') + '</i>' : '') + '<b>' + x + '</b>').join('') + '</div>',
+    nl: (labs, jump) => { const W = 230, n = labs.length, g = (W - 30) / (n - 1); let s = SV([W, 62]) + '<line x1="10" y1="44" x2="' + (W - 6) + '" y2="44" stroke="#475569" stroke-width="2"/>';
+      labs.forEach((l, i) => { const x = 15 + i * g; s += '<line x1="' + x + '" y1="38" x2="' + x + '" y2="50" stroke="#475569" stroke-width="2"/>' + T(x, 60, l, { s: 10 }); if (i && jump) s += '<path d="M' + (x - g + 3) + ' 36 Q' + (x - g / 2) + ' 8 ' + (x - 3) + ' 36" fill="none" stroke="#ea580c" stroke-width="2"/>' + T(x - g / 2, 16, jump, { s: 10, c: '#ea580c' }); });
+      return s + '</svg>'; },
+    ang: (d, o) => { o = o || {}; const W = 150, H = d > 95 ? 92 : 100, cx = d > 95 ? 80 : 20, cy = H - 14, L = 110 * (o.k || 1), r = 26;
+      const x2 = cx + L * Math.cos(rad(d)), y2 = cy - L * Math.sin(rad(d)) * (d > 95 ? .75 : 1);
+      let s = SV([W + (d > 95 ? 0 : 0), H]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + Math.min(W - 4, cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#1d4ed8" stroke-width="3"/>';
+      s += d === 90 ? '<path d="M' + (cx + 14) + ' ' + cy + ' v-14 h-14" fill="none" stroke="#ea580c" stroke-width="2"/>' : '<path d="M' + (cx + r) + ' ' + cy + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d))) + ' ' + (cy - r * Math.sin(rad(d)) * (d > 95 ? .75 : 1)) + '" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>';
+      if (o.lab !== false) s += T(cx + 40 * Math.cos(rad(d / 2)) + 4, cy - 34 * Math.sin(rad(d / 2)), o.lab || d + '°', { s: 12, c: '#c2410c' });
+      return s + '</svg>'; },
+    two: (a, b, o) => { o = o || {}; const cx = 75, cy = 88, L = 70; let s = SV([160, 100]) + '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L) + '" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/>';
+      [a, a + b].forEach(d => { s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + L * Math.cos(rad(d))) + '" y2="' + (cy - L * Math.sin(rad(d))) + '" stroke="#1d4ed8" stroke-width="3"/>'; });
+      const arc = (d0, d1, r, c) => '<path d="M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(rad(d0))) + ' ' + (cy - r * Math.sin(rad(d0))) + ' A' + r + ' ' + r + ' 0 0 0 ' + (cx + r * Math.cos(rad(d1))) + ' ' + (cy - r * Math.sin(rad(d1))) + 'Z" fill="' + c + '" opacity=".55"/>';
+      s += arc(0, a, 30, '#c4b5fd') + arc(a, a + b, 30, '#fdba74') + T(cx + 44 * Math.cos(rad(a / 2)), cy - 40 * Math.sin(rad(a / 2)) + 4, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx + 46 * Math.cos(rad(a + b / 2)), cy - 44 * Math.sin(rad(a + b / 2)) + 4, o.lb || b + '°', { s: 11, c: '#c2410c' });
+      return s + '</svg>'; },
+    line: (a, o) => { o = o || {}; const cx = 80, cy = 70; let s = SV([160, 80]) + '<line x1="6" y1="' + cy + '" x2="154" y2="' + cy + '" stroke="#1d4ed8" stroke-width="3"/><line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 70 * Math.cos(rad(a))) + '" y2="' + (cy - 60 * Math.sin(rad(a))) + '" stroke="#1d4ed8" stroke-width="3"/>';
+      return s + T(cx + 36 * Math.cos(rad(a / 2)) + 6, cy - 14, o.la || a + '°', { s: 11, c: '#6d28d9' }) + T(cx - 34, cy - 14, o.lb || '?', { s: 11, c: '#c2410c' }) + '</svg>'; },
+    tri: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [60, 12]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/>';
+      const at = [[30, 80], [128, 80], [62, 34]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#c2410c' }); }); return s + '</svg>'; },
+    quad: (A, o) => { o = o || {}; const p = [[14, 86], [150, 86], [134, 18], [38, 10]]; let s = SV([164, 100]) + '<polygon points="' + p.map(q => q.join(',')).join(' ') + '" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>' + (o.diag ? '<line x1="14" y1="86" x2="134" y2="18" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>' : '');
+      const at = [[32, 80], [130, 80], [122, 32], [46, 26]]; A.forEach((v, i) => { s += T(at[i][0], at[i][1], v, { s: 11, c: v === '?' ? '#dc2626' : '#15803d' }); }); return s + '</svg>'; },
+    push: (dx, dy) => { const c = 14, W = 12 * c, H = 7 * c; let s = SV([W, H]); for (let x = 0; x <= 12; x++) s += '<line x1="' + x * c + '" y1="0" x2="' + x * c + '" y2="' + H + '" stroke="#e2e8f0"/>'; for (let y = 0; y <= 7; y++) s += '<line x1="0" y1="' + y * c + '" x2="' + W + '" y2="' + y * c + '" stroke="#e2e8f0"/>';
+      const ox = dx >= 0 ? 1 : 8, oy = dy >= 0 ? 1 : 4, tri = (x, y, f, l, d) => '<polygon points="' + [[x, y], [x, y + 2], [x + 3, y + 2]].map(q => q[0] * c + ',' + q[1] * c).join(' ') + '" fill="' + f + '" stroke="' + l + '" stroke-width="2"' + (d ? ' stroke-dasharray="4 3"' : '') + '/>';
+      return s + tri(ox, oy, '#f1f5f9', '#94a3b8', 1) + tri(ox + dx, oy + dy, '#bfdbfe', '#1d4ed8') + '<line x1="' + ox * c + '" y1="' + oy * c + '" x2="' + (ox + dx) * c + '" y2="' + (oy + dy) * c + '" stroke="#ea580c" stroke-width="2" marker-end="url(#fmA)"/><defs><marker id="fmA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#ea580c"/></marker></defs></svg>'; },
+    bars: (v, step, o) => { o = o || {}; const n = v.length, W = 40 + n * 34, H = 110, top = Math.max(...v) / step, k = 80 / Math.max(top, 1); let s = SV([W, H]) + '<line x1="30" y1="96" x2="' + (W - 4) + '" y2="96" stroke="#475569" stroke-width="2"/><line x1="30" y1="96" x2="30" y2="8" stroke="#475569" stroke-width="2"/>';
+      for (let i = 0; i <= top; i++) s += '<line x1="30" y1="' + (96 - i * k) + '" x2="' + (W - 4) + '" y2="' + (96 - i * k) + '" stroke="#e2e8f0"/>' + (o.nolab ? '' : T(24, 100 - i * k, i * step, { s: 9, a: 'end' }));
+      v.forEach((x, i) => { const h = x / step * k; s += '<rect x="' + (40 + i * 34) + '" y="' + (96 - h) + '" width="22" height="' + h + '" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399', '#f472b6'][i % 5] + '"/>'; });
+      return s + '</svg>'; },
+    hbars: (v, step) => { const n = v.length, H = 20 + n * 22, top = Math.max(...v) / step, k = 110 / top; let s = SV([150, H]) + '<line x1="20" y1="4" x2="20" y2="' + (H - 6) + '" stroke="#475569" stroke-width="2"/>';
+      v.forEach((x, i) => { s += '<rect x="20" y="' + (8 + i * 22) + '" width="' + x / step * k + '" height="14" fill="' + ['#60a5fa', '#f97316', '#a78bfa', '#34d399'][i % 4] + '"/>'; }); return s + '</svg>'; },
+    clock: h => { const cx = 50, cy = 50; let s = SV([100, 100]) + '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#334155" stroke-width="3"/>';
+      for (let i = 1; i <= 12; i++) s += T(cx + 34 * Math.sin(rad(i * 30)), cy - 34 * Math.cos(rad(i * 30)) + 4, i, { s: 10 });
+      return s + '<line x1="50" y1="50" x2="50" y2="14" stroke="#1d4ed8" stroke-width="3"/><line x1="50" y1="50" x2="' + (cx + 24 * Math.sin(rad(h * 30))) + '" y2="' + (cy - 24 * Math.cos(rad(h * 30))) + '" stroke="#dc2626" stroke-width="4"/></svg>'; },
+    grid: (rows, hl) => '<table class="fmgr">' + rows.map((r, i) => '<tr>' + r.map((x, j) => '<td' + (hl && hl.some(q => q[0] === i && q[1] === j) ? ' class="hl"' : '') + '>' + x + '</td>').join('') + '</tr>').join('') + '</table>',
+    box: (t, c) => '<div class="fmbox" style="background:' + (c || '#f1f5f9') + '">' + t + '</div>'
+  };
+  const D = () => window.SV_FM || null;
+  const ST = k => { const s = state.s1; s.fm = s.fm || {}; return s.fm[k] = s.fm[k] || { a: {}, done: false }; };
+  const curTool = () => { const b = document.querySelector('#s1body .hub [data-act=tool].on'); return b ? b.dataset.v : null; };
+  const slot = (f, v, ok) => f.replace('{?}', '<span class="fmslot ' + (v != null ? 'ok' : '') + '">' + (v != null ? v : '?') + '</span>');
+  const MIX = (a, k) => { let h = 7; for (const c of String(k)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  const NUM = x => /^[\d,]+$/.test(String(x));
+  function rowsOf(F) { return F.rows.concat([[null, F.rule[0], F.rule[1], F.rule[2]]]); }
+  function html(k) {
+    const F = D()[k], S = ST(k), R = rowsOf(F), nx = R.findIndex((_, i) => S.a[i] == null);
+    let h = '<div class="fmcard card" data-fm="' + k + '"><div class="fmhd">📐 식으로 정리해요 <small>' + (F.t || '') + '</small><span class="anpill">' + R.length + '개 중 ' + Object.keys(S.a).length + '개</span></div><div class="fmrows">';
+    R.forEach((r, i) => { const v = S.a[i], on = i === nx;
+      h += '<div class="fmrow ' + (r[0] == null ? 'rule' : '') + (on ? ' on' : '') + '">' + (r[0] != null ? '<div class="fmpic">' + r[0] + '</div><div class="fmarr">➜</div>' : '<div class="fmrl">🔑 정리</div>')
+        + '<div class="fmf">' + (on && NUM(r[2]) ? r[1].replace('{?}', '<input class="fmin" data-fmi="' + i + '" inputmode="numeric" autocomplete="off" placeholder="?" aria-label="빈칸에 알맞은 수">') + '<button type="button" class="fmchk" data-fmi="' + i + '">확인</button>'
+          : slot(r[1], v) + (on ? '<div class="fmops">' + MIX(r[3], r[1]).map(o => '<button type="button" class="fmop" data-fmi="' + i + '" data-fmv="' + String(o).replace(/"/g, '&quot;') + '">' + o + '</button>').join('') + '</div>' : '')) + '</div></div>'; });
+    h += '</div><div class="fmfb">' + (S.msg ? (typeof charSay === 'function' ? charSay(S.ok ? 'ok' : 'no', S.msg) : S.msg) : '') + '</div></div>';
+    return h;
+  }
+  function inject() {
+    if (!D()) return; const k = curTool(); if (!k || !D()[k]) return;
+    const card = document.querySelector('.svsl-tc') || document.querySelector('#toolBody > .antool, #toolBody > .card') || [...document.querySelectorAll('#s1body > .card')].find(c => c.querySelector(':scope > .stage-head'));
+    if (!card) return; const done = card.querySelector('.andone'); const old = card.querySelector('.fmcard');
+    if (!done) { if (old) old.remove(); return; }
+    if (old && old.dataset.fm === k && old.dataset.v === JSON.stringify(ST(k))) return;
+    const w = document.createElement('div'); w.innerHTML = html(k); const nn = w.firstChild; nn.dataset.v = JSON.stringify(ST(k));
+    if (old) old.replaceWith(nn); else done.insertAdjacentElement('afterend', nn);
+  }
+  const norm = x => String(x).replace(/[\s,]/g, '');
+  function answer(b, val) { const card = b.closest('.fmcard'), k = card.dataset.fm, F = D()[k], S = ST(k), i = +b.dataset.fmi, r = rowsOf(F)[i];
+    if (val === '') { const f = card.querySelector('.fmin'); if (f) f.focus(); return; }
+    if (norm(val) === norm(r[2])) { S.a[i] = r[2]; S.ok = true; const all = Object.keys(S.a).length === rowsOf(F).length;
+      S.msg = all ? '🎉 식 정리 완료! ' + (F.sum || '') : '맞아요! 다음 줄도 정리해 봐요.'; if (all) S.done = true;
+      try { Sound.correct(); } catch (er) {} try { if (typeof mood === 'function') mood(all ? 'celebrate' : 'happy', 1600); } catch (er) {} }
+    else { S.ok = false; S.msg = '다시 생각해 봐요. 그림을 보고 ' + (r[0] == null ? '앞에서 정리한 식들' : '수를 하나씩') + ' 확인해 봐요.'; try { Sound.wrong(); } catch (er) {} try { if (typeof mood === 'function') mood('think', 1600); } catch (er) {} b.classList.add('no'); setTimeout(() => b.classList.remove('no'), 500); const f = b.closest('.fmf') && b.closest('.fmf').querySelector('.fmin'); if (f) { f.classList.add('no'); setTimeout(() => f.classList.remove('no'), 500); } }
+    try { touch('s1'); } catch (er) {} inject(); if (!S.done) setTimeout(() => { const f = document.querySelector('.fmcard .fmin'); if (f) f.focus(); }, 30); }
+  document.addEventListener('click', e => { const b = e.target.closest('.fmop,.fmchk'); if (!b) return; if (b.classList.contains('fmop')) return answer(b, b.dataset.fmv);
+    const f = b.closest('.fmf').querySelector('.fmin'); answer(b, f ? f.value.trim() : ''); });
+  document.addEventListener('keydown', e => { const f = e.target.closest && e.target.closest('.fmin'); if (!f || e.key !== 'Enter') return; e.preventDefault(); answer(f, f.value.trim()); });
+  let q = 0; const mo = new MutationObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; try { inject(); } catch (e) {} }); });
+  const start = () => { const m = document.querySelector('main') || document.body; mo.observe(m, { childList: true, subtree: true }); inject(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  /* 인쇄 ① 개념 정리: [그림 | 식(빈 상자)] */
+  window.FM_PRINT = function () {
+    const F = D(); if (!F) return null; const keys = Object.keys(F); let h = '<div class="fmp">', ans = [];
+    keys.forEach((k, ti) => { const t = F[k]; h += '<div class="fmp-t"><b>' + (ti + 1) + '. ' + (t.name || t.t || '') + '</b>';
+      rowsOf(t).forEach((r, i) => { h += '<div class="fmp-r">' + (r[0] != null ? '<div class="fmp-pic">' + r[0] + '</div><div class="fmp-ar">➜</div>' : '<div class="fmp-rl">🔑</div>') + '<div class="fmp-f">' + r[1].replace('{?}', '<span class="fmp-b"></span>') + '</div></div>'; });
+      h += '</div>'; ans.push((ti + 1) + '. ' + rowsOf(t).map(r => r[2]).join(' / ')); });
+    return { html: h + '</div>', key: ans.join('<br>') };
+  };
+})();
+
+window.SV_FM = {
+ fan: { name: '변 늘이고 줄이기', t: '각의 크기는 무엇으로?', rows: [
+  [FMP.ang(40, { lab: '가' }) + FMP.ang(40, { lab: '나', k: .55 }), '변의 길이가 달라도 가와 나의 크기는 {?}', '같아요', ['같아요', '가가 커요', '나가 커요', '알 수 없어요']],
+  [FMP.ang(30, { lab: '가' }) + FMP.ang(70, { lab: '나', k: .55 }), '변이 짧아도 더 벌어진 {?}가 더 큰 각', '나', ['가', '나', '둘 다 같아요', '알 수 없어요']]],
+  rule: ['각의 크기는 변의 길이와 상관없이 두 변이 {?} 정도로 정해져요.', '벌어진', ['벌어진', '긴', '굵은', '짧은']], sum: '두 변이 많이 벌어질수록 큰 각이에요.' },
+ trace: { name: '투명 종이 겹치기', t: '겹쳐 비교', rows: [
+  [FMP.two(35, 25, { la: '가', lb: '+' }), '가를 나에 겹쳤더니 나가 삐져나왔어요 → 나 {?} 가', '>', ['>', '<', '=']],
+  [FMP.ang(50, { lab: '꼭 맞음' }), '꼭 맞게 겹쳐지면 두 각의 크기는 {?}', '같아요', ['같아요', '달라요', '가가 커요', '나가 커요']]],
+  rule: ['꼭짓점과 한 변을 맞춰 겹친 뒤 {?} 쪽 각이 더 커요.', '삐져나온', ['삐져나온', '가려진', '짧은', '긴']], sum: '투명 종이로 겹치면 직접 비교할 수 있어요.' },
+ unit: { name: '단위 조각 채우기', t: '조각 수 세기', rows: [
+  [FMP.blk('조각', 4, '#fed7aa', 34) + FMP.blk('조각', 3, '#bfdbfe', 34), '가 4조각, 나 3조각 → 가가 {?}조각만큼 더 커요.', '1', ['1', '3', '7']],
+  [FMP.blk('조각', 5, '#fed7aa', 34), '조각 5개 각 {?} 조각 3개 각', '>', ['>', '<', '=']]],
+  rule: ['같은 크기 조각의 {?}가 많을수록 큰 각이에요.', '개수', ['개수', '색', '모양', '크기']], sum: '단위 조각으로 채우면 얼마나 더 큰지 수로 말할 수 있어요.' },
+ ruler: { name: '서로 다른 눈금', t: '단위가 다르면?', rows: [
+  [FMP.box('직각 = 3칸 눈금'), '도하 눈금(직각 3칸)으로 2칸인 각 = 유주 눈금(직각 6칸)으로 {?}칸', '4', ['2', '4', '6']],
+  [FMP.box('직각 = 6칸 눈금'), '유주 눈금 6칸 = 도하 눈금 {?}칸', '3', ['3', '6', '12']]],
+  rule: ['각의 크기를 바르게 비교하려면 모두 같은 {?}를 써야 해요.', '단위', ['단위', '색', '종이', '길이']], sum: '그래서 모두가 함께 쓰는 단위(다음 시간: 1°)가 필요해요.' }
+};
+
+</script><!--FM-END-->
 <!--PJ-START--><script>
 /* =====================================================================
    🖨️ 학습지 인쇄 보강 — 점프 문제를 수업과 같은 4개(점프 1 오늘의 문제 + 보스전 도전 3개)로 맞추고,
