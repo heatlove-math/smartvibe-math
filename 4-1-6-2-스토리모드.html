@@ -11177,6 +11177,26 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
+<!--M4D-START--><style>/* ✋ M4 직접 조작 (11-20): 따로 떠 있는 주황 손잡이(동그라미·화살표) 대신, 잡을 물건 자체가 반짝여요.
+   처음 잡기 전에는 물건 둘레가 점선으로 움직이고, 한 번 잡으면 표시가 사라져요. 끄는 방향 글은 짧게 남겨요. */
+.m4hand circle,.m4hand path,.m4hand .m4hi{display:none!important}
+.m4hand .m4hl{font-size:15px!important;opacity:.95}
+#toolBody .m4hit{fill:#fde68a;fill-opacity:.22;stroke:#f97316;stroke-width:3;stroke-dasharray:7 6;animation:m4dDash .9s linear infinite}
+#toolBody .m4h:hover .m4hit{fill-opacity:.36}
+#toolBody.m4used .m4hit{fill-opacity:.001;stroke:none;animation:none}
+#toolBody.m4used .m4h:hover .m4hit{fill:#fde68a;fill-opacity:.25}
+#toolBody.m4used .m4hand{display:none}
+.m4drag #toolBody .m4hit{fill-opacity:.001;stroke:none;animation:none}
+@keyframes m4dDash{to{stroke-dashoffset:-26}}
+@media (prefers-reduced-motion:reduce){#toolBody .m4hit{animation:none}}
+</style><script>/* ✋ M4 직접 조작: 한 번 잡으면 그 단계의 잡기 표시를 거둬요 (도구·단계가 바뀌면 다시 보여요) */
+(function () { if (window.__M4D) return; window.__M4D = 1;
+  const key = () => { try { const k = state.s1.tool; return k + ':' + CK.S(k).i; } catch (e) { return ''; } };
+  let used = '';
+  document.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('#toolBody .m4h')) { used = key(); const tb = document.getElementById('toolBody'); if (tb) tb.classList.add('m4used'); } }, true);
+  try { new MutationObserver(() => { const tb = document.getElementById('toolBody'); if (tb && used && key() !== used) { tb.classList.remove('m4used'); used = ''; } }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
+</script><!--M4D-END-->
 <!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
 /* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
 .card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}

@@ -9042,34 +9042,435 @@ const B1 = (() => {
   return { piece, PV, GROUP, ADD, JUMP, SIZE, STACK, EXCH, MAG, CUT, ALIGN, LADDER, LINE };
 })();
 
+/* =====================================================================
+   ✋ B2 · 4학년 1단원 큰 수 — 물건을 직접 집어 옮기는 도구 (11-20)
+   · 손잡이·단추 없이: 지폐·동전·묶음·숫자 타일·칸막이·개구리·깃발을 손가락으로 집어 옮겨요.
+   · 집기(.b2d data-p) → 놓을 곳(.b2t data-t) 에 놓으면 'drop:p:t', 제자리에 톡 누르면 'tap:p', 빈 곳은 'miss:p'
+     를 [data-ck=m4set] 로 보내요 → stage.on['act:m4set'](d, v)
+   · 길을 따라 움직이는 물건(개구리·말·엘리베이터·깃발·수 띠)은 M4.grip 을 물건 몸에 바로 붙여요(따로 손잡이 없음).
+   ===================================================================== */
+const B2 = (() => {
+  const { T: TX, R: RC, L: LN } = M4, F = n => Number(n).toLocaleString();
+  const V = k => Math.pow(10, k), NM = k => CKN[k], P = (k, x, y, w, h) => B1.piece(k, x, y, w, h);
+  const KOR = n => { try { return ckKor(n); } catch (e) { return F(n); } }, RD = n => { try { return ckRead(n); } catch (e) { return F(n); } };
+  /* ---------- 집어 옮기기 엔진 ---------- */
+  if (!window.__b2) { window.__b2 = 1; let D = null;
+    const send = v => { const b = document.querySelector('#toolBody [data-ck="m4set"]'); if (b) { b.dataset.v = v; b.click(); } };
+    const tgtAt = (x, y) => { for (const e of document.elementsFromPoint(x, y)) { const t = e.closest && e.closest('#toolBody .b2t'); if (t) return t; } return null; };
+    document.addEventListener('pointerdown', e => { if (D || (e.button != null && e.button > 0)) return; const g = e.target.closest && e.target.closest('#toolBody .b2d'); if (!g) return; const sv = g.ownerSVGElement; if (!sv) return; e.preventDefault();
+      let bb; try { bb = g.getBBox(); } catch (er) { return; } const m = g.getScreenCTM(), sc = m ? Math.hypot(m.a, m.b) : 1, pad = 8, r = g.getBoundingClientRect();
+      const gh = document.createElement('div'); gh.className = 'b2ghost';
+      gh.innerHTML = `<svg viewBox="${bb.x - pad} ${bb.y - pad} ${bb.width + 2 * pad} ${bb.height + 2 * pad}" width="${(bb.width + 2 * pad) * sc}" height="${(bb.height + 2 * pad) * sc}">${g.outerHTML}</svg>`;
+      const l0 = r.left - pad * sc, t0 = r.top - pad * sc; gh.style.left = l0 + 'px'; gh.style.top = t0 + 'px'; document.body.appendChild(gh);
+      D = { g, gh, p: g.dataset.p, x0: e.clientX, y0: e.clientY, l0, t0, id: e.pointerId, moved: false, hov: null }; g.classList.add('b2lift');
+      try { document.body.setPointerCapture(e.pointerId); } catch (er) {} document.body.classList.add('b2drag'); try { Sound.click(); } catch (er) {} }, true);
+    document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); const dx = e.clientX - D.x0, dy = e.clientY - D.y0; if (Math.hypot(dx, dy) > 6) D.moved = true;
+      D.gh.style.left = (D.l0 + dx) + 'px'; D.gh.style.top = (D.t0 + dy) + 'px'; D.gh.classList.toggle('mv', D.moved);
+      const t = tgtAt(e.clientX, e.clientY); if (t !== D.hov) { if (D.hov) D.hov.classList.remove('b2hov'); if (t) t.classList.add('b2hov'); D.hov = t; } }, { passive: false });
+    const up = e => { if (!D || (e && e.pointerId != null && e.pointerId !== D.id)) return; const d = D; D = null; try { document.body.releasePointerCapture(d.id); } catch (er) {} document.body.classList.remove('b2drag');
+      if (d.hov) d.hov.classList.remove('b2hov'); d.g.classList.remove('b2lift'); const t = e && e.clientX != null ? tgtAt(e.clientX, e.clientY) : null;
+      if (d.moved && !t) { d.gh.classList.add('back'); d.gh.style.left = d.l0 + 'px'; d.gh.style.top = d.t0 + 'px'; setTimeout(() => d.gh.remove(), 260); } else d.gh.remove();
+      send(!d.moved ? 'tap:' + d.p : t ? 'drop:' + d.p + ':' + t.dataset.t : 'miss:' + d.p); };
+    document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+    try { const s = document.createElement('style'); s.textContent = `
+#toolBody .b2d{cursor:grab;touch-action:none}#toolBody .b2d:hover>*{filter:brightness(1.06)}#toolBody .b2d.b2lift{opacity:.35}
+.b2ghost{position:fixed;z-index:99999;pointer-events:none;transition:transform .12s;filter:drop-shadow(0 10px 14px rgba(0,0,0,.28))}.b2ghost.mv{transform:scale(1.08) rotate(-3deg)}.b2ghost.back{transition:left .24s ease,top .24s ease,opacity .24s;opacity:.2}
+.b2ghost svg{overflow:visible;font-family:inherit;font-weight:900}
+#toolBody .b2t .b2tz{transition:fill .12s,stroke .12s}#toolBody .b2t.b2hov .b2tz{fill:#dcfce7!important;stroke:#16a34a!important;stroke-width:4!important}
+body.b2drag,body.b2drag *{cursor:grabbing!important}
+#toolBody .b2cue{animation:b2cue 1.3s ease-in-out infinite}@keyframes b2cue{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#toolBody .b2shake{animation:b2sh .45s}@keyframes b2sh{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}`; document.head.appendChild(s); } catch (er) {} }
+  /* 그림 칸 맞춤: 단계마다 처음 그린 그림 상자(투명 틀 포함)에 맞춰 viewBox 를 정해요 → 그림이 칸을 가득 채워요 */
+  if (!window.__b2fit) { window.__b2fit = 1; const VB = {};
+    const fit = () => document.querySelectorAll('#toolBody svg.b2svg').forEach(sv => { if (!sv.getClientRects().length) return; let key = ''; try { const k = state.s1.tool; key = k + ':' + CK.S(k).i; } catch (e) {}
+      let b; try { b = sv.getBBox(); } catch (e) { return; } if (!b.width) return; const p = 16; let r = [b.x - p, b.y - p, b.x + b.width + p, b.y + b.height + p];
+      const o = VB[key]; if (o) r = [Math.min(o[0], r[0]), Math.min(o[1], r[1]), Math.max(o[2], r[2]), Math.max(o[3], r[3])];   /* 단계 안에서는 넓어지기만(그림이 줄었다 커졌다 하지 않게) */
+      VB[key] = r; const vb = [r[0], r[1], r[2] - r[0], r[3] - r[1]].map(v => +v.toFixed(1)).join(' '); if (sv.getAttribute('viewBox') !== vb) sv.setAttribute('viewBox', vb); });
+    try { new MutationObserver(() => fit()).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {} }
+  const drag = (p, inner, cls) => `<g class="b2d ${cls || ''}" data-p="${p}">${inner}</g>`;
+  const tgt = (t, x, y, w, h, o = {}) => `<g class="b2t" data-t="${t}">${RC(x, y, w, h, o.fill || '#fff', { st: o.st || '#94a3b8', sw: o.sw || 2.5, rx: o.rx != null ? o.rx : 12, da: o.da == null ? '8 6' : o.da, c: 'b2tz', op: o.op })}${o.lab ? TX(x + w / 2, y + (o.ly != null ? o.ly : h / 2 + 7), o.lab, { fs: o.fs || 18, fill: o.lc || '#94a3b8', w: 800 }) : ''}</g>`;
+  /* 더미: 몇 장 겹쳐 보이고 맨 위 한 장만 집어요 */
+  const pile = (p, k, x, y, w, h, n, lab) => { let s = ''; for (let i = Math.min(3, n) - 1; i > 0; i--) s += `<g opacity="${.55 + .15 * (3 - i)}">${P(k, x + i * 5, y - i * 5, w, h)}</g>`;
+    return s + (n > 0 ? drag(p, P(k, x, y, w, h), 'b2cue') : RC(x, y, w, h, 'none', { st: '#cbd5e1', sw: 2, da: '6 6', rx: 8 })) + (lab ? TX(x + w / 2, y + h + 24, lab, { fs: 17, fill: '#475569', w: 800 }) : ''); };
+  const box = (fig, info, done) => M4.box(M4.svg(960, 440, fig, 'b2svg'), info, { done, wide: true });
+  const frame = () => '';
+  const msg = (v) => { const [a, p, t] = String(v).split(':'); return { a, p, t }; };
+  const tile = (x, y, w, h, s, o = {}) => RC(x, y, w, h, o.fill || '#fff', { st: o.st || '#6366f1', sw: o.sw || 3, rx: o.rx || 10 }) + TX(x + w / 2, y + h / 2 + (o.fs || 30) * .36, s, { fs: o.fs || 30, fill: o.c || '#1e1b4b', w: 900 });
+
+  /* ============ 1-1 ① 모아서 한 장으로: 더미에서 한 장씩 집어 상자 칸에 ============ */
+  function FILL(c) { const k = c.k, coin = k <= 2, SW = coin ? 112 : 160, SH = coin ? 112 : 92, GX = 14, GY = 14, BX = 40, BY = 200, BW = 5 * SW + 4 * GX + 32, BH = 2 * SH + GY + 32;
+    const slot = j => [BX + 16 + (j % 5) * (SW + GX), BY + 16 + Math.floor(j / 5) * (SH + GY)];
+    return { _ty: 'b2fill', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ n: 0, ok: false }),
+      view: d => { const n = d.n; let s = '';
+        s += RC(BX, 20, 300, 160, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 16 }) + TX(BX + 150, 52, `${NM(k)} 원 더미`, { fs: 24, fill: '#334155', w: 900 });
+        s += pile('m', k, BX + (coin ? 100 : 66), 70, coin ? 96 : 168, coin ? 96 : 84, d.ok ? 0 : 3, '');
+        s += `<path d="M${BX + 320},100 C${BX + 420},100 ${BX + 440},130 ${BX + 450},180" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="8 6"/>` + TX(BX + 600, 80, n >= 10 ? '' : '✋ 한 장씩 집어 상자 칸에', { fs: 24, fill: '#b45309', w: 900 });
+        s += TX(BX + 600, 128, `상자 속: ${NM(k)}(${F(V(k))})이 ${n}개`, { fs: 30, fill: '#0f172a', w: 900 });
+        s += tgt('box', BX, BY, BW, BH, { fill: '#fffbeb', st: '#f59e0b', da: n >= 10 ? '' : '10 7' });
+        for (let j = 0; j < 10; j++) { const [x, y] = slot(j); s += j < n ? `<g class="${j === n - 1 ? 'pop' : ''}">${P(k, x, y, SW, SH)}</g>` : RC(x, y, SW, SH, 'none', { st: '#fcd34d', sw: 2.5, da: '6 6', rx: 10 }); }
+        const ry = BY + BH + 20; if (n >= 10) s += `<g class="pop">${P(k + 1, BX + BW / 2 - 300, ry, 300, coin ? 100 : 96)}</g>` + TX(BX + BW / 2 + 30, ry + 64, `= ${F(V(k + 1))}`, { fs: 44, fill: '#c2410c', w: 900, a: 'start' });
+        else s += TX(BX + BW / 2, ry + 60, n ? `${10 - n}${coin ? '개' : '장'} 더 모으면?` : '10장이 모이면 어떻게 될까요?', { fs: 30, fill: '#64748b', w: 800 });
+        const info = M4.rows('📦 상자', [[NM(k) + ' 원', n, coin ? '개' : '장'], ['모두', F(n * V(k)), '원', 1]], n >= 10 ? `${F(V(k))}이 10개면 <b>${F(V(k + 1))}</b>!` : '')
+          + (d.ok ? M4.eq(`${F(V(k))} × 10 = <b>${F(V(k + 1))}</b>`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (m.a === 'drop' && m.t === 'box' && !d.ok) { d.n++; api.clear(); try { Sound.pop(); } catch (e) {} if (d.n >= 10) { d.ok = true; api.win(c.say()); } } else if (m.a === 'tap') api.say(false, '돈을 <b>잡아 끌어서</b> 상자에 넣어요.', true); } },
+      _solve(d, on) { for (let i = 0; i < 10; i++) on('act:m4set', 'drop:m:box', null); } }; }
+
+  /* ============ 1-1 ② 개구리 3마리: 작게(10)·보통(100)·크게(1000) 뛰는 개구리를 직접 잡아 뛰게 ============ */
+  const FROG = { 1: ['꼬마', 44, '#86efac'], 10: ['작은', 54, '#4ade80'], 100: ['보통', 68, '#22c55e'], 1000: ['큰', 86, '#15803d'] };
+  function FROGS(c) { const a = c.start, g = c.goal, fr = c.frogs, X0 = 200, W = 700, xv = v => X0 + (v - a) * W / (g - a), tick = c.tick;
+    return { _ty: 'b2frog', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ j: fr.map(() => 0), ok: false, win: -1 }),
+      view: d => { let s = ''; const LH = 500 / fr.length;
+        fr.forEach((st, i) => { const y = 20 + i * LH + LH * .64, [nm, sz, col] = FROG[st], jmax = Math.floor((g - a) / st), j = d.j[i], cur = a + j * st;
+          s += LN(X0 - 16, y, X0 + W + 16, y, '#64748b', 4); for (let v = a; v <= g; v += tick) s += LN(xv(v), y - 9, xv(v), y + 9, '#64748b', 2.5);
+          s += TX(X0, y + 38, F(a), { fs: 24, fill: '#475569', w: 800 }) + TX(xv(g), y + 38, F(g), { fs: 26, fill: '#dc2626', w: 900 }) + `<text x="${xv(g) + 14}" y="${y + 4}" font-size="34">🚩</text>`;
+          for (let q = 1; q <= j; q++) { const x1 = xv(a + (q - 1) * st), x2 = xv(a + q * st); s += `<path d="M${x1},${y - 4} Q${(x1 + x2) / 2},${y - 56} ${x2},${y - 4}" fill="none" stroke="${col}" stroke-width="4"/>`; }
+          if (j && cur !== g) s += TX(xv(cur), y + 38, F(cur), { fs: 22, fill: '#0f172a', w: 900 });
+          const fx = xv(cur); s += TX(X0 - 100, y - 10, `${nm} 개구리`, { fs: 24, fill: '#166534', w: 900 }) + TX(X0 - 100, y + 24, `${F(st)}씩`, { fs: 30, fill: '#15803d', w: 900 });
+          const body = `<text x="${fx}" y="${y - 6}" font-size="${sz}" text-anchor="middle" class="${d.win === i ? 'pop' : ''}">🐸</text>`;
+          s += d.ok ? body : M4.grip('f' + i, j, 0, Math.max(0, jmax), [1, 0], Math.max(14, st * W / (g - a)), [[fx - sz * .6, y - sz - 6, sz * 1.2, sz + 10]], body); });
+        const L = fr.map((st, i) => [`${FROG[st][0]}(${F(st)}씩)`, d.j[i], '번']);
+        const info = M4.rows('🐸 개구리 뛰기', [['출발', F(a), '']].concat(L), d.ok ? '' : '✋ 개구리를 잡아 오른쪽으로 끌어요. 몇씩 뛰는 개구리가 좋을까요?') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk[0] !== 'f') return; const i = +kk.slice(1), st = fr[i];
+          if (x !== 'end') { d.j[i] = +x; api.clear(); return; }
+          if (Math.floor((g - a) / st) === 0) { api.say(false, `${F(st)}씩 뛰면 ${F(g)}을 훌쩍 넘어요! 더 작게 뛰는 개구리를 골라 봐요.`, true); return; }
+          if (a + d.j[i] * st === g) { d.ok = true; d.win = i; api.win(c.say(st, d.j[i])); } } },
+      _solve(d, on) { const i = fr.findIndex(st => st === g - a) >= 0 ? fr.findIndex(st => st === g - a) : 0; on('act:m4set', 'f' + i + ':' + (g - a) / fr[i], null); on('act:m4set', 'f' + i + ':end', null); } }; }
+
+  /* ============ 1-1 ③ 만 원 묶음 상자: 묶음을 집어 넣고·빼며 ○만 만들기 ============ */
+  function BUNDLE(c) { const k = c.k || 4, BW = 250, BH = 48;
+    return { _ty: 'b2bun', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ n: 0, ok: false }),
+      view: d => { const n = d.n; let s = '';
+        s += RC(20, 120, 300, 280, '#f0fdf4', { st: '#bbf7d0', sw: 2, rx: 16 }) + TX(170, 160, `${NM(k)} 원 묶음 더미`, { fs: 26, fill: '#166534', w: 900 });
+        s += tgt('pile', 30, 170, 280, 220, { fill: 'none', st: 'none', da: '' }) + pile('m', k, 45, 230, BW, BH + 30, d.ok ? 0 : 3, '');
+        s += TX(170, 370, d.ok ? '' : '✋ 집어서 상자로 →', { fs: 22, fill: '#15803d', w: 900 });
+        s += tgt('box', 360, 30, 300, 500, { fill: '#fff7ed', st: '#f97316' }) + TX(510, 22, '💰 돈 상자', { fs: 26, fill: '#9a3412', w: 900 });
+        for (let j = 0; j < n; j++) { const y = 515 - (j + 1) * (BH + 3); s += j === n - 1 && !d.ok ? drag('o', P(k, 385, y, BW, BH)) : `<g class="${j === n - 1 ? 'pop' : ''}">${P(k, 385, y, BW, BH)}</g>`; }
+        s += TX(820, 200, `${NM(k)}이 ${n}개`, { fs: 36, fill: '#0f172a', w: 900 }) + TX(820, 280, F(n * V(k)), { fs: 56, fill: '#ea580c', w: 900 }) + TX(820, 350, n ? `「${KOR(n * V(k))}」` : '', { fs: 34, fill: '#7c2d12', w: 900 });
+        s += TX(820, 470, n && !d.ok ? '맨 위 묶음을 끌어 내면 빠져요' : '', { fs: 19, fill: '#94a3b8', w: 800 });
+        const info = M4.rows('🎯 주문', [['만들 돈', F(c.goal), '원', 1], ['상자 속', n, '묶음']], c.note || '') + (d.ok ? M4.eq(`${F(V(k))}이 ${c.goal / V(k)}개 → <b>${F(c.goal)}</b> (${KOR(c.goal)})`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return;
+          if (m.a === 'drop' && m.p === 'm' && m.t === 'box') { if (d.n >= 9) { api.say(false, '상자가 가득 찼어요.', true); return; } d.n++; api.clear(); try { Sound.pop(); } catch (e) {} }
+          else if (m.p === 'o' && (m.a === 'miss' || (m.a === 'drop' && m.t === 'pile'))) { d.n--; api.clear(); }
+          else if (m.a === 'tap') { api.say(false, '묶음을 <b>잡아 끌어서</b> 옮겨요.', true); return; } else return;
+          if (d.n * V(k) === c.goal) { d.ok = true; api.win(c.say()); } else if (d.n * V(k) > c.goal) api.say(false, `${F(c.goal)}보다 많아요. 맨 위 묶음을 끌어 내 봐요.`, true); } },
+      _solve(d, on) { for (let i = 0; i < c.goal / V(k); i++) on('act:m4set', 'drop:m:box', null); } }; }
+
+  /* ============ 1-1 ④ 은행 창구: 큰 돈을 창구에 넣으면 작은 돈 10개 → 지갑 칸에 직접 정리 ============ */
+  function BANK(c) { const k = c.k, lo = k - 1, coin = lo <= 2, SW = coin ? 92 : 150, SH = coin ? 92 : 76;
+    return { _ty: 'b2bank', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : !d.out ? c.q : `나온 ${NM(lo)} 원을 <b>하나씩 끌어</b> 지갑 칸에 넣어요.`, init: () => ({ out: false, w: 0, ok: false }),
+      view: d => { let s = '';
+        s += RC(30, 40, 230, 170, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 14 }) + TX(145, 70, '내 돈', { fs: 24, fill: '#334155', w: 900 });
+        s += d.out ? TX(145, 140, '(창구에 냈어요)', { fs: 17, fill: '#94a3b8', w: 800 }) : drag('big', P(k, 55, 100, 180, 76), 'b2cue');
+        s += tgt('win', 330, 40, 260, 170, { fill: '#eff6ff', st: '#3b82f6' }) + TX(460, 30, '🏦 은행 창구', { fs: 26, fill: '#1d4ed8', w: 900 }) + TX(460, 135, d.out ? '바꿔 드렸어요!' : `${NM(k)} 원을 여기에`, { fs: 24, fill: '#1e40af', w: 800 });
+        /* 나온 돈(창구 앞 쟁반) */
+        const rest = d.out ? 10 - d.w : 0; s += RC(630, 40, 300, 170, '#fefce8', { st: '#fde68a', sw: 2, rx: 14 }) + TX(780, 30, `나온 ${NM(lo)} 원 ${rest}${coin ? '개' : '장'}`, { fs: 24, fill: '#854d0e', w: 900 });
+        for (let j = 0; j < rest; j++) { const x = 645 + (j % 5) * (coin ? 56 : 54), y = 60 + Math.floor(j / 5) * 70 + (j % 2) * 6; s += j === rest - 1 ? drag('one', P(lo, x, y, coin ? 52 : 100, coin ? 52 : 46), 'b2cue') : `<g opacity=".95">${P(lo, x, y, coin ? 52 : 100, coin ? 52 : 46)}</g>`; }
+        /* 지갑 10칸 */
+        const X0 = 480 - (5 * SW + 4 * 12) / 2; s += tgt('wal', X0 - 18, 262, 5 * SW + 48 + 36, 2 * SH + 12 + 36, { fill: '#fdf4ff', st: '#c026d3' }) + TX(480, 252, '👛 지갑 10칸', { fs: 24, fill: '#86198f', w: 900 });
+        for (let j = 0; j < 10; j++) { const x = X0 + (j % 5) * (SW + 12), y = 280 + Math.floor(j / 5) * (SH + 12); s += j < d.w ? P(lo, x, y, SW, SH) : RC(x, y, SW, SH, 'none', { st: '#f0abfc', sw: 2, da: '5 5', rx: 8 }); }
+        const info = M4.rows('🔁 바꾸기', [['낸 돈', d.out ? F(V(k)) : '-', ''], [`받은 ${NM(lo)}`, d.out ? 10 : 0, coin ? '개' : '장'], ['지갑', d.w, '/ 10']], '')
+          + (d.ok ? M4.eq(`${F(V(k))} = ${F(V(lo))} × <b>10</b>`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return;
+          if (m.a === 'drop' && m.p === 'big' && m.t === 'win') { d.out = true; api.clear(); try { Sound.whoosh(); } catch (e) {} return; }
+          if (m.a === 'drop' && m.p === 'one' && m.t === 'wal') { d.w++; api.clear(); try { Sound.pop(); } catch (e) {} if (d.w >= 10) { d.ok = true; api.win(c.say()); } return; }
+          if (m.a === 'tap') api.say(false, '돈을 <b>잡아 끌어서</b> 옮겨요.', true); } },
+      _solve(d, on) { on('act:m4set', 'drop:big:win', null); for (let i = 0; i < 10; i++) on('act:m4set', 'drop:one:wal', null); } }; }
+
+  /* ============ 1-2 ① 자릿값 판: 돈 쟁반에서 집어 자리 칸에 넣어 수 만들기 ============ */
+  function PVB(c) { const cols = c.cols, n = cols.length, X0 = 30, W = 900, cw = W / n;
+    return { _ty: 'b2pv', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ c: cols.map(() => 0), ok: false }),
+      view: d => { let s = ''; const val = cols.reduce((a, k, i) => a + d.c[i] * V(k), 0);
+        cols.forEach((k, i) => { const x = X0 + i * cw, coin = k <= 2, pw = coin ? 44 : Math.min(cw - 34, 140), ph = coin ? 22 : 20;
+          s += tgt('c' + k, x + 5, 34, cw - 10, 216, { fill: i % 2 ? '#f8fafc' : '#f1f5f9', st: '#cbd5e1', da: '' }) + TX(x + cw / 2, 28, NM(k) + '의 자리', { fs: 16, fill: '#475569', w: 900 });
+          for (let j = 0; j < d.c[i]; j++) { const y = 238 - (j + 1) * (ph + 1), px = x + (cw - pw) / 2; const pc = coin ? P(k, px, y - 4, pw, pw * .9) : P(k, px, y, pw, ph); s += j === d.c[i] - 1 && !d.ok ? drag('o' + k, pc) : pc; }
+          const dg = d.c[i]; s += RC(x + 14, 258, cw - 28, 52, '#fff', { st: '#94a3b8', sw: 2, rx: 8 }) + TX(x + cw / 2, 296, dg, { fs: 34, fill: '#0f172a', w: 900 });
+          /* 쟁반 */
+          s += pile('m' + k, k, x + (cw - (coin ? 60 : Math.min(cw - 34, 140))) / 2, 352, coin ? 60 : Math.min(cw - 34, 140), coin ? 56 : 52, d.ok ? 0 : 3, ''); });
+        s += RC(X0, 330, W, 104, 'none', { st: '#e2e8f0', sw: 2, rx: 14, da: '6 6' }) + TX(X0 + 8, 346, '돈 쟁반 — 집어서 위 자리 칸으로', { fs: 14, fill: '#94a3b8', w: 800, a: 'start' });
+        const info = M4.rows('🧱 자릿값 판', [['만든 돈', F(val), '원', 1], ['읽기', `<span style="font-size:.78em">${KOR(val)}</span>`, ''], ['주문', F(c.goal), '원']], '맨 위 돈을 칸 밖으로 끌어 내면 빠져요.')
+          + (d.ok ? M4.eq(c.done(), 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; const k = +m.p.slice(1), i = cols.indexOf(k);
+          if (m.a === 'tap') { api.say(false, '돈을 <b>잡아 끌어서</b> 옮겨요.', true); return; }
+          if (m.p[0] === 'm' && m.a === 'drop') { const ti = cols.indexOf(+m.t.slice(1)); if (ti !== i) { api.say(false, `${NM(k)} 원은 <b>${NM(k)}의 자리</b> 칸에 넣어요.`, true); return; } if (d.c[i] >= 9) { api.say(false, '한 자리에는 9개까지! 10개면 한 자리 위로 올라가요.', true); return; } d.c[i]++; api.clear(); try { Sound.pop(); } catch (e) {} }
+          else if (m.p[0] === 'o' && (m.a === 'miss' || (m.a === 'drop' && m.t !== 'c' + k))) { d.c[i]--; api.clear(); } else return;
+          if (cols.reduce((a, kk, j) => a + d.c[j] * V(kk), 0) === c.goal) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { cols.forEach(k => { for (let j = 0; j < Math.floor(c.goal / V(k)) % 10; j++) on('act:m4set', `drop:m${k}:c${k}`, null); }); } }; }
+
+  /* ============ 1-2 ② 수 카드 쪼개기: 숫자 타일을 끌어 내려 자리값으로 펼치기 ============ */
+  function SPLIT(c) { const str = String(c.n), L = str.length, cw = Math.min(130, 880 / L), X0 = 480 - L * cw / 2;
+    return { _ty: 'b2split', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ put: Array(L).fill(false), ok: false }),
+      view: d => { let s = '';
+        s += TX(480, 36, `수 카드 ${F(c.n)}`, { fs: 28, fill: '#334155', w: 900 });
+        for (let i = 0; i < L; i++) { const x = X0 + i * cw, k = L - 1 - i; s += TX(x + cw / 2, 64, NM(k), { fs: 18, fill: '#64748b', w: 800 });
+          s += d.put[i] ? RC(x + 6, 72, cw - 12, 100, '#f1f5f9', { st: '#e2e8f0', sw: 2, rx: 10 }) : drag('d' + i, tile(x + 6, 72, cw - 12, 100, str[i], { fs: 60 }), i === d.put.indexOf(false) ? 'b2cue' : ''); }
+        /* 펼친 줄 */
+        const SW2 = Math.min(180, 920 / L), X1 = 480 - L * SW2 / 2; s += TX(480, 232, '각 숫자가 나타내는 값', { fs: 24, fill: '#7c3aed', w: 900 });
+        for (let i = 0; i < L; i++) { const x = X1 + i * SW2, k = L - 1 - i, val = +str[i] * V(k);
+          s += d.put[i] ? RC(x + 6, 250, SW2 - 12, 110, '#ede9fe', { st: '#7c3aed', sw: 3, rx: 12 }) + TX(x + SW2 / 2, 318, F(val), { fs: Math.min(34, 230 / String(val).length + 8), fill: '#4c1d95', w: 900 }) : tgt('p' + i, x + 6, 250, SW2 - 12, 110, { fill: '#faf5ff', st: '#c4b5fd', lab: NM(k) + '의 자리', fs: 18 });
+          if (i < L - 1) s += TX(x + SW2, 316, '+', { fs: 30, fill: '#7c3aed', w: 900 }); }
+        if (d.ok) s += TX(480, 430, `${F(c.n)} = ${str.split('').map((ch, i) => F(+ch * V(L - 1 - i))).join(' + ')}`, { fs: Math.min(32, 1500 / (L * 9)), fill: '#0f172a', w: 900 });
+        else s += TX(480, 430, '✋ 숫자 카드를 끌어 내려 그 숫자의 자리 칸에 놓아요', { fs: 24, fill: '#64748b', w: 800 });
+        const info = M4.rows('🔍 숫자의 값', [['놓은 숫자', d.put.filter(Boolean).length, '/ ' + L]], '같은 숫자라도 어느 자리에 있느냐에 따라 나타내는 값이 달라요.') + (d.ok ? M4.eq(c.done || `${F(c.n)}을 자리값으로 펼쳤어요`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '숫자 카드를 <b>잡아 끌어 내려요</b>.', true); return; } if (m.a !== 'drop') return;
+          const i = +m.p.slice(1), j = +m.t.slice(1); if (i !== j) { api.say(false, `<b>${str[i]}</b>은 <b>${NM(L - 1 - i)}의 자리</b> 숫자예요. 그 칸에 놓아요.`, true); return; }
+          d.put[i] = true; api.clear(); try { Sound.pop(); } catch (e) {} if (d.put.every(Boolean)) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { for (let i = 0; i < L; i++) on('act:m4set', `drop:d${i}:p${i}`, null); } }; }
+
+  /* ============ 1-2 ③ 묶음 엘리베이터: 10개를 통에 넣으면 한 층 위 묶음으로 ============ */
+  function TUBE(c) { const k = c.k;
+    return { _ty: 'b2tube', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ n: c.start || 0, ok: false }),
+      view: d => { const n = d.n; let s = frame(20, 10, 930, 430);
+        /* 층 표시 */
+        const fl = [4, 5, 6, 7]; fl.forEach((f, i) => { const y = 340 - i * 86, on = f === k || f === k + 1; s += RC(780, y, 170, 70, on ? (f === k + 1 && d.ok ? '#dcfce7' : '#eff6ff') : '#f8fafc', { st: on ? '#3b82f6' : '#e2e8f0', sw: 2.5, rx: 12 }) + TX(855, y + 44, `${NM(f)} 층`, { fs: 22, fill: on ? '#1d4ed8' : '#94a3b8', w: 900 }); });
+        s += `<path d="M755,${340 - (k - 4) * 86 + 35} C700,${300 - (k - 4) * 86} 700,${250 - (k - 4) * 86} 755,${254 - (k - 4) * 86 + 35}" fill="none" stroke="${d.ok ? '#16a34a' : '#cbd5e1'}" stroke-width="4" stroke-dasharray="${d.ok ? '' : '7 6'}"/>`;
+        s += RC(10, 70, 280, 300, '#f0fdf4', { st: '#bbf7d0', sw: 2, rx: 16 }) + TX(150, 108, `${NM(k)} 묶음 더미`, { fs: 24, fill: '#166534', w: 900 }) + pile('m', k, 30, 170, 230, 90, d.ok ? 0 : 3, '') + TX(150, 340, d.ok ? '' : '✋ 집어서 통으로 →', { fs: 21, fill: '#15803d', w: 900 });
+        s += tgt('tube', 310, 40, 410, 360, { fill: '#fffbeb', st: '#f59e0b' }) + TX(515, 28, `묶음 통 · ${NM(k)}이 ${n}개`, { fs: 26, fill: '#92400e', w: 900 });
+        for (let j = 0; j < 10; j++) { const x = 328 + (j % 2) * 192, y = 56 + Math.floor(j / 2) * 68; s += j < n ? `<g class="${j === n - 1 ? 'pop' : ''}">${P(k, x, y, 182, 58)}</g>` : RC(x, y, 182, 58, 'none', { st: '#fcd34d', sw: 2, da: '5 5', rx: 8 }); }
+        if (d.ok) s += `<g class="pop">${P(k + 1, 330, 420, 300, 84)}</g>` + TX(650, 476, `= ${F(V(k + 1))}`, { fs: 36, fill: '#c2410c', w: 900, a: 'start' });
+        else s += TX(515, 460, `10개가 모이면 무엇이 될까요?`, { fs: 26, fill: '#64748b', w: 800 });
+        const info = M4.rows('🛗 묶음 엘리베이터', [[NM(k), n, '개'], ['모두', F(n * V(k)), '', 1]], d.ok ? `${NM(k)}이 10개면 <b>${NM(k + 1)}</b>! 한 층 올라갔어요.` : '') + (d.ok ? M4.eq(`${F(V(k))} × 10 = <b>${F(V(k + 1))}</b> (${NM(k + 1)})`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '묶음을 <b>잡아 끌어</b> 통에 넣어요.', true); return; }
+          if (m.a === 'drop' && m.t === 'tube') { d.n++; api.clear(); try { Sound.pop(); } catch (e) {} if (d.n >= 10) { d.ok = true; api.win(c.say()); } } } },
+      _solve(d, on) { for (let i = d.n; i < 10; i++) on('act:m4set', 'drop:m:tube', null); } }; }
+
+  /* ============ 1-2 ④ / 1-3 칸막이: 칸막이 막대를 직접 집어 숫자 사이 틈에 끼우기 ============ */
+  function CUTB(c) { const str = String(c.n), L = str.length, cw = Math.min(70, 860 / L), X0 = 480 - L * cw / 2, need = []; for (let i = L - 4; i > 0; i -= 4) need.push(i);
+    return { _ty: 'b2cut', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ cuts: [], ok: false }),
+      view: d => { let s = '';
+        for (let i = 0; i < L; i++) { const x = X0 + i * cw, k = L - 1 - i; s += RC(x + 4, 120, cw - 8, 84, '#fff', { st: '#6366f1', sw: 3, rx: 10 }) + TX(x + cw / 2, 178, str[i], { fs: 42, fill: '#1e1b4b', w: 900 }); if (d.ok) s += TX(x + cw / 2, 108, NM(k), { fs: 13, fill: '#64748b', w: 800 }); }
+        for (let i = 1; i < L; i++) { const x = X0 + i * cw; s += d.cuts.includes(i) ? RC(x - 5, 100, 10, 124, '#ea580c', { rx: 4 }) : tgt('g' + i, x - 13, 116, 26, 92, { fill: '#fff7ed', st: '#fdba74', rx: 8, op: .9 }); }
+        const left = need.length - d.cuts.length; s += RC(260, 290, 440, 110, '#fff7ed', { st: '#fed7aa', sw: 2, rx: 16 }) + TX(480, 320, `칸막이 ${left}개`, { fs: 19, fill: '#9a3412', w: 900 });
+        for (let j = 0; j < left; j++) s += drag('bar', RC(420 + j * 60, 336, 14, 54, '#ea580c', { rx: 5 }) + RC(410 + j * 60, 330, 34, 66, '#fff', { op: .01, rx: 6 }), j === 0 ? 'b2cue' : '');
+        if (d.ok) s += TX(480, 268, `읽기: ${RD(c.n)}  →  「${KOR(c.n)}」`, { fs: Math.min(26, 1100 / KOR(c.n).length + 10), fill: '#7c2d12', w: 900 });
+        const info = M4.rows('✂️ 네 자리씩', [['자릿수', L, '자리'], ['놓은 칸막이', d.cuts.length, '/ ' + need.length]], '오른쪽 끝(일의 자리)부터 네 자리씩 세어 칸막이를 끼워요.') + (d.ok ? M4.eq(`${RD(c.n)} · ${KOR(c.n)}`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '칸막이를 <b>잡아 끌어</b> 숫자 사이에 끼워요.', true); return; } if (m.a !== 'drop') return;
+          const i = +m.t.slice(1); if (!need.includes(i)) { api.say(false, '오른쪽 끝에서부터 숫자를 <b>네 개씩</b> 세어 그 사이에 끼워요.', true); return; }
+          if (!d.cuts.includes(i)) d.cuts.push(i); api.clear(); try { Sound.pop(); } catch (e) {} if (need.every(x => d.cuts.includes(x))) { d.ok = true; api.win(c.say ? c.say() : `네 자리씩 끊으니 <b>${RD(c.n)}</b>, 「${KOR(c.n)}」이라고 읽어요.`); } } },
+      _solve(d, on) { need.forEach(i => on('act:m4set', 'drop:bar:g' + i, null)); } }; }
+
+  /* ============ 1-3 ① 자리 집 붙이기: 만·억·조 집 블록을 끌어 왼쪽에 이어 붙이기 ============ */
+  function HOUSES(c) { const ORDER = ['만', '억', '조'], HW = 210, X = i => 690 - i * (HW + 8);
+    return { _ty: 'b2house', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ n: 0, ok: false }),
+      view: d => { let s = frame(X(3) - 10, 20, 1000 - X(3), 410); const house = (x, y, u, on) => { const names = ['천', '백', '십', ''].map(p => (p + u) || '일'); let g = `<path d="M${x},${y + 40} L${x + HW / 2},${y} L${x + HW},${y + 40}z" fill="${on ? '#fde68a' : '#e2e8f0'}" stroke="#a16207" stroke-width="2"/>` + RC(x, y + 40, HW, 120, on ? '#fffbeb' : '#f8fafc', { st: '#a16207', sw: 2.5, rx: 6 }) + TX(x + HW / 2, y + 32, (u || '일') + ' 집', { fs: 18, fill: '#713f12', w: 900 });
+          names.forEach((nm, i) => { g += RC(x + 6 + i * 47, y + 52, 43, 96, '#fff', { st: '#d6d3d1', sw: 1.5, rx: 6 }) + `<text x="${x + 27.5 + i * 47}" y="${y + 75}" font-size="${nm.length > 2 ? 11 : 13}" text-anchor="middle" font-weight="800" fill="#57534e">${nm}</text>` + TX(x + 27.5 + i * 47, y + 128, '0', { fs: 26, fill: '#94a3b8', w: 900 }); }); return g; };
+        s += house(X(0), 40, '', true);
+        for (let i = 0; i < d.n; i++) s += `<g class="${i === d.n - 1 ? 'pop' : ''}">${house(X(i + 1), 40, ORDER[i], true)}</g>`;
+        if (d.n < 3) s += tgt('L', X(d.n + 1), 40, HW, 160, { fill: '#f0fdf4', st: '#22c55e', lab: '여기에 붙여요 ←', fs: 20, lc: '#16a34a' });
+        const tray = ['억', '조', '만'].filter(u => ORDER.indexOf(u) >= d.n); s += RC(60, 290, 760, 210, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 16, da: '6 6' }) + TX(76, 316, '집 블록 — 집어서 위로', { fs: 18, fill: '#94a3b8', w: 800, a: 'start' });
+        tray.forEach((u, i) => { s += drag('h' + u, `<g transform="translate(${90 + i * 245},326) scale(.98)">${house(0, 0, u, false)}</g>`); });
+        if (d.ok) s += TX(450, 260, '일 · 만 · 억 · 조 — 네 자리마다 새 이름!', { fs: 30, fill: '#b45309', w: 900 });
+        const info = M4.rows('🏠 자리 집', [['붙인 집', d.n, '/ 3']], '집마다 천·백·십·일 네 칸이 똑같이 반복돼요.') + (d.ok ? M4.eq('네 자리마다 <b>만 → 억 → 조</b>', 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '집 블록을 <b>잡아 끌어</b> 왼쪽에 붙여요.', true); return; } if (m.a !== 'drop' || m.t !== 'L') return;
+          const u = m.p.slice(1); if (u !== ORDER[d.n]) { api.say(false, `${d.n ? ORDER[d.n - 1] + ' 집' : '일 집'} 바로 왼쪽에는 <b>${ORDER[d.n]} 집</b>이 와요. 1만이 1만 개면 1억!`.replace('1만이 1만 개면 1억!', d.n === 0 ? '일 집 다음은 만!' : d.n === 1 ? '만 집 다음은 억!' : '억 집 다음은 조!'), true); return; }
+          d.n++; api.clear(); try { Sound.pop(); } catch (e) {} if (d.n >= 3) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { ['만', '억', '조'].forEach(u => on('act:m4set', 'drop:h' + u + ':L', null)); } }; }
+
+  /* ============ 1-3 ② 0 타일: 1 뒤에 0을 하나씩 끌어 놓아 1억·1조 ============ */
+  function ZEROS(c) { const NZ = c.z, cw = c.z > 8 ? 62 : 78, L = NZ + 2, X0 = 480 - (L + 1) * cw / 2 + 8;
+    return { _ty: 'b2zero', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ z: 0, ok: false }),
+      view: d => { let s = ''; const tot = d.z + 1, val = Math.pow(10, d.z);
+        for (let i = 0; i < tot; i++) { const x = X0 + i * cw, k = tot - 1 - i; s += i === tot - 1 && i > 0 && !d.ok ? drag('o', tile(x + 3, 100, cw - 6, 100, '0', { fs: 52 })) : tile(x + 3, 100, cw - 6, 100, i ? '0' : '1', { fs: 52, fill: i ? '#fff' : '#fef3c7', st: i ? '#6366f1' : '#f59e0b' }); s += TX(x + cw / 2, 90, NM(k), { fs: 15, fill: '#64748b', w: 800 }); if (k % 4 === 0 && k > 0) s += RC(x + cw - 3, 94, 6, 112, '#f97316', { rx: 2 }); }
+        if (!d.ok) s += tgt('end', X0 + tot * cw + 2, 96, cw + 10, 110, { fill: '#f0fdf4', st: '#22c55e', lab: '+0', fs: 26, lc: '#16a34a' });
+        s += RC(300, 330, 360, 190, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 16 }) + TX(480, 362, '0 타일 더미 — 집어서 끝에 붙여요', { fs: 20, fill: '#64748b', w: 800 });
+        for (let i = 2; i >= 0; i--) s += i ? `<g opacity=".7">${tile(436 + i * 6, 386 - i * 6, 88, 110, '0', { fs: 56 })}</g>` : drag('z', tile(436, 386, 88, 110, '0', { fs: 56 }), 'b2cue');
+        s += TX(480, 268, `0이 ${d.z}개 → ${F(val)}  「${KOR(val)}」`, { fs: 32, fill: '#0f172a', w: 900 });
+        const info = M4.rows('0️⃣ 0 타일', [['0의 개수', d.z, '개', 1], ['만들 수', c.name, '']], '네 자리마다 주황 선이 생겨요. 마지막 0을 끌어 내면 빠져요.') + (d.ok ? M4.eq(`${c.name} = 1 뒤에 0이 <b>${NZ}개</b>`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '0 타일을 <b>잡아 끌어</b> 놓아요.', true); return; }
+          if (m.p === 'z' && m.a === 'drop' && m.t === 'end') { if (d.z >= 15) return; d.z++; api.clear(); try { Sound.pop(); } catch (e) {} }
+          else if (m.p === 'o' && (m.a === 'miss' || (m.a === 'drop' && m.t !== 'end'))) { d.z--; api.clear(); } else return;
+          if (d.z === NZ) { d.ok = true; api.win(c.say()); } else if (d.z > NZ) api.say(false, `${c.name}보다 커졌어요. 마지막 0을 끌어 내 봐요.`, true); } },
+      _solve(d, on) { for (let i = 0; i < NZ; i++) on('act:m4set', 'drop:z:end', null); } }; }
+
+  /* ============ 1-3 ③ 단위 카드 조립: 네 자리 묶음 카드를 집 칸에 넣어 수 완성 ============ */
+  function GROUPS(c) { const H = c.houses, HW = Math.min(200, 860 / H.length), X0 = 480 - H.length * HW / 2, cards = c.cards;
+    return { _ty: 'b2grp', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ put: H.map(() => null), used: cards.map(() => false), ok: false }),
+      view: d => { let s = TX(480, 40, `「${c.words}」를 숫자로 써요`, { fs: 32, fill: '#0f172a', w: 900 });
+        H.forEach((u, i) => { const x = X0 + i * HW; s += `<path d="M${x + 8},${110} L${x + HW / 2},${72} L${x + HW - 8},${110}z" fill="#fde68a" stroke="#a16207" stroke-width="2"/>` + TX(x + HW / 2, 102, (u || '일') + ' 집', { fs: 20, fill: '#713f12', w: 900 });
+          s += d.put[i] != null ? tile(x + 6, 114, HW - 12, 110, cards[d.put[i]], { fs: 46, fill: '#fffbeb', st: '#f59e0b' }) : tgt('h' + i, x + 6, 114, HW - 12, 110, { fill: '#fffbeb', st: '#fcd34d', lab: '네 자리', fs: 20 }); });
+        s += RC(50, 330, 860, 170, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 16, da: '6 6' }) + TX(66, 356, '숫자 묶음 카드 — 집어서 위 집 칸으로', { fs: 18, fill: '#94a3b8', w: 800, a: 'start' });
+        const CW = Math.min(190, 820 / cards.length); cards.forEach((t, j) => { if (!d.used[j]) s += drag('c' + j, tile(70 + j * (CW + 6), 372, CW - 6, 104, t, { fs: 44 })); });
+        if (d.ok) s += TX(480, 290, `${F(c.n)}`, { fs: 40, fill: '#c2410c', w: 900 });
+        const info = M4.rows('🧩 단위 카드', [['채운 집', d.put.filter(x => x != null).length, '/ ' + H.length]], '비어 있는 자리는 0으로 채워 네 자리를 맞춰요.') + (d.ok ? M4.eq(`${c.words} = <b>${F(c.n)}</b>`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '카드를 <b>잡아 끌어</b> 집 칸에 넣어요.', true); return; } if (m.a !== 'drop') return;
+          const j = +m.p.slice(1), i = +m.t.slice(1); if (cards[j] !== c.ans[i]) { api.say(false, c.hint(H[i], cards[j]), true); return; }
+          d.put[i] = j; d.used[j] = true; api.clear(); try { Sound.pop(); } catch (e) {} if (d.put.every(x => x != null)) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { const used = []; c.ans.forEach((a, i) => { const j = cards.findIndex((t, q) => t === a && !used.includes(q)); used.push(j); on('act:m4set', `drop:c${j}:h${i}`, null); }); } }; }
+
+  /* ============ 1-3 ④ 읽기 퍼즐: 낱말 조각을 네 자리 묶음 아래에 ============ */
+  function READ(c) { const str = String(c.n), G = []; for (let e = str.length; e > 0; e -= 4) G.unshift(str.slice(Math.max(0, e - 4), e)); const U = ['', '만', '억', '조'], GN = G.length, GW = Math.min(240, 900 / GN), X0 = 480 - GN * GW / 2;
+    const need = G.map((g, i) => +g ? c.words[i] : null);
+    return { _ty: 'b2read', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ put: G.map(() => null), used: c.tiles.map(() => false), ok: false }),
+      view: d => { let s = '';
+        G.forEach((g, i) => { const x = X0 + i * GW, u = U[GN - 1 - i]; s += tile(x + 6, 30, GW - 12, 110, g, { fs: 52 }) + TX(x + GW / 2, 168, u ? u + ' 묶음' : '일 묶음', { fs: 20, fill: '#64748b', w: 800 });
+          if (need[i] == null) s += TX(x + GW / 2, 230, '(0000 — 읽지 않아요)', { fs: 18, fill: '#94a3b8', w: 800 });
+          else s += d.put[i] != null ? RC(x + 6, 186, GW - 12, 80, '#ecfdf5', { st: '#10b981', sw: 3, rx: 12 }) + TX(x + GW / 2, 236, c.tiles[d.put[i]], { fs: Math.min(28, 330 / c.tiles[d.put[i]].length + 6), fill: '#065f46', w: 900 }) : tgt('w' + i, x + 6, 186, GW - 12, 80, { fill: '#f0fdf4', st: '#6ee7b7', lab: '읽는 말', fs: 18 }); });
+        s += RC(40, 330, 880, 170, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 16, da: '6 6' }) + TX(56, 356, '낱말 조각 — 집어서 위 묶음 아래로', { fs: 18, fill: '#94a3b8', w: 800, a: 'start' });
+        const TW = 860 / c.tiles.length; c.tiles.forEach((t, j) => { if (!d.used[j]) s += drag('t' + j, RC(52 + j * TW, 374, TW - 12, 100, '#fff', { st: '#10b981', sw: 3, rx: 14 }) + TX(52 + j * TW + (TW - 12) / 2, 434, t, { fs: Math.min(30, 380 / t.length + 4), fill: '#065f46', w: 900 })); });
+        if (d.ok) s += TX(480, 306, `「${KOR(c.n)}」`, { fs: 32, fill: '#7c2d12', w: 900 });
+        const info = M4.rows('📖 읽기 퍼즐', [['맞춘 묶음', d.put.filter(x => x != null).length, '/ ' + need.filter(x => x).length]], '네 자리 묶음을 읽고, 그 묶음의 이름(억·만)을 붙여요.') + (d.ok ? M4.eq(`${RD(c.n)} → 「${KOR(c.n)}」`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '낱말 조각을 <b>잡아 끌어</b> 놓아요.', true); return; } if (m.a !== 'drop') return;
+          const j = +m.p.slice(1), i = +m.t.slice(1); if (c.tiles[j] !== need[i]) { api.say(false, `이 묶음은 <b>${G[i]}</b>이고 <b>${U[GN - 1 - i]}</b> 묶음이에요. 「${need[i]}」를 찾아봐요.`, true); return; }
+          d.put[i] = j; d.used[j] = true; api.clear(); try { Sound.pop(); } catch (e) {} if (need.every((w, q) => w == null || d.put[q] != null)) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { need.forEach((w, i) => { if (w) on('act:m4set', `drop:t${c.tiles.indexOf(w)}:w${i}`, null); }); } }; }
+
+  /* 바뀐 자리를 빨갛게 */
+  const redNum = (v, prev, x, y, fs) => { const s = F(v), p = prev == null ? null : F(prev); let t = ''; for (let q = 0; q < s.length; q++) { const ch = p && (p.length !== s.length || p[q] !== s[q]) && s[q] !== ','; t += `<tspan fill="${ch ? '#dc2626' : '#0f172a'}">${s[q]}</tspan>`; } return `<text x="${x}" y="${y}" text-anchor="middle" font-size="${fs}" font-weight="900">${t}</text>`; };
+
+  /* ============ 1-4 ① 수의 탑 계단: 말을 직접 잡아 한 계단씩 ============ */
+  function STAIRS(c) { const N = c.n, SW = 760 / (N + 1), SH = 290 / (N + 1), pt = i => [100 + i * SW, 390 - i * SH];
+    return { _ty: 'b2stair', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ j: 0, ok: false }),
+      view: d => { let s = ''; for (let i = 0; i <= N; i++) { const [x, y] = pt(i), v = c.start + i * c.step; s += RC(x, y, SW + 4, 400 - y + 30, i <= d.j ? '#fef3c7' : '#f1f5f9', { st: '#d6d3d1', sw: 2, rx: 4 });
+          s += i <= d.j ? redNum(v, i ? v - c.step : null, x + SW / 2, y + 32, Math.min(22, 220 / F(v).length)) : TX(x + SW / 2, y + 32, '?', { fs: 22, fill: '#94a3b8', w: 900 }); }
+        const [x, y] = pt(d.j), body = `<text x="${x + SW / 2}" y="${y - 8}" font-size="46" text-anchor="middle">🧗</text>`;
+        s += d.ok ? body : M4.grip('j', d.j, 0, N, [SW, -SH].map(t => t / Math.hypot(SW, SH)), Math.hypot(SW, SH), [[x + SW / 2 - 34, y - 60, 68, 66]], body);
+        s += TX(880, 60, `한 계단 = ${c.step > 0 ? '+' : ''}${F(c.step)}`, { fs: 20, fill: '#c2410c', w: 900, a: 'end' });
+        const info = M4.rows('🪜 뛰어 세기', [['올라간 계단', d.j, '칸'], ['지금 수', F(c.start + d.j * c.step), '', 1]], d.ok ? '' : '✋ 등산가를 잡아 위 계단으로 끌어요. 빨간 숫자는 바뀐 자리예요.') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'j') return; if (x !== 'end') { d.j = +x; api.clear(); return; } if (d.j === N) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'j:' + N, null); on('act:m4set', 'j:end', null); } }; }
+
+  /* ============ 1-4 ② 고무줄: 수 띠 위 고무줄 끝을 잡아 다음 수까지 늘이고 뛴 크기 찾기 ============ */
+  function BAND(c) { const pts = c.pts, N = pts.length - 1, X0 = 120, W = 720, x = i => X0 + i * W / N, step = pts[1] - pts[0];
+    return { _ty: 'b2band', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : d.e < 1 ? c.q : '고무줄이 늘어난 만큼, 몇씩 뛰었는지 오른쪽 칸에 써요.', init: () => ({ e: 0, ans: '', ok: false }),
+      view: d => { let s = RC(X0 - 60, 194, W + 120, 72, '#f8fafc', { st: '#cbd5e1', sw: 2, rx: 36 });
+        pts.forEach((v, i) => { const fs = Math.min(30, 300 / F(v).length); s += RC(x(i) - 96, 40, 192, 90, '#fff', { st: '#6366f1', sw: 3, rx: 14 }) + (i <= d.e ? redNum(v, i ? pts[i - 1] : null, x(i), 98, fs) : TX(x(i), 98, F(v), { fs, fill: '#0f172a', w: 900 })) + `<path d="M${x(i)},130 V214" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="5 5"/><circle cx="${x(i)}" cy="230" r="12" fill="#475569"/>`; });
+        const xe = x(d.e); s += `<path d="M${x(0)},230 Q${(x(0) + xe) / 2},${d.e ? 340 : 230} ${xe},230" fill="none" stroke="#ec4899" stroke-width="10" stroke-linecap="round"/>`;
+        const knob = `<circle cx="${xe}" cy="230" r="28" fill="#f472b6" stroke="#be185d" stroke-width="4"/><text x="${xe}" y="240" font-size="28" text-anchor="middle">🎀</text>`;
+        s += d.ok ? knob : M4.grip('e', d.e, 0, N, [1, 0], W / N, [[xe - 40, 186, 80, 88]], knob);
+        if (d.e) s += TX((x(0) + xe) / 2, 380, `${d.e}번 뛰었어요`, { fs: 28, fill: '#be185d', w: 900 });
+        s += TX(480, 450, d.e < 1 ? '✋ 분홍 고무줄 끝(🎀)을 잡아 다음 수까지 늘여요' : '빨간 숫자가 바뀐 자리예요', { fs: 24, fill: '#64748b', w: 800 });
+        const info = M4.rows('🎀 몇씩 뛰었을까?', [['늘인 칸', d.e, '번']], '') + (d.e >= 1 ? `<div class="m4vol"><div class="m4vh">뛴 크기</div><div class="m4vr"><span>한 번에</span>${typeof ckInput === 'function' ? '' : ''}<input class="b2in" data-b2in="1" inputmode="numeric" value="${d.ans}" placeholder="?" ${d.ok ? 'disabled' : ''}><em>씩</em></div><button class="btn btn-primary sm" data-ck="b2chk" ${d.ok ? 'disabled' : ''}>확인</button></div>` : '') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'e') return; if (x !== 'end') { d.e = +x; api.clear(); } },
+        'act:b2chk'(d, v, el, api) { const inp = document.querySelector('#toolBody [data-b2in]'); const a = +(inp ? inp.value : '').replace(/[^0-9]/g, ''); d.ans = inp ? inp.value : '';
+          if (a === step) { d.ok = true; api.win(c.say()); } else api.say(false, '두 수에서 <b>바뀐 자리</b>를 보고, 그 자리의 숫자가 얼마씩 커지는지 봐요.', true); } },
+      _solve(d, on) { on('act:m4set', 'e:1', null); d.ans = String(step); const f = document.querySelector('#toolBody [data-b2in]'); if (f) f.value = step; on('act:b2chk', '', null); } }; }
+
+  /* ============ 1-4 ③ 엘리베이터 내려가기 ============ */
+  function ELEV(c) { const N = c.n, FH = 320 / (N + 1), y = i => 60 + i * FH;
+    return { _ty: 'b2elev', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ j: 0, ok: false }),
+      view: d => { let s = RC(300, 40, 360, 340 + 20, '#f1f5f9', { st: '#94a3b8', sw: 3, rx: 10 }) + RC(330, 40, 120, 360, '#e2e8f0', { rx: 4 });
+        for (let i = 0; i <= N; i++) { const v = c.start - i * c.step; s += LN(300, y(i) + FH, 660, y(i) + FH, '#cbd5e1', 2) + (i <= d.j ? redNum(v, i ? v + c.step : null, 560, y(i) + FH / 2 + 9, Math.min(24, 220 / F(v).length)) : TX(560, y(i) + FH / 2 + 9, '?', { fs: 24, fill: '#94a3b8', w: 900 })); }
+        const cy = y(d.j), car = RC(336, cy + 6, 108, FH - 12, '#fbbf24', { st: '#b45309', sw: 3, rx: 8 }) + `<text x="390" y="${cy + FH / 2 + 12}" font-size="${Math.min(34, FH * .6)}" text-anchor="middle">🛗</text>`;
+        s += d.ok ? car : M4.grip('j', d.j, 0, N, [0, 1], FH, [[330, cy, 120, FH]], car);
+        s += TX(700, 70, `한 층 = −${F(c.step)}`, { fs: 20, fill: '#c2410c', w: 900, a: 'start' }) + TX(700, 380, d.ok ? '' : '✋ 엘리베이터를 잡아 아래로', { fs: 17, fill: '#64748b', w: 800, a: 'start' });
+        const info = M4.rows('🛗 거꾸로 뛰어 세기', [['내려간 층', d.j, '층'], ['지금 수', F(c.start - d.j * c.step), '', 1]], '') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'j') return; if (x !== 'end') { d.j = +x; api.clear(); return; } if (d.j === N) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'j:' + N, null); on('act:m4set', 'j:end', null); } }; }
+
+  /* ============ 1-4 ④ ×10 복사기: 카드를 넣으면 10배 카드가 나와요 → 다시 넣기 ============ */
+  function COPY(c) { const N = c.n;
+    return { _ty: 'b2copy', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ h: [c.start], ok: false }),
+      view: d => { let s = ''; const cur = d.h[d.h.length - 1];
+        s += RC(380, 20, 300, 230, '#e0e7ff', { st: '#4338ca', sw: 3, rx: 22 }) + TX(530, 62, '×10 복사기', { fs: 32, fill: '#3730a3', w: 900 }) + tgt('slot', 410, 80, 240, 110, { fill: '#eef2ff', st: '#6366f1', lab: d.ok ? '' : '카드 넣는 곳', fs: 20 });
+        s += `<text x="530" y="236" font-size="38" text-anchor="middle">⚙️</text>` + (d.ok ? '' : TX(710, 120, '✋ 카드를 잡아', { fs: 24, fill: '#64748b', w: 800, a: 'start' }) + TX(710, 156, '복사기에 넣어요', { fs: 24, fill: '#64748b', w: 800, a: 'start' }));
+        const card = (v, x, y) => tile(x, y, 270, 100, F(v), { fs: Math.min(40, 330 / F(v).length + 4), fill: '#fff', st: '#f59e0b' });
+        s += RC(30, 40, 310, 170, '#fffbeb', { st: '#fde68a', sw: 2, rx: 14 }) + TX(185, 30, d.h.length > 1 ? '새로 나온 카드' : '처음 카드', { fs: 22, fill: '#92400e', w: 900 });
+        s += d.ok ? card(cur, 50, 74) : drag('card', card(cur, 50, 74), 'b2cue');
+        s += TX(150, 300, '나온 카드들', { fs: 22, fill: '#475569', w: 900 }); d.h.forEach((v, i) => { const y = 340 + i * 54; s += RC(40, y - 34, 600, 48, i === d.h.length - 1 ? '#fffbeb' : '#f8fafc', { st: '#e2e8f0', sw: 1.5, rx: 10 }) + redNum(v, i ? d.h[i - 1] : null, 400, y, Math.min(34, 400 / F(v).length)) + TX(70, y, i ? '×10 →' : '처음', { fs: 20, fill: i ? '#16a34a' : '#64748b', w: 900, a: 'start' }); });
+        const info = M4.rows('🖨 10배씩 뛰어 세기', [['넣은 횟수', d.h.length - 1, '/ ' + N], ['지금 수', F(cur), '', 1]], '10배가 되면 0이 하나 더 붙어요(숫자가 한 자리씩 왼쪽으로).') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok) return; if (m.a === 'tap') { api.say(false, '카드를 <b>잡아 끌어</b> 복사기에 넣어요.', true); return; }
+          if (m.a === 'drop' && m.t === 'slot') { d.h.push(d.h[d.h.length - 1] * 10); api.clear(); try { Sound.whoosh(); } catch (e) {} if (d.h.length - 1 >= N) { d.ok = true; api.win(c.say()); } } } },
+      _solve(d, on) { for (let i = 0; i < N; i++) on('act:m4set', 'drop:card:slot', null); } }; }
+
+  /* ============ 1-5 ① 자리 맞춰 저울: 수 띠를 직접 밀어 일의 자리를 맞추면 저울이 기울어요 ============ */
+  function ALIGNS(c) { const A = String(c.a), B = String(c.b), COL = Math.max(A.length, B.length) + 3, cw = Math.min(64, 660 / COL), X0 = 20, R0 = X0 + COL * cw;
+    return { _ty: 'b2align', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ a: 0, b: 0, ok: false }),
+      view: d => { let s = ''; for (let i = 0; i < COL; i++) { const k = COL - 1 - i; s += RC(X0 + i * cw, 60, cw, 320, i % 2 ? '#f8fafc' : '#f1f5f9', { rx: 0 }) + `<text x="${X0 + i * cw + cw / 2}" y="50" font-size="${NM(k).length > 2 ? 13 : 16}" text-anchor="middle" font-weight="800" fill="#64748b">${NM(k)}</text>`; }
+        s += RC(R0 - cw, 60, cw, 320, 'none', { st: '#f97316', sw: 4, rx: 4 }) + TX(R0 - cw / 2, 404, '일', { fs: 18, fill: '#f97316', w: 900 });
+        const strip = (str, sh, y, col, key) => { const x0 = X0 + sh * cw; let g = ''; for (let i = 0; i < str.length; i++) g += RC(x0 + i * cw + 3, y, cw - 6, 100, '#fff', { st: col, sw: 3, rx: 10 }) + TX(x0 + i * cw + cw / 2, y + 68, str[i], { fs: 46, fill: '#1e1b4b', w: 900 });
+          const mx = COL - str.length, done = sh === mx; return d.ok || done ? g : M4.grip(key, sh, 0, mx, [1, 0], cw, [[x0, y - 4, str.length * cw, 108]], g); };
+        s += strip(A, d.a, 90, '#2563eb', 'a') + strip(B, d.b, 240, '#db2777', 'b');
+        const al = d.a === COL - A.length && d.b === COL - B.length, tilt = al ? Math.sign(B.length - A.length || 0) * 12 : 0;
+        s += `<g transform="translate(840,150) scale(1.3)"><path d="M0,40 v120" stroke="#475569" stroke-width="6"/><path d="M-50,170 h100" stroke="#475569" stroke-width="8"/><g transform="rotate(${tilt})"><path d="M-80,40 h160" stroke="#334155" stroke-width="6"/><path d="M-80,40 l-18,40 h36z" fill="#93c5fd" stroke="#1d4ed8" stroke-width="2"/><path d="M80,40 l-18,40 h36z" fill="#f9a8d4" stroke="#be185d" stroke-width="2"/></g><circle cy="40" r="7" fill="#334155"/></g>`;
+        s += TX(840, 440, al ? (A.length === B.length ? '자릿수가 같아요' : `${B.length > A.length ? '아래' : '위'} 수가 더 커요`) : '자리를 맞추면 저울이 움직여요', { fs: 22, fill: '#334155', w: 900 });
+        s += TX(X0 + COL * cw / 2, 450, al ? '' : '✋ 수 띠를 잡아 오른쪽으로 밀어 일의 자리를 주황 칸에 맞춰요', { fs: 22, fill: '#64748b', w: 800 });
+        const info = M4.rows('⚖️ 두 수', [['위 수', `${A.length}자리`, ''], ['아래 수', `${B.length}자리`, '']], '일의 자리를 맞추면 자리 수를 바로 비교할 수 있어요.') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk !== 'a' && kk !== 'b') return; if (x !== 'end') { d[kk] = +x; api.clear(); return; }
+          if (d.a === COL - A.length && d.b === COL - B.length) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { on('act:m4set', 'a:' + (COL - A.length), null); on('act:m4set', 'b:' + (COL - B.length), null); on('act:m4set', 'b:end', null); } }; }
+
+  /* ============ 1-5 ② 뒤집기 카드: 높은 자리부터 카드를 직접 뒤집어 처음 다른 자리 찾기 ============ */
+  function FLIP(c) { const A = String(c.a), B = String(c.b), L = A.length, ROW = L > 9 ? Math.ceil(L / 2) : L, cw = Math.min(104, 900 / ROW), diff = [...A].findIndex((ch, i) => ch !== B[i]);
+    const pos = i => { const r = Math.floor(i / ROW), q = i % ROW, n = Math.min(ROW, L - r * ROW); return [480 - n * cw / 2 + q * cw, 40 + r * 230]; };
+    return { _ty: 'b2flip', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ f: 0, ok: false }),
+      view: d => { let s = '';
+        for (let i = 0; i < L; i++) { const [x, y0] = pos(i), k = L - 1 - i, open = i < d.f, hit = d.ok && i === diff;
+          s += `<text x="${x + cw / 2}" y="${y0 + 12}" font-size="${NM(k).length > 2 ? 15 : 18}" text-anchor="middle" font-weight="800" fill="#64748b">${NM(k)}</text>`;
+          const face = (y, ch, col) => open ? RC(x + 4, y, cw - 8, 92, hit ? '#fef08a' : '#fff', { st: hit ? '#eab308' : col, sw: 3, rx: 10 }) + TX(x + cw / 2, y + 64, ch, { fs: 46, fill: '#1e1b4b', w: 900 }) : RC(x + 4, y, cw - 8, 92, col, { rx: 10 }) + TX(x + cw / 2, y + 60, '?', { fs: 34, fill: '#fff', w: 900 });
+          const pair = face(y0 + 24, A[i], '#3b82f6') + face(y0 + 124, B[i], '#ec4899'); s += !open && !d.ok ? drag('f' + i, pair + RC(x, y0 + 20, cw, 200, '#fff', { op: .01 }), i === d.f ? 'b2cue' : '') : pair; }
+        for (let r = 0; r * ROW < L; r++) { const [x0, y0] = pos(r * ROW); s += TX(x0 - 14, y0 + 84, 'A', { fs: 30, fill: '#2563eb', w: 900, a: 'end' }) + TX(x0 - 14, y0 + 184, 'B', { fs: 30, fill: '#db2777', w: 900, a: 'end' }); }
+        const yb = 40 + Math.ceil(L / ROW) * 230 + 10;
+        s += TX(480, yb, d.ok ? `${NM(L - 1 - diff)}의 자리에서 처음 달라요: ${A[diff]} ${+A[diff] > +B[diff] ? '>' : '<'} ${B[diff]}` : '✋ 카드를 톡 눌러 뒤집어요 — 가장 높은 자리부터!', { fs: 28, fill: d.ok ? '#b45309' : '#64748b', w: 900 });
+        const info = M4.rows('🃏 높은 자리부터', [['자릿수', L, '자리'], ['뒤집은 자리', d.f, '개']], '자릿수가 같으면 가장 높은 자리부터 차례로 비교해요.') + (d.ok ? M4.eq(`${RD(c.a)} ${+A[diff] > +B[diff] ? '>' : '<'} ${RD(c.b)}`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const m = msg(v); if (d.ok || (m.a !== 'tap' && m.a !== 'miss' && m.a !== 'drop')) return; const i = +m.p.slice(1);
+          if (i !== d.f) { api.say(false, `<b>${NM(L - 1 - d.f)}의 자리</b>(아직 안 뒤집은 가장 높은 자리)부터 뒤집어요.`, true); return; }
+          d.f++; api.clear(); try { Sound.pop(); } catch (e) {} if (d.f - 1 === diff) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { for (let i = 0; i <= diff; i++) on('act:m4set', 'tap:f' + i, null); } }; }
+
+  /* ============ 1-5 ④ 수직선 깃발: 깃발 자체를 잡아 꽂기 ============ */
+  function FLAGS(c) { const a = c.from, b = c.to, X0 = 70, W = 820, AY = 400, xv = v => X0 + (v - a) * W / (b - a), U = c.unit;
+    return { _ty: 'b2flag', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : c.q, init: () => ({ p: c.flags.map(() => 0), ok: false }),
+      view: d => { let s = LN(X0 - 16, AY, X0 + W + 16, AY, '#334155', 5);
+        for (let v = a; v <= b; v += U) { const big = (v - a) % (U * 10) === 0; s += LN(xv(v), big ? AY - 18 : AY - 10, xv(v), big ? AY + 18 : AY + 10, '#334155', big ? 3.5 : 2.5) + (big ? TX(xv(v), AY + 50, RD(v), { fs: 26, fill: '#475569', w: 900 }) : ''); }
+        const col = ['#2563eb', '#db2777', '#16a34a'];
+        c.flags.forEach((fv, i) => { const v = a + d.p[i] * U, x = xv(v), y = AY - 70 - i * 120, ok = v === fv;
+          const g = LN(x, AY, x, y - 50, '#334155', 4) + `<path d="M${x},${y - 50} h130 l-18,24 l18,24 h-130z" fill="${col[i]}"/>` + TX(x + 58, y - 17, RD(fv), { fs: 24, fill: '#fff', w: 900 }) + (ok ? `<circle cx="${x}" cy="${AY}" r="10" fill="${col[i]}"/>` : '');
+          s += d.ok ? g : M4.grip('p' + i, d.p[i], 0, (b - a) / U, [1, 0], W / ((b - a) / U), [[x - 22, y - 56, 160, 60], [x - 18, y, 36, AY - y]], g); });
+        s += TX(480, AY + 100, d.ok ? '' : `✋ 깃발을 잡아 그 수의 자리로 옮겨요 (작은 눈금 한 칸 = ${RD(U)})`, { fs: 22, fill: '#64748b', w: 800 });
+        const info = M4.rows('🚩 수직선', c.flags.map((fv, i) => [RD(fv), RD(a + d.p[i] * U), '']), '수직선에서는 오른쪽에 있을수록 큰 수예요.') + (d.ok ? M4.eq(c.done, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { const [kk, x] = v.split(':'); if (kk[0] !== 'p') return; const i = +kk.slice(1); if (x !== 'end') { d.p[i] = +x; api.clear(); return; }
+          if (c.flags.every((fv, q) => a + d.p[q] * U === fv)) { d.ok = true; api.win(c.say()); } } },
+      _solve(d, on) { c.flags.forEach((fv, i) => on('act:m4set', 'p' + i + ':' + (fv - a) / U, null)); on('act:m4set', 'p0:end', null); } }; }
+
+  return { drag, tgt, pile, FILL, FROGS, BUNDLE, BANK, PVB, SPLIT, TUBE, CUTB, HOUSES, ZEROS, GROUPS, READ, STAIRS, BAND, ELEV, COPY, ALIGNS, FLIP, FLAGS };
+})();
 
 
 
-/* 4-1-1-2 다섯 자리 수 · 십만·백만·천만 — 모형 돈·묶음 직접 조작 (B1) */
+
+/* 4-1-1-2 다섯 자리 수 · 십만·백만·천만 — 물건을 직접 집어 옮기는 도구 (B2 · 11-20) */
 (function () {
   const C5 = [4, 3, 2, 1, 0];
   CK.install([
-    { k: 'pv', vk: 'tilt', icon: '🧱', name: '자릿값 판에 수 만들기', short: '모형 돈을 놓으면?', dnd: [],
-      sub: '자릿값 판의 돈 더미를 위아래로 끌어 주문한 수를 만들어 보세요. 더미의 개수와 숫자를 비교해 봐요.', taunt: '모형 돈을 다 흩어 놨지롱~', msg: '모형 돈을 놓아 다섯 자리 수를 만들어 보자!',
-      summary: '각 자리에 놓인 모형 돈의 개수가 그 자리의 숫자예요. 없는 자리에는 <b>0</b>을 써요. 51465 = 50000 + 1000 + 400 + 60 + 5',
-      stages: [B1.PV({ t: '51465원', cols: C5, goal: 51465, goalTxt: '51465', q: '돈 더미 꼭대기를 <b>위아래로 끌어</b> <b>51465원</b>을 만들어요.', say: () => '만 원 5장·천 원 1장·백 원 4개·십 원 6개·일 원 5개 = <b>51465</b>, 오만 천사백육십오!' }),
-        B1.PV({ t: '0이 있는 수', kind: 'check', cols: C5, goal: 60407, goalTxt: '육만 사백칠', q: '<b>육만 사백칠</b>을 만들어요. 빈 자리는 어떻게 될까요?', say: () => '<b>60407</b>! 천과 십의 자리는 비어서 0이에요.' })] },
-    { k: 'val', vk: 'half', icon: '🔍', name: '숫자의 값 돋보기', short: '같은 숫자, 다른 자리', dnd: [],
-      sub: '돋보기를 끌어 숫자 위에 대어 보세요. 그 숫자가 나타내는 값은 얼마일까요?', taunt: '숫자는 다 똑같은 값이지!', msg: '돋보기로 숫자마다 값을 알아보자!',
-      summary: '숫자가 나타내는 값은 놓인 <b>자리</b>에 따라 달라져요. 86290000에서 8은 <b>80000000</b>을 나타내요.',
-      stages: [B1.MAG({ t: '51465', num: 51465, q: '돋보기를 끌어 <b>51465</b>의 숫자를 하나씩 들여다봐요.', done: '51465 = 50000 + 1000 + 400 + 60 + 5', say: () => '<b>51465 = 50000 + 1000 + 400 + 60 + 5</b>예요.' }),
-        B1.MAG({ t: '천만의 자리', kind: 'check', num: 86290000, need: [7, 6, 5, 4], q: '<b>86290000</b>에서 천만·백만·십만·만의 자리 숫자를 들여다봐요.', done: '86290000 = 80000000 + 6000000 + 200000 + 90000', say: () => '8은 <b>80000000</b>, 6은 <b>6000000</b>! 앞으로 갈수록 값이 커져요.' })] },
-    { k: 'ten', vk: 'mixup', icon: '📦', name: '10개 묶어 다음 자리로', short: '10개가 모이면?', dnd: [],
-      sub: '같은 묶음을 하나씩 끌어 모아 보세요. 10개가 모이면 어떤 수가 될까요?', taunt: '10개 모아 봤자 소용없다구~', msg: '10개씩 묶어 십만·백만·천만을 만나 보자!',
+    { k: 'pv', vk: 'tilt', icon: '🧱', name: '자릿값 판에 돈 놓기', short: '돈을 놓으면 몇?', dnd: [],
+      sub: '돈 쟁반에서 만·천·백·십·일 원을 집어 자리 칸에 넣어 주문한 수를 만들어 보세요.', taunt: '모형 돈을 다 흩어 놨지롱~', msg: '돈을 자리 칸에 놓아 다섯 자리 수를 만들어 보자!',
+      summary: '각 자리 칸에 놓인 돈의 개수가 그 자리의 숫자예요. 없는 자리에는 <b>0</b>을 써요. 51465 = 50000 + 1000 + 400 + 60 + 5',
+      stages: [B2.PVB({ t: '51465원', cols: C5, goal: 51465, q: '돈을 <b>집어 자리 칸에 넣어</b> <b>51465원</b>을 만들어요.', done: () => '51465 = 만 5 · 천 1 · 백 4 · 십 6 · 일 5', say: () => '만 원 5장·천 원 1장·백 원 4개·십 원 6개·일 원 5개 = <b>51465</b>, 오만 천사백육십오!' }),
+        B2.PVB({ t: '0이 있는 수', kind: 'check', cols: C5, goal: 60407, q: '<b>육만 사백칠</b>을 만들어요. 빈 자리는 어떻게 될까요?', done: () => '60407 — 천·십의 자리는 0', say: () => '<b>60407</b>! 천과 십의 자리는 비어서 0이에요.' })] },
+    { k: 'val', vk: 'half', icon: '🔍', name: '수 카드 쪼개기', short: '같은 숫자, 다른 자리', dnd: [],
+      sub: '수 카드의 숫자를 하나씩 끌어 내려 그 숫자가 나타내는 값을 펼쳐 보세요.', taunt: '숫자는 다 똑같은 값이지!', msg: '숫자를 끌어 내려 값을 알아보자!',
+      summary: '숫자가 나타내는 값은 놓인 <b>자리</b>에 따라 달라져요. 2704000에서 2는 <b>2000000</b>, 7은 <b>700000</b>을 나타내요.',
+      stages: [B2.SPLIT({ t: '51465', n: 51465, q: '숫자 카드를 <b>끌어 내려</b> 그 숫자의 자리 칸에 놓아요.', say: () => '<b>51465 = 50000 + 1000 + 400 + 60 + 5</b>예요.' }),
+        B2.SPLIT({ t: '백만의 자리', kind: 'check', n: 2704000, q: '<b>2704000</b>도 숫자를 끌어 내려 펼쳐 봐요. 0은 무엇을 나타낼까요?', say: () => '2는 <b>2000000</b>, 7은 <b>700000</b>, 4는 <b>4000</b>! 0인 자리는 0을 나타내요.' })] },
+    { k: 'ten', vk: 'mixup', icon: '🛗', name: '묶음 엘리베이터', short: '10개가 모이면?', dnd: [],
+      sub: '같은 묶음을 하나씩 집어 통에 넣어 보세요. 10개가 모이면 한 층 위 묶음이 돼요.', taunt: '10개 모아 봤자 소용없다구~', msg: '10개씩 묶어 십만·백만·천만 층으로 올라가 보자!',
       summary: '10000이 10개면 <b>100000(십만)</b>, 십만이 10개면 <b>1000000(백만)</b>, 백만이 10개면 <b>10000000(천만)</b>이에요.',
-      stages: [B1.GROUP({ t: '만 10개', k: 4, q: '만 원짜리를 끌어 하나씩 더 놓아 10장을 모아요.', say: () => '10000이 10개면 <b>100000</b>, 십만!' }),
-        B1.GROUP({ t: '십만 10개', k: 5, start: 6, q: '십만 묶음이 6개 있어요. 끌어서 10개까지 모아요.', say: () => '십만이 10개면 <b>1000000</b>, 백만!' }),
-        B1.GROUP({ t: '백만 10개', kind: 'check', k: 6, start: 7, q: '백만 묶음을 10개 모으면? 끌어서 확인해요.', say: () => '백만이 10개면 <b>10000000</b>, 천만!' })] },
-    { k: 'cut', vk: 'clock', icon: '✂️', name: '네 자리씩 끊어 읽기', short: '큰 수 쉽게 읽기', dnd: [],
-      sub: '칸막이를 끌어 숫자 사이에 놓아 보세요. 어디서 끊으면 읽기 쉬울까요?', taunt: '숫자가 너무 길어서 못 읽지?', msg: '칸막이로 네 자리씩 끊어 읽어 보자!',
+      stages: [B2.TUBE({ t: '만 10개', k: 4, q: '만 원 묶음을 <b>하나씩 집어 통에 넣어</b> 10개를 모아요.', say: () => '10000이 10개면 <b>100000</b>, 십만! 한 층 올라갔어요.' }),
+        B2.TUBE({ t: '십만 10개', k: 5, start: 7, q: '십만 묶음이 7개 있어요. 더 넣어 10개를 채워요.', say: () => '십만이 10개면 <b>1000000</b>, 백만!' }),
+        B2.TUBE({ t: '백만 10개', kind: 'check', k: 6, start: 8, q: '백만 묶음을 10개 모으면? 넣어서 확인해요.', say: () => '백만이 10개면 <b>10000000</b>, 천만!' })] },
+    { k: 'cut', vk: 'clock', icon: '✂️', name: '칸막이로 끊어 읽기', short: '큰 수 쉽게 읽기', dnd: [],
+      sub: '칸막이를 직접 집어 숫자 사이 틈에 끼워 보세요. 어디서 끊으면 읽기 쉬울까요?', taunt: '숫자가 너무 길어서 못 읽지?', msg: '칸막이로 네 자리씩 끊어 읽어 보자!',
       summary: '큰 수는 <b>오른쪽부터 네 자리씩</b> 끊어 읽어요. 35280000 → 3528만 → 삼천오백이십팔만',
-      stages: [B1.CUT({ t: '35280000', num: 35280000, q: '주황 칸막이를 <b>왼쪽으로 끌어</b> 오른쪽부터 네 자리째 사이에 놓아요.', say: () => '<b>3528만</b>, 삼천오백이십팔만이라고 읽어요.' }),
-        B1.CUT({ t: '확인', kind: 'check', num: 1200000, q: '<b>1200000</b>도 네 자리씩 끊어 읽어요.', say: () => '<b>120만</b>, 백이십만!' })] }
+      stages: [B2.CUTB({ t: '35280000', n: 35280000, q: '칸막이를 <b>집어</b> 오른쪽 끝부터 네 자리째 틈에 끼워요.', say: () => '<b>3528만</b>, 삼천오백이십팔만이라고 읽어요.' }),
+        B2.CUTB({ t: '확인', kind: 'check', n: 1200000, q: '<b>1200000</b>도 칸막이로 끊어 읽어요.', say: () => '<b>120만</b>, 백이십만!' })] }
   ]);
 })();
 
@@ -10662,6 +11063,26 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 </script><!--SL3-END-->
+<!--M4D-START--><style>/* ✋ M4 직접 조작 (11-20): 따로 떠 있는 주황 손잡이(동그라미·화살표) 대신, 잡을 물건 자체가 반짝여요.
+   처음 잡기 전에는 물건 둘레가 점선으로 움직이고, 한 번 잡으면 표시가 사라져요. 끄는 방향 글은 짧게 남겨요. */
+.m4hand circle,.m4hand path,.m4hand .m4hi{display:none!important}
+.m4hand .m4hl{font-size:15px!important;opacity:.95}
+#toolBody .m4hit{fill:#fde68a;fill-opacity:.22;stroke:#f97316;stroke-width:3;stroke-dasharray:7 6;animation:m4dDash .9s linear infinite}
+#toolBody .m4h:hover .m4hit{fill-opacity:.36}
+#toolBody.m4used .m4hit{fill-opacity:.001;stroke:none;animation:none}
+#toolBody.m4used .m4h:hover .m4hit{fill:#fde68a;fill-opacity:.25}
+#toolBody.m4used .m4hand{display:none}
+.m4drag #toolBody .m4hit{fill-opacity:.001;stroke:none;animation:none}
+@keyframes m4dDash{to{stroke-dashoffset:-26}}
+@media (prefers-reduced-motion:reduce){#toolBody .m4hit{animation:none}}
+</style><script>/* ✋ M4 직접 조작: 한 번 잡으면 그 단계의 잡기 표시를 거둬요 (도구·단계가 바뀌면 다시 보여요) */
+(function () { if (window.__M4D) return; window.__M4D = 1;
+  const key = () => { try { const k = state.s1.tool; return k + ':' + CK.S(k).i; } catch (e) { return ''; } };
+  let used = '';
+  document.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('#toolBody .m4h')) { used = key(); const tb = document.getElementById('toolBody'); if (tb) tb.classList.add('m4used'); } }, true);
+  try { new MutationObserver(() => { const tb = document.getElementById('toolBody'); if (tb && used && key() !== used) { tb.classList.remove('m4used'); used = ''; } }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
+</script><!--M4D-END-->
 <!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
 /* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
 .card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}
