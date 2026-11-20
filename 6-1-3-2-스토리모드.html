@@ -12270,7 +12270,7 @@ function frame() {
 }
 function sizes() { const t = $('#svslTop'), tb = $('#svslTabs'), n = $('#svslNav'); const th = t.offsetHeight, tbh = B.classList.contains('svsl-tabs') ? tb.offsetHeight : 0;
   tb.style.top = th + 'px'; B.style.setProperty('--svT', th + tbh + 'px'); B.style.setProperty('--svB', n.offsetHeight + 'px');
-  const land = innerWidth >= 760 && innerWidth > innerHeight * 1.05; B.classList.toggle('svsl-land', land); B.classList.toggle('svsl-port', !land); B.classList.toggle('svsl-short', land && innerHeight < 760);
+  const land = innerWidth >= 560 && innerWidth > innerHeight * 1.05; B.classList.toggle('svsl-land', land); B.classList.toggle('svsl-port', !land); B.classList.toggle('svsl-short', land && innerHeight < 760);
   const r = n.querySelector('.say-row'); if (r) { const fb = n.querySelector('[data-svn=prev]'), w = Math.max(0, (fb ? fb.getBoundingClientRect().left : n.clientWidth / 3) - 24); r.style.maxWidth = w + 'px'; const bb0 = r.querySelector('.bubble'); if (bb0) bb0.style.setProperty('max-width', Math.max(0, w - 62) + 'px', 'important'); const bb = r.querySelector('.bubble'); if (bb) { r.classList.toggle('svsl-nobub', w < 170); bb.style.display = w < 170 ? 'none' : ''; fitBub(bb); } } }
 /* 말풍선은 두 줄까지: 낱말이 중간에 끊기지 않게(keep-all) 먼저 맞춰 보고, 안 되면 글자 단위로 줄을 바꿔요 */
 function fitBub(bb) { if (!bb || bb.style.display === 'none') return; bb.style.overflowWrap = 'anywhere'; for (const [f, wb] of [[14, 'keep-all'], [13, 'keep-all'], [14, 'normal'], [13, 'normal'], [12, 'keep-all'], [12, 'normal'], [11.5, 'keep-all'], [11.5, 'normal']]) { bb.style.wordBreak = wb; bb.style.setProperty('font-size', f + 'px', 'important'); if (bb.scrollHeight <= f * 1.4 * 2 + 14) return; } }
@@ -12910,6 +12910,38 @@ body.svsl-on .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#s
 @media (max-width:760px) and (orientation:portrait){body.svsl-port .sv-heroboard .sv-hb-story{font-size:.95rem!important;line-height:1.55!important;padding:10px 14px!important;margin:4px auto 6px!important}body.svsl-port .sv-heroboard .sv-hb-task{font-size:.92rem!important;margin:4px 0!important}}
 /* 휴대폰 세로: 이야기 팝업 단추가 잘리지 않게 그림·여백을 줄여요 */
 @media (max-width:760px) and (orientation:portrait){#stBox{padding:14px 14px 12px!important;max-height:calc(100dvh - 24px)!important;overflow-y:auto!important}#stBox>div:first-child{zoom:.72}#stBox .stline{margin:4px 0!important}#stBox .stbtns{gap:6px!important;margin-top:6px!important}#stBox .stbtns .btn{padding:8px 14px!important;min-height:44px}}
+/* ===== 휴대폰 세로: 조작 도구 — 캐릭터 피드백이 그림을 가리지 않게 (11-20) ===== */
+@media (max-width:700px) and (orientation:portrait){
+body.svsl-on.svsl-port .wrap{overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+body.svsl-on.svsl-port #toolBody{flex:none!important;min-height:0}
+body.svsl-on.svsl-port #toolBody>.svsl-tc{flex:none!important;height:auto!important;max-height:none!important;overflow:visible!important;grid-template-areas:"head" "q" "side" "man"!important;grid-template-rows:none!important;grid-auto-rows:auto!important;row-gap:6px!important}
+body.svsl-on.svsl-port #toolBody>.svsl-tc>.svsl-main{height:auto!important;max-height:none!important;overflow:visible!important}
+body.svsl-on.svsl-port #toolBody>.svsl-tc>.svsl-side{max-height:none!important;overflow:visible!important}
+body.svsl-on.svsl-port #toolBody .svsl-side .cfb{display:flex!important;align-items:center;gap:6px;margin:0!important}
+body.svsl-on.svsl-port #toolBody .svsl-side .cfb .jm{--px:30px!important;width:30px!important;height:30px!important;flex:none}
+body.svsl-on.svsl-port #toolBody .svsl-side .cfb .jm>span[role=img]{font-size:24px!important;line-height:30px!important;width:30px!important;height:30px!important}
+body.svsl-on.svsl-port #toolBody .svsl-side .cfb .face-e,body.svsl-on.svsl-port #toolBody .svsl-side .cfb .cn{display:none!important}
+body.svsl-on.svsl-port #toolBody .svsl-side .cfb .cbub{font-size:.88rem!important;padding:6px 10px!important;line-height:1.35;border-width:2px!important}
+body.svsl-on.svsl-port #toolBody .m4fig{height:auto!important;max-height:none!important;aspect-ratio:auto}
+body.svsl-on.svsl-port #toolBody .m4fig>svg{height:auto!important}
+body.svsl-on.svsl-port #toolBody .m4info{max-height:none!important;overflow:visible!important}
+body.svsl-on.svsl-port #toolBody .m4p{--m4z:.92!important}
+/* 오늘의 문제 첫 장면: 학습 목표 · 내 생각 단추가 잘리지 않게 */
+body.svsl-on .sv-mission.sv-hero{overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+body.svsl-on .sv-mission .svh-pic{height:min(208px,20vh)!important;max-height:20vh!important;width:100%!important}
+body.svsl-on .sv-mission .svh-pic .svh-bg{width:100%!important;height:100%!important;object-fit:cover!important;background-size:cover!important}
+}
+/* 휴대폰 가로(낮은 화면): 피드백은 그림 옆 칸에 */
+@media (max-height:450px) and (orientation:landscape){
+body.svsl-on #toolBody>.svsl-tc:has(>.svsl-side .cfb){display:grid!important;grid-template-areas:"q q" "man side"!important;grid-template-columns:minmax(0,1fr) clamp(150px,24vw,220px)!important;grid-template-rows:auto auto!important;column-gap:8px}
+body.svsl-on #toolBody>.svsl-tc>.svsl-side .cfb{font-size:.78em}
+body.svsl-on #toolBody>.svsl-tc>.svsl-side:has(.cfb) .vrow{display:none!important}
+body.svsl-on #toolBody .svsl-side .cfb .cn{display:none}
+body.svsl-on #toolBody .svsl-side .cfb{display:flex!important;flex-direction:column;align-items:center;gap:4px}
+body.svsl-on #toolBody .svsl-side .cfb .jm{--px:34px!important;width:34px!important;height:34px!important}
+body.svsl-on #toolBody .svsl-side .cfb .jm>span[role=img]{font-size:28px!important;line-height:34px!important;width:34px!important;height:34px!important}
+body.svsl-on #toolBody .svsl-side .cfb .face-e{display:none}
+}
 </style><script>/* 공통 통일 스크립트: 미니게임 고르기 화면의 '세 가지 · 3종' 문구를 실제 미니게임 수에 맞춰요 */
 (function () { const W = { 1: '한', 2: '두', 3: '세', 4: '네', 5: '다섯' };
   function fix() { document.querySelectorAll('.lair').forEach(l => { const n = l.querySelectorAll('.lcard').length, c = l.closest('.card'); if (!c || !n || c.dataset.unin == n) return; c.dataset.unin = n;
