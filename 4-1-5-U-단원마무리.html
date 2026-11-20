@@ -8868,6 +8868,48 @@ window.SV_ARENA={
   body.svsl-on #s2body .card:has(.ucrec){justify-content:center}body.svsl-on #s2body .card:has(.ucrec)>*{flex:none}}
 @media(min-width:1000px) and (min-height:860px){.ucrow{padding:10px 12px;font-size:1.15rem;margin:8px 0}.ucrow .ucr-s{font-size:1rem}body.svsl-on #s2body .rp-head .score-big{font-size:6rem}body.svsl-on #s2body .rp-head .stars{font-size:3.4rem}}
 @media(min-width:1600px) and (min-height:900px){body.svsl-on #s2body .card.rp-head>*,body.svsl-on #s2body .card:has(.ucrec)>*{zoom:1.28}}
+/* ===== 성벽 3관문 (11-20 새 디자인): 그림이 카드를 가득 채우는 관문 포스터 ===== */
+#s2body .fu-menu.ucw-on{display:flex;flex-direction:column}
+#s2body .fu-menu.ucw-on .gates{flex:1 1 auto;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important;margin-top:12px!important;align-items:stretch}
+#s2body .fu-menu.ucw-on .gate{--gc:#10b981;--gcd:#047857;--gcl:#ecfdf5;position:relative;display:flex!important;flex-direction:column;align-items:stretch;padding:0!important;border-radius:22px!important;overflow:hidden!important;background:#fff!important;border:3px solid var(--gc)!important;box-shadow:0 7px 0 var(--gcd),0 16px 30px rgba(15,23,42,.18)!important;color:#1e293b!important;text-align:center!important;transform:none;min-height:0}
+#s2body .fu-menu.ucw-on .gate[data-v="lv2"]{--gc:#3b82f6;--gcd:#1d4ed8;--gcl:#eff6ff}
+#s2body .fu-menu.ucw-on .gate[data-v="lv3"]{--gc:#f43f5e;--gcd:#be123c;--gcl:#fff1f2}
+#s2body .fu-menu.ucw-on .gate:hover{transform:translateY(-3px)}
+#s2body .fu-menu.ucw-on .gate:before,#s2body .fu-menu.ucw-on .gate:after{display:none!important}
+#s2body .fu-menu.ucw-on .gate .gi{position:relative!important;inset:auto!important;grid-row:auto!important;width:100%!important;height:auto!important;flex:1 1 auto;min-height:160px;aspect-ratio:16/10;margin:0!important;padding:0!important;filter:none!important;display:block!important;overflow:hidden!important;border:0!important;border-bottom:3px solid var(--gc)!important;border-radius:0!important;background:none!important;box-shadow:none!important;font-size:0!important}
+#s2body .fu-menu.ucw-on .gate .gi svg.ucg{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;border-radius:0}
+#s2body .fu-menu.ucw-on .gate .qrib{position:absolute!important;left:12px!important;top:12px!important;right:auto!important;transform:none!important;margin:0!important;z-index:3;background:var(--gc)!important;color:#fff!important;border:2px solid #fff!important;border-radius:999px!important;padding:3px 12px!important;font-size:.85rem!important;font-weight:900!important;box-shadow:0 3px 0 var(--gcd)!important;width:auto!important;clip-path:none!important}
+#s2body .fu-menu.ucw-on .gate .gt{margin:10px 12px 0!important;font-size:clamp(1.15rem,1.55vw,1.5rem)!important;font-weight:900!important;color:#1e1b4b!important;white-space:nowrap;line-height:1.2!important;text-align:center!important}
+#s2body .fu-menu.ucw-on .gate .ucwst{margin:6px auto 0!important;font-size:.84rem!important;padding:3px 12px!important;background:var(--gcl)!important;border-color:var(--gc)!important;color:var(--gcd)!important}
+#s2body .fu-menu.ucw-on .gate.ucw-broken .ucwst{background:#f0fdf4!important;border-color:#22c55e!important;color:#166534!important}
+#s2body .fu-menu.ucw-on .gate.ucw-crack .ucwst{background:#fff7ed!important;border-color:#fb923c!important;color:#9a3412!important}
+#s2body .fu-menu.ucw-on .gate .gs{display:none!important}
+#s2body .fu-menu.ucw-on .gate .qstat{display:flex!important;justify-content:center;gap:6px;flex-wrap:wrap;margin:8px 12px 0!important}
+#s2body .fu-menu.ucw-on .gate .qstat span{background:#f8fafc!important;border:1.5px solid #e2e8f0!important;color:#334155!important;border-radius:999px!important;padding:2px 9px!important;font-size:.78rem!important;font-weight:800!important}
+#s2body .fu-menu.ucw-on .gate .qgo{margin:10px 12px 12px!important;padding:9px 10px!important;border-radius:14px!important;background:linear-gradient(180deg,var(--gc),var(--gcd))!important;color:#fff!important;font-weight:900!important;font-size:1.05rem!important;box-shadow:0 4px 0 rgba(0,0,0,.18)!important;border:0!important;width:auto!important}
+#s2body .fu-menu.ucw-on .fu-menu-st{margin-top:10px!important;font-size:.9rem}
+.ucg .ucg-flag{animation:ucgWave 1.6s ease-in-out infinite}
+.ucg .ucg-glow{animation:ucgGlow .9s ease-in-out infinite alternate}
+.ucg .ucg-fire{animation:ucgFire .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+.ucg .ucg-tw{animation:ucgTw 1.8s ease-in-out infinite}
+@keyframes ucgWave{0%,100%{transform:skewY(0)}50%{transform:skewY(-6deg) scaleX(.94)}}
+@keyframes ucgGlow{from{opacity:.55}to{opacity:1}}
+@keyframes ucgFire{from{transform:scale(1,1)}to{transform:scale(.85,1.15)}}
+@keyframes ucgTw{0%,100%{opacity:.25}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ucg *{animation:none!important}}
+@media(max-width:760px){
+  #s2body .fu-menu.ucw-on .gates{grid-template-columns:1fr!important;gap:14px!important}
+  #s2body .fu-menu.ucw-on .gate .gi{min-height:0;aspect-ratio:16/8.2;flex:none}
+  #s2body .fu-menu.ucw-on .gate .gt{font-size:1.1rem!important;margin:8px 8px 0!important}
+  #s2body .fu-menu.ucw-on .gate .qstat span{font-size:.72rem!important;padding:1px 8px!important}
+  #s2body .fu-menu.ucw-on .gate .ucwst{font-size:.76rem!important;white-space:normal}
+  #s2body .fu-menu.ucw-on .gate .qgo{margin:8px 10px 10px!important;font-size:.95rem!important;padding:8px!important}
+  #s2body .fu-menu.ucw-on .gate .qrib{font-size:.74rem!important;padding:2px 10px!important;left:8px!important;top:8px!important}
+}
+/* 단원 평가 그림 문제: 줄 높이가 늘어나지 않게 위에서부터 쌓고, 그림은 스크립트가 남는 칸에 맞춰 키워 가운데로 옮겨요 */
+#s2body .udq.hasfig{align-content:start}
+#s2body .udq.hasfig>.uqfig{align-self:start}
+#s2body .udq.hasfig>.uqfig>svg,#s2body .udq.hasfig>.uqfig>img{display:block;margin-left:auto;margin-right:auto}
 /* 👑 학년 최종 대장 */
 .gbx{position:relative;display:inline-block;vertical-align:middle;line-height:0}
 .gbx>img,.gbx>svg:not(.gbcr){width:100%!important;height:100%!important;object-fit:contain}
@@ -9101,19 +9143,70 @@ window.SV_ARENA={
   /* ① 머리글 */
   function head() { const ti = document.querySelector('#svslTop .ti'); if (!ti || ti.dataset.uc) return; ti.dataset.uc = '1';
     ti.innerHTML = `<small>${UN}단원 마무리</small>🏰 ${CS} 탈환전`; ti.title = window.UCASTLE.title + ' · ' + UNM; }
-  /* ② 성벽 그림: 0 그대로 · 1 금이 감 · 2 무너짐 */
+  /* ② 관문 그림 (11-20 새 그림): 하 = 아침 숲 성문 · 중 = 노을 협곡 요새 · 상 = 밤의 대성채
+       st 0 굳게 닫힘 · 1 금이 감 · 2 무너짐(우리 깃발) */
   function wall(st, L) {
-    const sky = ['#7dd3fc', '#c4b5fd', '#fda4af'][L - 1] || '#7dd3fc', id = 'ucw' + L + st;
-    let bricks = ''; for (let y = 46, r = 0; y < 98; y += 10, r++) { bricks += `<path d="M6 ${y}H94" />`; for (let x = (r % 2 ? 12 : 18); x < 94; x += 14) bricks += `<path d="M${x} ${y}v${Math.min(10, 98 - y)}"/>`; }
-    let merl = ''; for (let x = 6; x < 94; x += 12) merl += `<rect x="${x}" y="31" width="8" height="10" rx="1"/>`;
-    const body = `<rect x="6" y="40" width="88" height="58" fill="#a8a29e" stroke="#57534e" stroke-width="1.5"/><g fill="#a8a29e" stroke="#57534e" stroke-width="1.5">${merl}</g><g stroke="#78716c" stroke-width=".9" fill="none">${bricks}</g>`;
-    const gate = `<path d="M36 98V76a14 14 0 0 1 28 0v22z" fill="#78350f" stroke="#451a03" stroke-width="1.6"/><g stroke="#451a03" stroke-width="1.3">${[41, 46, 50, 54, 59].map(x => `<path d="M${x} ${x === 50 ? 62 : 66}V98"/>`).join('')}<path d="M37 80H63M37 89H63"/></g>`;
-    const flag = c => `<path d="M50 30V8" stroke="#44403c" stroke-width="2"/><path d="M51 9l18 6-18 6z" fill="${c}"/>`;
-    const crack = `<g stroke="#292524" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M22 42l5 9-4 8 6 10"/><path d="M76 44l-4 10 5 7-3 9"/><path d="M48 52l4 6-3 5"/></g><g fill="#78716c"><rect x="14" y="99" width="5" height="4" rx="1"/><rect x="80" y="100" width="6" height="3" rx="1"/></g>`;
-    const hole = `<path d="M22 99L20 74l7-11 6 5 6-13 8 8 7-12 8 10 6-6 6 12-2 30z" fill="url(#${id}s)" stroke="#57534e" stroke-width="1.5"/><g fill="#a8a29e" stroke="#57534e" stroke-width="1"><rect x="14" y="96" width="9" height="6" rx="1.5" transform="rotate(-12 18 99)"/><rect x="28" y="98" width="7" height="5" rx="1"/><rect x="62" y="97" width="10" height="6" rx="1.5" transform="rotate(10 67 100)"/><rect x="76" y="99" width="7" height="5" rx="1"/><rect x="44" y="99" width="8" height="5" rx="1" transform="rotate(6 48 101)"/></g>`;
-    return `<svg viewBox="0 0 100 110" class="qart ucwall"><defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky}"/><stop offset="1" stop-color="#f0f9ff"/></linearGradient></defs>
-      <rect width="100" height="110" fill="url(#${id}s)"/><circle cx="16" cy="16" r="7" fill="#fef08a" opacity=".9"/><rect y="98" width="100" height="12" fill="#65a30d"/>
-      ${body}${st === 2 ? hole + flag('#16a34a') : gate + flag('#7c3aed') + (st === 1 ? crack : '')}</svg>`;
+    const id = 'ucg' + L + st + Math.random().toString(36).slice(2, 6);
+    const P = [null,
+      { s1: '#7dd3fc', s2: '#e0f2fe', m1: '#a7f3d0', m2: '#6ee7b7', g1: '#4ade80', g2: '#16a34a', rf: '#0d9488', rf2: '#115e59', fl: '#14b8a6', st1: '#e7e5e4', st2: '#a8a29e', lab: '하', top: 84, keep: 0 },
+      { s1: '#fb923c', s2: '#fde68a', m1: '#fdba74', m2: '#f59e0b', g1: '#a3e635', g2: '#4d7c0f', rf: '#2563eb', rf2: '#1e3a8a', fl: '#3b82f6', st1: '#e7e5e4', st2: '#a8a29e', lab: '중', top: 74, keep: 1 },
+      { s1: '#1e1b4b', s2: '#6d28d9', m1: '#4c1d95', m2: '#312e81', g1: '#166534', g2: '#052e16', rf: '#e11d48', rf2: '#881337', fl: '#f43f5e', st1: '#d6d3d1', st2: '#78716c', lab: '상', top: 66, keep: 2 }][L] || null;
+    if (!P) return '';
+    const T0 = P.top, win = st === 2, flc = win ? '#22c55e' : P.fl;
+    const merl = (x0, x1, y, w = 9, g = 5) => { let s = ''; for (let x = x0; x + w <= x1 + .1; x += w + g) s += `<rect x="${x}" y="${y - 8}" width="${w}" height="9" rx="1.2"/>`; return s; };
+    const tower = (cx, top, w) => { const x = cx - w / 2;
+      return `<g><rect x="${x}" y="${top}" width="${w}" height="${172 - top}" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/>
+        <rect x="${x}" y="${top}" width="${w}" height="${172 - top}" fill="url(#${id}b)" opacity=".55"/>
+        <g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.2">${merl(x - 3, x + w + 3, top, 8, 4)}</g>
+        <path d="M${x - 5} ${top - 8}L${cx} ${top - 38}L${x + w + 5} ${top - 8}z" fill="url(#${id}r)" stroke="${P.rf2}" stroke-width="1.4"/>
+        <path d="M${cx} ${top - 38}L${x + w + 5} ${top - 8}H${cx + 4}z" fill="#000" opacity=".16"/>
+        <path d="M${cx} ${top - 38}V${top - 58}" stroke="#3f3f46" stroke-width="1.8"/>
+        <path class="ucg-flag" d="M${cx + 1} ${top - 57}q8 3 16 0t16 2v11q-8 3-16 0t-16 -1z" fill="${flc}" stroke="#0f172a" stroke-width=".8" style="transform-origin:${cx}px ${top - 52}px"/>
+        ${win ? `<path d="M${cx + 13} ${top - 54}l3 6 6 .6-4.6 4 1.4 6-5.8-3.2-5.8 3.2 1.4-6-4.6-4 6-.6z" fill="#fef08a"/>` : ''}
+        <rect x="${cx - 4}" y="${top + 16}" width="8" height="13" rx="4" fill="#1c1917"/><rect x="${cx - 4}" y="${top + 46}" width="8" height="13" rx="4" fill="#1c1917"/>
+        <path d="M${x + 4} ${top + 4}v${70}" stroke="#fff" stroke-width="2" opacity=".18"/>
+        ${win ? '' : `<path d="M${cx - 8} ${top + 8}h16v26l-8 7-8-7z" fill="${P.fl}" stroke="${P.rf2}" stroke-width="1"/><circle cx="${cx}" cy="${top + 20}" r="3.2" fill="#fde68a"/>`}</g>`; };
+    const sky = L === 3 ? `<g fill="#fff">${[[22, 18, 1.2], [60, 34, .9], [94, 14, 1.1], [250, 22, 1], [286, 44, 1.3], [210, 12, .8], [140, 30, .7], [300, 12, .9], [40, 58, .8]].map(s => `<circle class="ucg-tw" cx="${s[0]}" cy="${s[1]}" r="${s[2]}"/>`).join('')}</g><circle cx="270" cy="34" r="15" fill="#fef3c7"/><circle cx="276" cy="30" r="13" fill="${P.s1}"/>`
+      : L === 2 ? `<circle cx="252" cy="96" r="30" fill="#fff7ed" opacity=".95"/><circle cx="252" cy="96" r="44" fill="#fff7ed" opacity=".25"/>`
+      : `<circle cx="44" cy="34" r="16" fill="#fef9c3"/><circle cx="44" cy="34" r="26" fill="#fef9c3" opacity=".3"/><g fill="#fff" opacity=".92"><ellipse cx="236" cy="38" rx="24" ry="9"/><ellipse cx="252" cy="32" rx="15" ry="9"/><ellipse cx="110" cy="52" rx="18" ry="6"/></g>`;
+    const KY = T0 - 8, KP = KY - 34 - (P.keep - 1) * 6;
+    const keep = P.keep ? `<g><rect x="128" y="${KY}" width="64" height="${110 - KY}" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.3"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(126, 194, KY, 8, 4)}</g>
+        <path d="M122 ${KY - 8}L160 ${KP}L198 ${KY - 8}z" fill="url(#${id}r)" stroke="${P.rf2}" stroke-width="1.3"/><path d="M160 ${KP}L198 ${KY - 8}H164z" fill="#000" opacity=".16"/><path d="M160 ${KP}V${KP - 18}" stroke="#3f3f46" stroke-width="1.8"/>
+        <path class="ucg-flag" d="M161 ${KP - 17}q9 3 18 0t17 2v11q-9 3-17 0t-18 -1z" fill="${flc}" stroke="#0f172a" stroke-width=".8" style="transform-origin:160px ${KP - 12}px"/>
+        <rect x="154" y="${KY + 8}" width="12" height="16" rx="6" fill="${L === 3 ? '#fde047' : '#1c1917'}"/></g>` : '';
+    const torch = x => `<g><circle class="ucg-glow" cx="${x}" cy="126" r="${L === 3 ? 16 : 10}" fill="url(#${id}g)"/><rect x="${x - 1.5}" y="128" width="3" height="11" fill="#78350f"/><path class="ucg-fire" d="M${x} 118c4 4 4 8 0 11-4-3-4-7 0-11z" fill="#f97316"/><path d="M${x} 122c2 2 2 4 0 6-2-2-2-4 0-6z" fill="#fde047"/></g>`;
+    const door = st === 2
+      ? `<path d="M138 172V134a22 22 0 0 1 44 0v38z" fill="#0c0a09"/><path d="M146 172V140" stroke="#1c1917"/><g transform="rotate(-38 138 172)"><rect x="126" y="140" width="13" height="32" rx="1.5" fill="url(#${id}w)" stroke="#451a03"/></g><g transform="rotate(30 182 172)"><rect x="181" y="142" width="12" height="30" rx="1.5" fill="url(#${id}w)" stroke="#451a03"/></g>
+         <g fill="${P.st2}" stroke="#44403c" stroke-width=".8"><path d="M112 178l9-7 8 3 2 8z"/><path d="M186 180l7-8 9 2 1 9z"/><path d="M150 182l6-6 8 2 1 6z"/><path d="M128 186l5-5 6 1v5z"/><path d="M196 188l6-4 5 3-2 4z"/></g>`
+      : `<path d="M138 172V134a22 22 0 0 1 44 0v38z" fill="url(#${id}w)" stroke="#451a03" stroke-width="1.6"/><path d="M160 112V172" stroke="#451a03" stroke-width="1.4"/>
+         <g stroke="#78350f" stroke-width=".8" opacity=".7">${[144, 150, 155, 165, 170, 176].map(x => `<path d="M${x} ${x < 147 || x > 173 ? 128 : 116}V172"/>`).join('')}</g>
+         <g stroke="#3f3f46" stroke-width="2.2" fill="none"><path d="M139 142H181M139 158H181"/></g><g fill="#a1a1aa">${[143, 152, 168, 177].map(x => `<circle cx="${x}" cy="142" r="1.4"/><circle cx="${x}" cy="158" r="1.4"/>`).join('')}</g>
+         <g stroke="#27272a" stroke-width="1.6" opacity=".85">${[143, 150, 157, 164, 171, 178].map(x => `<path d="M${x} ${st ? 150 : 132}V172"/>`).join('')}<path d="M139 ${st ? 160 : 150}H181"/></g>`;
+    const crack = st >= 1 ? `<g stroke="#1c1917" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M134 100l6 10-5 7 7 9"/><path d="M188 104l-5 9 6 6-4 10"/><path d="M80 ${T0 + 30}l7 9-5 8 6 11"/><path d="M236 ${T0 + 36}l-6 8 5 9"/></g><g stroke="#fff" stroke-width=".7" fill="none" opacity=".55"><path d="M135 101l6 10-5 7 7 9"/><path d="M81 ${T0 + 31}l7 9-5 8 6 11"/></g>` : '';
+    const smoke = st === 1 ? `<g fill="#e7e5e4" opacity=".8"><circle cx="186" cy="92" r="6"/><circle cx="193" cy="85" r="5"/><circle cx="199" cy="78" r="3.5"/></g>` : '';
+    const spark = st === 2 ? `<g fill="#fef08a">${[[104, 60], [214, 52], [160, 30], [60, 100], [262, 96]].map(p => `<path class="ucg-tw" d="M${p[0]} ${p[1] - 6}l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z"/>`).join('')}</g>` : '';
+    return `<svg viewBox="0 0 320 200" class="qart ucwall ucg" preserveAspectRatio="xMidYMid slice"><defs>
+      <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.s1}"/><stop offset="1" stop-color="${P.s2}"/></linearGradient>
+      <linearGradient id="${id}t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${P.st1}"/><stop offset=".55" stop-color="${P.st2}"/><stop offset="1" stop-color="#57534e"/></linearGradient>
+      <linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${P.rf}"/><stop offset="1" stop-color="${P.rf2}"/></linearGradient>
+      <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b45309"/><stop offset="1" stop-color="#78350f"/></linearGradient>
+      <linearGradient id="${id}gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.g1}"/><stop offset="1" stop-color="${P.g2}"/></linearGradient>
+      <radialGradient id="${id}g"><stop offset="0" stop-color="#fde047" stop-opacity=".95"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>
+      <pattern id="${id}b" width="16" height="10" patternUnits="userSpaceOnUse"><path d="M0 10H16M8 0V5M0 5H16M16 5V10M0 5V10" stroke="#57534e" stroke-width=".7" fill="none"/></pattern></defs>
+      <rect width="320" height="200" fill="url(#${id}s)"/>${sky}
+      <path d="M0 132L40 96L78 120L120 84L168 118L214 80L262 114L296 92L320 108V200H0z" fill="${P.m1}" opacity=".75"/>
+      <path d="M0 150L52 122L96 140L150 116L204 142L250 120L320 138V200H0z" fill="${P.m2}" opacity=".85"/>
+      ${keep}
+      <g><rect x="18" y="114" width="284" height="58" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/><rect x="18" y="114" width="284" height="58" fill="url(#${id}b)" opacity=".5"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(18, 302, 114)}</g></g>
+      ${tower(92, T0, 46)}${tower(228, T0, 46)}${L === 3 ? tower(36, T0 + 26, 34) + tower(284, T0 + 26, 34) : ''}
+      <g><rect x="128" y="98" width="64" height="74" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/><rect x="128" y="98" width="64" height="74" fill="url(#${id}b)" opacity=".5"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(126, 194, 98, 8, 4)}</g>
+        <path d="M134 172V132a26 26 0 0 1 52 0v40z" fill="#57534e" opacity=".55"/></g>
+      ${door}
+      <g><path d="M150 102h20v12l-10 8-10-8z" fill="${win ? '#22c55e' : P.fl}" stroke="#0f172a" stroke-width="1"/><text x="160" y="114.5" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff" font-family="inherit">${win ? '✓' : P.lab}</text></g>
+      ${torch(122)}${torch(198)}${crack}${smoke}
+      <path d="M0 172H320V200H0z" fill="url(#${id}gr)"/><path d="M138 172H182L214 200H106z" fill="#d6b98c" opacity="${L === 3 ? .55 : .9}"/>
+      <g fill="${P.g2}" opacity=".8"><ellipse cx="40" cy="178" rx="20" ry="7"/><ellipse cx="282" cy="180" rx="24" ry="8"/><ellipse cx="88" cy="190" rx="14" ry="5"/></g>${spark}
+      ${L === 3 && !win ? `<rect width="320" height="200" fill="#1e1b4b" opacity=".12"/>` : ''}</svg>`;
   }
   function boom(gi) { const fx = document.createElement('div'); fx.className = 'ucwfx';
     fx.innerHTML = Array.from({ length: 12 }, (_, i) => { const a = (i / 12) * Math.PI * 2 + Math.random() * .4, d = 60 + Math.random() * 70; return `<i style="--dx:${(Math.cos(a) * d).toFixed(0)}px;--dy:${(Math.sin(a) * d - 30).toFixed(0)}px;--r:${(Math.random() * 540 - 270).toFixed(0)}deg;--s:${(.6 + Math.random() * .8).toFixed(2)}"></i>`; }).join('') + '<b>💥</b>';
@@ -9157,6 +9250,48 @@ window.SV_ARENA={
   function run() { T(head); T(gates); T(fin); T(result); }
   try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
   setTimeout(run, 300);
+})();
+
+/* =====================================================================
+   🖼️ 단원 평가·확인 문제 그림: 왼쪽 칸(문제 아래 ~ 카드 아래 끝)을 가득 채우게 키워요 (11-20)
+     - 그림 칸 크기는 문제 머리 아래부터 카드 안쪽 아래 끝까지로 재요 → 답한 뒤에도 크기가 같아요
+     - 한 줄(휴대폰) 화면은 예전처럼 화면 높이의 일부만큼만 키워요
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__UFIT2 || typeof ufigFit1 !== 'function') return; window.__UFIT2 = 1;
+  const old = ufigFit1;
+  const ZC = new Map();   /* 문제마다 처음 맞춘 크기를 기억 → 답한 뒤에도 그림 크기가 같아요 */
+  const fit = () => document.querySelectorAll('.udq.hasfig>.uqfig').forEach(f => { try {
+    if (!f.getClientRects().length || f.classList.contains('sm')) return; const card = f.parentElement; if (getComputedStyle(card).display !== 'grid') return;
+    const body = card.parentElement;   /* 펠트 판(skb) — 이 칸을 넘치면 화면 맞춤이 카드 전체를 줄여요 */
+    f.style.zoom = ''; f.style.top = ''; card.style.zoom = ''; const colW = f.getBoundingClientRect().width; if (colW < 120) return;
+    const head = f.previousElementSibling, cr = card.getBoundingClientRect(), cs = getComputedStyle(card), bs = getComputedStyle(body), br = body.getBoundingClientRect();
+    /* 위 끝: 카드 안쪽 위 + (첫 줄 ~ 문제 머리까지 높이) — 카드가 가운데 정렬이라 지금 자리 대신 높이로 재요 */
+    const first = card.firstElementChild, inTop = Math.max(0, br.top + parseFloat(bs.borderTopWidth || 0) + parseFloat(bs.paddingTop || 0)) + parseFloat(cs.marginTop || 0) + parseFloat(cs.paddingTop) + parseFloat(cs.borderTopWidth || 0);
+    const top = inTop + (head && first ? head.getBoundingClientRect().bottom - first.getBoundingClientRect().top : 0) + 12;
+    /* 아래 끝: 카드가 넘치지 않는 곳(본문 칸의 안쪽 아래 - 카드 아래 여백) */
+    const bot = Math.min(br.top + parseFloat(bs.borderTopWidth || 0) + body.clientHeight - parseFloat(bs.paddingBottom || 0), innerHeight) - parseFloat(cs.paddingBottom) - parseFloat(cs.borderBottomWidth || 0) - parseFloat(cs.marginBottom || 0) - 10;
+    let L = 1e9, R = -1e9, T = 1e9, B = -1e9;
+    f.querySelectorAll('*').forEach(e => { if (e.tagName !== 'svg' && (e.children.length || e.closest('svg'))) return; const q = e.getBoundingClientRect(); if (q.width < 1 || q.height < 1) return; L = Math.min(L, q.left); R = Math.max(R, q.right); T = Math.min(T, q.top); B = Math.max(B, q.bottom); });
+    if (R <= L) return;
+    const key = (T => { try { return state.s2.drill.idx + '|' + state.s2.drill.level; } catch (e) { return ''; } })() + '|' + f.textContent.slice(0, 60);
+    let z = Math.max(1, Math.min(2.8, (colW - 24) / (R - L), (bot - top) / (B - T + 14))); const z0 = ZC.get(key);
+    if (z0 && Math.abs(z0 - z) / z0 < .1) z = z0; else ZC.set(key, z);   /* 답한 뒤 조금 달라져도 처음 크기 그대로 */
+    f.style.position = 'relative';
+    /* 카드 전체가 본문 칸을 넘치면(그러면 화면 전체가 작아져요) 넘치지 않을 때까지 줄여요 */
+    const H0 = card.getBoundingClientRect().height, o1 = card.scrollHeight - card.clientHeight, o2 = body.scrollHeight - body.clientHeight, ok = () => card.getBoundingClientRect().height <= H0 + 1 && card.scrollHeight - card.clientHeight <= Math.max(1, o1 + 1) && body.scrollHeight - body.clientHeight <= Math.max(1, o2 + 1);   /* 처음부터 넘치던 만큼은 그대로 두고, 그림 때문에 더 넘치지만 않게 */
+    for (let i = 0; i < 24 && z > 1; i++) { f.style.zoom = z.toFixed(2); if (ok()) break; z = Math.max(1, z * .95); }
+    if (z0 && Math.abs(z0 - z) / z0 >= .1) ZC.set(key, z); else if (!z0) ZC.set(key, z);
+    if (z <= 1.02) f.style.zoom = '';
+    /* 남는 위아래 빈 곳 없이 칸 가운데로 (자리만 옮겨요 — 카드 높이는 그대로) */
+    const r2 = f.getBoundingClientRect(), hb2 = head ? head.getBoundingClientRect().bottom + 10 : top, d = (hb2 + bot) / 2 - (r2.top + r2.height / 2);
+    const cb = card.getBoundingClientRect().bottom - parseFloat(cs.paddingBottom) - 4, dd = Math.min(d, cb - r2.bottom);
+    if (dd > 4) f.style.top = (dd / z).toFixed(1) + 'px';
+    /* 화면 맞춤이 줄여 놓은 카드는, 넘치지 않으면 원래 크기로 */
+    setTimeout(() => { const cz = parseFloat(card.style.zoom) || 1; if (cz < 1 && cz > .7) { card.style.zoom = ''; if (card.scrollHeight > card.clientHeight + 1 || body.scrollHeight > body.clientHeight + 1) card.style.zoom = cz; } }, 260);
+  } catch (e) {} });
+  ufigFit1 = function () { old(); requestAnimationFrame(() => requestAnimationFrame(fit)); };
+  addEventListener('resize', () => { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); });
 })();
 
 /* =====================================================================

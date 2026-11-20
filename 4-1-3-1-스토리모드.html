@@ -5459,7 +5459,7 @@ button.bcell:hover{background:#ffe4e6;border-color:#fb7185}
 .tlcn{font-family:var(--fun);font-size:.95rem;color:#b45309;background:#fef3c7;border-radius:999px;padding:0 10px}
 .tlcn.q{color:#64748b;background:#e2e8f0}
 .tlctl{margin:10px 0 4px}
-.tlhands{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:6px}
+.tlhands{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:6px}@media(min-width:701px){.tlhands{grid-auto-rows:1fr}}.tlhands.n4{grid-template-columns:repeat(2,minmax(0,1fr))}.tlhands.n2{grid-template-columns:repeat(2,minmax(0,1fr))}.tlhands.n3{grid-template-columns:repeat(3,minmax(0,1fr))}@media(max-width:700px){.tlhands.n3,.tlhands.n4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tlhand{background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.2);border-radius:18px;padding:8px}
 .tlhand.turn{border-color:var(--pc);background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(255,255,255,.25)}
 .tlhn{display:flex;align-items:center;gap:6px;font-weight:800;font-size:.85rem;margin-bottom:6px}
@@ -6491,7 +6491,7 @@ function renderTL() {
     <div class="tltop">${pileHTML(b.deck.length, { label: '더미' })}<div class="tlrib"><span>작은 곱</span><i></i><span>큰 곱</span></div><div class="tldisc"><span class="tlc back sm"><b>🗑</b></span><small>버린 카드 ${b.disc.length}</small></div></div>
     <div class="tlline">${line}</div>
     <div class="tlctl">${ctl}</div>
-    <div class="tlhands">${b.players.map((_, i) => handH(i)).join('')}</div>
+    <div class="tlhands n${b.players.length}">${b.players.map((_, i) => handH(i)).join('')}</div>
     <div class="blog rblog" id="blog">${esc(b.log)}</div>${pop}</div>`;
 }
 function tlWhere(L, c) { let i = 0; while (i < L.length && L[i].v < c.v) i++; const pv = L[i - 1], nx = L[i]; return !pv ? `${tlN(nx)} 카드보다 앞(왼쪽)에` : !nx ? `${tlN(pv)} 카드보다 뒤(오른쪽)에` : `${tlN(pv)}과 ${tlN(nx)} 사이에`; }
