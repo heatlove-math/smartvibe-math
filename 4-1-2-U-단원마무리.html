@@ -8861,10 +8861,38 @@ window.SV_ARENA={"u":"4-1-2-U","unit":"2단원 「각도」","games":[
   #s2body .fu-menu.ucw-on .gate .qgo{margin:8px 10px 10px!important;font-size:.95rem!important;padding:8px!important}
   #s2body .fu-menu.ucw-on .gate .qrib{font-size:.74rem!important;padding:2px 10px!important;left:8px!important;top:8px!important}
 }
-/* 단원 평가 그림 문제: 줄 높이가 늘어나지 않게 위에서부터 쌓고, 그림은 스크립트가 남는 칸에 맞춰 키워 가운데로 옮겨요 */
-#s2body .udq.hasfig{align-content:start}
-#s2body .udq.hasfig>.uqfig{align-self:start}
-#s2body .udq.hasfig>.uqfig>svg,#s2body .udq.hasfig>.uqfig>img{display:block;margin-left:auto;margin-right:auto}
+
+/* ===== 단원 평가 문제 화면 (11-20 새 구성): 머리 줄 · 문제 줄 · [그림 판 | 보기 2×2 + 피드백 자리] ===== */
+@media(min-width:761px){
+html body.svsl-on #s2body .skb:has(>.udq){display:flex!important;flex-direction:column}
+html body.svsl-on #sec-s2 #s2body .card.udq.udq{zoom:1!important;height:auto!important;flex:1 1 0!important;min-height:0!important;max-height:100%!important;overflow:hidden;box-sizing:border-box;display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr)!important;gap:12px 18px!important;align-content:stretch!important;padding:14px 18px 16px!important}
+html body #sec-s2 #s2body .card.udq>*{grid-column:1/-1!important;grid-row:auto!important;margin:0!important;min-width:0}
+html body #sec-s2 #s2body .card.udq>.row:first-child{align-items:center}
+html body #sec-s2 #s2body .card.udq>.mt-3 .qhead{align-items:center}
+html body #sec-s2 #s2body .card.udq>.mt-3 .qtext{font-size:clamp(1.3rem,2.1vw,2rem)!important;line-height:1.35!important}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig{grid-column:1!important;grid-row:3!important;align-self:stretch!important;position:relative!important;top:0!important;zoom:1!important;display:flex!important;align-items:center;justify-content:center;padding:34px 12px 10px!important;border-radius:18px;border:2px solid #cbd5e1;background:#f8fafc;background-image:linear-gradient(#e2e8f0 1px,transparent 1px),linear-gradient(90deg,#e2e8f0 1px,transparent 1px);background-size:24px 24px;overflow:hidden;min-height:0;max-width:none!important;width:auto!important}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig:before{content:'🧩 그림';position:absolute;left:12px;top:8px;font-size:.78rem;font-weight:900;color:#475569;background:#fff;border:1.5px solid #cbd5e1;border-radius:999px;padding:1px 10px}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig .uqin{display:flex;align-items:center;justify-content:center}
+html body #sec-s2 #s2body .card.udq>.svsl-qR{grid-row:3!important;display:flex!important;flex-direction:column;gap:10px;min-height:0;align-self:stretch}
+html body #sec-s2 #s2body .card.udq.hasfig>.svsl-qR{grid-column:2!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices{flex:1 1 auto;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:1fr;gap:12px!important;margin:0!important;min-height:0}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices .choice{height:auto!important;min-height:64px;font-size:clamp(1.1rem,2vw,1.9rem)!important;display:flex;align-items:center;justify-content:center;margin:0!important;padding:8px 12px!important;line-height:1.3}
+html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices{grid-template-columns:1fr!important}
+html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices .choice{font-size:clamp(1rem,1.5vw,1.35rem)!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.udrow{flex:none;min-height:56px;justify-content:center;align-items:center;margin:0!important;border:2px dashed #e2e8f0;border-radius:14px;padding:4px 8px}
+}
+@media(max-width:760px){
+html body #sec-s2 #s2body .card.udq>.svsl-qR{width:100%!important;max-width:none!important;display:block!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
+html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices{grid-template-columns:1fr!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices .choice{width:auto!important;min-height:58px;font-size:1.15rem!important}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig{border-radius:16px;border:2px solid #cbd5e1;background:#f8fafc;padding:8px!important;margin:8px 0!important}
+}
+@media(max-width:760px){
+html body #sec-s2 #s2body .card.udq>.choices{flex:1 1 100%!important;width:100%!important;max-width:none!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;grid-column:1/-1!important}
+html body #sec-s2 #s2body .card.udq.uqlong>.choices{grid-template-columns:1fr!important}
+html body #sec-s2 #s2body .card.udq>.choices .choice{width:auto!important;min-height:58px;font-size:1.15rem!important}
+}
 /* 👑 학년 최종 대장 */
 .gbx{position:relative;display:inline-block;vertical-align:middle;line-height:0}
 .gbx>img,.gbx>svg:not(.gbcr){width:100%!important;height:100%!important;object-fit:contain}
@@ -9208,45 +9236,26 @@ window.SV_ARENA={"u":"4-1-2-U","unit":"2단원 「각도」","games":[
 })();
 
 /* =====================================================================
-   🖼️ 단원 평가·확인 문제 그림: 왼쪽 칸(문제 아래 ~ 카드 아래 끝)을 가득 채우게 키워요 (11-20)
-     - 그림 칸 크기는 문제 머리 아래부터 카드 안쪽 아래 끝까지로 재요 → 답한 뒤에도 크기가 같아요
-     - 한 줄(휴대폰) 화면은 예전처럼 화면 높이의 일부만큼만 키워요
+   🖼️ 단원 평가 문제 화면 (11-20 새 구성)
+     [머리 줄] [문제 줄 — 가로 전체] [그림 판 | 보기 2×2 + 피드백 자리]
+     그림 판은 칸 크기가 정해져 있고, 그림만 판 안에서 가득 차게 키워 가운데 놓아요 (답한 뒤에도 그대로)
    ===================================================================== */
 (function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.__UFIT2 || typeof ufigFit1 !== 'function') return; window.__UFIT2 = 1;
+  if (!(window.SV_LF && SV_LF.flowU) || window.__UFIT3 || typeof ufigFit1 !== 'function') return; window.__UFIT3 = 1;
   const old = ufigFit1;
-  const ZC = new Map();   /* 문제마다 처음 맞춘 크기를 기억 → 답한 뒤에도 그림 크기가 같아요 */
-  const fit = () => document.querySelectorAll('.udq.hasfig>.uqfig').forEach(f => { try {
-    if (!f.getClientRects().length || f.classList.contains('sm')) return; const card = f.parentElement; if (getComputedStyle(card).display !== 'grid') return;
-    const body = card.parentElement;   /* 펠트 판(skb) — 이 칸을 넘치면 화면 맞춤이 카드 전체를 줄여요 */
-    f.style.zoom = ''; f.style.top = ''; card.style.zoom = ''; const colW = f.getBoundingClientRect().width; if (colW < 120) return;
-    const head = f.previousElementSibling, cr = card.getBoundingClientRect(), cs = getComputedStyle(card), bs = getComputedStyle(body), br = body.getBoundingClientRect();
-    /* 위 끝: 카드 안쪽 위 + (첫 줄 ~ 문제 머리까지 높이) — 카드가 가운데 정렬이라 지금 자리 대신 높이로 재요 */
-    const first = card.firstElementChild, inTop = Math.max(0, br.top + parseFloat(bs.borderTopWidth || 0) + parseFloat(bs.paddingTop || 0)) + parseFloat(cs.marginTop || 0) + parseFloat(cs.paddingTop) + parseFloat(cs.borderTopWidth || 0);
-    const top = inTop + (head && first ? head.getBoundingClientRect().bottom - first.getBoundingClientRect().top : 0) + 12;
-    /* 아래 끝: 카드가 넘치지 않는 곳(본문 칸의 안쪽 아래 - 카드 아래 여백) */
-    const bot = Math.min(br.top + parseFloat(bs.borderTopWidth || 0) + body.clientHeight - parseFloat(bs.paddingBottom || 0), innerHeight) - parseFloat(cs.paddingBottom) - parseFloat(cs.borderBottomWidth || 0) - parseFloat(cs.marginBottom || 0) - 10;
+  const fit = () => document.querySelectorAll('#s2body .udq.hasfig>.uqfig').forEach(f => { try {
+    if (!f.getClientRects().length) return; f.style.zoom = ''; f.style.top = ''; const kids = [...f.children]; if (!kids.length) return;
+    let inner = f.querySelector(':scope>.uqin'); if (!inner) { inner = document.createElement('div'); inner.className = 'uqin'; kids.forEach(k => inner.appendChild(k)); f.appendChild(inner); }
+    inner.style.zoom = ''; const W = f.clientWidth - 28, H = f.clientHeight - 44; if (W < 80 || H < 60) return;
     let L = 1e9, R = -1e9, T = 1e9, B = -1e9;
-    f.querySelectorAll('*').forEach(e => { if (e.tagName !== 'svg' && (e.children.length || e.closest('svg'))) return; const q = e.getBoundingClientRect(); if (q.width < 1 || q.height < 1) return; L = Math.min(L, q.left); R = Math.max(R, q.right); T = Math.min(T, q.top); B = Math.max(B, q.bottom); });
-    if (R <= L) return;
-    const key = (T => { try { return state.s2.drill.idx + '|' + state.s2.drill.level; } catch (e) { return ''; } })() + '|' + f.textContent.slice(0, 60);
-    let z = Math.max(1, Math.min(2.8, (colW - 24) / (R - L), (bot - top) / (B - T + 14))); const z0 = ZC.get(key);
-    if (z0 && Math.abs(z0 - z) / z0 < .1) z = z0; else ZC.set(key, z);   /* 답한 뒤 조금 달라져도 처음 크기 그대로 */
-    f.style.position = 'relative';
-    /* 카드 전체가 본문 칸을 넘치면(그러면 화면 전체가 작아져요) 넘치지 않을 때까지 줄여요 */
-    const H0 = card.getBoundingClientRect().height, o1 = card.scrollHeight - card.clientHeight, o2 = body.scrollHeight - body.clientHeight, ok = () => card.getBoundingClientRect().height <= H0 + 1 && card.scrollHeight - card.clientHeight <= Math.max(1, o1 + 1) && body.scrollHeight - body.clientHeight <= Math.max(1, o2 + 1);   /* 처음부터 넘치던 만큼은 그대로 두고, 그림 때문에 더 넘치지만 않게 */
-    for (let i = 0; i < 24 && z > 1; i++) { f.style.zoom = z.toFixed(2); if (ok()) break; z = Math.max(1, z * .95); }
-    if (z0 && Math.abs(z0 - z) / z0 >= .1) ZC.set(key, z); else if (!z0) ZC.set(key, z);
-    if (z <= 1.02) f.style.zoom = '';
-    /* 남는 위아래 빈 곳 없이 칸 가운데로 (자리만 옮겨요 — 카드 높이는 그대로) */
-    const r2 = f.getBoundingClientRect(), hb2 = head ? head.getBoundingClientRect().bottom + 10 : top, d = (hb2 + bot) / 2 - (r2.top + r2.height / 2);
-    const cb = card.getBoundingClientRect().bottom - parseFloat(cs.paddingBottom) - 4, dd = Math.min(d, cb - r2.bottom);
-    if (dd > 4) f.style.top = (dd / z).toFixed(1) + 'px';
-    /* 화면 맞춤이 줄여 놓은 카드는, 넘치지 않으면 원래 크기로 */
-    setTimeout(() => { const cz = parseFloat(card.style.zoom) || 1; if (cz < 1 && cz > .7) { card.style.zoom = ''; if (card.scrollHeight > card.clientHeight + 1 || body.scrollHeight > body.clientHeight + 1) card.style.zoom = cz; } }, 260);
+    inner.querySelectorAll('*').forEach(e => { if (e.tagName !== 'svg' && (e.children.length || e.closest('svg'))) return; const q = e.getBoundingClientRect(); if (q.width < 1 || q.height < 1) return; L = Math.min(L, q.left); R = Math.max(R, q.right); T = Math.min(T, q.top); B = Math.max(B, q.bottom); });
+    if (R <= L) return; let z = Math.max(.6, Math.min(2.8, W / (R - L), H / (B - T))); if (Math.abs(z - 1) > .02) inner.style.zoom = z.toFixed(2);
+    const fr = f.getBoundingClientRect(); for (let i = 0; i < 16 && z > .6; i++) { const q = inner.getBoundingClientRect(); if (q.bottom <= fr.bottom - 6 && q.top >= fr.top + 26 && q.right <= fr.right - 4 && q.left >= fr.left + 4 && inner.scrollHeight * z <= f.clientHeight) break; z *= .95; inner.style.zoom = z.toFixed(2); }
   } catch (e) {} });
-  ufigFit1 = function () { old(); requestAnimationFrame(() => requestAnimationFrame(fit)); };
+  const longMark = () => document.querySelectorAll('#s2body .udq').forEach(c => { const L = Math.max(0, ...[...c.querySelectorAll('.choices .choice')].map(b => b.textContent.trim().length)); c.classList.toggle('uqlong', L > 11); });
+  ufigFit1 = function () { old(); requestAnimationFrame(() => requestAnimationFrame(fit)); setTimeout(fit, 400); setTimeout(fit, 1000); };
   addEventListener('resize', () => { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); });
+  try { new MutationObserver(() => { longMark(); clearTimeout(fit.m); fit.m = setTimeout(fit, 60); }).observe(document.getElementById('s2body') || document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
 
 /* =====================================================================
