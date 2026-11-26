@@ -8963,7 +8963,7 @@ function g56StoryPatch() { const VN = G56.C.vname || '브래킷';
 
 const opt4 = (ans, ds, n) => { const o = [String(ans)]; ds.forEach(x => { x = String(x); if (!o.includes(x) && o.length < (n || 4)) o.push(x); }); return shuffle(o); };
 const rnd2 = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const jo = (v, a, b) => { const s = String(v).replace(/<[^>]+>/g, '').trim(); try { return josa(s, a, b); } catch (e) { return a; } };
+const jo = (v, a, b) => { const s = String(v).replace(/<[^>]+>/g, '').trim(); if (a === '으로' && /[178]$/.test(s.replace(/[^0-9]/g, '') ? s : '')) return /[178]$/.test(s) ? b : (() => { try { return josa(s, a, b); } catch (e) { return a; } })(); try { return josa(s, a, b); } catch (e) { return a; } };
 const VN = G56.C.vname || '브래킷';
 const dfix = x => String(Math.round(x * 10000) / 10000);
 /* ---------- 문제은행 공통 틀 ---------- */
@@ -9105,6 +9105,44 @@ const EX = (() => {
 .mpdghost{position:fixed!important;z-index:99999;pointer-events:none;margin:0!important;transition:transform .12s;filter:drop-shadow(0 10px 14px rgba(0,0,0,.28))}.mpdghost.mv{transform:scale(1.06) rotate(-2deg)}.mpdghost.back{transition:left .24s ease,top .24s ease,opacity .24s;opacity:.2}
 [data-mpt].mpdhov{outline:4px solid #16a34a!important;outline-offset:2px;background-color:#dcfce7!important}body.mpddrag,body.mpddrag *{cursor:grabbing!important}`; document.head.appendChild(st); })();
 
+/* ---------- MEB · 미니게임 「식 만들기 판」 (MGX 안에서: 수 타일 → □, 기호 → ○, ( ) → ○ 위) ----------
+   MEB.reset(r, nums) · MEB.view(r, { ops, title, hint }) · MEB.drop(r, 'src|dst') · MEB.clr(r, 'n0') · MEB.expr(r) · MEB.val(r)
+   미니게임 on: { drop(r, x, a) { if (MEB.drop(r, x)) a.pop(); }, clr(r, x) { MEB.clr(r, x); } } */
+const MEB = (() => {
+  const SYM = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+  const ex = (n, o, br) => br === 0 ? `(${n[0]} ${o[0]} ${n[1]}) ${o[1]} ${n[2]}` : br === 1 ? `${n[0]} ${o[0]} (${n[1]} ${o[1]} ${n[2]})` : `${n[0]} ${o[0]} ${n[1]} ${o[1]} ${n[2]}`;
+  const reset = (r, nums) => { r.eb = { src: nums.slice(), n: [null, null, null], from: [null, null, null], used: nums.map(() => false), o: [null, null], br: null }; };
+  const built = r => r.eb.n.every(x => x != null) && r.eb.o.every(x => x != null);
+  const expr = r => built(r) ? ex(r.eb.n, r.eb.o, r.eb.br) : null;
+  const val = r => built(r) ? EX.val(expr(r)) : null;
+  function drop(r, x) { const B = r.eb, [src, dst] = String(x).split('|'); if (!src || !dst) return false;
+    if (/^d\d+$/.test(src) && /^n\d$/.test(dst)) { const j = +src.slice(1), i = +dst[1]; if (B.used[j]) return false; if (B.from[i] != null) B.used[B.from[i]] = false; B.n[i] = B.src[j]; B.from[i] = j; B.used[j] = true; return true; }
+    if (/^o[-+*/]$/.test(src) && /^o\d$/.test(dst)) { B.o[+dst[1]] = src[1]; return true; }
+    if (src === 'br' && /^o\d$/.test(dst)) { B.br = B.br === +dst[1] ? null : +dst[1]; return true; }
+    return false; }
+  function clr(r, v) { const B = r.eb; if (/^n\d$/.test(v)) { const i = +v[1]; if (B.from[i] != null) B.used[B.from[i]] = false; B.n[i] = null; B.from[i] = null; } else if (/^o\d$/.test(v)) { const i = +v[1]; if (B.br === i) B.br = null; else B.o[i] = null; } }
+  /* 자동 점검용: 식 e 를 만드는 조작 목록 */
+  function acts(r, e) { const B = r.eb, tk = EX.toks(e).filter(x => x !== '(' && x !== ')'), ns = [tk[0], tk[2], tk[4]], used = B.src.map(() => false), A = [];
+    ns.forEach((x, i) => { const j = B.src.findIndex((y, k) => y === x && !used[k]); used[j] = true; A.push(`drop:d${j}|n${i}`); }); A.push(`drop:o${tk[1]}|o0`, `drop:o${tk[3]}|o1`);
+    if (e[0] === '(') A.push('drop:br|o0'); else if (e.includes('(')) A.push('drop:br|o1'); return A; }
+  function view(r, o = {}) { const B = r.eb, ops = o.ops || ['+', '-'], e = expr(r), v = val(r), on = !r.done;
+    const ns = i => `<span class="mebs n ${B.n[i] != null ? 'full' : ''}" ${on ? `data-mpt="n${i}"` : ''} ${on && B.n[i] != null ? `data-an="mgx" data-v="clr:n${i}"` : ''}>${B.n[i] != null ? B.n[i] : '?'}</span>`;
+    const os = i => `<span class="mebs o ${B.o[i] ? 'full' : ''}" ${on ? `data-mpt="o${i}"` : ''} ${on && B.o[i] ? `data-an="mgx" data-v="clr:o${i}"` : ''}>${B.o[i] ? SYM[B.o[i]] : '○'}</span>`;
+    const L = B.br === 0 ? '<b class="mebb">(</b>' : '', M1 = B.br === 0 ? '<b class="mebb">)</b>' : '', M2 = B.br === 1 ? '<b class="mebb">(</b>' : '', R2 = B.br === 1 ? '<b class="mebb">)</b>' : '';
+    return `<div class="mebtop"><div><small>${o.title || '수 타일'}</small><div>${B.src.map((x, j) => `<span class="mebt ${B.used[j] ? 'used' : ''}" ${on && !B.used[j] ? `data-mpd="d${j}"` : ''}>${x}</span>`).join('')}</div></div>
+      ${on ? `<div><small>기호 · 괄호</small><div>${ops.map(x => `<span class="mebc" data-mpd="o${x}">${SYM[x]}</span>`).join('')}${o.noBr ? '' : '<span class="mebc br" data-mpd="br">( )</span>'}</div></div>` : ''}</div>
+      <div class="mebexpr">${L}${ns(0)}${os(0)}${M2}${ns(1)}${M1}${os(1)}${ns(2)}${R2}</div>
+      <div class="mebval">${e ? (v == null ? `${EX.t(e)} → <b class="no">계산할 수 없어요</b>` : `${EX.t(e)} = <b>${v}</b>`) : (o.hint || '수 타일과 기호를 끌어 식을 완성해요')}</div>`; }
+  (() => { const st = document.createElement('style'); st.textContent = `.mebtop{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0}.mebtop>div{text-align:center}.mebtop small{display:block;font-weight:800;color:#64748b}.mebtop>div>div{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.mebt{width:62px;height:62px;border-radius:14px;background:#fff;border:3px solid #6366f1;box-shadow:0 4px 0 #4338ca;font-size:1.8rem;font-weight:900;color:#1e1b4b;display:inline-flex;align-items:center;justify-content:center}.mebt.used{opacity:.3;box-shadow:none}
+.mebc{width:56px;height:56px;border-radius:50%;background:#ede9fe;border:3px solid #7c3aed;font-size:1.8rem;font-weight:900;color:#5b21b6;display:inline-flex;align-items:center;justify-content:center}.mebc.br{width:74px;border-radius:16px;background:#fee2e2;border-color:#dc2626;color:#b91c1c}
+.mebexpr{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0}.mebs{min-width:62px;height:64px;border-radius:14px;border:3px dashed #94a3b8;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#94a3b8;background:#fff}
+.mebs.full{border-style:solid;border-color:#6366f1;color:#1e1b4b;cursor:pointer}.mebs.o{border-radius:50%;width:56px;min-width:56px;height:56px}.mebs.o.full{border-color:#7c3aed;color:#5b21b6}.mebb{font-size:2.8rem;color:#dc2626;line-height:1}
+.mebval{text-align:center;font-weight:800;font-size:1.25rem;color:#334155;min-height:36px}.mebval b{font-size:1.7rem;color:#0f766e}.mebval b.no{font-size:1.1rem;color:#dc2626}
+@media(max-width:640px){.mebt,.mebs{min-width:48px;width:48px;height:50px;font-size:1.5rem}.mebc,.mebs.o{width:46px;height:46px;min-width:46px}}`; document.head.appendChild(st); })();
+  return { reset, built, expr, val, drop, clr, acts, view, ex };
+})();
+
 /* =====================================================================
    🚌 5학년 1학기 1단원 자연수의 혼합 계산 · 1차시 「덧셈과 뺄셈이 섞여 있는 식」
    구출의 여정 EP.1 「하늘 순환 버스」 · 간부 브래킷(괄호 파괴자) · 봉인된 12지신 자람이(쥐)
@@ -9126,8 +9164,8 @@ lessonSetup({
   target: '덧셈과 뺄셈이 섞여 있는 식을 계산하는 순서를 알고 계산할 수 있어요.',
   trap: { title: `${VN}의 괄호 부수기 함정`, sub: `${VN}${jo(VN, '이', '가')} 괄호를 부수고 계산 순서를 뒤섞어 놓았어요.`, taunt: '아무 데서나 먼저 계산해도 값은 똑같아!' },
   basic: [
-    { label: '계산하는 순서', gen: () => { const [a, b, c] = abc(), A = `${a} − ${b}를 먼저 계산하고, 그 결과에 ${c}를 더해요`;
-      return { text: `${EH(`${a} - ${b} + ${c}`)}를 계산하는 순서로 알맞은 것은 어느 것일까요?`, choices: shuffle([A, `${b} + ${c}를 먼저 계산하고, ${a}에서 빼요`, `${a} + ${c}를 먼저 계산하고, ${b}를 빼요`, '가장 큰 수와 가장 작은 수부터 계산해요']), ans: A,
+    { label: '계산하는 순서', gen: () => { const [a, b, c] = abc(), A = `${a} − ${b}${jo(b, "을", "를")} 먼저 계산하고, 그 결과에 ${c}${jo(c, "을", "를")} 더해요`;
+      return { text: `${EH(`${a} - ${b} + ${c}`)}를 계산하는 순서로 알맞은 것은 어느 것일까요?`, choices: shuffle([A, `${b} + ${c}${jo(c, "을", "를")} 먼저 계산하고, ${a}에서 빼요`, `${a} + ${c}${jo(c, "을", "를")} 먼저 계산하고, ${b}${jo(b, "을", "를")} 빼요`, '가장 큰 수와 가장 작은 수부터 계산해요']), ans: A,
         hint: '덧셈과 뺄셈만 섞여 있으면 어디부터 계산할까요?', ok: `앞에서부터 차례로! ${EX.chain(`${a} - ${b} + ${c}`)}` }; } },
     { label: '앞에서부터 계산', gen: () => { const [a, b, c] = abc(), v = a - b + c, s = `${a} - ${b} + ${c}`;
       return { text: `계산해 보세요. ${EXF(s)}`, choices: opt4(v, [a - (b + c), a + b - c, a - b - c, v + 10]), ans: String(v), hint: `${a} − ${b}부터 계산해요.`, ok: EX.chain(s) }; } },
@@ -9138,20 +9176,20 @@ lessonSetup({
         hint: '두 식을 각각 계산해 봐요.', ok: `${v1} − ${v2} = ${v1 - v2}. 숫자는 같아도 괄호가 계산 순서를 바꿔요.` }; } },
     { label: `${VN}의 함정`, gen: () => { const [a, b, c] = abc(), v = a - b + c, w = a - (b + c), A = `${E(`${a} - ${b} + ${c}`)} = ${a - b} + ${c} = ${v}`;
       return { text: `${VN}: “${E(`${a} - ${b} + ${c}`)} = ${a} − ${b + c} = ${w}이야!” ${VN}의 계산을 바르게 고친 것은 어느 것일까요?`, choices: shuffle([A, `${E(`${a} - ${b} + ${c}`)} = ${a} − ${b + c} = ${w}`, `${E(`${a} - ${b} + ${c}`)} = ${a + c} − ${b} = ${v + 2}`, `${E(`${a} - ${b} + ${c}`)} = ${a} − ${b - c} = ${a - (b - c) === v ? v + 4 : a - (b - c)}`]), ans: A,
-        hint: '괄호가 없으니 앞에서부터 차례로 계산해요.', ok: `괄호가 없으면 ${b} + ${c}를 먼저 할 수 없어요. 앞에서부터: ${EX.chain(`${a} - ${b} + ${c}`)}` }; } },
+        hint: '괄호가 없으니 앞에서부터 차례로 계산해요.', ok: `괄호가 없으면 ${b} + ${c}${jo(c, "을", "를")} 먼저 할 수 없어요. 앞에서부터: ${EX.chain(`${a} - ${b} + ${c}`)}` }; } },
     { label: '하나의 식으로', gen: () => { const [a, b, c] = abc(60, 98), A = `${a} − ${b} + ${c}`;
       return { text: `하늘 도서관 책장에 책이 <b>${a}권</b> 있었어요. 학생들이 <b>${b}권</b>을 빌려 가고, <b>${c}권</b>을 반납했어요. 지금 책장의 책 수를 구하는 식으로 알맞은 것은 어느 것일까요?`, choices: shuffle([A, `${a} − (${b} + ${c})`, `${a} + ${b} − ${c}`, `${a} − ${b} − ${c}`]), ans: A,
         hint: '빌려 간 책은 빼고, 반납한 책은 더해요.', ok: `${A} = ${a - b + c}권` }; } },
     { label: '괄호 넣기', gen: () => { for (;;) { const [a, b, c] = abc(70, 98), d = rnd2(3, 12); const s0 = `${a} - ${b} + ${c} - ${d}`, T = EX.val(`${a} - (${b} + ${c}) - ${d}`), O = [`${a} - (${b} + ${c}) - ${d}`, `(${a} - ${b}) + ${c} - ${d}`, `${a} - ${b} + (${c} - ${d})`, `${a} - (${b} + ${c} - ${d})`];
         const V = O.map(EX.val); if (V.filter(x => x === T).length !== 1 || V.some(x => x == null)) continue;
-        return { text: `${EH(s0)}에 괄호를 넣어 계산 결과가 <b>${T}</b>이 되게 하려고 해요. 알맞은 식은 어느 것일까요?`, choices: shuffle(O.map(E)), ans: E(O[0]), hint: '식마다 괄호 안부터 계산해 봐요.', ok: `${EX.chain(O[0])}` }; } } },
+        return { text: `${EH(s0)}에 괄호를 넣어 계산 결과가 <b>${T}</b>${jo(T, "이", "가")} 되게 하려고 해요. 알맞은 식은 어느 것일까요?`, choices: shuffle(O.map(E)), ans: E(O[0]), hint: '식마다 괄호 안부터 계산해 봐요.', ok: `${EX.chain(O[0])}` }; } } },
     { label: '가장 큰 값', gen: () => { const [a, b, c0] = abc(), c = Math.min(c0, b - 3), O = [`${a} - ${b} + ${c}`, `${a} - (${b} + ${c})`, `${a} + ${b} - ${c}`, `${a} - ${b} - ${c}`], V = O.map(EX.val), mx = Math.max(...V);
       return { text: `계산 결과가 <b>가장 큰</b> 식은 어느 것일까요?`, choices: shuffle(O.map(E)), ans: E(O[V.indexOf(mx)]), hint: '네 식을 모두 계산해서 비교해요.', ok: O.map((o, i) => `${E(o)} = ${V[i]}`).join(' · ') }; } }
   ],
   j1: { label: '정류장 봉인', title: '하늘 순환 버스 정류장의 봉인을 풀어라', icon: '🚌', sub: `${VN}${jo(VN, '이', '가')} 정류장 기록 3곳을 잠갔어요! 식을 세워 계산하고 답을 써요.`, done: '정류장 기록 3곳의 봉인을 모두 풀었어요! 🚌',
     rounds: () => { const [a, b, c] = abc(), m = pick([5000, 6000, 7000]), p = rnd2(14, 26) * 100, q = rnd2(7, 13) * 100, [x, y, z] = abc(70, 98), w = rnd2(4, 9); return [
       { name: '① 운동장 학생 수', q: `운동장에 학생이 <b>${a}명</b> 있었어요. <b>${b}명</b>이 교실로 들어가고, <b>${c}명</b>이 운동장으로 나왔어요. 지금 운동장에 있는 학생은 몇 명일까요?`, fig: `<div class="ex5story"><span>처음 ${a}명</span><span>들어감 ${b}명</span><span>나옴 ${c}명</span></div>`, ans: [String(a - b + c), `${a - b + c}명`], unit: '명',
-        hints: ['들어간 학생은 빼고, 나온 학생은 더해요.', `${a} − ${b} + ${c}를 앞에서부터`], ok: `${EX.chain(`${a} - ${b} + ${c}`)}명!` },
+        hints: ['들어간 학생은 빼고, 나온 학생은 더해요.', `${a} − ${b} + ${c}${jo(c, "을", "를")} 앞에서부터`], ok: `${EX.chain(`${a} - ${b} + ${c}`)}명!` },
       { name: '② 매점 거스름돈', q: `${m}원을 내고 <b>${p}원짜리 빵</b>과 <b>${q}원짜리 우유</b>를 <b>한꺼번에</b> 계산했어요. 거스름돈은 얼마일까요?`, fig: `<div class="ex5story"><span>낸 돈 ${m.toLocaleString()}원</span><span>🍞 ${p.toLocaleString()}원</span><span>🥛 ${q.toLocaleString()}원</span></div>`, ans: [String(m - p - q), `${m - p - q}원`], unit: '원',
         hints: ['한꺼번에 계산한 물건값은 괄호로 묶어요.', `${m} − (${p} + ${q})`], ok: `${m} − (${p} + ${q}) = ${m} − ${p + q} = ${m - p - q}원!` },
       { name: '③ 긴 식 계산', q: `계산해 보세요.`, fig: EX.h(`${x} - ${y} + ${z} - ${w}`, { cls: 'big' }), ans: [String(x - y + z - w)], unit: '',
@@ -9202,7 +9240,7 @@ BANK[3] = [
   () => { const [a, b, c] = abc(60, 98), d = rnd2(5, 15); return bqx(`버스에 <b>${a}명</b>이 타고 있었어요. 첫 정류장에서 <b>${b}명</b>이 내리고, 둘째 정류장에서 <b>단체 손님 ${c}명과 ${d}명이 함께</b> 탔어요. 지금 버스에 탄 사람은 몇 명일까요?`, `${a - b + c + d}명`, [`${a - (b + c + d)}명`, `${a - b - c - d}명`, `${a - b + c - d}명`], `${a} − ${b} + (${c} + ${d}) = ${a - b + c + d}`); },
   () => { for (;;) { const [a, b, c] = abc(70, 98), d = rnd2(4, 12), O = [`${a} - (${b} + ${c} - ${d})`, `${a} - (${b} + ${c}) - ${d}`, `${a} - ${b} + (${c} - ${d})`, `(${a} - ${b}) + ${c} - ${d}`], V = O.map(EX.val), mn = Math.min(...V); if (V.filter(x => x === mn).length !== 1 || V.some(x => x == null)) continue;
       return bqx(`${EH(`${a} - ${b} + ${c} - ${d}`)}에 괄호를 한 번 넣어 계산 결과를 <b>가장 작게</b> 만든 식은 어느 것일까요?`, E(O[V.indexOf(mn)]), O.filter((_, i) => i !== V.indexOf(mn)).map(E), O.map((o, i) => `${E(o)} = ${V[i]}`).join(' · ')); } },
-  () => { const [a, b, c] = abc(); return bqx(`${EH(`${a} - (${b} + ${c})`)}와 계산 결과가 <b>같은</b> 식은 어느 것일까요?`, `${a} − ${b} − ${c}`, [`${a} − ${b} + ${c}`, `${a} + ${b} − ${c}`, `${a} − ${c} + ${b}`], `${b}와 ${c}를 함께 빼는 것은 ${b}를 빼고 ${c}를 또 빼는 것과 같아요. 둘 다 ${a - b - c}`); },
+  () => { const [a, b, c] = abc(); return bqx(`${EH(`${a} - (${b} + ${c})`)}와 계산 결과가 <b>같은</b> 식은 어느 것일까요?`, `${a} − ${b} − ${c}`, [`${a} − ${b} + ${c}`, `${a} + ${b} − ${c}`, `${a} − ${c} + ${b}`], `${b}와 ${c}${jo(c, "을", "를")} 함께 빼는 것은 ${b}${jo(b, "을", "를")} 빼고 ${c}${jo(c, "을", "를")} 또 빼는 것과 같아요. 둘 다 ${a - b - c}`); },
   () => { const x = rnd2(60, 90), y = rnd2(15, 30), z = rnd2(8, 20); return bqx(`□ 안에 알맞은 수를 구해 보세요. ${FIG(`<div class="ex5card"><span class="exq big">${x} − ${y} + □ = ${x - y + z}</span></div>`)}`, z, [z + 2 * y, x - y, z + 10], `${x} − ${y} = ${x - y}, ${x - y} + □ = ${x - y + z} → □ = ${z}`); }
 ];
 
@@ -12981,6 +13019,7 @@ body.b2drag,body.b2drag *{cursor:grabbing!important}
             단체 손님(tie)은 먼저 한 묶음으로 모아(괄호) 함께 내려요.
    · FOLD : 식 접기 — 먼저 계산할 두 수를 끌어 겹치면 그 부분이 한 수로 접혀요.
             순서가 틀리면 접히지 않고 왜 안 되는지 알려 줘요(괄호 안 → ×÷ → +−, 앞에서부터).
+   · CHAIN: 이야기 순서대로 카드를 끌어 놓으며 식 만들기 — 묶음(먼저 계산할 부분)은 두 카드를 겹쳐서
    EX(g5/ex.js)가 먼저 있어야 해요.
    ===================================================================== */
 const EX5 = (() => {
@@ -13093,7 +13132,49 @@ const EX5 = (() => {
 
   (() => { const st = document.createElement('style'); st.textContent = `.ex5lh{font-weight:900;color:#5b21b6;font-size:1.05rem;margin:6px 0 2px}.ex5log{font-weight:800;color:#334155;font-size:1rem;padding:3px 8px;border-left:4px solid #c4b5fd;margin:3px 0;background:#faf5ff;border-radius:0 8px 8px 0}
 #toolBody .ex5go{animation:ex5go .7s ease}@keyframes ex5go{0%{transform:translateX(-30px)}100%{transform:none}}`; document.head.appendChild(st); })();
-  return { BUS, FOLD, pcard, person };
+
+  /* ============ CHAIN: 이야기 순서대로 카드를 끌어 놓으며 식 만들기 (차시 2~5) ============
+     c = { t, kind, q, start, unit, hold:{ name, icon, col }, steps:[{ name, label?:v=>'한 상자에 9개',
+            cards:[{ n, op, lab, icon, label?:v=>'받는 곳 이름' }], // 하나씩 차례로 끌어 놓아요
+            tie?:{ op:'*', apply:'/', lab:v=>'24상자' } }],      // 두 카드를 먼저 겹쳐 한 묶음 → 묶음째 끌어 놓아요
+           say(d, e), done(d, e) }                                */
+  const PR = { '+': 1, '-': 1, '*': 2, '/': 2 };
+  function ccard(x, y, w, h, o) { let s = RC(x, y, w, h, o.fill || '#fff', { st: o.col || '#6366f1', sw: 3.5, rx: 18 });
+    s += TX(x + 42, y + h / 2 + 16, o.icon || '🔹', { fs: 46 }) + TX(x + w / 2 + 26, y + h / 2 - 8, o.lab || '', { fs: o.lfs || 25, fill: '#334155', w: 800 }) + TX(x + w / 2 + 26, y + h / 2 + 34, o.big || '', { fs: 36, fill: '#0f172a', w: 900 });
+    if (o.op) s += `<circle cx="${x + w - 6}" cy="${y + 6}" r="20" fill="${o.opc || '#ede9fe'}" stroke="${o.col || '#7c3aed'}" stroke-width="3"/>` + TX(x + w - 6, y + 17, S[o.op], { fs: 28, fill: '#5b21b6', w: 900 });
+    return s; }
+  function CHAIN(c) { const U = c.unit || '';
+    const app = (d, op, piece, v, pieceOp) => { const need = pieceOp && (PR[pieceOp] < PR[op] || (PR[pieceOp] === PR[op] && (op === '-' || op === '/')));
+      if (d.top < PR[op] && d.top !== 9) d.e = `(${d.e})`; d.e += ` ${op} ${need ? '(' + piece + ')' : piece}`; d.top = d.e.startsWith('(') && d.top < PR[op] ? PR[op] : Math.min(d.top, PR[op]); d.v = v; };
+    const fresh = () => ({ si: 0, ci: 0, v: c.start, e: String(c.start), top: 9, tied: null, log: [], ok: false });
+    return { _ty: 'ex5chain', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : (typeof c.q === 'function' ? c.q(d) : c.q), init: fresh,
+      view: d => { const st = c.steps[Math.min(d.si, c.steps.length - 1)], H = c.hold || {}; let s = RC(0, 0, 960, 440, '#f8fafc', { rx: 0 });
+        s += RC(130, 14, 700, 86, '#fff', { st: '#c4b5fd', sw: 3, rx: 22 }) + TX(170, 46, '식', { fs: 20, fill: '#7c3aed', w: 900 }) + TX(480, 78, d.e === String(c.start) ? `처음 ${c.start}${U}` : EX.t(d.e) + (d.ok ? ' = ' + d.v : ''), { fs: d.e.length > 24 ? 32 : 40, fill: '#1e1b4b', w: 900 });
+        /* 받는 곳 */
+        const lab = d.lab || `${H.name || ''} ${d.v}${U}`;
+        s += zone('hold', RC(20, 122, 410, 306, '#fff7ed', { st: H.col || '#f59e0b', sw: 4, rx: 28, c: 'b2tz' }) + TX(225, 256, H.icon || '📦', { fs: 128 }) + TX(225, 342, lab, { fs: 34, fill: '#7c2d12', w: 900 }) + TX(225, 400, d.ok ? '' : '✋ 카드를 여기로 끌어 놓아요', { fs: 20, fill: '#9a3412', w: 800 }));
+        /* 지금 단계 카드 */
+        if (!d.ok) { s += TX(696, 150, `${d.si + 1}. ${st.name}`, { fs: 26, fill: '#334155', w: 900 });
+          if (st.tie) { if (d.tied == null) st.cards.forEach((k, i) => { s += zone('c' + i, drag('c:' + i, ccard(456, 170 + i * 134, 480, 120, Object.assign({ big: k.big || '' }, k)), 'b2cue')); }); 
+            else s += drag('c:all', `<g>${brace(448, 168, 496, 236)}${ccard(468, 184, 456, 200, { icon: st.cards[0].icon, lab: st.cards.map(k => k.lab).join(' · '), lfs: 19, big: `${st.cards[0].n} ${S[st.tie.op]} ${st.cards[1].n} = ${d.tied}${st.tie.u || ''}`, op: st.tie.apply, col: '#dc2626', fill: '#fff1f2' })}</g>`, 'b2cue');
+            if (d.tied == null) s += TX(696, 440, '두 카드를 먼저 겹쳐 한 묶음으로!', { fs: 21, fill: '#b91c1c', w: 900 }); }
+          else st.cards.forEach((k, i) => { const done = i < d.ci, now = i === d.ci; if (done) return; s += now ? drag('c:' + i, ccard(456, 170 + (i - d.ci) * 134, 480, 120, k), 'b2cue') : `<g opacity=".45">${ccard(456, 170 + (i - d.ci) * 134, 480, 120, k)}</g>`; }); }
+        else s += TX(690, 280, '🎉 완성!', { fs: 44, fill: '#15803d', w: 900 });
+        const info = `<div class="ex5lh">🧾 기록</div>` + (d.log.length ? d.log.map(x => `<div class="ex5log">${x}</div>`).join('') : `<div class="ex5log">처음 · ${c.start}${U}</div>`) + (d.ok && c.done ? M4.eq(c.done(d, d.e), 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v), st = c.steps[d.si];
+          if (m.a === 'tap') { api.say(false, '카드를 <b>잡아 끌어서</b> 옮겨요.', true); return; } if (m.a !== 'drop') return;
+          if (st.tie && d.tied == null) { if (/^c\d$/.test(m.t) && m.p !== 'c:' + m.t.slice(1)) { const [a, b] = st.cards.map(k => k.n); d.tied = EX.ap(a, st.tie.op, b); pop(); api.say(true, st.tie.msg ? st.tie.msg(d.tied) : `한 묶음으로! ${a} ${S[st.tie.op]} ${b} = ${d.tied}`, true); return; }
+            if (m.t === 'hold') { api.say(false, st.tie.why || '이 두 카드는 <b>함께</b> 움직여요. 먼저 한 카드를 다른 카드 위에 겹쳐 한 묶음으로 만들어요.', true); return; } return; }
+          if (m.t !== 'hold') return;
+          if (st.tie) { if (m.p !== 'c:all') return; const [a, b] = st.cards.map(k => k.n), v0 = d.v, nv = EX.ap(v0, st.tie.apply, d.tied); if (nv == null) { api.say(false, '이렇게는 계산할 수 없어요.', true); return; }
+            app(d, st.tie.apply, `${a} ${st.tie.op} ${b}`, nv, st.tie.op); d.log.push(`${v0} ${S[st.tie.apply]} (${a} ${S[st.tie.op]} ${b}) = ${v0} ${S[st.tie.apply]} ${d.tied} = <b>${nv}</b>`); d.ci = st.cards.length; if (st.label) d.lab = st.label(nv); }
+          else { const i = +m.p.split(':')[1]; if (i !== d.ci) { api.say(false, '이야기 순서대로 하나씩 옮겨요.', true); return; } const k = st.cards[i], v0 = d.v, nv = EX.ap(v0, k.op, k.n); if (nv == null) { api.say(false, '이렇게는 계산할 수 없어요.', true); return; }
+            app(d, k.op, String(k.n), nv, null); d.log.push(`${v0} ${S[k.op]} ${k.n} = <b>${nv}</b>`); d.ci++; if (k.label || st.label) d.lab = (k.label || st.label)(nv); }
+          pop(); api.clear();
+          if (d.ci >= st.cards.length) { if (d.si < c.steps.length - 1) { d.si++; d.ci = 0; d.tied = null; api.say(true, `좋아요! 다음은 <b>${c.steps[d.si].name}</b>.`, true); } else { d.ok = true; api.win(c.say(d, d.e)); } } } },
+      _solve(d, on) { c.steps.forEach(st => { if (st.tie) { on('act:m4set', 'drop:c:0:c1'); on('act:m4set', 'drop:c:all:hold'); } else st.cards.forEach((k, i) => on('act:m4set', `drop:c:${i}:hold`)); }); } }; }
+  return { BUS, FOLD, CHAIN, pcard, person, ccard };
 })();
 
 
