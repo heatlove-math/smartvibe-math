@@ -11277,6 +11277,66 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
   try { new MutationObserver(() => { const tb = document.getElementById('toolBody'); if (tb && used && key() !== used) { tb.classList.remove('m4used'); used = ''; } }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
 })();
 </script><!--M4D-END-->
+<!--ARENA-START--><style>/* 🏆 왕중왕전 모드: 게임 화면만 */
+html.svarena header,html.svarena .idbar,html.svarena #tabs,html.svarena #storyHud,html.svarena .sthud,html.svarena .stov,html.svarena #sec-s1,html.svarena #svslFab,html.svarena #svslTop,html.svarena #svslNav,html.svarena #svslTabs,html.svarena .stepmap,html.svarena #sec-s2>.map,html.svarena .svhof{display:none!important}
+html.svarena body{padding-top:62px!important}
+#svarBar{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 14px;background:linear-gradient(90deg,#312e81,#7c3aed);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+#svarBar .svar-t{font-weight:900;color:#fde047}#svarBar .svar-g{font-weight:900;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#svarBar .svar-b{font-weight:800}#svarBar .svar-b b{color:#fde047;font-size:1.15rem}
+#svarBar .btn{padding:6px 12px}
+</style><script>
+/* 🏆 (수학탐험대) 왕중왕전 — 단원 마무리에서 이 차시의 게임 하나만 바로 열기
+   주소 뒤에 ?arena=<게임 id | board>&u=<단원 마무리 코드> 를 붙이면:
+   · 이야기·넘겨 보기 없이 세트 2의 그 게임으로 바로 가요.
+   · 혼자 하기 점수를 이 기기(같은 사이트)와 학급 서버 명예의 전당(단원 마무리 · 게임별)에 기록해요. */
+(function () {
+  const q = new URLSearchParams(location.search), AR = q.get('arena'); if (!AR || window.__SVAR) return; window.__SVAR = 1;
+  const U = q.get('u') || '', T = f => { try { return f(); } catch (e) { return undefined; } };
+  const LS = { get: k => T(() => localStorage.getItem(k)), set: (k, v) => T(() => localStorage.setItem(k, v)) };
+  const LID = () => T(() => CONFIG.LESSON_ID) || '', KEY = () => 'svarena:' + LID() + ':' + AR;
+  const SID = () => String(LS.get('sv_id') || '').replace(/^"|"$/g, ''), NAME = () => String(LS.get('sv_name') || '').replace(/^"|"$/g, '');
+  const HOOK = () => T(() => state.webhook) || '', CLS = () => String(T(() => store.get('sv_class')) || LS.get('sv_class') || '').replace(/^"|"$/g, '');
+  const E = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  document.documentElement.classList.add('svarena');
+  const prevView = LS.get('sv:view2');
+  function bar() {
+    let b = document.getElementById('svarBar'); if (!b) { b = document.createElement('div'); b.id = 'svarBar'; document.body.appendChild(b); }
+    const best = +(LS.get(KEY()) || 0);
+    b.innerHTML = `<span class="svar-t">🏆 수학탐험대 왕중왕전</span><span class="svar-g">${E(q.get('n') || T(() => document.title.split(' - ')[1].split(' · ')[0]) || LID())}</span><span class="svar-b">내 최고 <b>${best}</b>점</span><button class="btn btn-sub" data-svar="close">✖ 닫기</button>`;
+  }
+  async function save(score) {
+    score = Math.max(0, Math.min(100, Math.round(+score || 0)));
+    const prev = +(LS.get(KEY()) || 0); if (score > prev) LS.set(KEY(), String(score));
+    T(() => parent !== window && parent.postMessage({ svarena: 1, lid: LID(), game: AR, score }, '*'));
+    bar();
+    const url = HOOK(), sid = SID(), cls = CLS();
+    if (U && score > 0 && /^https:\/\/script\.google(usercontent)?\.com\//.test(url) && sid && cls)
+      T(() => fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'scoreSave', cls, sid, name: NAME(), lesson: U, game: LID() + ':' + AR, score }) }).catch(() => {}));
+  }
+  /* 기록 지켜보기: 미니게임은 판 수(plays)가 늘 때, 보드게임은 혼자 하기 결과(bgRecord · 옛 보드는 b.score)가 나올 때 */
+  let plays = null, seenB = null;
+  setInterval(() => T(() => {
+    const g = state.s2 && state.s2.game;
+    if (AR !== 'board' && g) { if (plays == null) plays = g.plays || 0; if ((g.plays || 0) > plays) { plays = g.plays; if (g.last) save(g.last.score); } }
+    const b = state.s2 && state.s2.board; if (AR === 'board' && b && b.over && b.solo && seenB !== b && typeof b.score === 'number') { seenB = b; save(b.score); }
+  }), 800);
+  T(() => { const o = window.bgRecord; if (typeof o === 'function') window.bgRecord = function (sc, w) { const r = o.apply(this, arguments); if (AR === 'board') save(sc); return r; }; });
+  document.addEventListener('click', e => { const t = e.target.closest('[data-svar]'); if (!t) return; e.preventDefault();
+    if (t.dataset.svar === 'close') { T(() => vgStop()); if (parent !== window) parent.postMessage({ svarena: 1, close: 1 }, '*'); else if (U) location.href = location.pathname.replace(/[^/]*$/, '') + encodeURIComponent(U) + '-단원마무리.html#arena'; else history.back(); } }, true);
+  function go() {
+    T(() => window.SVSL && SVSL.setMode(false)); if (prevView != null) LS.set('sv:view2', prevView);
+    T(() => document.querySelectorAll('.stov').forEach(x => x.classList.add('hidden')));
+    T(() => showTab('s2'));
+    if (AR === 'board') T(() => goStep('s2', 'board'));
+    else {
+      T(() => goStep('s2', 'game'));
+      setTimeout(() => T(() => { const b = document.querySelector(`[data-act="lair-pick"][data-v="${AR}"]`); if (b) b.click(); }), 300);
+    }
+    bar(); scrollTo(0, 0);
+  }
+  if (document.readyState === 'complete') setTimeout(go, 900); else addEventListener('load', () => setTimeout(go, 900));
+})();
+
+</script><!--ARENA-END-->
 <!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
 /* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
 .card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}
@@ -11535,7 +11595,8 @@ body.svsl-on #toolBody .svsl-side .cfb .face-e{display:none}
 /* 휴대폰 세로 화면: 조작 활동(개념 탐험·미니게임·보드게임)에서는 가로로 돌려 달라는 안내 — 문제 풀이는 세로 그대로 */
 (function () { if (window.__uniRot) return; window.__uniRot = 1;
   const isPhone = () => Math.min(screen.width, screen.height) < 600 && matchMedia('(pointer:coarse)').matches;
-  const act = () => { const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
+  const isWrap = () => /-U-/.test(decodeURIComponent(location.pathname)) || /-U$/.test(String((window.CONFIG || {}).LESSON_ID || ''));
+  const act = () => { if (isWrap()) return false; const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
   let el = null, dis = {};
   function upd() { const port = innerHeight > innerWidth, on = isPhone() && port && act(); const key = (document.body.dataset.svst || '') + '|' + (document.body.dataset.svset || '');
     if (!el) { el = document.createElement('div'); el.id = 'uniRot'; el.innerHTML = '<div class="uniRotBox"><div class="uniRotPh">📱</div><b>휴대폰을 가로로 돌려 주세요</b><p>직접 끌어 조작하는 활동은 가로 화면에서 그림이 크게 보여요.</p><button type="button">세로로 그냥 할게요</button></div>'; const off = e => { e.preventDefault(); e.stopPropagation(); try { sessionStorage.setItem('uniRotOff', '1'); } catch (x) {} dis.all = 1; el.classList.remove('on'); };
