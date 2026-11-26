@@ -4052,7 +4052,7 @@ function init() {
   }, 500);
 }
 /* =====================================================================
-   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 3개·기본 문제·브래킷 보스전)
+   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 4개·기본 문제·브래킷 보스전)
    보석은 학번별로 이 기기에 저장돼요. (제출하면 시트 '보석현황'에도 기록)
    ===================================================================== */
 CONFIG.LESSON_ID = CONFIG.LESSON_ID || '5-1-1-2';
@@ -4136,7 +4136,7 @@ const ST_AREA = { dark: '수학 세계 전체', tilt: '수와 연산', mixup: '�
 const ST_VK = ['dark', 'tilt', 'mixup', 'clock', 'half'];
 const ST_SEAL = { tilt: '네 자리 끊기의 자물쇠', mixup: '자릿값의 봉인', clock: '뛰어 세기의 봉인', half: '10장 묶기의 봉인', dark: '조의 문 봉인' };
 const CHAPTERS = [
-  { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 3개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
+  { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 4개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '브래킷의 함정',     sub: '기본 문제 4개 · 억과 조 읽고 쓰기',        go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '브래킷 보스전',     sub: '방어막 3겹 · 실생활 큰 수 문제 3개',        go: ['s1', 'jump'] },
   { n: 4, v: 'mixup', icon: '🎮', title: '브래킷의 마법진',         sub: '문제은행 · 미니게임 3종 · 수호석 경매전', go: ['s2', 'drill'] },
@@ -9230,13 +9230,86 @@ const MEB = (() => {
 })();
 
 /* =====================================================================
+   🎮 5학년 미니게임 무대 꾸미기 · 효과 (mg5fx)
+   · 게임마다 이야기 배경(쿠키 공장, 문구점, 피자 가게, 체험학습 공원 …)을 무대 빈 곳에 깔아요
+   · 맞히면 그 게임의 물건이 터져 나오고 +점수가 떠올라요 / 틀리면 무대가 흔들려요
+   · 연속 성공 불꽃 배지, 남은 10초 경고(째깍 소리 + 빨간 시계)
+   ===================================================================== */
+(function () {
+  if (window.__mg5fx) return; window.__mg5fx = 1;
+  const svgURI = s => `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice"><g opacity=".55">${s}</g></svg>`)}")`;
+  const ck = (x, y, r = 16) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#d97706" stroke="#92400e" stroke-width="2"/><circle cx="${x - r / 3}" cy="${y - r / 4}" r="${r / 6}" fill="#451a03"/><circle cx="${x + r / 3}" cy="${y + r / 4}" r="${r / 6}" fill="#451a03"/>`;
+  const box = (x, y, w = 60, h = 50) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#fcd34d" stroke="#92400e" stroke-width="3"/><path d="M${x},${y + 14} h${w}" stroke="#92400e" stroke-width="2"/>`;
+  const kid = (x, y, c, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-9" y="10" width="18" height="24" rx="7" fill="${c}"/><circle r="9" fill="#fcd5b4"/><path d="M-9,-1 q0,-10 9,-10 q9,0 9,10 q-4,-4 -9,-4 q-5,0 -9,4z" fill="#3f2a1d"/><rect x="-6" y="32" width="5" height="16" rx="2" fill="#334155"/><rect x="1" y="32" width="5" height="16" rx="2" fill="#334155"/></g>`;
+  const T = {
+    umbrg: { emo: ['☂️', '💧', '🌈'], top: '#e0f2fe', bot: '#bae6fd', art: `<path d="M0,250 Q300,220 600,248 T1200,240 V300 H0z" fill="#bbf7d0"/>${[80, 1080].map(x => `<rect x="${x}" y="170" width="70" height="80" rx="8" fill="#94a3b8"/><path d="M${x - 10},170 l45,-30 l45,30z" fill="#64748b"/>`).join('')}` },
+    pairg: { emo: ['🎟️', '🚌', '⭐'], top: '#f0f9ff', bot: '#dbeafe', art: `<rect y="236" width="1200" height="64" fill="#64748b"/><line x1="0" y1="268" x2="1200" y2="268" stroke="#fff" stroke-width="5" stroke-dasharray="40 26"/><g transform="translate(40,170)"><rect width="190" height="70" rx="16" fill="#fbbf24" stroke="#92400e" stroke-width="4"/>${[0, 1, 2, 3].map(i => `<rect x="${14 + i * 40}" y="12" width="30" height="26" rx="4" fill="#bae6fd"/>`).join('')}<circle cx="40" cy="72" r="14" fill="#1f2937"/><circle cx="150" cy="72" r="14" fill="#1f2937"/></g>` },
+    judgeg: { emo: ['⚖️', '✔️', '🍪'], top: '#fff7ed', bot: '#fde68a', art: `<rect y="230" width="1200" height="70" fill="#b45309"/><rect y="222" width="1200" height="14" fill="#92400e"/><g transform="translate(70,150)"><rect x="0" y="60" width="90" height="16" rx="6" fill="#78350f"/><rect x="30" y="0" width="70" height="30" rx="8" fill="#a16207" transform="rotate(-25 65 15)"/><rect x="58" y="20" width="12" height="50" rx="5" fill="#78350f" transform="rotate(-25 64 45)"/></g><g transform="translate(1040,110)" fill="none" stroke="#a16207" stroke-width="6"><path d="M50,0 v110 M0,30 h100"/><path d="M0,30 l-18,40 h36z M100,30 l-18,40 h36z" fill="#fde68a"/><rect x="25" y="108" width="50" height="10" fill="#a16207"/></g>` },
+    buildg: { emo: ['🍪', '📦', '🚚'], top: '#fff7ed', bot: '#fed7aa', art: `<rect y="236" width="1200" height="26" rx="13" fill="#475569"/>${Array.from({ length: 16 }, (_, i) => `<circle cx="${40 + i * 75}" cy="249" r="9" fill="#94a3b8"/>`).join('')}${[60, 150, 240, 900, 990].map((x, i) => i < 3 ? ck(x, 218) : box(x, 186))}<rect y="262" width="1200" height="38" fill="#e7e5e4"/>` },
+    payg: { emo: ['🪙', '💵', '🧾'], top: '#f0fdf4', bot: '#dcfce7', art: `<rect y="226" width="1200" height="74" fill="#a16207"/><rect y="216" width="1200" height="16" rx="6" fill="#ca8a04"/><g transform="translate(1030,140)"><rect width="130" height="78" rx="12" fill="#334155"/><rect x="14" y="12" width="102" height="26" rx="4" fill="#86efac"/><rect x="14" y="46" width="102" height="18" rx="4" fill="#64748b"/></g>${[60, 120, 180].map((x, i) => `<g transform="translate(${x},${160}) rotate(-25)"><rect width="14" height="62" rx="5" fill="${['#ef4444', '#3b82f6', '#22c55e'][i]}"/></g>`).join('')}` },
+    rcptg: { emo: ['🔍', '🧾', '✨'], top: '#f8fafc', bot: '#e2e8f0', art: `${[0, 1, 2, 3, 4, 5].map(i => `<g transform="translate(${40 + i * 200},${200 + (i % 2) * 20}) rotate(${i % 2 ? 6 : -5})"><rect width="120" height="90" fill="#fff" stroke="#cbd5e1" stroke-width="3"/>${[18, 36, 54, 72].map(y => `<line x1="14" y1="${y}" x2="106" y2="${y}" stroke="#e2e8f0" stroke-width="5"/>`).join('')}</g>`).join('')}` },
+    orderg: { emo: ['🎫', '🔢', '🍕'], top: '#fff7ed', bot: '#fecaca', art: `<rect y="232" width="1200" height="68" fill="#e7c9a0"/>${Array.from({ length: 30 }, (_, i) => `<rect x="${i * 40}" y="0" width="20" height="16" fill="#ef4444" opacity=".5"/>`).join('')}<g transform="translate(1040,150)"><circle cx="60" cy="60" r="62" fill="#d97706"/><circle cx="60" cy="60" r="52" fill="#fbbf24"/><circle cx="40" cy="44" r="7" fill="#dc2626"/><circle cx="78" cy="70" r="7" fill="#dc2626"/><circle cx="56" cy="88" r="7" fill="#dc2626"/></g>` },
+    balg: { emo: ['⚖️', '🍕', '🥤'], top: '#fff7ed', bot: '#fde68a', art: `<rect y="236" width="1200" height="64" fill="#e7c9a0"/>${[[70, '#38bdf8'], [130, '#f472b6'], [1060, '#a3e635'], [1120, '#fbbf24']].map(([x, c]) => `<g transform="translate(${x},170)"><path d="M0,0 h44 l-6,62 h-32z" fill="${c}" stroke="#0369a1" stroke-width="3"/><rect x="-3" y="-8" width="50" height="10" rx="3" fill="#e0f2fe"/></g>`).join('')}` },
+    chaing: { emo: ['🧩', '🚌', '🎟️'], top: '#e0f2fe', bot: '#bbf7d0', art: `<path d="M0,240 Q300,210 600,236 T1200,226 V300 H0z" fill="#86efac"/>${['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map((c, i) => kid(60 + i * 34, 200, c, 1.1)).join('')}<g transform="translate(980,170)"><rect width="190" height="70" rx="16" fill="#facc15" stroke="#a16207" stroke-width="4"/>${[0, 1, 2, 3].map(i => `<rect x="${14 + i * 40}" y="12" width="30" height="26" rx="4" fill="#e0f2fe"/>`).join('')}<circle cx="40" cy="72" r="14" fill="#1f2937"/><circle cx="150" cy="72" r="14" fill="#1f2937"/></g>` },
+    missingg: { emo: ['🔎', '❓', '⭐'], top: '#f5f3ff', bot: '#ddd6fe', art: `<path d="M0,246 Q400,220 800,244 T1200,236 V300 H0z" fill="#c4b5fd"/>${[100, 300, 900, 1100].map((x, i) => `<text x="${x}" y="${150 + (i % 2) * 40}" font-size="70" font-weight="900" fill="#a78bfa" opacity=".35">${['□', '?', '□', '?'][i]}</text>`).join('')}` }
+  };
+  const css = Object.keys(T).map(k => `#mgxStage[data-g5g="${k}"]{background:${svgURI(T[k].art)} center bottom/100% auto no-repeat,linear-gradient(180deg,${T[k].top},${T[k].bot})!important}`).join('\n');
+  const st = document.createElement('style');
+  st.textContent = css + `
+#mgxStage[data-g5g]{position:relative;border-radius:18px;transition:box-shadow .2s}
+#mgxStage[data-g5g] .qzq{background:rgba(255,255,255,.88);border-radius:16px;padding:8px 14px;display:block;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;box-shadow:0 3px 0 rgba(15,23,42,.08)}
+#mgxStage.g5ok{animation:g5okf .55s}#mgxStage.g5bad{animation:g5shake .45s}
+@keyframes g5okf{0%{box-shadow:inset 0 0 0 0 rgba(34,197,94,.0)}30%{box-shadow:inset 0 0 0 10px rgba(34,197,94,.55)}100%{box-shadow:inset 0 0 0 0 rgba(34,197,94,0)}}
+@keyframes g5shake{0%,100%{transform:none}20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.g5pt{position:fixed;z-index:9999;pointer-events:none;font-size:30px;left:0;top:0;animation:g5fly .9s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes g5fly{0%{transform:translate(var(--x0),var(--y0)) scale(.4);opacity:1}100%{transform:translate(calc(var(--x0) + var(--dx)),calc(var(--y0) + var(--dy))) scale(1.15) rotate(var(--r));opacity:0}}
+.g5plus{position:fixed;z-index:9999;pointer-events:none;font:900 2.1rem/1 inherit;color:#16a34a;-webkit-text-stroke:2px #fff;paint-order:stroke;animation:g5up 1s ease-out forwards}.g5plus.bad{color:#dc2626}
+@keyframes g5up{0%{transform:translate(-50%,0) scale(.6);opacity:0}20%{transform:translate(-50%,-14px) scale(1.15);opacity:1}100%{transform:translate(-50%,-80px) scale(1);opacity:0}}
+.g5combo{position:absolute;right:14px;top:10px;z-index:5;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;font-weight:900;border-radius:999px;padding:6px 14px;box-shadow:0 4px 0 #9a3412;animation:g5pop .35s}
+@keyframes g5pop{0%{transform:scale(.4)}70%{transform:scale(1.18)}100%{transform:none}}
+.g5hurry{animation:g5hur .5s infinite alternate!important;color:#fecaca!important}@keyframes g5hur{to{transform:scale(1.12);text-shadow:0 0 12px #ef4444}}
+/* 판정소: 도장 받침 */
+#mgxStage .jgbin{position:relative;box-shadow:0 8px 0 rgba(21,128,61,.25);background:radial-gradient(circle at 50% 40%,#dcfce7,#f0fdf4 70%)}#mgxStage .jgbin.no{box-shadow:0 8px 0 rgba(185,28,28,.25);background:radial-gradient(circle at 50% 40%,#fee2e2,#fef2f2 70%)}
+#mgxStage .jgbin:before{content:'🟢';position:absolute;top:10px;font-size:1.2rem;opacity:.7}#mgxStage .jgbin.no:before{content:'🔴'}
+#mgxStage .jgcard{background:repeating-linear-gradient(180deg,#fff 0 30px,#f1f5f9 30px 31px);transform:rotate(-1.5deg)}
+/* 계산대: 진짜 돈처럼 */
+#mgxStage .pycoin{box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .15s}#mgxStage .pycoin:hover{transform:translateY(-3px) rotate(-3deg)}
+#mgxStage .pycoin.c1000{background:linear-gradient(135deg,#bbf7d0,#86efac 45%,#4ade80);border-color:#15803d;border-radius:10px}
+#mgxStage .pycoin.c500{background:radial-gradient(circle at 35% 30%,#fef9c3,#facc15 55%,#ca8a04);border-color:#a16207;border-radius:50%}
+#mgxStage .pycoin.c100{background:radial-gradient(circle at 35% 30%,#f8fafc,#cbd5e1 55%,#94a3b8);border-color:#475569;border-radius:50%}
+#mgxStage .pytray{background:radial-gradient(ellipse at 50% 60%,#fff,#f1f5f9 60%,#e2e8f0);border:5px solid #94a3b8!important;border-radius:60px!important;box-shadow:inset 0 6px 16px rgba(15,23,42,.12),0 8px 0 rgba(15,23,42,.12)}
+`;
+  document.head.appendChild(st);
+  const stage = () => document.getElementById('mgxStage');
+  const tag = () => { const s = stage(); try { if (s && typeof VG !== 'undefined' && VG.id && T[VG.id] && s.dataset.g5g !== VG.id) s.dataset.g5g = VG.id; } catch (e) {} };
+  try { new MutationObserver(tag).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  function burst(ok, pts) { const s = stage(); if (!s) return; tag(); const r = s.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + Math.min(r.height * .45, 260), th = T[s.dataset.g5g] || { emo: ['⭐'] };
+    s.classList.remove('g5ok', 'g5bad'); void s.offsetWidth; s.classList.add(ok ? 'g5ok' : 'g5bad'); setTimeout(() => s.classList.remove('g5ok', 'g5bad'), 600);
+    const p = document.createElement('div'); p.className = 'g5plus' + (ok ? '' : ' bad'); p.textContent = ok ? `+${pts}` : '−'; p.style.left = cx + 'px'; p.style.top = cy + 'px'; document.body.appendChild(p); setTimeout(() => p.remove(), 1100);
+    if (!ok) return;
+    for (let i = 0; i < 14; i++) { const e = document.createElement('span'), a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 170; e.className = 'g5pt'; e.textContent = th.emo[i % th.emo.length];
+      e.style.setProperty('--x0', cx - 15 + 'px'); e.style.setProperty('--y0', cy - 15 + 'px'); e.style.setProperty('--dx', Math.cos(a) * d + 'px'); e.style.setProperty('--dy', Math.sin(a) * d - 40 + 'px'); e.style.setProperty('--r', (Math.random() * 300 - 150) + 'deg'); document.body.appendChild(e); setTimeout(() => e.remove(), 950); } }
+  function combo() { const s = stage(); if (!s) return; let b = s.querySelector('.g5combo'); const n = (typeof VG !== 'undefined' && VG.combo) || 0;
+    if (n < 2) { if (b) b.remove(); return; } if (!b) { b = document.createElement('div'); b.className = 'g5combo'; s.appendChild(b); } b.textContent = `🔥 ${n}연속!`; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; }
+  setTimeout(function wrap() {
+    if (typeof window.vgGood !== 'function' || typeof window.vgBad !== 'function') return setTimeout(wrap, 300);
+    const G0 = window.vgGood, B0 = window.vgBad;
+    window.vgGood = function () { const p = G0.apply(this, arguments); try { if (stage()) { burst(true, p); try { Sound.coin(); } catch (e) {} setTimeout(combo, 30); } } catch (e) {} return p; };
+    window.vgBad = function () { const r = B0.apply(this, arguments); try { if (stage()) { burst(false); setTimeout(combo, 30); } } catch (e) {} return r; };
+  }, 0);
+  /* 남은 10초: 시계가 빨갛게 뛰고 째깍 */
+  let lastT = -1; setInterval(() => { try { const s = stage(); if (!s || typeof VG === 'undefined' || !VG.id) return; const el = [...document.querySelectorAll('.vgtime,#vgTime,[id*="Time"],[class*="time"]')].find(x => x.offsetParent && /\d+:\d\d/.test(x.textContent)); if (!el) return;
+      const m = el.textContent.match(/(\d+):(\d\d)/), t = +m[1] * 60 + +m[2]; el.classList.toggle('g5hurry', t > 0 && t <= 10); if (t !== lastT && t > 0 && t <= 5) { try { Sound.tick(); } catch (e) {} } lastT = t; } catch (e) {} }, 250);
+})();
+
+/* =====================================================================
    🍪 5학년 1학기 1단원 자연수의 혼합 계산 · 2차시 「곱셈과 나눗셈이 섞여 있는 식」
    구출의 여정 EP.2 「하늘 쿠키 공장」 · 간부 브래킷 · 봉인된 12지신 자람이
    초점: ① 곱셈과 나눗셈이 섞인 식은 앞에서부터 차례로 ② 괄호 안을 먼저 ③ "곱셈이 언제나 먼저"라는 오개념 고치기
    지킬 것: 이 차시에는 덧셈·뺄셈을 섞지 않아요 (3차시부터)
    ===================================================================== */
 S1_TOOLS.length = 0; BADGES.length = 0;
-[['share', 'tilt', '도구 1', '나누어 담고 가져가기', '앞에서부터 차례로', '📦'], ['stack', 'mixup', '도구 2', '상자 탑에 한꺼번에 담기', '괄호 안을 먼저', '🧱'], ['fold', 'clock', '도구 3', '식 접기', '계산 순서대로 접기', '🧮']]
+[['share', 'tilt', '도구 1', '나누어 담고 실어 보내기', '앞에서부터 차례로', '📦'], ['stack', 'mixup', '도구 2', '선반 상자에 한꺼번에', '괄호 안을 먼저', '🧱'], ['tape', 'half', '도구 3', '막대 자르고 고르기', '차례로 vs 묶어서', '📏'], ['fold', 'clock', '도구 4', '식 접기', '계산 순서대로 접기', '🧮']]
   .forEach(([k, v, no, nm, sh, ic]) => { S1_TOOLS.push([k, v, no, nm, sh]); BADGES.push([k, `${no} · ${nm}`, ic]); TOOL_VK[k] = v; TOOL_RENDER[k] = () => { try { CK.render(k); } catch (e) {} }; });
 const E = s => EX.t(s), EH = s => EX.h(s);
 /* a ÷ b × c (a는 b로 나누어떨어짐) · 괄호용은 a가 b × c로도 나누어떨어지게 */
@@ -9262,7 +9335,7 @@ lessonSetup({
       return { text: `${VN}: “${E(`${a} / ${b} * ${c}`)} = ${a} ÷ ${b * c} = ${w}이야!” ${VN}의 계산을 바르게 고친 것은 어느 것일까요?`, choices: shuffle([A, `${E(`${a} / ${b} * ${c}`)} = ${a} ÷ ${b * c} = ${w}`, `${E(`${a} / ${b} * ${c}`)} = ${a * c} ÷ ${b} = ${v + 1}`, `${E(`${a} / ${b} * ${c}`)} = ${a / b} × ${c} = ${v + c}`]), ans: A,
         hint: '괄호가 없으니 앞에서부터 차례로 계산해요.', ok: `괄호가 없으면 ${b} × ${c}${jo(c, "을", "를")} 먼저 할 수 없어요. ${EX.chain(`${a} / ${b} * ${c}`)}` }; } },
     { label: '하나의 식으로', gen: () => { const [a, b, c] = dmc(), A = `${a} ÷ ${b} × ${c}`;
-      return { text: `사과 <b>${a}개</b>를 <b>${b}봉지</b>에 똑같이 나누어 담았어요. 그중 <b>${c}봉지</b>에 든 사과 수를 구하는 식으로 알맞은 것은 어느 것일까요?`, choices: shuffle([A, `${a} ÷ (${b} × ${c})`, `${a} × ${b} ÷ ${c}`, `${b} × ${c} ÷ ${a}`]), ans: A,
+      return { text: `사과 <b>${a}개</b>를 <b>${b}봉지</b>에 똑같이 나누어 담았어요. 그중 <b>${c}봉지</b>에 든 사과 수를 구하는 식으로 알맞은 것은 어느 것일까요? ${SCN.flow([['🍎', '사과', `${a}개`], ['🛍️', '봉지에 나누기', `${b}봉지`, '÷'], ['✋', '그중', `${c}봉지`, '×']])}`, choices: shuffle([A, `${a} ÷ (${b} × ${c})`, `${a} × ${b} ÷ ${c}`, `${b} × ${c} ÷ ${a}`]), ans: A,
         hint: '한 봉지에 든 사과 수를 먼저 구하고, 몇 봉지인지 곱해요.', ok: `${A} = ${a / b} × ${c} = ${a / b * c}개` }; } },
     { label: '괄호 넣기', gen: () => { for (;;) { const [a, b, c] = dmc(true), T = a / (b * c), O = [`${a} / (${b} * ${c})`, `(${a} / ${b}) * ${c}`, `${a} * ${c} / ${b}`, `${a} / ${c} * ${b}`], V = O.map(EX.val);
         if (V.some(x => x == null) || V.filter(x => x === T).length !== 1) continue;
@@ -9273,9 +9346,9 @@ lessonSetup({
   ],
   j1: { label: '공장 봉인', title: '하늘 쿠키 공장의 봉인을 풀어라', icon: '🍪', sub: `${VN}${jo(VN, '이', '가')} 공장 기록 3곳을 잠갔어요! 식을 세워 계산하고 답을 써요.`, done: '쿠키 공장 기록 3곳의 봉인을 모두 풀었어요! 🍪',
     rounds: () => { const [a, b, c] = dmc(), [p, q, r] = dmc(true); let x, y, z; for (;;) { x = rnd2(6, 15); y = rnd2(2, 9); z = rnd2(2, 9); if ((x * y) % z === 0 && z !== y) break; } return [
-      { name: '① 나누어 보낸 쿠키', q: `쿠키 <b>${a}개</b>를 <b>${b}상자</b>에 똑같이 나누어 담고, 그중 <b>${c}상자</b>를 보냈어요. 보낸 쿠키는 몇 개일까요?`, fig: `<div class="ex5story"><span>🍪 쿠키 ${a}개</span><span>📦 ${b}상자에 나누기</span><span>🚚 ${c}상자 보내기</span></div>`, ans: [String(a / b * c), `${a / b * c}개`], unit: '개',
+      { name: '① 나누어 보낸 쿠키', q: `쿠키 <b>${a}개</b>를 <b>${b}상자</b>에 똑같이 나누어 담고, 그중 <b>${c}상자</b>를 보냈어요. 보낸 쿠키는 몇 개일까요?`, fig: SCN.flow([['🍪', '쿠키', `${a}개`], ['📦', '상자에 나누기', `${b}상자`, '÷'], ['🚚', '보낸 상자', `${c}상자`, '×']]), ans: [String(a / b * c), `${a / b * c}개`], unit: '개',
         hints: ['한 상자에 든 쿠키 수를 먼저 구해요.', `${a} ÷ ${b} × ${c}${jo(c, "을", "를")} 앞에서부터`], ok: `${EX.chain(`${a} / ${b} * ${c}`)}개!` },
-      { name: '② 초콜릿 판', q: `초콜릿 <b>${p}개</b>를 <b>한 줄에 ${q}칸씩 ${r}줄</b>인 상자의 모든 칸에 똑같이 나누어 담았어요. 한 칸에 몇 개씩 담았을까요?`, fig: `<div class="ex5story"><span>🍫 초콜릿 ${p}개</span><span>▦ 한 줄에 ${q}칸 × ${r}줄</span></div>`, ans: [String(p / (q * r)), `${p / (q * r)}개`], unit: '개',
+      { name: '② 초콜릿 판', q: `초콜릿 <b>${p}개</b>를 <b>한 줄에 ${q}칸씩 ${r}줄</b>인 상자의 모든 칸에 똑같이 나누어 담았어요. 한 칸에 몇 개씩 담았을까요?`, fig: SCN.flow([['🍫', '초콜릿', `${p}개`], ['▦', '한 줄 칸 수', `${q}칸`, '÷'], ['🧱', '줄 수', `${r}줄`, '×']]), ans: [String(p / (q * r)), `${p / (q * r)}개`], unit: '개',
         hints: ['칸이 모두 몇 개인지 먼저 구해요. 괄호로 묶어요.', `${p} ÷ (${q} × ${r})`], ok: `${EX.chain(`${p} / (${q} * ${r})`)}개!` },
       { name: '③ 식 계산', q: '계산해 보세요.', fig: EX.h(`${x} * ${y} / ${z}`, { cls: 'big' }), ans: [String(x * y / z)], unit: '',
         hints: ['곱셈과 나눗셈만 있으니 앞에서부터 차례로!', `${x} × ${y} = ${x * y}`], ok: `${EX.chain(`${x} * ${y} / ${z}`)}!` }]; } },
@@ -9307,13 +9380,13 @@ BANK[1] = [
   () => { const [a, b, c] = dmc(true), s = `${a} / (${b} * ${c})`; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [a / b * c, b * c, a / b], EX.chain(s)); },
   () => { for (;;) { const a = rnd2(4, 15), b = rnd2(2, 9), c = rnd2(2, 9); if ((a * b) % c || c === b) continue; const s = `${a} * ${b} / ${c}`; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [a * b * c, a * b, a + b - c > 0 ? a + b - c : a + b], EX.chain(s)); } },
   () => { const [a, b, c] = dmc(true); return bqx(`${E(`${a} / (${b} * ${c})`)}에서 가장 먼저 계산해야 하는 것은 어느 것일까요?`, `${b} × ${c}`, [`${a} ÷ ${b}`, `${a} ÷ ${c}`, `${a} × ${c}`], '괄호가 있으면 괄호 안을 먼저 계산해요.'); },
-  () => { const [a, b, c] = dmc(); return bqx(`귤 ${a}개를 ${b}봉지에 똑같이 나누어 담았어요. 그중 ${c}봉지에 든 귤은 몇 개일까요?`, `${a / b * c}개`, [`${a / (b * c) % 1 ? a / b + c : a / (b * c)}개`, `${a / b}개`, `${a / b * c + c}개`], `${a} ÷ ${b} × ${c} = ${a / b} × ${c} = ${a / b * c}`); },
+  () => { const [a, b, c] = dmc(); return bqx(`귤 ${a}개를 ${b}봉지에 똑같이 나누어 담았어요. 그중 ${c}봉지에 든 귤은 몇 개일까요? ${SCN.flow([['🍊', '귤', `${a}개`], ['🛍️', '봉지에 나누기', `${b}봉지`, '÷'], ['✋', '그중', `${c}봉지`, '×']])}`, `${a / b * c}개`, [`${a / (b * c) % 1 ? a / b + c : a / (b * c)}개`, `${a / b}개`, `${a / b * c + c}개`], `${a} ÷ ${b} × ${c} = ${a / b} × ${c} = ${a / b * c}`); },
   () => bqx('곱셈과 나눗셈이 섞여 있고 괄호가 없는 식은 어떻게 계산할까요?', '앞에서부터 차례로 계산해요', ['곱셈을 먼저 계산해요', '나눗셈을 먼저 계산해요', '큰 수끼리 먼저 계산해요'], '예: 72 ÷ 8 × 3 = 9 × 3 = 27')
 ];
 BANK[2] = [
   () => { const [a, b, c] = dmc(true); return bqx(`두 식의 계산 결과의 차는 얼마일까요? ${FIG(`<div class="ex5story"><span>${EH(`${a} / ${b} * ${c}`)}</span><span>${EH(`${a} / (${b} * ${c})`)}</span></div>`)}`, a / b * c - a / (b * c), [a / b * c, a / (b * c), a / b], `${a / b * c} − ${a / (b * c)} = ${a / b * c - a / (b * c)}`); },
   () => { for (;;) { const b = rnd2(2, 6), c = rnd2(2, 6), q = rnd2(2, 8), a = q * b * c, d = pick([2, 3, 4]); if (a > 240) continue; const s = `${a} / ${b} / ${c} * ${d}`; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [a / (b * c * d) % 1 ? a / b : a / (b * c * d), a / b / c, a / b], EX.chain(s)); } },
-  () => { const [a, b, c] = dmc(true); return bqx(`한 판에 ${b}줄씩, 한 줄에 ${c}칸인 달걀판의 모든 칸에 달걀 ${a}개를 똑같이 나누어 담으려고 해요. 한 칸에 몇 개씩 담는지 구하는 식으로 알맞은 것은 어느 것일까요?`, `${a} ÷ (${b} × ${c})`, [`${a} ÷ ${b} × ${c}`, `${a} × ${b} ÷ ${c}`, `(${a} ÷ ${b}) × ${c}`], `${a} ÷ (${b} × ${c}) = ${a} ÷ ${b * c} = ${a / (b * c)}`); },
+  () => { const [a, b, c] = dmc(true); return bqx(`한 판에 ${b}줄씩, 한 줄에 ${c}칸인 달걀판의 모든 칸에 달걀 ${a}개를 똑같이 나누어 담으려고 해요. 한 칸에 몇 개씩 담는지 구하는 식으로 알맞은 것은 어느 것일까요? ${SCN.flow([['🥚', '달걀', `${a}개`], ['🧺', '한 판의 줄', `${b}줄`, '÷'], ['▦', '한 줄의 칸', `${c}칸`, '×']])}`, `${a} ÷ (${b} × ${c})`, [`${a} ÷ ${b} × ${c}`, `${a} × ${b} ÷ ${c}`, `(${a} ÷ ${b}) × ${c}`], `${a} ÷ (${b} × ${c}) = ${a} ÷ ${b * c} = ${a / (b * c)}`); },
   () => { for (;;) { const [a, b, c] = dmc(true), O = [`${a} / ${b} * ${c}`, `${a} / (${b} * ${c})`, `${a} / ${b} / ${c}`, `${a} * ${c} / ${b} / ${c}`], V = O.map(EX.val), T = V[0]; if (V.some(x => x == null) || V.filter(x => x === T).length !== 1) continue; return bqx(`계산 결과가 ${T}인 식은 어느 것일까요?`, E(O[0]), O.slice(1).map(E), EX.chain(O[0])); } },
   () => { const [a, b, c] = dmc(true); return bqx(`${VN}: “${E(`${a} / ${b} * ${c}`)}와 ${E(`${a} / (${b} * ${c})`)}는 숫자가 같으니까 값도 같아!” 바르게 말한 것은 어느 것일까요?`, '괄호가 계산 순서를 바꾸어 값이 달라요', ['숫자가 같으니 값도 같아요', '곱셈이 있으면 언제나 곱셈부터 해요', '괄호는 계산에 상관없어요'], `${a / b * c}와 ${a / (b * c)}로 값이 달라요.`); },
   () => { for (;;) { const a = rnd2(3, 9), b = rnd2(2, 9), c = rnd2(2, 6), d = rnd2(2, 9); if ((a * b) % c || c === b) continue; const s = `${a} * ${b} / ${c} * ${d}`; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [a * b / (c * d) % 1 ? a * b * d : a * b / (c * d), a * b / c, a * b * d], EX.chain(s)); } }
@@ -9321,7 +9394,7 @@ BANK[2] = [
 BANK[3] = [
   () => { const [a, b, c] = dmc(); return bqx(`□ 안에 알맞은 수를 구해 보세요. ${FIG(`<div class="ex5card"><span class="exq big">${a} ÷ □ × ${c} = ${a / b * c}</span></div>`)}`, b, [c, b + 1, a / b], `${a / b * c} ÷ ${c} = ${a / b} → ${a} ÷ □ = ${a / b} → □ = ${b}`); },
   () => { const [a, b, c] = dmc(true); return bqx(`두 식의 값의 크기를 비교해 보세요. ${FIG(`<div class="ex5story"><span>가 ${EH(`${a} / ${b} * ${c}`)}</span><span>나 ${EH(`${a} / (${b} * ${c})`)}</span></div>`)}`, '가가 나보다 커요', ['나가 가보다 커요', '두 식의 값이 같아요', '알 수 없어요'], `가 ${a / b * c}, 나 ${a / (b * c)}`); },
-  () => { const [a, b, c] = dmc(true), d = rnd2(2, 4); return bqx(`쿠키 ${a}개를 한 줄에 ${b}상자씩 ${c}줄로 쌓은 상자에 똑같이 나누어 담았어요. 그중 ${d}상자에 든 쿠키는 몇 개일까요?`, `${a / (b * c) * d}개`, [`${a / b * c * d % 1 ? a / b : a / b * c * d}개`, `${a / (b * c)}개`, `${a / (b * c) * d + d}개`], `${a} ÷ (${b} × ${c}) × ${d} = ${a / (b * c)} × ${d} = ${a / (b * c) * d}`); },
+  () => { const [a, b, c] = dmc(true), d = rnd2(2, 4); return bqx(`쿠키 ${a}개를 한 줄에 ${b}상자씩 ${c}줄로 쌓은 상자에 똑같이 나누어 담았어요. 그중 ${d}상자에 든 쿠키는 몇 개일까요? ${SCN.flow([['🍪', '쿠키', `${a}개`], ['📦', '상자 탑', `${b}상자 × ${c}줄`, '÷'], ['✋', '그중', `${d}상자`, '×']])}`, `${a / (b * c) * d}개`, [`${a / b * c * d % 1 ? a / b : a / b * c * d}개`, `${a / (b * c)}개`, `${a / (b * c) * d + d}개`], `${a} ÷ (${b} × ${c}) × ${d} = ${a / (b * c)} × ${d} = ${a / (b * c) * d}`); },
   () => { for (;;) { const [a, b, c] = dmc(true), O = [`${a} / ${b} * ${c}`, `${a} / (${b} * ${c})`, `(${a} / ${b}) * ${c}`, `${a} * ${c} / ${b}`], V = O.map(EX.val), mn = Math.min(...V); if (V.some(x => x == null) || V.filter(x => x === mn).length !== 1) continue;
       return bqx(`계산 결과가 가장 작은 식은 어느 것일까요?`, E(O[V.indexOf(mn)]), O.filter((_, i) => i !== V.indexOf(mn)).map(E), O.map((o, i) => `${E(o)} = ${V[i]}`).join(' · ')); } },
   () => { const [a, b, c] = dmc(true); return bqx(`${E(`${a} / (${b} * ${c})`)}와 계산 결과가 같은 식은 어느 것일까요?`, `${a} ÷ ${b} ÷ ${c}`, [`${a} ÷ ${b} × ${c}`, `${a} × ${b} ÷ ${c}`, `${a} ÷ ${c} × ${b}`], `${b} × ${c}${jo(c, "으로", "로")} 한 번에 나누는 것은 ${b}${jo(b, "으로", "로")} 나누고 ${c}${jo(c, "으로", "로")} 또 나누는 것과 같아요. 둘 다 ${a / (b * c)}`); },
@@ -9341,15 +9414,15 @@ mgxKit([
     auto(r) { return ['drop:c|' + (r.ok ? 'ok' : 'no')]; } },
   { id: 'buildg', v: 'mixup', name: '주문서 식 만들기', title: `🧾 ${VN}가 지운 주문서 식`, goal: '80초 · 이야기에 맞는 식 만들기', dur: 80, pts: 12,
     sub: '주문서 이야기를 읽고 수 타일과 <b>× ÷ ( )</b>를 끌어 식을 만들어요. 식의 값이 이야기의 답과 같으면 성공!', desc: '이야기 순서대로 식을 세워 봐요.', help: '수 타일·기호·괄호를 끌어 이야기에 맞는 식을 완성해요',
-    gen() { const k = rnd2(0, 1); let r; if (k === 0) { const [a, b, c] = dmc(); r = { story: `쿠키 <b>${a}개</b>를 <b>${b}상자</b>에 똑같이 나누어 담고, 그중 <b>${c}상자</b>를 보냈어요. 보낸 쿠키는?`, A: `${a} / ${b} * ${c}`, nums: shuffle([a, b, c]) }; }
-      else { const [a, b, c] = dmc(true); r = { story: `사탕 <b>${a}개</b>를 <b>한 줄에 ${b}칸씩 ${c}줄</b>인 상자의 모든 칸에 똑같이 나누어 담았어요. 한 칸에 몇 개?`, A: `${a} / (${b} * ${c})`, nums: shuffle([a, b, c]) }; }
+    gen() { const k = rnd2(0, 1); let r; if (k === 0) { const [a, b, c] = dmc(); r = { story: `쿠키 <b>${a}개</b>를 <b>${b}상자</b>에 똑같이 나누어 담고, 그중 <b>${c}상자</b>를 보냈어요. 보낸 쿠키는?`, A: `${a} / ${b} * ${c}`, nums: shuffle([a, b, c]), fig: SCN.flow([['🍪', '쿠키', `${a}개`], ['📦', '상자에 나누기', `${b}상자`, '÷'], ['🚚', '보낸 상자', `${c}상자`, '×']]) }; }
+      else { const [a, b, c] = dmc(true); r = { story: `사탕 <b>${a}개</b>를 <b>한 줄에 ${b}칸씩 ${c}줄</b>인 상자의 모든 칸에 똑같이 나누어 담았어요. 한 칸에 몇 개?`, A: `${a} / (${b} * ${c})`, nums: shuffle([a, b, c]), fig: SCN.flow([['🍬', '사탕', `${a}개`], ['▦', '한 줄의 칸', `${b}칸`, '÷'], ['🧱', '줄 수', `${c}줄`, '×']]) }; }
       r.T = EX.val(r.A); MEB.reset(r, r.nums); return r; },
-    view(r) { return `<div class="qzq">${r.story}</div>${MEB.view(r, { ops: ['*', '/'], title: '수 타일' })}${!r.done && MEB.built(r) ? `<div class="mgxrow"><button class="mgxb go" data-an="mgx" data-v="check">✅ 이 식이에요</button></div>` : ''}`; },
+    view(r) { return `<div class="qzq">${r.story}</div><div class="bgfig">${r.fig || ''}</div>${MEB.view(r, { ops: ['*', '/'], title: '수 타일' })}${!r.done && MEB.built(r) ? `<div class="mgxrow"><button class="mgxb go" data-an="mgx" data-v="check">✅ 이 식이에요</button></div>` : ''}`; },
     on: { drop(r, x, a) { if (MEB.drop(r, x)) a.pop(); }, clr(r, x) { MEB.clr(r, x); }, tap() {},
       check(r, x, a) { const e = MEB.expr(r), v = MEB.val(r); if (!e) return; if (v === r.T) return a.end(true, `${EX.chain(e)} ✔`); a.slip(v == null ? `${E(e)}는 계산할 수 없어요.` : `${E(e)} = ${v}이에요. 이야기의 답은 ${r.T}! 일이 일어난 순서를 다시 생각해 봐요.`, `${E(e)} (답 ${r.T})`); } },
     auto(r) { return MEB.acts(r, r.A).concat(['check']); } }
 ]);
-(() => { const st = document.createElement('style'); st.textContent = `.jgrow{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:14px;align-items:center;margin:18px 0}.jgbin{min-height:150px;border-radius:22px;border:4px dashed #22c55e;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:#15803d}.jgbin.no{border-color:#ef4444;background:#fef2f2;color:#b91c1c}
+(() => { const st = document.createElement('style'); st.textContent = `.bgfig{max-width:560px;margin:4px auto 0}.bgfig .dxfig,.bgfig .rffig{margin:0}.jgrow{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:14px;align-items:center;margin:18px 0}.jgbin{min-height:150px;border-radius:22px;border:4px dashed #22c55e;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:#15803d}.jgbin.no{border-color:#ef4444;background:#fef2f2;color:#b91c1c}
 .jgcard{background:#fff;border:4px solid #7c3aed;border-radius:20px;padding:22px 14px;font-size:1.9rem;font-weight:900;text-align:center;box-shadow:0 6px 0 #c4b5fd}.jgcard b{color:#dc2626}@media(max-width:640px){.jgrow{grid-template-columns:1fr 1fr}.jgcard{grid-column:1/3;grid-row:1;font-size:1.4rem}.jgbin{min-height:100px;font-size:1.2rem}}`; document.head.appendChild(st); })();
 const GUIDES = {
   judgeg: { title: '⚖️ 계산 판정소', color: '#ea580c', slides: [{ t: '1. 이렇게 해요', ill: () => '<div class="gsay">🧾 72 ÷ 8 × 3 = 3 ?<br>앞에서부터 9 × 3 = 27 → <b>✘ 틀렸어요</b>로!</div>', txt: '브래킷이 찍어 놓은 계산 카드를 직접 계산해 보고, 맞으면 ✔ 칸, 틀리면 ✘ 칸으로 끌어 넣어요.' }, { t: '2. 점수', ill: () => '<div class="gsay">바르게 판정하면 점수 ⬆<br>잘못 판정하면 실수</div>', txt: '곱셈이 언제나 먼저가 아니에요. 앞에서부터, 괄호 안을 먼저!' }] },
@@ -9360,7 +9433,7 @@ LC.story = mkStory6({ unitNo: 1, ep: 2, title: '곱셈 먼저? 쿠키 공장의 
   ch1Name: '하늘 쿠키 공장', ch1Sub: '나누어 담기 · 상자 탑 · 식 접기',
   area: { dark: '공장 기록', tilt: '곱셈 먼저 마법', mixup: '괄호 지우기', clock: '식 엉키기', half: '노선 흔들기' },
   seal: { tilt: '순서의 봉인', mixup: '괄호의 봉인', clock: '식의 봉인', half: '노선의 봉인', dark: '공장의 봉인' },
-  toolMsg: { share: '쿠키를 나누어 담고 상자를 가져가 보자.', stack: '상자 탑에 쿠키를 한꺼번에 나누어 담아 보자.', fold: '계산 순서대로 식을 접어 보자.' },
+  toolMsg: { share: '쿠키를 나누어 담고 상자를 가져가 보자.', stack: '상자 탑에 쿠키를 한꺼번에 나누어 담아 보자.', tape: '막대를 직접 잘라 보자.', fold: '계산 순서대로 식을 접어 보자.' },
   taunt: { tilt: ['곱셈은 언제나 먼저지!'], mixup: ['괄호는 내가 지웠다!'], clock: ['곱셈부터 접으면 되지!'], half: ['열차 노선을 흔들어 주마!'], dark: ['쿠키 공장은 내 거다!', '곱셈부터 해 봐!'] },
   hit: { tilt: ['앞에서부터 계산하다니!'], mixup: ['괄호를 되찾다니!'], clock: ['순서대로 접어 버렸어?!'], half: ['노선을 다 이었어?!'], dark: ['크윽… 곱셈 먼저 마법이 깨지다니!', '쿠키를 바르게 나누다니…?!'] },
   prologue: [
@@ -10670,12 +10743,23 @@ window.SV_LF={
  "verify": null
 };
 window.SV_LF.j0.board=function(H){
-const ex=(k,e)=>`<span class="sv5opt"><b>${k}</b> ${EX.h(e)}</span>`;
-return `<div class="sv-paper" style="text-align:left"><div class="sv-paper-h">🍪 하늘 쿠키 공장 주문서 <small style="color:#b91c1c">(괄호가 지워졌어요!)</small></div>
-<div class="sv5route"><div class="sv5st"><b>🍪 갓 구운 쿠키</b><span>96개</span></div><i>➜</i><div class="sv5st"><b>📦 상자에 담기</b><span>상자 8개에 똑같이</span></div><i>➜</i><div class="sv5st"><b>🚚 별빛 마을로</b><span>그중 3상자 보내기</span></div></div>
-<div class="sv-paper-t">주문서에 맞는 식: <span class="sv-row" style="display:inline-flex;margin:0;flex-wrap:wrap;gap:6px">${H.pick(0,'가',ex('가','96 / 8 * 3'))}${H.pick(0,'나',ex('나','96 / (8 * 3)'))}${H.pick(0,'다',ex('다','96 * 8 / 3'))}${H.pick(0,'라',ex('라','96 / 3 * 8'))}</span></div>
-<div class="sv-paper-t">별빛 마을에 보낸 쿠키: ${H.inp(1,{w:90,unit:'개'})}</div></div>
-<style>.sv5route{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0 12px}.sv5route i{align-self:center;font-style:normal;font-weight:900;color:#64748b}.sv5st{background:#fff7ed;border:2px solid #fdba74;border-radius:14px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:150px}.sv5st b{color:#7c2d12}.sv5st span{font-weight:800;color:#334155}.sv5opt{display:inline-flex;gap:6px;align-items:center}</style>`;};
+const ex=(k,e)=>`<span class="sv5opt"><b>${k}</b>${EX.h(e)}</span>`;
+const SK=['#fcd5b4','#f1c27d','#e0ac69','#ffdbac'],SH=['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899'];
+const man=(x,y,k,s=1)=>`<g transform="translate(${x},${y}) scale(${s})"><rect x="-3.6" y="16" width="3" height="9" rx="1.4" fill="#334155"/><rect x="0.6" y="16" width="3" height="9" rx="1.4" fill="#334155"/><rect x="-5.5" y="5" width="11" height="13" rx="4" fill="${SH[k%6]}"/><circle r="5" fill="${SK[k%4]}"/><path d="M-5.2,-1 q0,-6 5.2,-6 q5.2,0 5.2,6 q-2.4,-2.6 -5.2,-2.6 q-2.8,0 -5.2,2.6z" fill="#3f2a1d"/></g>`;
+const tag=(x,y,t,c,w)=>{w=w||t.length*13+24;return `<rect x="${x-w/2}" y="${y-17}" width="${w}" height="25" rx="12" fill="#fff" stroke="${c}" stroke-width="2.5"/><text x="${x}" y="${y}" text-anchor="middle" font-size="14" font-weight="900" fill="${c}">${t}</text>`;};
+const T=(x,y,t,fs,c,w)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${fs||14}" font-weight="${w||900}" fill="${c||'#1e293b'}">${t}</text>`;
+const arr=(x1,x2,y)=>`<path d="M${x1},${y} H${x2-8}" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/><path d="M${x2-14},${y-8} l9,8 l-9,8" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>`;
+const svgw=(inner,bg)=>`<svg class="sv5map" viewBox="0 0 760 210" preserveAspectRatio="xMidYMid meet"><rect width="760" height="210" rx="18" fill="${bg}"/>${inner}</svg>`;
+const ck=(x,y)=>`<circle cx="${x}" cy="${y}" r="9" fill="#d97706" stroke="#92400e" stroke-width="1.5"/><circle cx="${x-3}" cy="${y-2}" r="1.6" fill="#451a03"/><circle cx="${x+3}" cy="${y+3}" r="1.6" fill="#451a03"/>`;
+let pile='';for(let r=0;r<5;r++)for(let i=0;i<7-r;i++)pile+=ck(40+i*18+r*9,170-r*16);
+const box=(x,y,c)=>`<rect x="${x}" y="${y}" width="34" height="30" rx="4" fill="${c||'#fde68a'}" stroke="#92400e" stroke-width="2"/><path d="M${x},${y+9} h34" stroke="#92400e" stroke-width="1.5"/>`;
+let bx='';for(let i=0;i<8;i++)bx+=box(240+(i%4)*40,96+Math.floor(i/4)*40,i<3?'#fcd34d':'#fef3c7');
+const truck=`<g transform="translate(560,98)"><rect width="110" height="60" rx="8" fill="#38bdf8" stroke="#0c4a6e" stroke-width="3"/><path d="M110,20 h36 l18,22 v18 h-54z" fill="#0ea5e9" stroke="#0c4a6e" stroke-width="3"/><rect x="118" y="26" width="26" height="16" rx="3" fill="#e0f2fe"/>${box(8,18)}${box(40,18)}${box(72,18)}<circle cx="30" cy="64" r="12" fill="#1f2937"/><circle cx="132" cy="64" r="12" fill="#1f2937"/></g>`;
+const svg=svgw(`<rect y="176" width="760" height="34" fill="#e7e5e4"/>${pile}${T(96,56,'🍪 갓 구운 쿠키',16,'#7c2d12')}${tag(96,82,'96개','#b45309')}${arr(186,232,140)}${bx}${T(318,56,'📦 상자 8개에 똑같이',16,'#7c2d12')}${tag(318,200,'그중 노란 3상자','#b45309',150)}${arr(410,552,140)}${truck}${T(650,56,'🚚 별빛 마을로',16,'#0c4a6e')}${tag(650,82,'3상자 보내기','#0369a1',120)}`,'#fff7ed');
+return `<div class="sv-paper sv5board" style="text-align:left"><div class="sv-paper-h">🍪 하늘 쿠키 공장 주문서 <small style="color:#b91c1c">(괄호가 지워졌어요!)</small></div>${svg}
+<div class="sv5q">① 주문서에 맞는 식을 골라요.</div><div class="sv5opts">${H.pick(0,'가',ex('가','96 / 8 * 3'))}${H.pick(0,'나',ex('나','96 / (8 * 3)'))}${H.pick(0,'다',ex('다','96 * 8 / 3'))}${H.pick(0,'라',ex('라','96 / 3 * 8'))}</div>
+<div class="sv5q">② 별빛 마을에 보낸 쿠키: ${H.inp(1,{w:90,unit:'개'})}</div></div>
+<style>.sv5board .sv5map{display:block;width:100%;height:auto;max-height:42vh;margin:6px 0 10px}.sv5board .sv5q{font-weight:900;color:#1e293b;margin:8px 0 6px;font-size:1.05rem}.sv5board .sv5opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sv5board .sv5opts>*{width:100%;justify-content:flex-start;margin:0!important}.sv5opt{display:inline-flex;gap:10px;align-items:center;font-size:1.08rem}.sv5opt>b{display:inline-flex;width:28px;height:28px;border-radius:50%;background:#ede9fe;color:#6d28d9;align-items:center;justify-content:center;flex:none}@media(max-width:640px){.sv5board .sv5opts{grid-template-columns:1fr}}</style>`;};
 
 /*HERO*/window.SV_LF.hero={"title": ["별빛 마을에 보낸", "쿠키는 몇 개?"], "speech": "브래킷이 곱셈이 언제나 먼저라고 우겨. <b>곱셈과 나눗셈이 섞인 식은 어떤 순서로 계산해야 할까?</b>", "villain": "브래킷", "vkey": "dark", "villainSub": "베일의 간부 · 괄호 파괴자", "object": "🍪 쿠키 주문서<div class=\"svh-seals\"><span>🔒 식</span><span>🔒 쿠키 수</span></div>"};
 
@@ -11935,11 +12019,11 @@ const EB = (() => {
     scoreLabel: (g, i) => `${g.score[i]}점 · 🎫 ${ST[g.tix[i][0]][0].slice(0, -1)}→${ST[g.tix[i][1]][0].slice(0, -1)}${g.tixDone[i] ? ' ✔' : ''}`,
     view(g, me) { const p = g.turn;
       const lines = RT.map((r, i) => { const [a, b] = [ST[r[0]], ST[r[1]]], o = g.own[i], col = o >= 0 ? g.players[o].color : '#cbd5e1', mx = (a[1] + b[1]) / 2, my = (a[2] + b[2]) / 2;
-        let dots = ''; for (let k = 0; k < r[3]; k++) { const t = (k + 1) / (r[3] + 1); dots += `<rect x="${a[1] + (b[1] - a[1]) * t - 9}" y="${a[2] + (b[2] - a[2]) * t - 6}" width="18" height="12" rx="3" fill="${o >= 0 ? col : '#fff'}" stroke="${o >= 0 ? col : '#94a3b8'}" stroke-width="2"/>`; }
-        return `<g ${me && o < 0 ? `data-mpt="r${i}"` : ''} class="srroute ${o >= 0 ? 'own' : ''}"><line x1="${a[1]}" y1="${a[2]}" x2="${b[1]}" y2="${b[2]}" stroke="${col}" stroke-width="${o >= 0 ? 12 : 9}" stroke-linecap="round" opacity="${o >= 0 ? 1 : .55}"/><line x1="${a[1]}" y1="${a[2]}" x2="${b[1]}" y2="${b[2]}" stroke="transparent" stroke-width="34"/>${dots}
+        let dots = ''; for (let k = 0; k < r[3]; k++) { const t = (k + 1) / (r[3] + 1); const cx0 = a[1] + (b[1] - a[1]) * t, cy0 = a[2] + (b[2] - a[2]) * t, ang = Math.atan2(b[2] - a[2], b[1] - a[1]) * 180 / Math.PI; dots += `<g transform="translate(${cx0},${cy0}) rotate(${ang})">${o >= 0 ? `<rect x="-12" y="-8" width="24" height="16" rx="4" fill="${col}" stroke="#fff" stroke-width="2"/><rect x="-8" y="-4" width="6" height="6" rx="1" fill="#e0f2fe"/><rect x="2" y="-4" width="6" height="6" rx="1" fill="#e0f2fe"/>` : `<rect x="-10" y="-6" width="20" height="12" rx="3" fill="#fff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3 2"/>`}</g>`; }
+        return `<g ${me && o < 0 ? `data-mpt="r${i}"` : ''} class="srroute ${o >= 0 ? 'own' : ''}"><line x1="${a[1]}" y1="${a[2]}" x2="${b[1]}" y2="${b[2]}" stroke="#d6d3d1" stroke-width="20" stroke-linecap="round"/><line x1="${a[1]}" y1="${a[2]}" x2="${b[1]}" y2="${b[2]}" stroke="#92400e" stroke-width="16" stroke-dasharray="3 8"/><line x1="${a[1]}" y1="${a[2]}" x2="${b[1]}" y2="${b[2]}" stroke="${o >= 0 ? col : '#64748b'}" stroke-width="${o >= 0 ? 8 : 4}" stroke-linecap="round" opacity="${o >= 0 ? 1 : .8}"/><line x1="${a[1]}" y1="${a[2]}" x2="${b[1]}" y2="${b[2]}" stroke="transparent" stroke-width="34"/>${dots}
           <circle cx="${mx}" cy="${my}" r="19" fill="${o >= 0 ? col : '#fef3c7'}" stroke="${o >= 0 ? '#fff' : '#f59e0b'}" stroke-width="3"/><text x="${mx}" y="${my + 7}" text-anchor="middle" font-size="19" font-weight="900" fill="${o >= 0 ? '#fff' : '#92400e'}">${r[2]}</text></g>`; }).join('');
-      const tix = g.tix[p], stn = ST.map((s, i) => `<g><circle cx="${s[1]}" cy="${s[2]}" r="22" fill="${i === tix[0] || i === tix[1] ? '#fde68a' : '#fff'}" stroke="#1e3a8a" stroke-width="4"/><text x="${s[1]}" y="${s[2] + 6}" text-anchor="middle" font-size="16">🚉</text><text x="${s[1]}" y="${s[2] + 44}" text-anchor="middle" font-size="16" font-weight="900" fill="#1e3a8a">${s[0]}</text></g>`).join('');
-      const board = `<div class="srmap"><svg viewBox="20 0 600 340" preserveAspectRatio="xMidYMid meet">${lines}${stn}</svg><button data-mpbtn data-bx="drop" data-v="" hidden></button></div>`;
+      const tix = g.tix[p], stn = ST.map((s, i) => { const hi = i === tix[0] || i === tix[1]; return `<g>${hi ? `<circle cx="${s[1]}" cy="${s[2]}" r="30" fill="#fde047" opacity=".55" class="srglow"/>` : ''}<rect x="${s[1] - 20}" y="${s[2] - 12}" width="40" height="28" rx="4" fill="${hi ? '#fef3c7' : '#fff'}" stroke="#1e3a8a" stroke-width="3"/><path d="M${s[1] - 26},${s[2] - 10} L${s[1]},${s[2] - 28} L${s[1] + 26},${s[2] - 10}z" fill="${hi ? '#f59e0b' : '#3b82f6'}" stroke="#1e3a8a" stroke-width="3" stroke-linejoin="round"/><rect x="${s[1] - 6}" y="${s[2] + 2}" width="12" height="14" fill="#1e3a8a"/><rect x="${s[1] - 16}" y="${s[2] - 6}" width="8" height="7" fill="#bae6fd"/><rect x="${s[1] + 8}" y="${s[2] - 6}" width="8" height="7" fill="#bae6fd"/><rect x="${s[1] - s[0].length * 9 - 6}" y="${s[2] + 22}" width="${s[0].length * 18 + 12}" height="24" rx="12" fill="#fff" stroke="#1e3a8a" stroke-width="2"/><text x="${s[1]}" y="${s[2] + 40}" text-anchor="middle" font-size="15" font-weight="900" fill="#1e3a8a">${s[0]}</text></g>`; }).join('');
+      const board = `<div class="srmap"><svg viewBox="20 0 600 350" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="srsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bae6fd"/><stop offset="1" stop-color="#f0f9ff"/></linearGradient></defs><rect x="20" y="0" width="600" height="340" fill="url(#srsky)"/><path d="M20,280 Q120,230 220,268 T420,258 T620,262 V340 H20z" fill="#bbf7d0"/><path d="M20,310 Q170,288 320,306 T620,300 V340 H20z" fill="#86efac"/>${[[90,40],[300,24],[520,46]].map(([x,y]) => `<g opacity=".9"><ellipse cx="${x}" cy="${y}" rx="34" ry="12" fill="#fff"/><ellipse cx="${x + 18}" cy="${y - 8}" rx="20" ry="12" fill="#fff"/></g>`).join('')}${lines}${stn}</svg><button data-mpbtn data-bx="drop" data-v="" hidden></button></div>`;
       let side = '';
       if (!g.over) { const H = g.hand[p];
         side = `<div class="srtix">🎫 <b>${E(g.players[p].name)}</b>의 목적지: ${ST[tix[0]][0]} → ${ST[tix[1]][0]} ${conn(g, p, tix[0], tix[1]) ? '✔ 연결!' : ''}</div>`;
@@ -11957,7 +12041,7 @@ const EB = (() => {
       const opts = open.map(i => [i, L.find(x => x[0] === RT[i][2])]).filter(x => x[1]).sort((a, b) => RT[b[0]][3] - RT[a[0]][3] + (conn(g, p, g.tix[p][0], g.tix[p][1]) ? 0 : 0));
       if (opts.length && Math.random() < K(.55, .85, .97)) { const [ri, [, e]] = opts[0]; EB.reset(g, H); EB.fill(g, e); api.paint(); return api.later(g, 900, () => claim(g, api, ri)); }
       draw(g, api, g.face.length ? R(0, g.face.length - 1) : null); },
-    css: EB.css + `.srmap{display:flex;justify-content:center;background:linear-gradient(180deg,#e0f2fe,#eef2ff);border-radius:22px;border:3px solid #bfdbfe;padding:6px}.srmap svg{width:100%;max-width:640px;height:auto}
+    css: EB.css + `.srglow{animation:srgl 1.2s ease-in-out infinite alternate}@keyframes srgl{to{opacity:.15}}.srroute.own line{animation:srown .6s ease}@keyframes srown{0%{opacity:.2}100%{opacity:1}}.srmap{display:flex;justify-content:center;background:linear-gradient(180deg,#bae6fd,#dcfce7);border-radius:22px;border:3px solid #bfdbfe;padding:6px}.srmap svg{width:100%;max-width:640px;height:auto}
 .srroute{cursor:default}.srroute.mpdhov line{stroke:#16a34a!important;opacity:1!important}[data-mpt].srroute.mpdhov{outline:none!important}
 .srtix{text-align:center;font-weight:800;color:#1e3a8a;background:#fef9c3;border:2px solid #fde047;border-radius:12px;padding:6px 10px;margin-bottom:6px}
 .srgo{display:flex;align-items:center;gap:10px;justify-content:center;margin:4px 0}.srtrain{font-size:2.3rem;background:#dbeafe;border:3px solid #1d4ed8;border-radius:16px;padding:2px 12px}
@@ -13256,6 +13340,59 @@ const EX5 = (() => {
           if (d.path.length === c.want.length) { d.ok = true; api.win(c.say(d)); } } },
       _solve(d, on) { c.want.forEach(id => on('act:m4set', `drop:j:${id}:line`)); } }; }
 
+
+
+  /* ---------- 물건 그림 (3~5차시 장면) ---------- */
+  const ART = {
+    note: (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect width="54" height="70" rx="5" fill="#60a5fa" stroke="#1e3a8a" stroke-width="3"/><rect x="6" width="5" height="70" fill="#1e3a8a"/><rect x="18" y="14" width="28" height="12" rx="2" fill="#fff"/></g>`,
+    pen: (x, y, s = 1, c = '#ef4444') => `<g transform="translate(${x},${y}) scale(${s}) rotate(-35)"><rect width="12" height="62" rx="5" fill="${c}" stroke="#7f1d1d" stroke-width="2"/><path d="M0,62 l6,14 l6,-14z" fill="#fde68a" stroke="#7f1d1d" stroke-width="2"/><rect x="-1" y="-2" width="14" height="10" rx="3" fill="#334155"/></g>`,
+    eraser: (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect width="50" height="28" rx="6" fill="#f9a8d4" stroke="#9d174d" stroke-width="2.5"/><rect x="28" width="22" height="28" rx="4" fill="#3b82f6"/></g>`,
+    tag: (x, y, t, c = '#b91c1c') => `<g><rect x="${x}" y="${y}" width="${t.length * 11 + 20}" height="26" rx="8" fill="#fff" stroke="${c}" stroke-width="2.5"/><text x="${x + 10}" y="${y + 19}" font-size="15" font-weight="900" fill="${c}">${t}</text></g>`,
+    counter: (x, y, w = 300) => `<g><rect x="${x}" y="${y + 40}" width="${w}" height="100" rx="12" fill="#a16207" stroke="#713f12" stroke-width="3"/><rect x="${x - 8}" y="${y + 30}" width="${w + 16}" height="18" rx="6" fill="#ca8a04"/><g transform="translate(${x + w - 96},${y - 30})"><rect width="84" height="60" rx="8" fill="#334155"/><rect x="8" y="8" width="68" height="20" rx="3" fill="#bbf7d0"/><rect x="10" y="34" width="64" height="18" rx="3" fill="#64748b"/></g></g>`,
+    bag: (x, y, w = 150, h = 130, c = '#a855f7') => `<g><path d="M${x + w * .3},${y + 20} q0,-34 ${w * .2},-34 q${w * .2},0 ${w * .2},34" fill="none" stroke="#581c87" stroke-width="5"/><path d="M${x},${y + 20} h${w} l-12,${h} h-${w - 24}z" fill="${c}" stroke="#581c87" stroke-width="3"/><path d="M${x + w / 2 - 14},${y + 20} l14,18 l14,-18" fill="#fde047" stroke="#a16207" stroke-width="2"/></g>`,
+    copier: (x, y, k, lab) => `<g><rect x="${x}" y="${y}" width="190" height="130" rx="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="4"/><text x="${x + 95}" y="${y + 40}" text-anchor="middle" font-size="22" font-weight="900" fill="#6d28d9">✨ × ${k}</text><text x="${x + 95}" y="${y + 70}" text-anchor="middle" font-size="15" font-weight="900" fill="#5b21b6">${lab}</text><rect x="${x + 30}" y="${y + 88}" width="130" height="28" rx="14" fill="#c4b5fd"/></g>`,
+    wallet: (x, y, v) => `<g><rect x="${x}" y="${y}" width="190" height="120" rx="18" fill="#be185d" stroke="#831843" stroke-width="3"/><rect x="${x + 110}" y="${y + 38}" width="80" height="44" rx="14" fill="#9d174d"/><circle cx="${x + 168}" cy="${y + 60}" r="7" fill="#fde68a"/><rect x="${x + 16}" y="${y - 22}" width="120" height="44" rx="6" fill="#bbf7d0" stroke="#15803d" stroke-width="2"/><text x="${x + 76}" y="${y + 6}" text-anchor="middle" font-size="16" font-weight="900" fill="#14532d">💵 ${Number(v).toLocaleString()}원</text></g>`,
+    pizza: (x, y, r, cuts, gone = 0) => { let s = `<circle cx="${x}" cy="${y}" r="${r + 8}" fill="#d97706"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fbbf24"/>`;
+      for (let i = 0; i < 7; i++) { const a = i * 0.9 + .3, rr = r * (.35 + (i % 3) * .2); s += `<circle cx="${x + Math.cos(a) * rr}" cy="${y + Math.sin(a) * rr}" r="${r * .1}" fill="#dc2626"/>`; }
+      if (cuts) for (let i = 0; i < cuts; i++) { const a = i / cuts * Math.PI * 2; s += `<line x1="${x}" y1="${y}" x2="${x + Math.cos(a) * (r + 8)}" y2="${y + Math.sin(a) * (r + 8)}" stroke="#7c2d12" stroke-width="4"/>`; }
+      if (gone) { const a0 = -Math.PI / 2, a1 = a0 + Math.PI * 2 / cuts * gone; s += `<path d="M${x},${y} L${x + Math.cos(a0) * (r + 9)},${y + Math.sin(a0) * (r + 9)} A${r + 9},${r + 9} 0 ${gone / cuts > .5 ? 1 : 0} 1 ${x + Math.cos(a1) * (r + 9)},${y + Math.sin(a1) * (r + 9)}z" fill="#fff7ed"/>`; } return s; },
+    slice: (x, y, r) => `<g><path d="M${x},${y} L${x},${y - r} A${r},${r} 0 0 1 ${x + r},${y}z" fill="#fbbf24" stroke="#d97706" stroke-width="6"/><circle cx="${x + r * .35}" cy="${y - r * .4}" r="${r * .1}" fill="#dc2626"/><circle cx="${x + r * .6}" cy="${y - r * .15}" r="${r * .09}" fill="#dc2626"/></g>`,
+    cup: (x, y, s = 1, c = '#38bdf8') => `<g transform="translate(${x},${y}) scale(${s})"><path d="M0,0 h34 l-5,46 h-24z" fill="${c}" stroke="#0369a1" stroke-width="2.5"/><rect x="-2" y="-6" width="38" height="8" rx="3" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/><path d="M22,-6 l8,-16" stroke="#ef4444" stroke-width="3"/></g>`,
+    friend: (x, y, k = 0, s = 1) => stand(x, y, k, s),
+    tray: (x, y, w = 200) => `<g><rect x="${x}" y="${y}" width="${w}" height="90" rx="45" fill="#fff" stroke="#94a3b8" stroke-width="4"/><ellipse cx="${x + w / 2}" cy="${y + 45}" rx="${w / 2 - 18}" ry="30" fill="#f1f5f9"/></g>`,
+    ticket: (x, y, t, c = '#0284c7') => `<g><rect x="${x}" y="${y}" width="150" height="70" rx="10" fill="#fff" stroke="${c}" stroke-width="3"/><rect x="${x}" y="${y}" width="40" height="70" rx="10" fill="${c}"/><text x="${x + 20}" y="${y + 44}" text-anchor="middle" font-size="22">🚌</text><text x="${x + 95}" y="${y + 42}" text-anchor="middle" font-size="16" font-weight="900" fill="${c}">${t}</text></g>`,
+    coupon: (x, y, t) => `<g><rect x="${x}" y="${y}" width="120" height="56" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="3" stroke-dasharray="7 4"/><text x="${x + 60}" y="${y + 35}" text-anchor="middle" font-size="17" font-weight="900" fill="#b45309">🏷️ ${t}</text></g>`,
+    lunch: (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect width="80" height="54" rx="10" fill="#f97316" stroke="#9a3412" stroke-width="3"/><rect x="6" y="6" width="32" height="42" rx="6" fill="#fff"/><circle cx="56" cy="27" r="14" fill="#16a34a"/></g>`,
+    board: (x, y, w, h, title, c = '#0284c7') => `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="18" fill="#f0f9ff" stroke="${c}" stroke-width="4"/><rect x="${x}" y="${y}" width="${w}" height="38" rx="18" fill="${c}"/><text x="${x + w / 2}" y="${y + 26}" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">${title}</text></g>`
+  };
+  /* ============ STEPS: 그림 속 물건을 직접 옮기며 식이 한 단계씩 자라요 ============
+     c = { t, kind, q, start, unit, art(d, K) → 장면 SVG, steps:[{ p, t, kind:'op'|'grp'|'gapply', op, n, a, gop, b, lab, why }], say(d), done(d) }
+       · op     : 지금 식에 op n 을 붙여요 (× ÷ 인데 앞 식에 + − 가 있으면 앞 식을 괄호로 묶어요)
+       · grp    : 먼저 계산할 묶음 (a gop b) 을 따로 만들어요
+       · gapply : 만든 묶음을 op 로 지금 식에 붙여요 (묶음에 + − 가 있고 op 가 × ÷ 면 괄호)
+       · art 는 d.gi(지금 몇 번째 단계) 와 d.done 을 보고 그림을 그려요 — 물건(drag)·놓을 곳(zone) 는 K.drag / K.zone */
+  const topPM = e => { let d = 0; for (const ch of String(e)) { if (ch === '(') d++; else if (ch === ')') d--; else if (d === 0 && (ch === '+' || ch === '-')) return true; } return false; };
+  function STEPS(c) {
+    const K = { drag, zone, TX, RC, LN, F, stand, seat, crowd, tagB, ART };
+    return { _ty: 'ex5steps', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : (typeof c.q === 'function' ? c.q(d) : c.q),
+      init: () => ({ gi: 0, e: String(c.start), g: null, ok: false, log: [], bad: null }),
+      view: d => { const st = c.steps[Math.min(d.gi, c.steps.length - 1)]; let s = c.art(d, K, st);
+        s += `<rect x="150" y="10" width="660" height="70" rx="18" fill="#fff" stroke="#a78bfa" stroke-width="4"/><text x="180" y="36" font-size="15" font-weight="900" fill="#7c3aed">식</text>`;
+        s += TX(480, 60, EX.t(d.e) + (d.g ? `  ·  묶음 ${EX.t(d.g)}` : '') + (d.ok ? ' = ' + EX.val(d.e) : ''), { fs: d.e.length > 22 ? 28 : 34, fill: '#1e1b4b', w: 900 });
+        if (!d.ok && st.lab) s += `<rect x="250" y="${c.hintY || 418}" width="460" height="34" rx="17" fill="#fff" stroke="#7c3aed" stroke-width="3"/>` + TX(480, (c.hintY || 418) + 23, '👆 ' + st.lab, { fs: 17, fill: '#5b21b6', w: 900 });
+        const info = M4.rows(c.infoT || '🧾 지금', [[c.infoL || '값', EX.val(d.e), c.unit || '', 1]], '') + `<div class="ex5lh">🧾 기록</div><div class="ex5log">처음 · ${F(c.start)}${c.unit || ''}</div>` + d.log.map(x => `<div class="ex5log">${x}</div>`).join('') + (d.ok && c.done ? M4.eq(c.done(d), 'ok') : '');
+        return M4.box(M4.svg(960, c.H || 470, s, 'b2svg'), info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v), st = c.steps[d.gi];
+          if (m.a === 'tap') { api.say(false, '물건을 <b>잡아 끌어서</b> 옮겨요.', true); return; }
+          if (m.a !== 'drop' || !st) return;
+          if (m.p !== st.p || m.t !== st.t) { const other = c.steps.find((x, k) => k > d.gi && x.p === m.p && x.t === m.t); api.say(false, other ? (st.why || '순서를 다시 생각해 봐요.') : (c.miss || '그곳이 아니에요. 이야기를 다시 읽어 봐요.'), true); try { Sound.wrong(); } catch (e) {} return; }
+          const e0 = d.e, v0 = EX.val(d.e);
+          if (st.kind === 'grp') { d.g = `${st.a} ${st.gop} ${st.b}`; d.log.push(`묶음 ${EX.t(d.g)} = <b>${F(EX.val(d.g))}</b>`); }
+          else if (st.kind === 'gapply') { const gg = topPM(d.g) && (st.op === '*' || st.op === '/') ? `(${d.g})` : d.g; d.e = `${(st.op === '*' || st.op === '/') && topPM(d.e) ? `(${d.e})` : d.e} ${st.op} ${gg}`; d.log.push(`${EX.t(e0)} ${S[st.op]} ${EX.t(gg)} → <b>${F(EX.val(d.e))}</b>`); d.g = null; }
+          else { d.e = `${(st.op === '*' || st.op === '/') && topPM(d.e) ? `(${d.e})` : d.e} ${st.op} ${st.n}`; d.log.push(`${F(v0)} ${S[st.op]} ${F(st.n)} = <b>${F(EX.val(d.e))}</b>`); }
+          d.gi++; pop(); api.clear(); if (st.say) api.say(true, typeof st.say === 'function' ? st.say(d) : st.say, true);
+          if (d.gi >= c.steps.length) { d.ok = true; api.win(c.say(d)); } } },
+      _solve(d, on) { c.steps.forEach(st => on('act:m4set', `drop:${st.p}:${st.t}`)); } }; }
   /* ============ FOLD: 식 접기 ============
      c = { t, kind, q, e:'50 - 20 + 10', story?:'버스 이야기', say(d) } */
   function FOLD(c) {
@@ -13292,6 +13429,55 @@ const EX5 = (() => {
           if (R.length === 1) { d.ok = true; api.win(c.say ? c.say(d) : `${EX.chain(c.e)}`); } } },
       _solve(d, on) { let T = d.T; for (let k = 0; k < 20 && T.length > 1; k++) { const i = EX.next(T); on('act:m4set', `drop:n:${i - 1}:n${i + 1}`); T = d.T; } } }; }
 
+  /* ============ ORDER: 계산 순서 번호 붙이기 ============
+     c = { t, kind, e:'2500 + 24000 / 6 - 300 * 2', story?, q, say(d) } — ①②③ 스티커를 차례로 끌어 연산 기호 밑 자리에 붙여요 */
+  function ORDER(c) {
+    const T0 = EX.toks(c.e), W = { n: 120, o: 60, b: 34 }, G = 10;
+    const plan = (() => { let T = T0.slice(), ids = T0.map((_, i) => i); const L = [];
+      for (let n = 0; n < 20 && T.length > 1; n++) { const i = EX.next(T); if (i < 0) break; const R = EX.fold(T, i); L.push({ oi: ids[i], a: T[i - 1], op: T[i], b: T[i + 1], v: null });
+        let I = ids.slice(0, i - 1).concat(['v'], ids.slice(i + 2)); const R2 = T.slice(0, i - 1).concat([EX.val(EX.str([T[i - 1], T[i], T[i + 1]]))], T.slice(i + 2));
+        for (let k = 1; k < R.length - 1; k++) if (R2[k - 1] === '(' && typeof R2[k] === 'number' && R2[k + 1] === ')') { I.splice(k + 1, 1); I.splice(k - 1, 1); break; }
+        L[L.length - 1].v = R.filter((x, j) => I[j] === 'v')[0]; I = I.map(x => x === 'v' ? 'r' + n : x); T = R; ids = I; }
+      return L; })();
+    const ws = T0.map(x => typeof x === 'number' ? W.n : (x === '(' || x === ')') ? W.b : W.o), tot = ws.reduce((a, b) => a + b, 0) + G * (T0.length - 1), sc = Math.min(1, 920 / tot);
+    const X = []; { let x = 480 - tot * sc / 2; ws.forEach(w => { X.push([x, w * sc]); x += (w + G) * sc; }); }
+    const CIRC = ['①', '②', '③', '④', '⑤', '⑥'];
+    const inB = (T, i) => { let d = 0; for (let k = 0; k < i; k++) { if (T[k] === '(') d++; else if (T[k] === ')') d--; } return d > 0; };
+    const why = i => { const hasB = T0.includes('('), hasMD = T0.some(x => x === '*' || x === '/'), want = plan.find((x, k) => k >= 0 && !x.done);
+      const w = want.oi; if (hasB && inB(T0, w) && !inB(T0, i)) return '괄호 안을 가장 먼저 계산해요.';
+      if (hasMD && (T0[w] === '*' || T0[w] === '/') && (T0[i] === '+' || T0[i] === '-')) return '곱셈·나눗셈이 덧셈·뺄셈보다 먼저예요.';
+      return '같은 단계끼리는 <b>앞에서부터</b> 차례로 계산해요.'; };
+    return { _ty: 'ex5order', t: c.t, kind: c.kind, q: d => d.ok ? '순서를 모두 찾았어요!' : c.q,
+      init: () => ({ k: 0, at: {}, ok: false, bad: -1 }),
+      view: d => { const y = 150, h = 96; let s = RC(0, 30, 960, 410, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 24 });
+        if (c.story) s += TX(480, 80, c.story, { fs: 21, fill: '#475569', w: 800 });
+        T0.forEach((t, i) => { const [x, w] = X[i];
+          if (typeof t === 'number') s += RC(x, y, w, h, '#fff', { st: '#6366f1', sw: 4, rx: 16 }) + TX(x + w / 2, y + h / 2 + 13, F(t), { fs: t > 9999 ? 28 : 34, fill: '#1e1b4b', w: 900 });
+          else if (t === '(' || t === ')') s += TX(x + w / 2, y + h / 2 + 22, t, { fs: 70, fill: '#dc2626', w: 900 });
+          else { const cx = x + w / 2, k = d.at[i];
+            s += `<g class="${i === d.bad ? 'b2shake' : ''}"><circle cx="${cx}" cy="${y + h / 2}" r="${w / 2 - 2}" fill="${k != null ? '#dcfce7' : i === d.bad ? '#fee2e2' : '#ede9fe'}" stroke="${k != null ? '#16a34a' : i === d.bad ? '#ef4444' : '#7c3aed'}" stroke-width="3"/>${TX(cx, y + h / 2 + 14, S[t], { fs: 38, fill: '#5b21b6', w: 900 })}</g>`;
+            s += LN(cx, y + h + 4, cx, y + h + 26, '#a78bfa', 3);
+            const slot = k != null ? `<circle cx="${cx}" cy="${y + h + 58}" r="30" fill="#facc15" stroke="#a16207" stroke-width="4"/>${TX(cx, y + h + 71, CIRC[k], { fs: 34, fill: '#713f12', w: 900 })}` : `<circle cx="${cx}" cy="${y + h + 58}" r="30" fill="#fff" stroke="#a78bfa" stroke-width="3" stroke-dasharray="7 5"/>`;
+            s += k != null || d.ok ? slot : zone('op' + i, slot); } });
+        /* 접힌 부분의 값 */
+        plan.forEach((P, k) => { if (k >= d.k) return; const [x, w] = X[P.oi]; s += TX(x + w / 2, y - 14, `${CIRC[k]} ${F(P.v)}`, { fs: 18, fill: '#15803d', w: 900 }); });
+        /* 스티커 판 */
+        if (!d.ok) { s += RC(170, 350, 620, 80, '#fffbeb', { st: '#f59e0b', sw: 3, rx: 20 }) + TX(240, 397, '스티커', { fs: 18, fill: '#92400e', w: 900 });
+          plan.forEach((P, k) => { const x = 330 + k * 92; if (k < d.k) s += `<circle cx="${x}" cy="390" r="28" fill="none" stroke="#fcd34d" stroke-width="2" stroke-dasharray="5 4"/>`;
+            else if (k === d.k) s += drag('n' + k, `<g><circle cx="${x}" cy="390" r="30" fill="#facc15" stroke="#a16207" stroke-width="4"/>${TX(x, 403, CIRC[k], { fs: 34, fill: '#713f12', w: 900 })}</g>`, 'b2cue');
+            else s += `<g opacity=".45"><circle cx="${x}" cy="390" r="28" fill="#fde68a" stroke="#ca8a04" stroke-width="3"/>${TX(x, 402, CIRC[k], { fs: 30, fill: '#713f12', w: 900 })}</g>`; });
+          s += TX(480 + 230, 396, `${CIRC[d.k]}번은 어디?`, { fs: 18, fill: '#7c3aed', w: 900 }); }
+        else s += TX(480, 400, '🎉 계산 순서를 모두 찾았어요!', { fs: 24, fill: '#15803d', w: 900 });
+        const info = `<div class="ex5lh">🔢 계산 순서</div>` + (d.k ? '' : `<div class="ex5log">1️⃣ 괄호 안</div><div class="ex5log">2️⃣ 곱셈·나눗셈 (앞에서부터)</div><div class="ex5log">3️⃣ 덧셈·뺄셈 (앞에서부터)</div>`) + plan.slice(0, d.k).map((P, k) => `<div class="ex5log">${CIRC[k]} ${F(P.a)} ${S[P.op]} ${F(P.b)} = <b>${F(P.v)}</b></div>`).join('') + (d.ok ? M4.eq(`${EX.t(T0)} = ${F(plan[plan.length - 1].v)}`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v);
+          if (m.a === 'tap') { api.say(false, `<b>${CIRC[d.k]}</b> 스티커를 잡아 먼저 계산할 연산 기호 밑의 동그라미로 끌어요.`, true); return; }
+          if (m.a !== 'drop' || m.p !== 'n' + d.k || !/^op\d+$/.test(m.t)) return;
+          const i = +m.t.slice(2), P = plan[d.k];
+          if (i !== P.oi) { plan.forEach((x, k) => x.done = k < d.k); d.bad = i; api.say(false, '❗ ' + why(i), true); try { Sound.wrong(); } catch (e) {} api.later(() => { d.bad = -1; api.redraw(); }, 900); return; }
+          d.at[i] = d.k; d.k++; pop(); api.clear(); api.say(true, `${CIRC[d.k - 1]} ${F(P.a)} ${S[P.op]} ${F(P.b)} = <b>${F(P.v)}</b>`, true);
+          if (d.k >= plan.length) { d.ok = true; api.win(c.say ? c.say(d) : EX.chain(c.e)); } } },
+      _solve(d, on) { plan.forEach((P, k) => on('act:m4set', `drop:n${k}:op${P.oi}`)); } }; }
   (() => { const st = document.createElement('style'); st.textContent = `.ex5lh{font-weight:900;color:#5b21b6;font-size:1.05rem;margin:6px 0 2px}.ex5log{font-weight:800;color:#334155;font-size:1rem;padding:3px 8px;border-left:4px solid #c4b5fd;margin:3px 0;background:#faf5ff;border-radius:0 8px 8px 0}
 #toolBody .ex5go{animation:ex5go .7s ease}#toolBody .ex5arc{stroke-dasharray:900;stroke-dashoffset:900;animation:ex5arc .7s ease forwards}@keyframes ex5arc{to{stroke-dashoffset:0}}@keyframes ex5go{0%{transform:translateX(-30px)}100%{transform:none}}`; document.head.appendChild(st); })();
 
@@ -13336,7 +13522,7 @@ const EX5 = (() => {
           pop(); api.clear();
           if (d.ci >= st.cards.length) { if (d.si < c.steps.length - 1) { d.si++; d.ci = 0; d.tied = null; api.say(true, `좋아요! 다음은 <b>${c.steps[d.si].name}</b>.`, true); } else { d.ok = true; api.win(c.say(d, d.e)); } } } },
       _solve(d, on) { c.steps.forEach(st => { if (st.tie) { on('act:m4set', 'drop:c:0:c1'); on('act:m4set', 'drop:c:all:hold'); } else st.cards.forEach((k, i) => on('act:m4set', `drop:c:${i}:hold`)); }); } }; }
-  return { BUS, JUMP, FOLD, CHAIN, ccard };
+  return { BUS, JUMP, STEPS, FOLD, ORDER, CHAIN, ccard, K: { drag, zone, TX, RC, LN, F, stand, seat, crowd, tagB, scene, ART } };
 })();
 
 
@@ -13425,37 +13611,78 @@ const JX = (() => {
 } catch (e) {} })();
 
 
-/* 5-1-1-2 곱셈과 나눗셈이 섞여 있는 식 — 나누어 담고 가져가기 · 상자 탑 한꺼번에 채우기(괄호) · 식 접기 + 보스전 도전 2·3 */
+/* 5-1-1-2 곱셈과 나눗셈이 섞여 있는 식 — 나누어 담고 싣기 · 선반 한꺼번에(괄호) · 막대 자르기 · 식 접기 + 보스전 도전 2·3 */
 (function () {
   const cmp = (a, b) => `<span class="ex5cmp"><b>${a}</b> ≠ <b>${b}</b></span>`;
+  const { RC, TX } = EX5.K, F = n => Number(n).toLocaleString();
+  /* ---- 그림 조각: 쿠키 · 상자 · 트럭 · 선반 ---- */
+  const cookie = (x, y, r = 7) => `<g><circle cx="${x}" cy="${y}" r="${r}" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/><circle cx="${x - r * .35}" cy="${y - r * .2}" r="${r * .18}" fill="#78350f"/><circle cx="${x + r * .3}" cy="${y + r * .25}" r="${r * .16}" fill="#78350f"/></g>`;
+  const pile = (x, y, n, per = 12, g = 17) => { let s = `<rect x="${x - 14}" y="${y - 18}" width="${per * g + 12}" height="${Math.ceil(n / per) * g + 22}" rx="16" fill="#fde68a" stroke="#b45309" stroke-width="3"/>`; for (let i = 0; i < n; i++) s += cookie(x + (i % per) * g, y + Math.floor(i / per) * g, 6.8); return s; };
+  const pbox = (x, y, n, w = 78, h = 64, hot) => { let s = `<path d="M${x},${y + 14} l10,-14 h${w - 20} l10,14z" fill="#d97706"/><rect x="${x}" y="${y + 14}" width="${w}" height="${h - 14}" rx="6" fill="${hot ? '#fef3c7' : '#fbbf24'}" stroke="#92400e" stroke-width="2.5"/>`; const per = Math.max(3, Math.ceil(Math.sqrt(n * 1.6))), gx = (w - 12) / per; for (let i = 0; i < Math.min(n, 24); i++) s += cookie(x + 8 + gx / 2 + (i % per) * gx, y + 24 + Math.floor(i / per) * 11, Math.min(5, gx / 2.3)); if (n) s += `<text x="${x + w / 2}" y="${y + h + 16}" text-anchor="middle" font-size="14" font-weight="900" fill="#7c2d12">${n}개</text>`; return s; };
+  const truck = (x, y, k, lab) => `<g><rect x="${x}" y="${y}" width="240" height="100" rx="10" fill="#e0f2fe" stroke="#0369a1" stroke-width="3" stroke-dasharray="${k ? '0' : '8 6'}"/><rect x="${x + 240}" y="${y + 30}" width="66" height="70" rx="10" fill="#38bdf8" stroke="#0369a1" stroke-width="3"/><rect x="${x + 252}" y="${y + 40}" width="40" height="26" rx="4" fill="#e0f2fe"/><circle cx="${x + 50}" cy="${y + 108}" r="16" fill="#1f2937"/><circle cx="${x + 200}" cy="${y + 108}" r="16" fill="#1f2937"/><circle cx="${x + 270}" cy="${y + 108}" r="16" fill="#1f2937"/>
+    ${Array.from({ length: k }, (_, i) => `<g transform="translate(${x + 12 + i * 74},${y + 18}) scale(.85)">${pbox(0, 0, 0)}</g>`).join('')}<text x="${x + 120}" y="${y - 10}" text-anchor="middle" font-size="16" font-weight="900" fill="#0369a1">${lab}</text></g>`;
+  function shareArt(c) { return (d, K) => { const per = c.N / c.B; let s = `<rect width="960" height="470" fill="#fff7ed"/><rect y="390" width="960" height="80" fill="#e7e5e4"/>`;
+      if (d.gi === 0) { s += K.drag('pile', pile(60, 140, c.N, 12, 17), 'b2cue') + TX(160, 120, `🍪 쿠키 ${c.N}개`, { fs: 18, fill: '#7c2d12', w: 900 }); }
+      s += K.zone('boxes', `<g>${RC(400, 100, 540, 180, '#fef3c7', { st: '#d97706', sw: 3, rx: 18, da: d.gi === 0 ? '10 7' : '' })}${Array.from({ length: c.B }, (_, i) => `<g transform="translate(${412 + (i % 6) * 88},${112 + Math.floor(i / 6) * 86})">${d.gi >= 1 && !(d.gi >= 2 && i < c.take) ? pbox(0, 0, per) : pbox(0, 0, 0)}</g>`).join('')}${TX(670, 96, `📦 상자 ${c.B}개`, { fs: 17, fill: '#92400e', w: 900 })}</g>`);
+      if (d.gi === 1) s += K.drag('box', `<g transform="translate(60,170)">${RC(-10, -14, 120, 120, '#fff', { st: '#16a34a', sw: 3, rx: 14 })}${pbox(10, 6, per, 78, 64, true)}${TX(50, 100, '한 상자', { fs: 15, fill: '#15803d', w: 900 })}</g>`, 'b2cue');
+      s += K.zone('truck', truck(420, 300, d.gi >= 2 ? c.take : 0, d.gi >= 2 ? `🚚 ${c.take}상자 = ${per * c.take}개` : `🚚 ${c.take}상자를 실어요`));
+      return s; }; }
+  function rackArt(c) { return (d, K) => { let s = `<rect width="960" height="470" fill="#fff7ed"/><rect y="390" width="960" height="80" fill="#e7e5e4"/>`, rows = d.gi >= 1 ? c.r : 0, per = c.N / (c.a * c.r);
+      if (d.gi === 0) s += K.drag('row', `<g>${RC(30, 110, c.a * 42 + 20, 70, '#fff', { st: '#16a34a', sw: 3, rx: 14 })}${Array.from({ length: c.a }, (_, i) => `<g transform="translate(${40 + i * 42},${122}) scale(.48)">${pbox(0, 0, 0)}</g>`).join('')}${TX(30 + (c.a * 42 + 20) / 2, 100, `한 줄 ${c.a}상자`, { fs: 16, fill: '#15803d', w: 900 })}</g>`, 'b2cue');
+      if (d.gi >= 1 && d.gi < 2) s += K.drag('pile', pile(40, 140, c.N, 12, 15), 'b2cue') + TX(130, 120, `🍪 ${c.N}개`, { fs: 18, fill: '#7c2d12', w: 900 });
+      s += K.zone('rack', `<g>${RC(470, 96, 450, 290, '#e7e5e4', { st: '#57534e', sw: 4, rx: 10, da: d.gi < 2 ? '10 7' : '' })}${Array.from({ length: c.r }, (_, r) => `<rect x="470" y="${96 + (r + 1) * (290 / c.r) - 6}" width="450" height="6" fill="#78716c"/>${r < rows ? Array.from({ length: c.a }, (_, i) => `<g transform="translate(${480 + i * (440 / c.a)},${104 + r * (290 / c.r)}) scale(${Math.min(.7, 4.4 / c.a)})">${pbox(0, 0, d.gi >= 2 ? per : 0)}</g>`).join('') : ''}`).join('')}${TX(695, 90, `🧱 ${c.r}줄짜리 선반 ${rows ? `= ${c.a} × ${c.r} = ${c.a * c.r}상자` : ''}`, { fs: 17, fill: '#44403c', w: 900 })}</g>`);
+      return s; }; }
+  /* 막대 모형 (테이프) */
+  function tapeArt(c) { return (d, K) => { const X0 = 60, W = 840, Y = 200; let s = `<rect width="960" height="470" fill="#f8fafc"/>`;
+      const parts = c.parts(d), hi = c.hi(d), seg = W / parts;
+      s += K.zone('tape', `<g>${Array.from({ length: parts }, (_, i) => `<rect x="${X0 + i * seg}" y="${Y}" width="${seg}" height="70" fill="${i < hi ? '#fbbf24' : '#fde68a'}" stroke="#b45309" stroke-width="${parts > 30 ? 1 : 2.5}"/>`).join('')}${parts > 1 && parts <= 12 ? Array.from({ length: parts }, (_, i) => TX(X0 + (i + .5) * seg, Y + 45, F(c.total / parts), { fs: 20, fill: '#7c2d12', w: 900 })).join('') : ''}</g>`);
+      s += `<path d="M${X0},${Y - 14} v-10 h${W} v10" fill="none" stroke="#334155" stroke-width="3"/>` + TX(X0 + W / 2, Y - 32, `전체 ${F(c.total)}개`, { fs: 20, fill: '#334155', w: 900 });
+      if (hi) s += `<path d="M${X0},${Y + 84} v10 h${hi * seg} v-10" fill="none" stroke="#16a34a" stroke-width="4"/>` + TX(X0 + hi * seg / 2, Y + 118, `${hi}칸 = ${F(c.total / parts * hi)}개`, { fs: 22, fill: '#15803d', w: 900 });
+      c.cards(d).forEach((k, i) => { const x = 140 + i * 250; s += K.drag(k.p, `<g>${RC(x, 320, 220, 74, k.bg, { st: k.col, sw: 4, rx: 18 })}${TX(x + 110, 352, k.big, { fs: 28, fill: k.col, w: 900 })}${TX(x + 110, 380, k.lab, { fs: 15, fill: '#334155', w: 800 })}</g>`, 'b2cue'); if (k.zone) s += K.zone(k.p + 'z', RC(x, 320, 220, 74, 'none', { rx: 18 })); });
+      return s; }; }
+  const KNIFE = { bg: '#fee2e2', col: '#dc2626' }, HL = { bg: '#dcfce7', col: '#16a34a' };
   CK.install([
-    { k: 'share', vk: 'tilt', icon: '📦', name: '나누어 담고 가져가기', short: '앞에서부터 차례로', dnd: [],
-      sub: '쿠키 공장에서 일어나는 순서대로 카드를 <b>직접 끌어</b> 쿠키 판에 놓아요. 카드를 놓을 때마다 식이 한 칸씩 자라요.', taunt: '곱셈은 언제나 먼저지!', msg: '쿠키를 나누어 담고 상자를 가져가 보자!',
+    { k: 'share', vk: 'tilt', icon: '📦', name: '나누어 담고 실어 보내기', short: '앞에서부터 차례로', dnd: [],
+      sub: '쿠키 더미를 <b>직접 끌어</b> 상자들에 나누어 담고, 상자를 트럭에 실어요. 일이 일어나는 순서대로 식이 자라요.', taunt: '곱셈은 언제나 먼저지!', msg: '쿠키를 나누어 담고 트럭에 실어 보자!',
       summary: '곱셈과 나눗셈이 섞여 있는 식은 <b>앞에서부터 차례로</b> 계산해요. <b>72 ÷ 8 × 3</b> = 9 × 3 = <b>27</b> (8 × 3을 먼저 하면 72 ÷ 24 = 3이 되어 이야기와 달라져요.)',
-      stages: [EX5.CHAIN({ t: '나누어 담기 → 3상자', start: 72, unit: '개', hold: { name: '쿠키', icon: '🍪', col: '#f59e0b' },
-          q: '쿠키 <b>72개</b>를 <b>상자 8개</b>에 똑같이 나누어 담고, 그중 <b>3상자</b>를 가져가요. 카드를 순서대로 쿠키 판에 끌어 놓아요.',
-          steps: [{ name: '상자 8개에 똑같이 나누어 담기', cards: [{ n: 8, op: '/', lab: '상자 8개에 나누기', icon: '📦', big: '÷ 8', label: v => `한 상자에 ${v}개` }] },
-            { name: '3상자 가져가기', cards: [{ n: 3, op: '*', lab: '3상자 가져가기', icon: '🚚', big: '× 3', label: v => `가져간 쿠키 ${v}개` }] }],
+      stages: [EX5.STEPS({ t: '나누어 담기 → 3상자', start: 72, unit: '개', infoT: '🍪 쿠키', infoL: '지금', art: shareArt({ N: 72, B: 8, take: 3 }),
+          q: '쿠키 <b>72개</b>를 <b>상자 8개</b>에 똑같이 나누어 담고, 그중 <b>3상자</b>를 트럭에 실어 보내요.',
+          steps: [{ p: 'pile', t: 'boxes', op: '/', n: 8, lab: '쿠키 더미를 상자들 위로 끌어 나누어 담아요', say: '한 상자에 72 ÷ 8 = <b>9개</b>씩!' },
+            { p: 'box', t: 'truck', op: '*', n: 3, lab: '한 상자를 트럭으로 끌어 3상자를 실어요', why: '먼저 쿠키를 상자에 나누어 담아야 실을 수 있어요.' }],
           say: () => '72 ÷ 8 × 3 = 9 × 3 = <b>27</b>개! 나눈 다음에 곱했으니 <b>앞에서부터 차례로</b> 계산했어요.',
-          done: (d, e) => `<b>${EX.t(e)} = 27</b><br>${VN}의 계산: 72 ÷ (8 × 3) = 3 → ${cmp(3, 27)} 가져간 쿠키와 달라요!` }),
-        EX5.CHAIN({ t: '확인', kind: 'check', start: 90, unit: '개', hold: { name: '쿠키', icon: '🍪', col: '#f59e0b' },
-          q: '쿠키 <b>90개</b>를 접시 <b>6개</b>에 똑같이 나누어 담고, 그중 <b>4접시</b>를 손님에게 내요.',
-          steps: [{ name: '접시 6개에 나누기', cards: [{ n: 6, op: '/', lab: '접시 6개에 나누기', icon: '🍽️', big: '÷ 6', label: v => `한 접시에 ${v}개` }] },
-            { name: '4접시 내기', cards: [{ n: 4, op: '*', lab: '4접시 내기', icon: '🛎️', big: '× 4', label: v => `손님에게 낸 쿠키 ${v}개` }] }],
-          say: () => '90 ÷ 6 × 4 = 15 × 4 = <b>60</b>개! 앞에서부터 차례로.', done: (d, e) => `<b>${EX.t(e)} = 60</b>` })] },
-    { k: 'stack', vk: 'mixup', icon: '🧱', name: '상자 탑에 한꺼번에 담기', short: '괄호 안을 먼저', dnd: [],
-      sub: '이번에는 상자를 <b>한 줄에 8상자씩 3줄</b>로 쌓은 상자 탑에 쿠키를 한꺼번에 나누어 담아요. 두 카드를 겹쳐 상자 수를 먼저 구해 봐요.', taunt: '괄호 따위 지워도 똑같아!', msg: '상자 탑에 쿠키를 한꺼번에 나누어 담아 보자!',
+          done: () => `<b>72 ÷ 8 × 3 = 27</b><br>${VN}의 계산: 72 ÷ (8 × 3) = 3 → ${cmp(3, 27)} 실어 보낸 쿠키와 달라요!` }),
+        EX5.STEPS({ t: '확인', kind: 'check', start: 90, unit: '개', infoT: '🍪 쿠키', infoL: '지금', art: shareArt({ N: 90, B: 6, take: 4 }),
+          q: '쿠키 <b>90개</b>를 상자 <b>6개</b>에 똑같이 나누어 담고, 그중 <b>4상자</b>를 실어 보내요.',
+          steps: [{ p: 'pile', t: 'boxes', op: '/', n: 6, lab: '쿠키 더미를 상자들 위로' }, { p: 'box', t: 'truck', op: '*', n: 4, lab: '한 상자를 트럭으로 (4상자)', why: '먼저 나누어 담아요.' }],
+          say: () => '90 ÷ 6 × 4 = 15 × 4 = <b>60</b>개! 앞에서부터 차례로.', done: () => '<b>90 ÷ 6 × 4 = 60</b>' })] },
+    { k: 'stack', vk: 'mixup', icon: '🧱', name: '선반 상자에 한꺼번에', short: '괄호 안을 먼저', dnd: [],
+      sub: '이번에는 <b>한 줄에 8상자씩 3줄</b>짜리 선반을 먼저 채우고, 쿠키를 <b>모든 상자에 한꺼번에</b> 나누어 담아요.', taunt: '괄호 따위 지워도 똑같아!', msg: '선반부터 만들어 보자!',
       summary: '괄호가 있으면 <b>괄호 안을 먼저</b> 계산해요. <b>72 ÷ (8 × 3)</b> = 72 ÷ 24 = <b>3</b>, 괄호가 없는 <b>72 ÷ 8 × 3</b> = <b>27</b> — 괄호가 계산 순서를 바꿔요.',
-      stages: [EX5.CHAIN({ t: '상자 탑 채우기', start: 72, unit: '개', hold: { name: '쿠키', icon: '🍪', col: '#f59e0b' },
-          q: '쿠키 <b>72개</b>를 <b>한 줄에 8상자씩 3줄</b>로 쌓은 상자 탑의 모든 상자에 똑같이 나누어 담아요. 두 카드를 겹쳐 <b>한 묶음</b>으로 만든 뒤 쿠키 판으로 옮겨요.',
-          steps: [{ name: '상자 탑에 한꺼번에 나누어 담기', cards: [{ n: 8, lab: '한 줄에 8상자', icon: '📦', big: '8' }, { n: 3, lab: '3줄로 쌓기', icon: '🧱', big: '3' }],
-            tie: { op: '*', apply: '/', u: '상자', msg: v => `8상자씩 3줄 = <b>${v}상자</b>! 이 상자들에 쿠키를 한꺼번에 나누어 담아요.`, why: '상자 탑의 상자는 <b>모두 함께</b> 쿠키를 받아요. 먼저 두 카드를 겹쳐 상자가 모두 몇 개인지 구해요.' }, label: v => `한 상자에 ${v}개` }],
-          say: () => '72 ÷ (8 × 3) = 72 ÷ 24 = <b>3</b>개! 상자 수 (8 × 3)을 <b>먼저</b> 구했어요.',
-          done: () => `72 ÷ (8 × 3) = <b>3</b> · 72 ÷ 8 × 3 = <b>27</b><br>괄호가 있으면 <b>괄호 안을 먼저</b>!` }),
-        EX5.CHAIN({ t: '확인', kind: 'check', start: 96, unit: '개', hold: { name: '사탕', icon: '🍬', col: '#ec4899' },
-          q: '사탕 <b>96개</b>를 <b>한 칸에 4개 상자씩 6칸</b>인 선반의 모든 상자에 똑같이 나누어 담아요.',
-          steps: [{ name: '선반에 한꺼번에 나누기', cards: [{ n: 4, lab: '한 칸에 4상자', icon: '📦', big: '4' }, { n: 6, lab: '6칸', icon: '🗄️', big: '6' }], tie: { op: '*', apply: '/', u: '상자' }, label: v => `한 상자에 ${v}개` }],
-          say: () => '96 ÷ (4 × 6) = 96 ÷ 24 = <b>4</b>개! 괄호 안을 먼저.', done: (d, e) => `<b>${EX.t(e)} = 4</b>` })] },
+      stages: [EX5.STEPS({ t: '선반 채우기', start: 72, unit: '개', infoT: '🍪 쿠키', infoL: '전체', art: rackArt({ N: 72, a: 8, r: 3 }),
+          q: '<b>한 줄 8상자</b>를 선반 <b>3줄</b>에 모두 놓은 뒤, 쿠키 <b>72개</b>를 선반의 모든 상자에 똑같이 나누어 담아요.',
+          steps: [{ p: 'row', t: 'rack', kind: 'grp', a: 8, gop: '*', b: 3, lab: '한 줄 상자를 선반으로 끌어 3줄을 채워요', say: '선반의 상자는 8 × 3 = <b>24상자</b>! 이 묶음이 먼저예요.' },
+            { p: 'pile', t: 'rack', kind: 'gapply', op: '/', lab: '쿠키 더미를 선반으로 끌어 한꺼번에 나누어요', why: '먼저 선반을 상자로 채워요.' }],
+          say: () => '72 ÷ (8 × 3) = 72 ÷ 24 = <b>3</b>개씩! 상자 수 (8 × 3)을 <b>먼저</b> 구했어요.',
+          done: () => '72 ÷ (8 × 3) = <b>3</b> · 72 ÷ 8 × 3 = <b>27</b><br>괄호가 있으면 <b>괄호 안을 먼저</b>!' }),
+        EX5.STEPS({ t: '확인', kind: 'check', start: 96, unit: '개', infoT: '🍬 사탕', infoL: '전체', art: rackArt({ N: 96, a: 4, r: 6 }),
+          q: '<b>한 줄 4상자</b>씩 <b>6줄</b> 선반을 채운 뒤, 사탕 <b>96개</b>를 모든 상자에 똑같이 나누어 담아요.',
+          steps: [{ p: 'row', t: 'rack', kind: 'grp', a: 4, gop: '*', b: 6, lab: '한 줄 상자를 선반으로' }, { p: 'pile', t: 'rack', kind: 'gapply', op: '/', lab: '사탕 더미를 선반으로', why: '먼저 선반을 채워요.' }],
+          say: () => '96 ÷ (4 × 6) = 96 ÷ 24 = <b>4</b>개! 괄호 안을 먼저.', done: () => '<b>96 ÷ (4 × 6) = 4</b>' })] },
+    { k: 'tape', vk: 'half', icon: '📏', name: '막대 자르고 고르기', short: '차례로 vs 묶어서', dnd: [],
+      sub: '쿠키 72개를 긴 막대로 나타냈어요. <b>칼 카드</b>를 끌어 막대를 똑같이 자르고, <b>형광펜 카드</b>로 몇 칸을 골라요. 차례로 할 때와 묶어서 먼저 할 때를 비교해요.', taunt: '8과 3을 먼저 곱해서 자르면 빠르지!', msg: '막대를 직접 잘라 보자!',
+      summary: '<b>72 ÷ 8 × 3</b>: 8칸으로 자르고 3칸 → <b>27</b>. <b>72 ÷ (8 × 3)</b>: 24칸으로 자르고 1칸 → <b>3</b>. 곱셈·나눗셈은 <b>앞에서부터</b>, 괄호는 <b>먼저</b>!',
+      stages: [EX5.STEPS({ t: '차례로', start: 72, unit: '개', infoT: '📏 막대', infoL: '고른 칸', art: tapeArt({ total: 72, parts: d => d.gi >= 1 ? 8 : 1, hi: d => d.gi >= 2 ? 3 : 0, cards: d => [d.gi === 0 && Object.assign({ p: 'k8', big: '÷ 8 ✂️', lab: '8칸으로 똑같이 자르기' }, KNIFE), d.gi <= 1 && Object.assign({ p: 'h3', big: '× 3 🖍️', lab: '3칸 고르기' }, HL)].filter(Boolean) }),
+          q: '<b>72 ÷ 8 × 3</b>: 먼저 막대를 <b>8칸</b>으로 자르고, <b>3칸</b>을 골라요. 카드를 막대 위로 끌어요.',
+          steps: [{ p: 'k8', t: 'tape', op: '/', n: 8, lab: '칼 카드를 막대 위로', say: '한 칸은 72 ÷ 8 = <b>9</b>!' }, { p: 'h3', t: 'tape', op: '*', n: 3, lab: '형광펜 카드를 막대 위로', why: '식의 앞에서부터! 먼저 ÷ 8로 잘라요.' }],
+          say: () => '72 ÷ 8 × 3 = 9 × 3 = <b>27</b>. 앞에서부터 차례로!', done: () => '<b>72 ÷ 8 × 3 = 27</b>' }),
+        EX5.STEPS({ t: '브래킷의 지름길', start: 72, unit: '개', infoT: '📏 막대', infoL: '고른 칸', art: tapeArt({ total: 72, parts: d => d.gi >= 2 ? 24 : 1, hi: d => d.gi >= 2 ? 1 : 0, cards: d => d.gi === 0 ? [Object.assign({ p: 'k8', big: '8', lab: '8칸', zone: 1 }, KNIFE), Object.assign({ p: 'k3', big: '× 3', lab: '그리고 3배', zone: 1 }, KNIFE)] : d.gi === 1 ? [Object.assign({ p: 'kk', big: '÷ (8 × 3) ✂️', lab: '24칸으로 자르기' }, KNIFE)] : [] }),
+          q: `${VN}이 “8 × 3을 먼저 해서 한 번에 자르자!”라고 해요. 두 카드를 겹쳐 묶은 뒤 막대를 잘라 봐요.`,
+          steps: [{ p: 'k8', t: 'k3z', kind: 'grp', a: 8, gop: '*', b: 3, lab: '8 카드를 × 3 카드 위에 겹쳐 묶어요', say: '8 × 3 = 24칸 칼이 되었어요.' }, { p: 'kk', t: 'tape', kind: 'gapply', op: '/', lab: '24칸 칼을 막대 위로' }],
+          say: () => '72 ÷ (8 × 3) = 72 ÷ 24 = <b>3</b>. 앞의 27과 달라요! 괄호로 묶으면 <b>계산 순서가 바뀌어</b> 다른 이야기가 돼요.', done: () => '72 ÷ 8 × 3 = <b>27</b> · 72 ÷ (8 × 3) = <b>3</b>' }),
+        EX5.STEPS({ t: '확인', kind: 'check', start: 84, unit: '개', infoT: '📏 막대', infoL: '고른 칸', art: tapeArt({ total: 84, parts: d => d.gi >= 2 ? 6 : 1, hi: d => d.gi >= 3 ? 5 : 0, cards: d => d.gi === 0 ? [Object.assign({ p: 'k2', big: '2', lab: '2칸', zone: 1 }, KNIFE), Object.assign({ p: 'k3', big: '× 3', lab: '그리고 3배', zone: 1 }, KNIFE), Object.assign({ p: 'h5', big: '× 5 🖍️', lab: '5칸 고르기' }, HL)] : d.gi === 1 ? [Object.assign({ p: 'kk', big: '÷ (2 × 3) ✂️', lab: '6칸으로 자르기' }, KNIFE), Object.assign({ p: 'h5', big: '× 5 🖍️', lab: '5칸 고르기' }, HL)] : d.gi === 2 ? [Object.assign({ p: 'h5', big: '× 5 🖍️', lab: '5칸 고르기' }, HL)] : [] }),
+          q: '<b>84 ÷ (2 × 3) × 5</b>를 막대로 나타내요. 괄호 안 → 앞에서부터!',
+          steps: [{ p: 'k2', t: 'k3z', kind: 'grp', a: 2, gop: '*', b: 3, lab: '괄호 안부터: 2 카드를 × 3 카드 위에', why: '괄호 안 (2 × 3)부터 만들어요.' }, { p: 'kk', t: 'tape', kind: 'gapply', op: '/', lab: '6칸 칼을 막대 위로', why: '먼저 막대를 잘라야 칸을 고를 수 있어요.' }, { p: 'h5', t: 'tape', op: '*', n: 5, lab: '형광펜을 막대 위로' }],
+          say: () => '84 ÷ (2 × 3) × 5 = 84 ÷ 6 × 5 = 14 × 5 = <b>70</b>!', done: () => '<b>84 ÷ (2 × 3) × 5 = 70</b>' })] },
     { k: 'fold', vk: 'clock', icon: '🧮', name: '식 접기', short: '계산 순서대로 접기', dnd: [],
       sub: '이야기 없이 식만 남았어요. <b>먼저 계산할 두 수</b>를 잡아 겹치면 그 부분이 한 수로 접혀요. 곱셈이 먼저일까요?', taunt: '곱셈부터 접으면 되지!', msg: '계산 순서대로 식을 접어 보자!',
       summary: '곱셈과 나눗셈이 섞여 있으면 <b>앞에서부터 차례로</b>, 괄호가 있으면 <b>괄호 안을 먼저</b> 계산해요.<br>▲ ÷ ● × ■ → (▲ ÷ ●)부터 · ▲ ÷ (● × ■) → (● × ■)부터',

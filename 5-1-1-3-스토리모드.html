@@ -4052,7 +4052,7 @@ function init() {
   }, 500);
 }
 /* =====================================================================
-   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 3개·기본 문제·브래킷 보스전)
+   💎 십이지 보석 — 한 차시 성취 = 보석 1개 (조각 3개: 개념 도구 4개·기본 문제·브래킷 보스전)
    보석은 학번별로 이 기기에 저장돼요. (제출하면 시트 '보석현황'에도 기록)
    ===================================================================== */
 CONFIG.LESSON_ID = CONFIG.LESSON_ID || '5-1-1-3';
@@ -4136,7 +4136,7 @@ const ST_AREA = { dark: '수학 세계 전체', tilt: '수와 연산', mixup: '�
 const ST_VK = ['dark', 'tilt', 'mixup', 'clock', 'half'];
 const ST_SEAL = { tilt: '네 자리 끊기의 자물쇠', mixup: '자릿값의 봉인', clock: '뛰어 세기의 봉인', half: '10장 묶기의 봉인', dark: '조의 문 봉인' };
 const CHAPTERS = [
-  { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 3개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
+  { n: 1, v: 'tilt',  icon: '🪨', title: '억과 조의 수호석', sub: '개념 도구 4개 · 10배와 네 자리 끊기',      go: ['s1', 'concept'] },
   { n: 2, v: 'tilt',  icon: '✏️', title: '브래킷의 함정',     sub: '기본 문제 4개 · 억과 조 읽고 쓰기',        go: ['s1', 'basic'] },
   { n: 3, v: 'dark',  icon: '👑', title: '브래킷 보스전',     sub: '방어막 3겹 · 실생활 큰 수 문제 3개',        go: ['s1', 'jump'] },
   { n: 4, v: 'mixup', icon: '🎮', title: '브래킷의 마법진',         sub: '문제은행 · 미니게임 3종 · 수호석 경매전', go: ['s2', 'drill'] },
@@ -9230,13 +9230,86 @@ const MEB = (() => {
 })();
 
 /* =====================================================================
+   🎮 5학년 미니게임 무대 꾸미기 · 효과 (mg5fx)
+   · 게임마다 이야기 배경(쿠키 공장, 문구점, 피자 가게, 체험학습 공원 …)을 무대 빈 곳에 깔아요
+   · 맞히면 그 게임의 물건이 터져 나오고 +점수가 떠올라요 / 틀리면 무대가 흔들려요
+   · 연속 성공 불꽃 배지, 남은 10초 경고(째깍 소리 + 빨간 시계)
+   ===================================================================== */
+(function () {
+  if (window.__mg5fx) return; window.__mg5fx = 1;
+  const svgURI = s => `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice"><g opacity=".55">${s}</g></svg>`)}")`;
+  const ck = (x, y, r = 16) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#d97706" stroke="#92400e" stroke-width="2"/><circle cx="${x - r / 3}" cy="${y - r / 4}" r="${r / 6}" fill="#451a03"/><circle cx="${x + r / 3}" cy="${y + r / 4}" r="${r / 6}" fill="#451a03"/>`;
+  const box = (x, y, w = 60, h = 50) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#fcd34d" stroke="#92400e" stroke-width="3"/><path d="M${x},${y + 14} h${w}" stroke="#92400e" stroke-width="2"/>`;
+  const kid = (x, y, c, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-9" y="10" width="18" height="24" rx="7" fill="${c}"/><circle r="9" fill="#fcd5b4"/><path d="M-9,-1 q0,-10 9,-10 q9,0 9,10 q-4,-4 -9,-4 q-5,0 -9,4z" fill="#3f2a1d"/><rect x="-6" y="32" width="5" height="16" rx="2" fill="#334155"/><rect x="1" y="32" width="5" height="16" rx="2" fill="#334155"/></g>`;
+  const T = {
+    umbrg: { emo: ['☂️', '💧', '🌈'], top: '#e0f2fe', bot: '#bae6fd', art: `<path d="M0,250 Q300,220 600,248 T1200,240 V300 H0z" fill="#bbf7d0"/>${[80, 1080].map(x => `<rect x="${x}" y="170" width="70" height="80" rx="8" fill="#94a3b8"/><path d="M${x - 10},170 l45,-30 l45,30z" fill="#64748b"/>`).join('')}` },
+    pairg: { emo: ['🎟️', '🚌', '⭐'], top: '#f0f9ff', bot: '#dbeafe', art: `<rect y="236" width="1200" height="64" fill="#64748b"/><line x1="0" y1="268" x2="1200" y2="268" stroke="#fff" stroke-width="5" stroke-dasharray="40 26"/><g transform="translate(40,170)"><rect width="190" height="70" rx="16" fill="#fbbf24" stroke="#92400e" stroke-width="4"/>${[0, 1, 2, 3].map(i => `<rect x="${14 + i * 40}" y="12" width="30" height="26" rx="4" fill="#bae6fd"/>`).join('')}<circle cx="40" cy="72" r="14" fill="#1f2937"/><circle cx="150" cy="72" r="14" fill="#1f2937"/></g>` },
+    judgeg: { emo: ['⚖️', '✔️', '🍪'], top: '#fff7ed', bot: '#fde68a', art: `<rect y="230" width="1200" height="70" fill="#b45309"/><rect y="222" width="1200" height="14" fill="#92400e"/><g transform="translate(70,150)"><rect x="0" y="60" width="90" height="16" rx="6" fill="#78350f"/><rect x="30" y="0" width="70" height="30" rx="8" fill="#a16207" transform="rotate(-25 65 15)"/><rect x="58" y="20" width="12" height="50" rx="5" fill="#78350f" transform="rotate(-25 64 45)"/></g><g transform="translate(1040,110)" fill="none" stroke="#a16207" stroke-width="6"><path d="M50,0 v110 M0,30 h100"/><path d="M0,30 l-18,40 h36z M100,30 l-18,40 h36z" fill="#fde68a"/><rect x="25" y="108" width="50" height="10" fill="#a16207"/></g>` },
+    buildg: { emo: ['🍪', '📦', '🚚'], top: '#fff7ed', bot: '#fed7aa', art: `<rect y="236" width="1200" height="26" rx="13" fill="#475569"/>${Array.from({ length: 16 }, (_, i) => `<circle cx="${40 + i * 75}" cy="249" r="9" fill="#94a3b8"/>`).join('')}${[60, 150, 240, 900, 990].map((x, i) => i < 3 ? ck(x, 218) : box(x, 186))}<rect y="262" width="1200" height="38" fill="#e7e5e4"/>` },
+    payg: { emo: ['🪙', '💵', '🧾'], top: '#f0fdf4', bot: '#dcfce7', art: `<rect y="226" width="1200" height="74" fill="#a16207"/><rect y="216" width="1200" height="16" rx="6" fill="#ca8a04"/><g transform="translate(1030,140)"><rect width="130" height="78" rx="12" fill="#334155"/><rect x="14" y="12" width="102" height="26" rx="4" fill="#86efac"/><rect x="14" y="46" width="102" height="18" rx="4" fill="#64748b"/></g>${[60, 120, 180].map((x, i) => `<g transform="translate(${x},${160}) rotate(-25)"><rect width="14" height="62" rx="5" fill="${['#ef4444', '#3b82f6', '#22c55e'][i]}"/></g>`).join('')}` },
+    rcptg: { emo: ['🔍', '🧾', '✨'], top: '#f8fafc', bot: '#e2e8f0', art: `${[0, 1, 2, 3, 4, 5].map(i => `<g transform="translate(${40 + i * 200},${200 + (i % 2) * 20}) rotate(${i % 2 ? 6 : -5})"><rect width="120" height="90" fill="#fff" stroke="#cbd5e1" stroke-width="3"/>${[18, 36, 54, 72].map(y => `<line x1="14" y1="${y}" x2="106" y2="${y}" stroke="#e2e8f0" stroke-width="5"/>`).join('')}</g>`).join('')}` },
+    orderg: { emo: ['🎫', '🔢', '🍕'], top: '#fff7ed', bot: '#fecaca', art: `<rect y="232" width="1200" height="68" fill="#e7c9a0"/>${Array.from({ length: 30 }, (_, i) => `<rect x="${i * 40}" y="0" width="20" height="16" fill="#ef4444" opacity=".5"/>`).join('')}<g transform="translate(1040,150)"><circle cx="60" cy="60" r="62" fill="#d97706"/><circle cx="60" cy="60" r="52" fill="#fbbf24"/><circle cx="40" cy="44" r="7" fill="#dc2626"/><circle cx="78" cy="70" r="7" fill="#dc2626"/><circle cx="56" cy="88" r="7" fill="#dc2626"/></g>` },
+    balg: { emo: ['⚖️', '🍕', '🥤'], top: '#fff7ed', bot: '#fde68a', art: `<rect y="236" width="1200" height="64" fill="#e7c9a0"/>${[[70, '#38bdf8'], [130, '#f472b6'], [1060, '#a3e635'], [1120, '#fbbf24']].map(([x, c]) => `<g transform="translate(${x},170)"><path d="M0,0 h44 l-6,62 h-32z" fill="${c}" stroke="#0369a1" stroke-width="3"/><rect x="-3" y="-8" width="50" height="10" rx="3" fill="#e0f2fe"/></g>`).join('')}` },
+    chaing: { emo: ['🧩', '🚌', '🎟️'], top: '#e0f2fe', bot: '#bbf7d0', art: `<path d="M0,240 Q300,210 600,236 T1200,226 V300 H0z" fill="#86efac"/>${['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map((c, i) => kid(60 + i * 34, 200, c, 1.1)).join('')}<g transform="translate(980,170)"><rect width="190" height="70" rx="16" fill="#facc15" stroke="#a16207" stroke-width="4"/>${[0, 1, 2, 3].map(i => `<rect x="${14 + i * 40}" y="12" width="30" height="26" rx="4" fill="#e0f2fe"/>`).join('')}<circle cx="40" cy="72" r="14" fill="#1f2937"/><circle cx="150" cy="72" r="14" fill="#1f2937"/></g>` },
+    missingg: { emo: ['🔎', '❓', '⭐'], top: '#f5f3ff', bot: '#ddd6fe', art: `<path d="M0,246 Q400,220 800,244 T1200,236 V300 H0z" fill="#c4b5fd"/>${[100, 300, 900, 1100].map((x, i) => `<text x="${x}" y="${150 + (i % 2) * 40}" font-size="70" font-weight="900" fill="#a78bfa" opacity=".35">${['□', '?', '□', '?'][i]}</text>`).join('')}` }
+  };
+  const css = Object.keys(T).map(k => `#mgxStage[data-g5g="${k}"]{background:${svgURI(T[k].art)} center bottom/100% auto no-repeat,linear-gradient(180deg,${T[k].top},${T[k].bot})!important}`).join('\n');
+  const st = document.createElement('style');
+  st.textContent = css + `
+#mgxStage[data-g5g]{position:relative;border-radius:18px;transition:box-shadow .2s}
+#mgxStage[data-g5g] .qzq{background:rgba(255,255,255,.88);border-radius:16px;padding:8px 14px;display:block;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;box-shadow:0 3px 0 rgba(15,23,42,.08)}
+#mgxStage.g5ok{animation:g5okf .55s}#mgxStage.g5bad{animation:g5shake .45s}
+@keyframes g5okf{0%{box-shadow:inset 0 0 0 0 rgba(34,197,94,.0)}30%{box-shadow:inset 0 0 0 10px rgba(34,197,94,.55)}100%{box-shadow:inset 0 0 0 0 rgba(34,197,94,0)}}
+@keyframes g5shake{0%,100%{transform:none}20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.g5pt{position:fixed;z-index:9999;pointer-events:none;font-size:30px;left:0;top:0;animation:g5fly .9s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes g5fly{0%{transform:translate(var(--x0),var(--y0)) scale(.4);opacity:1}100%{transform:translate(calc(var(--x0) + var(--dx)),calc(var(--y0) + var(--dy))) scale(1.15) rotate(var(--r));opacity:0}}
+.g5plus{position:fixed;z-index:9999;pointer-events:none;font:900 2.1rem/1 inherit;color:#16a34a;-webkit-text-stroke:2px #fff;paint-order:stroke;animation:g5up 1s ease-out forwards}.g5plus.bad{color:#dc2626}
+@keyframes g5up{0%{transform:translate(-50%,0) scale(.6);opacity:0}20%{transform:translate(-50%,-14px) scale(1.15);opacity:1}100%{transform:translate(-50%,-80px) scale(1);opacity:0}}
+.g5combo{position:absolute;right:14px;top:10px;z-index:5;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;font-weight:900;border-radius:999px;padding:6px 14px;box-shadow:0 4px 0 #9a3412;animation:g5pop .35s}
+@keyframes g5pop{0%{transform:scale(.4)}70%{transform:scale(1.18)}100%{transform:none}}
+.g5hurry{animation:g5hur .5s infinite alternate!important;color:#fecaca!important}@keyframes g5hur{to{transform:scale(1.12);text-shadow:0 0 12px #ef4444}}
+/* 판정소: 도장 받침 */
+#mgxStage .jgbin{position:relative;box-shadow:0 8px 0 rgba(21,128,61,.25);background:radial-gradient(circle at 50% 40%,#dcfce7,#f0fdf4 70%)}#mgxStage .jgbin.no{box-shadow:0 8px 0 rgba(185,28,28,.25);background:radial-gradient(circle at 50% 40%,#fee2e2,#fef2f2 70%)}
+#mgxStage .jgbin:before{content:'🟢';position:absolute;top:10px;font-size:1.2rem;opacity:.7}#mgxStage .jgbin.no:before{content:'🔴'}
+#mgxStage .jgcard{background:repeating-linear-gradient(180deg,#fff 0 30px,#f1f5f9 30px 31px);transform:rotate(-1.5deg)}
+/* 계산대: 진짜 돈처럼 */
+#mgxStage .pycoin{box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .15s}#mgxStage .pycoin:hover{transform:translateY(-3px) rotate(-3deg)}
+#mgxStage .pycoin.c1000{background:linear-gradient(135deg,#bbf7d0,#86efac 45%,#4ade80);border-color:#15803d;border-radius:10px}
+#mgxStage .pycoin.c500{background:radial-gradient(circle at 35% 30%,#fef9c3,#facc15 55%,#ca8a04);border-color:#a16207;border-radius:50%}
+#mgxStage .pycoin.c100{background:radial-gradient(circle at 35% 30%,#f8fafc,#cbd5e1 55%,#94a3b8);border-color:#475569;border-radius:50%}
+#mgxStage .pytray{background:radial-gradient(ellipse at 50% 60%,#fff,#f1f5f9 60%,#e2e8f0);border:5px solid #94a3b8!important;border-radius:60px!important;box-shadow:inset 0 6px 16px rgba(15,23,42,.12),0 8px 0 rgba(15,23,42,.12)}
+`;
+  document.head.appendChild(st);
+  const stage = () => document.getElementById('mgxStage');
+  const tag = () => { const s = stage(); try { if (s && typeof VG !== 'undefined' && VG.id && T[VG.id] && s.dataset.g5g !== VG.id) s.dataset.g5g = VG.id; } catch (e) {} };
+  try { new MutationObserver(tag).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  function burst(ok, pts) { const s = stage(); if (!s) return; tag(); const r = s.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + Math.min(r.height * .45, 260), th = T[s.dataset.g5g] || { emo: ['⭐'] };
+    s.classList.remove('g5ok', 'g5bad'); void s.offsetWidth; s.classList.add(ok ? 'g5ok' : 'g5bad'); setTimeout(() => s.classList.remove('g5ok', 'g5bad'), 600);
+    const p = document.createElement('div'); p.className = 'g5plus' + (ok ? '' : ' bad'); p.textContent = ok ? `+${pts}` : '−'; p.style.left = cx + 'px'; p.style.top = cy + 'px'; document.body.appendChild(p); setTimeout(() => p.remove(), 1100);
+    if (!ok) return;
+    for (let i = 0; i < 14; i++) { const e = document.createElement('span'), a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 170; e.className = 'g5pt'; e.textContent = th.emo[i % th.emo.length];
+      e.style.setProperty('--x0', cx - 15 + 'px'); e.style.setProperty('--y0', cy - 15 + 'px'); e.style.setProperty('--dx', Math.cos(a) * d + 'px'); e.style.setProperty('--dy', Math.sin(a) * d - 40 + 'px'); e.style.setProperty('--r', (Math.random() * 300 - 150) + 'deg'); document.body.appendChild(e); setTimeout(() => e.remove(), 950); } }
+  function combo() { const s = stage(); if (!s) return; let b = s.querySelector('.g5combo'); const n = (typeof VG !== 'undefined' && VG.combo) || 0;
+    if (n < 2) { if (b) b.remove(); return; } if (!b) { b = document.createElement('div'); b.className = 'g5combo'; s.appendChild(b); } b.textContent = `🔥 ${n}연속!`; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; }
+  setTimeout(function wrap() {
+    if (typeof window.vgGood !== 'function' || typeof window.vgBad !== 'function') return setTimeout(wrap, 300);
+    const G0 = window.vgGood, B0 = window.vgBad;
+    window.vgGood = function () { const p = G0.apply(this, arguments); try { if (stage()) { burst(true, p); try { Sound.coin(); } catch (e) {} setTimeout(combo, 30); } } catch (e) {} return p; };
+    window.vgBad = function () { const r = B0.apply(this, arguments); try { if (stage()) { burst(false); setTimeout(combo, 30); } } catch (e) {} return r; };
+  }, 0);
+  /* 남은 10초: 시계가 빨갛게 뛰고 째깍 */
+  let lastT = -1; setInterval(() => { try { const s = stage(); if (!s || typeof VG === 'undefined' || !VG.id) return; const el = [...document.querySelectorAll('.vgtime,#vgTime,[id*="Time"],[class*="time"]')].find(x => x.offsetParent && /\d+:\d\d/.test(x.textContent)); if (!el) return;
+      const m = el.textContent.match(/(\d+):(\d\d)/), t = +m[1] * 60 + +m[2]; el.classList.toggle('g5hurry', t > 0 && t <= 10); if (t !== lastT && t > 0 && t <= 5) { try { Sound.tick(); } catch (e) {} } lastT = t; } catch (e) {} }, 250);
+})();
+
+/* =====================================================================
    🛒 5학년 1학기 1단원 자연수의 혼합 계산 · 3차시 「덧셈, 뺄셈, 곱셈이 섞여 있는 식」
    구출의 여정 EP.3 「하늘 문구점」 · 간부 브래킷 · 봉인된 12지신 자람이
    초점: ① 곱셈을 먼저 계산 ② 괄호 안을 먼저 ③ "무조건 앞에서부터"라는 오개념 고치기
    지킬 것: 나눗셈은 섞지 않아요 (4차시부터)
    ===================================================================== */
 S1_TOOLS.length = 0; BADGES.length = 0;
-[['cart', 'tilt', '도구 1', '계산대에 올리기', '곱셈 먼저', '🛒'], ['set', 'mixup', '도구 2', '세트로 사기', '괄호 안을 먼저', '🎁'], ['fold', 'clock', '도구 3', '식 접기', '계산 순서대로 접기', '🧮']]
+[['cart', 'tilt', '도구 1', '계산대에 올리기', '곱셈 먼저', '🛒'], ['set', 'mixup', '도구 2', '세트로 사기', '괄호 안을 먼저', '🎁'], ['wallet', 'half', '도구 3', '지갑에서 내기', '곱셈 먼저, 나머지는 앞에서부터', '👛'], ['fold', 'clock', '도구 4', '식 접기', '계산 순서대로 접기', '🧮']]
   .forEach(([k, v, no, nm, sh, ic]) => { S1_TOOLS.push([k, v, no, nm, sh]); BADGES.push([k, `${no} · ${nm}`, ic]); TOOL_VK[k] = v; TOOL_RENDER[k] = () => { try { CK.render(k); } catch (e) {} }; });
 const E = s => EX.t(s), EH = s => EX.h(s);
 /* a ○ b × c 꼴의 작은 수 */
@@ -9265,7 +9338,7 @@ lessonSetup({
       return { text: `${VN}: “${E(`${a} + ${b} * ${c}`)} = ${a + b} × ${c} = ${w}이야!” ${VN}의 계산을 바르게 고친 것은 어느 것일까요?`, choices: shuffle([A, `${E(`${a} + ${b} * ${c}`)} = ${a + b} × ${c} = ${w}`, `${E(`${a} + ${b} * ${c}`)} = ${a} × ${c} + ${b} = ${a * c + b}`, `${E(`${a} + ${b} * ${c}`)} = ${a} + ${b * c} = ${v + 10}`]), ans: A,
         hint: '덧셈과 곱셈이 섞여 있으면 곱셈을 먼저!', ok: `곱셈 먼저: ${EX.chain(`${a} + ${b} * ${c}`)}` }; } },
     { label: '하나의 식으로', gen: () => { const [a, b, c] = won(), A = `${a} + ${b} × ${c}`;
-      return { text: `<b>${F(a)}원짜리 필통 1개</b>와 <b>한 자루에 ${F(b)}원인 색연필 ${c}자루</b>를 샀어요. 내야 할 돈을 구하는 식으로 알맞은 것은 어느 것일까요?`, choices: shuffle([A, `(${a} + ${b}) × ${c}`, `${a} × ${c} + ${b}`, `${a} + ${b} + ${c}`]), ans: A,
+      return { text: `<b>${F(a)}원짜리 필통 1개</b>와 <b>한 자루에 ${F(b)}원인 색연필 ${c}자루</b>를 샀어요. 내야 할 돈을 구하는 식으로 알맞은 것은 어느 것일까요? ${SCN.flow([['✏️', '필통 1개', `${F(a)}원`], ['🖍️', '색연필 한 자루', `${F(b)}원`, '+'], ['✋', '색연필', `${c}자루`, '×']])}`, choices: shuffle([A, `(${a} + ${b}) × ${c}`, `${a} × ${c} + ${b}`, `${a} + ${b} + ${c}`]), ans: A,
         hint: '색연필 값은 한 묶음(곱셈)으로 계산해요.', ok: `${A} = ${a} + ${b * c} = ${a + b * c}원` }; } },
     { label: '괄호 넣기', gen: () => { for (;;) { const [a, b, c] = amc(), d = rnd2(2, 9), T = EX.val(`(${a} + ${b}) * ${c} - ${d}`), O = [`(${a} + ${b}) * ${c} - ${d}`, `${a} + ${b} * (${c} - ${d})`, `${a} + ${b} * ${c} - ${d}`, `${a} + (${b} * ${c} - ${d})`], V = O.map(EX.val);
         if (V.some(x => x == null) || V.filter(x => x === T).length !== 1) continue;
@@ -9276,9 +9349,9 @@ lessonSetup({
   ],
   j1: { label: '계산대 봉인', title: '하늘 문구점 계산대의 봉인을 풀어라', icon: '🛒', sub: `${VN}${jo(VN, '이', '가')} 계산대 기록 3곳을 잠갔어요! 식을 세워 계산하고 답을 써요.`, done: '문구점 계산대 기록 3곳의 봉인을 모두 풀었어요! 🛒',
     rounds: () => { const [a, b, c] = won(), [p, q, r] = won(), m = pick([5000, 10000]), [x, y, z] = amc(); return [
-      { name: '① 내야 할 돈', q: `<b>${F(a)}원짜리 공책 1권</b>과 <b>한 자루에 ${F(b)}원인 볼펜 ${c}자루</b>를 샀어요. 내야 할 돈은 얼마일까요?`, fig: `<div class="ex5story"><span>📒 공책 ${F(a)}원</span><span>🖊️ ${F(b)}원 × ${c}자루</span></div>`, ans: [String(a + b * c), `${a + b * c}원`], unit: '원',
+      { name: '① 내야 할 돈', q: `<b>${F(a)}원짜리 공책 1권</b>과 <b>한 자루에 ${F(b)}원인 볼펜 ${c}자루</b>를 샀어요. 내야 할 돈은 얼마일까요?`, fig: SCN.flow([['📒', '공책 1권', `${F(a)}원`], ['🖊️', '볼펜 한 자루', `${F(b)}원`, '+'], ['✋', '볼펜', `${c}자루`, '×']]), ans: [String(a + b * c), `${a + b * c}원`], unit: '원',
         hints: ['볼펜값을 먼저 한 묶음으로 구해요.', `${a} + ${b} × ${c}`], ok: `${EX.chain(`${a} + ${b} * ${c}`)}원!` },
-      { name: '② 거스름돈', q: `${F(m)}원을 내고 <b>${F(p)}원짜리 가위</b>와 <b>한 개에 ${F(q)}원인 풀 ${r}개</b>를 한꺼번에 샀어요. 거스름돈은 얼마일까요?`, fig: `<div class="ex5story"><span>💵 낸 돈 ${F(m)}원</span><span>✂️ 가위 ${F(p)}원</span><span>🧴 ${F(q)}원 × ${r}개</span></div>`, ans: [String(m - (p + q * r)), `${m - (p + q * r)}원`], unit: '원',
+      { name: '② 거스름돈', q: `${F(m)}원을 내고 <b>${F(p)}원짜리 가위</b>와 <b>한 개에 ${F(q)}원인 풀 ${r}개</b>를 한꺼번에 샀어요. 거스름돈은 얼마일까요?`, fig: SCN.flow([['💵', '낸 돈', `${F(m)}원`], ['✂️', '가위', `${F(p)}원`, '-'], ['🧴', '풀 한 개', `${F(q)}원`, '-'], ['✋', '풀', `${r}개`, '×']]), ans: [String(m - (p + q * r)), `${m - (p + q * r)}원`], unit: '원',
         hints: ['한꺼번에 산 물건값은 괄호로 묶어요.', `${m} − (${p} + ${q} × ${r})`], ok: `${m} − (${p} + ${q} × ${r}) = ${m} − ${p + q * r} = ${m - (p + q * r)}원!` },
       { name: '③ 식 계산', q: '계산해 보세요.', fig: EX.h(`(${x} + ${y}) * ${z} - ${y}`, { cls: 'big' }), ans: [String(EX.val(`(${x} + ${y}) * ${z} - ${y}`))], unit: '',
         hints: ['괄호 안 → 곱셈 → 뺄셈', `${x} + ${y} = ${x + y}`], ok: `${EX.chain(`(${x} + ${y}) * ${z} - ${y}`)}!` }]; } },
@@ -9310,13 +9383,13 @@ BANK[1] = [
   () => { const [a, b, c] = amc(), s = `(${a} + ${b}) * ${c}`; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [a + b * c, a * c + b, (a + b) * c + c], EX.chain(s)); },
   () => { for (;;) { const b = rnd2(3, 9), c = rnd2(2, 6), a = b * c + rnd2(5, 40), s = `${a} - ${b} * ${c}`; if ((a - b) * c === EX.val(s)) continue; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [(a - b) * c, a - b + c, a - b - c], EX.chain(s)); } },
   () => { const [a, b, c] = amc(); return bqx(`${E(`${a} + ${b} * ${c}`)}에서 가장 먼저 계산해야 하는 것은 어느 것일까요?`, `${b} × ${c}`, [`${a} + ${b}`, `${a} × ${c}`, `${a} + ${c}`], '덧셈과 곱셈이 섞여 있으면 곱셈을 먼저 계산해요.'); },
-  () => { const [a, b, c] = won(); return bqx(`${F(a)}원짜리 공책 1권과 한 자루에 ${F(b)}원인 볼펜 ${c}자루를 샀어요. 내야 할 돈은 얼마일까요?`, `${a + b * c}원`, [`${(a + b) * c}원`, `${a + b + c}원`, `${a * c + b}원`], `${a} + ${b} × ${c} = ${a} + ${b * c} = ${a + b * c}`); },
+  () => { const [a, b, c] = won(); return bqx(`${F(a)}원짜리 공책 1권과 한 자루에 ${F(b)}원인 볼펜 ${c}자루를 샀어요. 내야 할 돈은 얼마일까요? ${SCN.flow([['📒', '공책 1권', `${F(a)}원`], ['🖊️', '볼펜 한 자루', `${F(b)}원`, '+'], ['✋', '볼펜', `${c}자루`, '×']])}`, `${a + b * c}원`, [`${(a + b) * c}원`, `${a + b + c}원`, `${a * c + b}원`], `${a} + ${b} × ${c} = ${a} + ${b * c} = ${a + b * c}`); },
   () => bqx('덧셈과 곱셈이 섞여 있고 괄호가 없는 식은 어떻게 계산할까요?', '곱셈을 먼저 계산해요', ['앞에서부터 차례로 계산해요', '덧셈을 먼저 계산해요', '큰 수끼리 먼저 계산해요'], '예: 1200 + 600 × 3 = 1200 + 1800 = 3000')
 ];
 BANK[2] = [
   () => { const [a, b, c] = amc(); return bqx(`두 식의 계산 결과의 차는 얼마일까요? ${FIG(`<div class="ex5story"><span>${EH(`(${a} + ${b}) * ${c}`)}</span><span>${EH(`${a} + ${b} * ${c}`)}</span></div>`)}`, (a + b) * c - (a + b * c), [a * c, b * c, a], `${(a + b) * c} − ${a + b * c} = ${(a + b) * c - (a + b * c)}`); },
   () => { for (;;) { const [a, b, c] = amc(), d = rnd2(2, 9), s = `${a} * ${d} - ${b} * ${c}`, v = EX.val(s); if (v == null || v < 3) continue; return bqx(`계산해 보세요. ${EXF(s)}`, v, [(a * d - b) * c > 0 ? (a * d - b) * c : v + 5, a * d - b - c, v + b], EX.chain(s)); } },
-  () => { const [a, b, c] = won(), m = pick([5000, 10000]); if (a + b * c >= m) return BANK[2][0](); return bqx(`${F(m)}원을 내고 ${F(a)}원짜리 가위와 한 개에 ${F(b)}원인 풀 ${c}개를 한꺼번에 샀어요. 거스름돈을 구하는 식으로 알맞은 것은 어느 것일까요?`, `${m} − (${a} + ${b} × ${c})`, [`${m} − ${a} + ${b} × ${c}`, `(${m} − ${a} + ${b}) × ${c}`, `${m} − (${a} + ${b}) × ${c}`], `${m} − (${a} + ${b} × ${c}) = ${m - a - b * c}원`); },
+  () => { const [a, b, c] = won(), m = pick([5000, 10000]); if (a + b * c >= m) return BANK[2][0](); return bqx(`${F(m)}원을 내고 ${F(a)}원짜리 가위와 한 개에 ${F(b)}원인 풀 ${c}개를 한꺼번에 샀어요. 거스름돈을 구하는 식으로 알맞은 것은 어느 것일까요? ${SCN.flow([['💵', '낸 돈', `${F(m)}원`], ['✂️', '가위', `${F(a)}원`, '-'], ['🧴', '풀 한 개', `${F(b)}원`, '-'], ['✋', '풀', `${c}개`, '×']])}`, `${m} − (${a} + ${b} × ${c})`, [`${m} − ${a} + ${b} × ${c}`, `(${m} − ${a} + ${b}) × ${c}`, `${m} − (${a} + ${b}) × ${c}`], `${m} − (${a} + ${b} × ${c}) = ${m - a - b * c}원`); },
   () => { for (;;) { const [a, b, c] = amc(), O = [`${a} + ${b} * ${c}`, `(${a} + ${b}) * ${c}`, `${a} * ${b} + ${c}`, `${a} + ${b} + ${c}`], V = O.map(EX.val), T = V[0]; if (V.filter(x => x === T).length !== 1) continue; return bqx(`계산 결과가 ${T}인 식은 어느 것일까요?`, E(O[0]), O.slice(1).map(E), EX.chain(O[0])); } },
   () => { const [a, b, c] = amc(); return bqx(`${VN}: “${E(`${a} + ${b} * ${c}`)}는 앞에서부터 계산하면 ${(a + b) * c}이야!” 바르게 말한 것은 어느 것일까요?`, `곱셈을 먼저 계산해야 해서 ${a + b * c}이에요`, [`앞에서부터 계산해서 ${(a + b) * c}가 맞아요`, `덧셈을 먼저 해서 ${(a + b) * c}가 맞아요`, `${a + b + c}이에요`], `${a} + ${b} × ${c} = ${a} + ${b * c} = ${a + b * c}`); },
   () => { const [a, b, c] = amc(), d = rnd2(2, 5), s = `${a} + ${b} * (${c} + ${d})`; return bqx(`계산해 보세요. ${EXF(s)}`, EX.val(s), [(a + b) * (c + d), a + b * c + d, a + b * c * d], EX.chain(s)); }
@@ -9324,7 +9397,7 @@ BANK[2] = [
 BANK[3] = [
   () => { const [a, b, c] = amc(); return bqx(`□ 안에 알맞은 수를 구해 보세요. ${FIG(`<div class="ex5card"><span class="exq big">${a} + □ × ${c} = ${a + b * c}</span></div>`)}`, b, [b + c, a + b, b * c], `${a + b * c} − ${a} = ${b * c} → □ × ${c} = ${b * c} → □ = ${b}`); },
   () => { const [a, b, c] = amc(); return bqx(`두 식의 값의 크기를 비교해 보세요. ${FIG(`<div class="ex5story"><span>가 ${EH(`${a} + ${b} * ${c}`)}</span><span>나 ${EH(`(${a} + ${b}) * ${c}`)}</span></div>`)}`, '나가 가보다 커요', ['가가 나보다 커요', '두 식의 값이 같아요', '알 수 없어요'], `가 ${a + b * c}, 나 ${(a + b) * c}`); },
-  () => { const [a, b, c] = won(), d = rnd2(2, 4); return bqx(`${F(a)}원짜리 공책 1권과 한 자루에 ${F(b)}원인 볼펜 ${c}자루를 한 세트로 묶어 ${d}세트를 샀어요. 내야 할 돈은 얼마일까요?`, `${(a + b * c) * d}원`, [`${a + b * c * d}원`, `${(a + b) * c * d}원`, `${(a + b * c) * d + d}원`], `(${a} + ${b} × ${c}) × ${d} = ${a + b * c} × ${d} = ${(a + b * c) * d}`); },
+  () => { const [a, b, c] = won(), d = rnd2(2, 4); return bqx(`${F(a)}원짜리 공책 1권과 한 자루에 ${F(b)}원인 볼펜 ${c}자루를 한 세트로 묶어 ${d}세트를 샀어요. 내야 할 돈은 얼마일까요? ${SCN.flow([['📒', '공책 1권', `${F(a)}원`], ['🖊️', `볼펜 ${c}자루`, `${F(b)}원씩`, '+'], ['🎁', '세트', `${d}세트`, '×']])}`, `${(a + b * c) * d}원`, [`${a + b * c * d}원`, `${(a + b) * c * d}원`, `${(a + b * c) * d + d}원`], `(${a} + ${b} × ${c}) × ${d} = ${a + b * c} × ${d} = ${(a + b * c) * d}`); },
   () => { for (;;) { const [a, b, c] = amc(), d = rnd2(2, 9), O = [`(${a} + ${b}) * ${c} - ${d}`, `${a} + ${b} * (${c} - ${d})`, `${a} + ${b} * ${c} - ${d}`, `(${a} + ${b} * ${c}) - ${d}`], V = O.map(EX.val), ok = V.map(x => x != null); const mn = Math.min(...V.filter(x => x != null)); if (V.filter(x => x === mn).length !== 1 || V.some(x => x == null)) continue;
       return bqx(`계산 결과가 가장 작은 식은 어느 것일까요?`, E(O[V.indexOf(mn)]), O.filter((_, i) => i !== V.indexOf(mn)).map(E), O.map((o, i) => `${E(o)} = ${V[i]}`).join(' · ')); } },
   () => { const [a, b, c] = amc(); return bqx(`${E(`${a} + ${b} * ${c}`)}와 계산 결과가 같은 식은 어느 것일까요?`, `${b} × ${c} + ${a}`, [`(${a} + ${b}) × ${c}`, `${a} × ${c} + ${b}`, `${a} + ${b} + ${c}`], `덧셈은 순서를 바꾸어도 값이 같아요. 둘 다 ${a + b * c}`); },
@@ -9371,7 +9444,7 @@ LC.story = mkStory6({ unitNo: 1, ep: 3, title: '앞에서부터? 문구점 계�
   ch1Name: '하늘 문구점', ch1Sub: '계산대 · 세트로 사기 · 식 접기',
   area: { dark: '계산대 기록', tilt: '앞에서부터 마법', mixup: '괄호 지우기', clock: '식 엉키기', half: '보석 값 흔들기' },
   seal: { tilt: '순서의 봉인', mixup: '괄호의 봉인', clock: '식의 봉인', half: '보석의 봉인', dark: '계산대의 봉인' },
-  toolMsg: { cart: '물건을 계산대에 올려 보자.', set: '세트를 만들어 여러 세트를 사 보자.', fold: '계산 순서대로 식을 접어 보자.' },
+  toolMsg: { cart: '물건을 계산대에 올려 보자.', set: '세트를 만들어 여러 세트를 사 보자.', wallet: '지갑에서 돈을 내 보자.', fold: '계산 순서대로 식을 접어 보자.' },
   taunt: { tilt: ['무조건 앞에서부터지!'], mixup: ['괄호는 내가 지웠다!'], clock: ['앞에서부터 접으면 되지!'], half: ['보석 값을 흔들어 주마!'], dark: ['문구점은 내 거다!', '앞에서부터 계산해 봐!'] },
   hit: { tilt: ['곱셈을 먼저 하다니!'], mixup: ['괄호를 되찾다니!'], clock: ['순서대로 접어 버렸어?!'], half: ['보석을 다 샀어?!'], dark: ['크윽… 계산대가 바로잡히다니!', '곱셈 먼저를 알아내다니…?!'] },
   prologue: [
@@ -10650,7 +10723,7 @@ window.SV_LF={
  "target": "덧셈, 뺄셈, 곱셈이 섞여 있는 식을 계산하는 순서를 알고 계산할 수 있다.",
  "title": "🛒 문구점에서 내야 할 돈은 얼마?",
  "sub": "1단원 · 오늘의 문제",
- "problem": "하늘 문구점에서 <b>1200원짜리 공책 1권</b>과 <b>한 자루에 600원인 볼펜 3자루</b>를 샀어요. 계산대에는 <b>1200 + 600 × 3</b>이라고 찍혔어요. 그런데 브래킷이 “앞에서부터 계산해야지! 1200 + 600 = 1800, 1800 × 3 = <b>5400원</b>!”이라고 우겨요. 내야 할 돈은 얼마일까요?",
+ "problem": "하늘 문구점에서 <b>1200원짜리 공책 1권</b>과 <b>한 자루에 600원인 볼펜 3자루</b>를 샀어요. 그런데 브래킷이 “앞에서부터 계산해야지! 1200 + 600 = 1800, 1800 × 3 = <b>5400원</b>!”이라고 우겨요. 내야 할 돈은 얼마일까요?",
  "placeholder": "예: 나는 ~하는 방법을 알아보고 싶어요.",
  "keywords": [
   { "k": ["순서"], "t": "계산 순서" },
@@ -10681,12 +10754,22 @@ window.SV_LF={
  "verify": null
 };
 window.SV_LF.j0.board=function(H){
-const ex=(k,e)=>`<span class="sv5opt"><b>${k}</b> ${EX.h(e)}</span>`;
-return `<div class="sv-paper" style="text-align:left"><div class="sv-paper-h">🧾 하늘 문구점 계산대</div>
-<div class="sv5route"><div class="sv5st"><b>📒 공책</b><span>1200원 · 1권</span></div><i>+</i><div class="sv5st"><b>🖊️ 볼펜</b><span>한 자루 600원 · 3자루</span></div></div>
-<div class="sv-paper-t">산 물건에 맞는 식: <span class="sv-row" style="display:inline-flex;margin:0;flex-wrap:wrap;gap:6px">${H.pick(0,'가',ex('가','1200 + 600 * 3'))}${H.pick(0,'나',ex('나','(1200 + 600) * 3'))}${H.pick(0,'다',ex('다','1200 * 3 + 600'))}${H.pick(0,'라',ex('라','1200 + 600 + 3'))}</span></div>
-<div class="sv-paper-t">내야 할 돈: ${H.inp(1,{w:110,unit:'원'})}</div></div>
-<style>.sv5route{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0 12px}.sv5route i{align-self:center;font-style:normal;font-weight:900;color:#64748b;font-size:1.4rem}.sv5st{background:#f0fdf4;border:2px solid #86efac;border-radius:14px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:170px}.sv5st b{color:#14532d}.sv5st span{font-weight:800;color:#334155}.sv5opt{display:inline-flex;gap:6px;align-items:center}</style>`;};
+const ex=(k,e)=>`<span class="sv5opt"><b>${k}</b>${EX.h(e)}</span>`;
+const SK=['#fcd5b4','#f1c27d','#e0ac69','#ffdbac'],SH=['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899'];
+const man=(x,y,k,s=1)=>`<g transform="translate(${x},${y}) scale(${s})"><rect x="-3.6" y="16" width="3" height="9" rx="1.4" fill="#334155"/><rect x="0.6" y="16" width="3" height="9" rx="1.4" fill="#334155"/><rect x="-5.5" y="5" width="11" height="13" rx="4" fill="${SH[k%6]}"/><circle r="5" fill="${SK[k%4]}"/><path d="M-5.2,-1 q0,-6 5.2,-6 q5.2,0 5.2,6 q-2.4,-2.6 -5.2,-2.6 q-2.8,0 -5.2,2.6z" fill="#3f2a1d"/></g>`;
+const tag=(x,y,t,c,w)=>{w=w||t.length*13+24;return `<rect x="${x-w/2}" y="${y-17}" width="${w}" height="25" rx="12" fill="#fff" stroke="${c}" stroke-width="2.5"/><text x="${x}" y="${y}" text-anchor="middle" font-size="14" font-weight="900" fill="${c}">${t}</text>`;};
+const T=(x,y,t,fs,c,w)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${fs||14}" font-weight="${w||900}" fill="${c||'#1e293b'}">${t}</text>`;
+const arr=(x1,x2,y)=>`<path d="M${x1},${y} H${x2-8}" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/><path d="M${x2-14},${y-8} l9,8 l-9,8" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>`;
+const svgw=(inner,bg)=>`<svg class="sv5map" viewBox="0 0 760 210" preserveAspectRatio="xMidYMid meet"><rect width="760" height="210" rx="18" fill="${bg}"/>${inner}</svg>`;
+const note=(x,y)=>`<g transform="translate(${x},${y})"><rect width="46" height="60" rx="5" fill="#60a5fa" stroke="#1e3a8a" stroke-width="3"/><rect x="6" width="5" height="60" fill="#1e3a8a"/><rect x="16" y="12" width="24" height="10" rx="2" fill="#fff"/></g>`;
+const pen=(x,y)=>`<g transform="translate(${x},${y}) rotate(-30)"><rect width="10" height="54" rx="4" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/><path d="M0,54 l5,12 l5,-12z" fill="#fde68a" stroke="#7f1d1d" stroke-width="2"/></g>`;
+const counter=`<rect x="40" y="132" width="680" height="16" rx="6" fill="#ca8a04"/><rect x="52" y="146" width="656" height="64" fill="#a16207"/>`;
+const reg=`<g transform="translate(600,66)"><rect width="110" height="66" rx="10" fill="#334155"/><rect x="12" y="10" width="86" height="24" rx="4" fill="#86efac"/>${T(55,28,'? 원',16,'#14532d')}<rect x="12" y="42" width="86" height="16" rx="4" fill="#64748b"/></g>`;
+const svg=svgw(`${counter}${reg}${note(110,72)}${tag(133,62,'공책 1200원','#1d4ed8',110)}${T(133,190,'📒 1권',16,'#fff')}${T(250,110,'+',40,'#64748b')}${pen(330,82)}${pen(380,82)}${pen(430,82)}${tag(390,62,'볼펜 한 자루 600원','#b91c1c',160)}${T(390,190,'🖊️ 같은 볼펜 3자루',16,'#fff')}<rect x="316" y="74" width="148" height="62" rx="10" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6 5"/>${T(655,190,'🧾 계산대',16,'#fff')}`,'#f0fdf4');
+return `<div class="sv-paper sv5board" style="text-align:left"><div class="sv-paper-h">🧾 하늘 문구점 계산대 <small style="color:#b91c1c">(영수증의 식이 지워졌어요!)</small></div>${svg}
+<div class="sv5q">① 산 물건에 맞는 식을 골라요.</div><div class="sv5opts">${H.pick(0,'가',ex('가','1200 + 600 * 3'))}${H.pick(0,'나',ex('나','(1200 + 600) * 3'))}${H.pick(0,'다',ex('다','1200 * 3 + 600'))}${H.pick(0,'라',ex('라','1200 + 600 + 3'))}</div>
+<div class="sv5q">② 내야 할 돈: ${H.inp(1,{w:110,unit:'원'})}</div></div>
+<style>.sv5board .sv5map{display:block;width:100%;height:auto;max-height:42vh;margin:6px 0 10px}.sv5board .sv5q{font-weight:900;color:#1e293b;margin:8px 0 6px;font-size:1.05rem}.sv5board .sv5opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sv5board .sv5opts>*{width:100%;justify-content:flex-start;margin:0!important}.sv5opt{display:inline-flex;gap:10px;align-items:center;font-size:1.08rem}.sv5opt>b{display:inline-flex;width:28px;height:28px;border-radius:50%;background:#ede9fe;color:#6d28d9;align-items:center;justify-content:center;flex:none}@media(max-width:640px){.sv5board .sv5opts{grid-template-columns:1fr}}</style>`;};
 
 /*HERO*/window.SV_LF.hero={"title": ["문구점에서", "내야 할 돈은 얼마?"], "speech": "브래킷이 무조건 앞에서부터 계산하라고 우겨. <b>덧셈, 뺄셈, 곱셈이 섞인 식은 어떤 순서로 계산해야 할까?</b>", "villain": "브래킷", "vkey": "dark", "villainSub": "베일의 간부 · 괄호 파괴자", "object": "🧾 계산대 영수증<div class=\"svh-seals\"><span>🔒 식</span><span>🔒 금액</span></div>"};
 
@@ -11960,7 +12043,7 @@ const EB = (() => {
     scoreLabel: (g, i) => `${g.score[i]}점 · ${COL.map((c, k) => `<span style="color:${c[2]}">💎${g.gems[i][k]}</span>`).join(' ')} · 🪙${sumP(g.purse[i])}`,
     view(g, me) { const p = g.turn, P = g.purse[p];
       const cards = g.mk.map((cd, i) => { if (!cd) return '<div class="gscd empty">품절</div>'; const [, nm, col, soft] = COL[cd.c], d = disc(g, p, cd), paid = cd.paid ? sumP(cd.paid) : 0;
-        return `<div class="gscd" style="--gc:${col};--gs:${soft}" ${me ? `data-mpt="c${i}"` : ''}><div class="gsh"><span>💎 ${nm}</span><b>${'★'.repeat(cd.pt)}</b></div><div class="gse">${EX.h(cd.e)}</div>
+        return `<div class="gscd" style="--gc:${col};--gs:${soft}" ${me ? `data-mpt="c${i}"` : ''}><div class="gsh"><span><svg class="gsgem" viewBox="0 0 40 34"><path d="M8,2 h24 l8,10 l-20,20 l-20,-20z" fill="${col}"/><path d="M8,2 l6,10 h12 l6,-10 M0,12 h40 M14,12 l6,20 l6,-20" fill="none" stroke="#fff" stroke-width="1.6" opacity=".75"/><path d="M10,4 l4,6 h-8z" fill="#fff" opacity=".6"/></svg> ${nm}</span><b>${'★'.repeat(cd.pt)}</b></div><div class="gse">${EX.h(cd.e)}</div>
           <div class="gsd">${d ? `할인 − 2 × ${g.gems[p][cd.c]}` : '할인 없음'}</div>${paid ? `<div class="gspaid">낸 돈 ${paid}원</div>` : ''}</div>`; }).join('');
       const board = `<div class="gsmk">${cards}</div><button data-mpbtn data-bx="drop" data-v="" hidden></button>`;
       let side = '';
@@ -11978,7 +12061,10 @@ const EB = (() => {
       const opts = g.mk.map((cd, i) => cd && exact(P, price(g, p, cd)) ? [i, cd.pt + (g.gems[p][cd.c] ? 0 : 1)] : null).filter(Boolean).sort((a, b) => b[1] - a[1]);
       if (opts.length && Math.random() < K(.6, .85, .97)) { const i = opts[0][0], cd = g.mk[i], pay = exact(P, price(g, p, cd)); CN.forEach(c => P[c] -= pay[c]); cd.paid = null; g.phase = 'pay'; return api.later(g, 700, () => buy(g, api, i)); }
       const pick = sumP(P) < 25 ? [10, 5, 1] : [5, 1, 1]; let k = 0; const step = () => { take(g, api, pick[k++]); if (k < 3) api.later(g, 380, step); }; step(); },
-    css: `.gsmk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:10px;background:linear-gradient(180deg,#fdf2f8,#f5f3ff);border-radius:22px;border:3px solid #fbcfe8}
+    css: `.gsmk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px;background:linear-gradient(180deg,#4c1d95,#6d28d9 40%,#7c3aed);border-radius:22px;border:6px solid #a16207;box-shadow:inset 0 0 0 3px #fde68a,0 8px 0 #713f12}
+.gsh>span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.gsgem{width:30px;height:26px;flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));animation:gsgl 2.4s ease-in-out infinite}@keyframes gsgl{50%{filter:drop-shadow(0 0 6px #fff) drop-shadow(0 2px 2px rgba(0,0,0,.25))}}
+.gscd{position:relative;overflow:hidden}.gscd:after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-120%);animation:gssh 4s ease-in-out infinite;pointer-events:none}@keyframes gssh{60%,100%{transform:translateX(120%)}}
+.gscd:hover{transform:translateY(-3px)}
 .gscd{background:var(--gs);border:4px solid var(--gc);border-radius:18px;padding:10px 8px;display:flex;flex-direction:column;gap:8px;align-items:center;min-height:140px;justify-content:space-between;box-shadow:0 4px 0 rgba(0,0,0,.08)}
 .gscd.empty{--gs:#f1f5f9;--gc:#cbd5e1;color:#94a3b8;font-weight:900;justify-content:center}.gsh{display:flex;justify-content:space-between;width:100%;font-weight:900;color:var(--gc)}.gsh b{color:#f59e0b}
 .gse{font-size:1.35rem;font-weight:900;background:#fff;border-radius:12px;padding:6px 8px;text-align:center}.gsd{font-weight:800;color:#475569;font-size:.9rem}.gspaid{font-weight:900;color:#fff;background:var(--gc);border-radius:999px;padding:2px 10px}
@@ -13283,6 +13369,59 @@ const EX5 = (() => {
           if (d.path.length === c.want.length) { d.ok = true; api.win(c.say(d)); } } },
       _solve(d, on) { c.want.forEach(id => on('act:m4set', `drop:j:${id}:line`)); } }; }
 
+
+
+  /* ---------- 물건 그림 (3~5차시 장면) ---------- */
+  const ART = {
+    note: (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect width="54" height="70" rx="5" fill="#60a5fa" stroke="#1e3a8a" stroke-width="3"/><rect x="6" width="5" height="70" fill="#1e3a8a"/><rect x="18" y="14" width="28" height="12" rx="2" fill="#fff"/></g>`,
+    pen: (x, y, s = 1, c = '#ef4444') => `<g transform="translate(${x},${y}) scale(${s}) rotate(-35)"><rect width="12" height="62" rx="5" fill="${c}" stroke="#7f1d1d" stroke-width="2"/><path d="M0,62 l6,14 l6,-14z" fill="#fde68a" stroke="#7f1d1d" stroke-width="2"/><rect x="-1" y="-2" width="14" height="10" rx="3" fill="#334155"/></g>`,
+    eraser: (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect width="50" height="28" rx="6" fill="#f9a8d4" stroke="#9d174d" stroke-width="2.5"/><rect x="28" width="22" height="28" rx="4" fill="#3b82f6"/></g>`,
+    tag: (x, y, t, c = '#b91c1c') => `<g><rect x="${x}" y="${y}" width="${t.length * 11 + 20}" height="26" rx="8" fill="#fff" stroke="${c}" stroke-width="2.5"/><text x="${x + 10}" y="${y + 19}" font-size="15" font-weight="900" fill="${c}">${t}</text></g>`,
+    counter: (x, y, w = 300) => `<g><rect x="${x}" y="${y + 40}" width="${w}" height="100" rx="12" fill="#a16207" stroke="#713f12" stroke-width="3"/><rect x="${x - 8}" y="${y + 30}" width="${w + 16}" height="18" rx="6" fill="#ca8a04"/><g transform="translate(${x + w - 96},${y - 30})"><rect width="84" height="60" rx="8" fill="#334155"/><rect x="8" y="8" width="68" height="20" rx="3" fill="#bbf7d0"/><rect x="10" y="34" width="64" height="18" rx="3" fill="#64748b"/></g></g>`,
+    bag: (x, y, w = 150, h = 130, c = '#a855f7') => `<g><path d="M${x + w * .3},${y + 20} q0,-34 ${w * .2},-34 q${w * .2},0 ${w * .2},34" fill="none" stroke="#581c87" stroke-width="5"/><path d="M${x},${y + 20} h${w} l-12,${h} h-${w - 24}z" fill="${c}" stroke="#581c87" stroke-width="3"/><path d="M${x + w / 2 - 14},${y + 20} l14,18 l14,-18" fill="#fde047" stroke="#a16207" stroke-width="2"/></g>`,
+    copier: (x, y, k, lab) => `<g><rect x="${x}" y="${y}" width="190" height="130" rx="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="4"/><text x="${x + 95}" y="${y + 40}" text-anchor="middle" font-size="22" font-weight="900" fill="#6d28d9">✨ × ${k}</text><text x="${x + 95}" y="${y + 70}" text-anchor="middle" font-size="15" font-weight="900" fill="#5b21b6">${lab}</text><rect x="${x + 30}" y="${y + 88}" width="130" height="28" rx="14" fill="#c4b5fd"/></g>`,
+    wallet: (x, y, v) => `<g><rect x="${x}" y="${y}" width="190" height="120" rx="18" fill="#be185d" stroke="#831843" stroke-width="3"/><rect x="${x + 110}" y="${y + 38}" width="80" height="44" rx="14" fill="#9d174d"/><circle cx="${x + 168}" cy="${y + 60}" r="7" fill="#fde68a"/><rect x="${x + 16}" y="${y - 22}" width="120" height="44" rx="6" fill="#bbf7d0" stroke="#15803d" stroke-width="2"/><text x="${x + 76}" y="${y + 6}" text-anchor="middle" font-size="16" font-weight="900" fill="#14532d">💵 ${Number(v).toLocaleString()}원</text></g>`,
+    pizza: (x, y, r, cuts, gone = 0) => { let s = `<circle cx="${x}" cy="${y}" r="${r + 8}" fill="#d97706"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fbbf24"/>`;
+      for (let i = 0; i < 7; i++) { const a = i * 0.9 + .3, rr = r * (.35 + (i % 3) * .2); s += `<circle cx="${x + Math.cos(a) * rr}" cy="${y + Math.sin(a) * rr}" r="${r * .1}" fill="#dc2626"/>`; }
+      if (cuts) for (let i = 0; i < cuts; i++) { const a = i / cuts * Math.PI * 2; s += `<line x1="${x}" y1="${y}" x2="${x + Math.cos(a) * (r + 8)}" y2="${y + Math.sin(a) * (r + 8)}" stroke="#7c2d12" stroke-width="4"/>`; }
+      if (gone) { const a0 = -Math.PI / 2, a1 = a0 + Math.PI * 2 / cuts * gone; s += `<path d="M${x},${y} L${x + Math.cos(a0) * (r + 9)},${y + Math.sin(a0) * (r + 9)} A${r + 9},${r + 9} 0 ${gone / cuts > .5 ? 1 : 0} 1 ${x + Math.cos(a1) * (r + 9)},${y + Math.sin(a1) * (r + 9)}z" fill="#fff7ed"/>`; } return s; },
+    slice: (x, y, r) => `<g><path d="M${x},${y} L${x},${y - r} A${r},${r} 0 0 1 ${x + r},${y}z" fill="#fbbf24" stroke="#d97706" stroke-width="6"/><circle cx="${x + r * .35}" cy="${y - r * .4}" r="${r * .1}" fill="#dc2626"/><circle cx="${x + r * .6}" cy="${y - r * .15}" r="${r * .09}" fill="#dc2626"/></g>`,
+    cup: (x, y, s = 1, c = '#38bdf8') => `<g transform="translate(${x},${y}) scale(${s})"><path d="M0,0 h34 l-5,46 h-24z" fill="${c}" stroke="#0369a1" stroke-width="2.5"/><rect x="-2" y="-6" width="38" height="8" rx="3" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/><path d="M22,-6 l8,-16" stroke="#ef4444" stroke-width="3"/></g>`,
+    friend: (x, y, k = 0, s = 1) => stand(x, y, k, s),
+    tray: (x, y, w = 200) => `<g><rect x="${x}" y="${y}" width="${w}" height="90" rx="45" fill="#fff" stroke="#94a3b8" stroke-width="4"/><ellipse cx="${x + w / 2}" cy="${y + 45}" rx="${w / 2 - 18}" ry="30" fill="#f1f5f9"/></g>`,
+    ticket: (x, y, t, c = '#0284c7') => `<g><rect x="${x}" y="${y}" width="150" height="70" rx="10" fill="#fff" stroke="${c}" stroke-width="3"/><rect x="${x}" y="${y}" width="40" height="70" rx="10" fill="${c}"/><text x="${x + 20}" y="${y + 44}" text-anchor="middle" font-size="22">🚌</text><text x="${x + 95}" y="${y + 42}" text-anchor="middle" font-size="16" font-weight="900" fill="${c}">${t}</text></g>`,
+    coupon: (x, y, t) => `<g><rect x="${x}" y="${y}" width="120" height="56" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="3" stroke-dasharray="7 4"/><text x="${x + 60}" y="${y + 35}" text-anchor="middle" font-size="17" font-weight="900" fill="#b45309">🏷️ ${t}</text></g>`,
+    lunch: (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect width="80" height="54" rx="10" fill="#f97316" stroke="#9a3412" stroke-width="3"/><rect x="6" y="6" width="32" height="42" rx="6" fill="#fff"/><circle cx="56" cy="27" r="14" fill="#16a34a"/></g>`,
+    board: (x, y, w, h, title, c = '#0284c7') => `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="18" fill="#f0f9ff" stroke="${c}" stroke-width="4"/><rect x="${x}" y="${y}" width="${w}" height="38" rx="18" fill="${c}"/><text x="${x + w / 2}" y="${y + 26}" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">${title}</text></g>`
+  };
+  /* ============ STEPS: 그림 속 물건을 직접 옮기며 식이 한 단계씩 자라요 ============
+     c = { t, kind, q, start, unit, art(d, K) → 장면 SVG, steps:[{ p, t, kind:'op'|'grp'|'gapply', op, n, a, gop, b, lab, why }], say(d), done(d) }
+       · op     : 지금 식에 op n 을 붙여요 (× ÷ 인데 앞 식에 + − 가 있으면 앞 식을 괄호로 묶어요)
+       · grp    : 먼저 계산할 묶음 (a gop b) 을 따로 만들어요
+       · gapply : 만든 묶음을 op 로 지금 식에 붙여요 (묶음에 + − 가 있고 op 가 × ÷ 면 괄호)
+       · art 는 d.gi(지금 몇 번째 단계) 와 d.done 을 보고 그림을 그려요 — 물건(drag)·놓을 곳(zone) 는 K.drag / K.zone */
+  const topPM = e => { let d = 0; for (const ch of String(e)) { if (ch === '(') d++; else if (ch === ')') d--; else if (d === 0 && (ch === '+' || ch === '-')) return true; } return false; };
+  function STEPS(c) {
+    const K = { drag, zone, TX, RC, LN, F, stand, seat, crowd, tagB, ART };
+    return { _ty: 'ex5steps', t: c.t, kind: c.kind, q: d => d.ok ? '완성!' : (typeof c.q === 'function' ? c.q(d) : c.q),
+      init: () => ({ gi: 0, e: String(c.start), g: null, ok: false, log: [], bad: null }),
+      view: d => { const st = c.steps[Math.min(d.gi, c.steps.length - 1)]; let s = c.art(d, K, st);
+        s += `<rect x="150" y="10" width="660" height="70" rx="18" fill="#fff" stroke="#a78bfa" stroke-width="4"/><text x="180" y="36" font-size="15" font-weight="900" fill="#7c3aed">식</text>`;
+        s += TX(480, 60, EX.t(d.e) + (d.g ? `  ·  묶음 ${EX.t(d.g)}` : '') + (d.ok ? ' = ' + EX.val(d.e) : ''), { fs: d.e.length > 22 ? 28 : 34, fill: '#1e1b4b', w: 900 });
+        if (!d.ok && st.lab) s += `<rect x="250" y="${c.hintY || 418}" width="460" height="34" rx="17" fill="#fff" stroke="#7c3aed" stroke-width="3"/>` + TX(480, (c.hintY || 418) + 23, '👆 ' + st.lab, { fs: 17, fill: '#5b21b6', w: 900 });
+        const info = M4.rows(c.infoT || '🧾 지금', [[c.infoL || '값', EX.val(d.e), c.unit || '', 1]], '') + `<div class="ex5lh">🧾 기록</div><div class="ex5log">처음 · ${F(c.start)}${c.unit || ''}</div>` + d.log.map(x => `<div class="ex5log">${x}</div>`).join('') + (d.ok && c.done ? M4.eq(c.done(d), 'ok') : '');
+        return M4.box(M4.svg(960, c.H || 470, s, 'b2svg'), info, { done: d.ok, wide: true }); },
+      on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v), st = c.steps[d.gi];
+          if (m.a === 'tap') { api.say(false, '물건을 <b>잡아 끌어서</b> 옮겨요.', true); return; }
+          if (m.a !== 'drop' || !st) return;
+          if (m.p !== st.p || m.t !== st.t) { const other = c.steps.find((x, k) => k > d.gi && x.p === m.p && x.t === m.t); api.say(false, other ? (st.why || '순서를 다시 생각해 봐요.') : (c.miss || '그곳이 아니에요. 이야기를 다시 읽어 봐요.'), true); try { Sound.wrong(); } catch (e) {} return; }
+          const e0 = d.e, v0 = EX.val(d.e);
+          if (st.kind === 'grp') { d.g = `${st.a} ${st.gop} ${st.b}`; d.log.push(`묶음 ${EX.t(d.g)} = <b>${F(EX.val(d.g))}</b>`); }
+          else if (st.kind === 'gapply') { const gg = topPM(d.g) && (st.op === '*' || st.op === '/') ? `(${d.g})` : d.g; d.e = `${(st.op === '*' || st.op === '/') && topPM(d.e) ? `(${d.e})` : d.e} ${st.op} ${gg}`; d.log.push(`${EX.t(e0)} ${S[st.op]} ${EX.t(gg)} → <b>${F(EX.val(d.e))}</b>`); d.g = null; }
+          else { d.e = `${(st.op === '*' || st.op === '/') && topPM(d.e) ? `(${d.e})` : d.e} ${st.op} ${st.n}`; d.log.push(`${F(v0)} ${S[st.op]} ${F(st.n)} = <b>${F(EX.val(d.e))}</b>`); }
+          d.gi++; pop(); api.clear(); if (st.say) api.say(true, typeof st.say === 'function' ? st.say(d) : st.say, true);
+          if (d.gi >= c.steps.length) { d.ok = true; api.win(c.say(d)); } } },
+      _solve(d, on) { c.steps.forEach(st => on('act:m4set', `drop:${st.p}:${st.t}`)); } }; }
   /* ============ FOLD: 식 접기 ============
      c = { t, kind, q, e:'50 - 20 + 10', story?:'버스 이야기', say(d) } */
   function FOLD(c) {
@@ -13319,6 +13458,55 @@ const EX5 = (() => {
           if (R.length === 1) { d.ok = true; api.win(c.say ? c.say(d) : `${EX.chain(c.e)}`); } } },
       _solve(d, on) { let T = d.T; for (let k = 0; k < 20 && T.length > 1; k++) { const i = EX.next(T); on('act:m4set', `drop:n:${i - 1}:n${i + 1}`); T = d.T; } } }; }
 
+  /* ============ ORDER: 계산 순서 번호 붙이기 ============
+     c = { t, kind, e:'2500 + 24000 / 6 - 300 * 2', story?, q, say(d) } — ①②③ 스티커를 차례로 끌어 연산 기호 밑 자리에 붙여요 */
+  function ORDER(c) {
+    const T0 = EX.toks(c.e), W = { n: 120, o: 60, b: 34 }, G = 10;
+    const plan = (() => { let T = T0.slice(), ids = T0.map((_, i) => i); const L = [];
+      for (let n = 0; n < 20 && T.length > 1; n++) { const i = EX.next(T); if (i < 0) break; const R = EX.fold(T, i); L.push({ oi: ids[i], a: T[i - 1], op: T[i], b: T[i + 1], v: null });
+        let I = ids.slice(0, i - 1).concat(['v'], ids.slice(i + 2)); const R2 = T.slice(0, i - 1).concat([EX.val(EX.str([T[i - 1], T[i], T[i + 1]]))], T.slice(i + 2));
+        for (let k = 1; k < R.length - 1; k++) if (R2[k - 1] === '(' && typeof R2[k] === 'number' && R2[k + 1] === ')') { I.splice(k + 1, 1); I.splice(k - 1, 1); break; }
+        L[L.length - 1].v = R.filter((x, j) => I[j] === 'v')[0]; I = I.map(x => x === 'v' ? 'r' + n : x); T = R; ids = I; }
+      return L; })();
+    const ws = T0.map(x => typeof x === 'number' ? W.n : (x === '(' || x === ')') ? W.b : W.o), tot = ws.reduce((a, b) => a + b, 0) + G * (T0.length - 1), sc = Math.min(1, 920 / tot);
+    const X = []; { let x = 480 - tot * sc / 2; ws.forEach(w => { X.push([x, w * sc]); x += (w + G) * sc; }); }
+    const CIRC = ['①', '②', '③', '④', '⑤', '⑥'];
+    const inB = (T, i) => { let d = 0; for (let k = 0; k < i; k++) { if (T[k] === '(') d++; else if (T[k] === ')') d--; } return d > 0; };
+    const why = i => { const hasB = T0.includes('('), hasMD = T0.some(x => x === '*' || x === '/'), want = plan.find((x, k) => k >= 0 && !x.done);
+      const w = want.oi; if (hasB && inB(T0, w) && !inB(T0, i)) return '괄호 안을 가장 먼저 계산해요.';
+      if (hasMD && (T0[w] === '*' || T0[w] === '/') && (T0[i] === '+' || T0[i] === '-')) return '곱셈·나눗셈이 덧셈·뺄셈보다 먼저예요.';
+      return '같은 단계끼리는 <b>앞에서부터</b> 차례로 계산해요.'; };
+    return { _ty: 'ex5order', t: c.t, kind: c.kind, q: d => d.ok ? '순서를 모두 찾았어요!' : c.q,
+      init: () => ({ k: 0, at: {}, ok: false, bad: -1 }),
+      view: d => { const y = 150, h = 96; let s = RC(0, 30, 960, 410, '#f8fafc', { st: '#e2e8f0', sw: 2, rx: 24 });
+        if (c.story) s += TX(480, 80, c.story, { fs: 21, fill: '#475569', w: 800 });
+        T0.forEach((t, i) => { const [x, w] = X[i];
+          if (typeof t === 'number') s += RC(x, y, w, h, '#fff', { st: '#6366f1', sw: 4, rx: 16 }) + TX(x + w / 2, y + h / 2 + 13, F(t), { fs: t > 9999 ? 28 : 34, fill: '#1e1b4b', w: 900 });
+          else if (t === '(' || t === ')') s += TX(x + w / 2, y + h / 2 + 22, t, { fs: 70, fill: '#dc2626', w: 900 });
+          else { const cx = x + w / 2, k = d.at[i];
+            s += `<g class="${i === d.bad ? 'b2shake' : ''}"><circle cx="${cx}" cy="${y + h / 2}" r="${w / 2 - 2}" fill="${k != null ? '#dcfce7' : i === d.bad ? '#fee2e2' : '#ede9fe'}" stroke="${k != null ? '#16a34a' : i === d.bad ? '#ef4444' : '#7c3aed'}" stroke-width="3"/>${TX(cx, y + h / 2 + 14, S[t], { fs: 38, fill: '#5b21b6', w: 900 })}</g>`;
+            s += LN(cx, y + h + 4, cx, y + h + 26, '#a78bfa', 3);
+            const slot = k != null ? `<circle cx="${cx}" cy="${y + h + 58}" r="30" fill="#facc15" stroke="#a16207" stroke-width="4"/>${TX(cx, y + h + 71, CIRC[k], { fs: 34, fill: '#713f12', w: 900 })}` : `<circle cx="${cx}" cy="${y + h + 58}" r="30" fill="#fff" stroke="#a78bfa" stroke-width="3" stroke-dasharray="7 5"/>`;
+            s += k != null || d.ok ? slot : zone('op' + i, slot); } });
+        /* 접힌 부분의 값 */
+        plan.forEach((P, k) => { if (k >= d.k) return; const [x, w] = X[P.oi]; s += TX(x + w / 2, y - 14, `${CIRC[k]} ${F(P.v)}`, { fs: 18, fill: '#15803d', w: 900 }); });
+        /* 스티커 판 */
+        if (!d.ok) { s += RC(170, 350, 620, 80, '#fffbeb', { st: '#f59e0b', sw: 3, rx: 20 }) + TX(240, 397, '스티커', { fs: 18, fill: '#92400e', w: 900 });
+          plan.forEach((P, k) => { const x = 330 + k * 92; if (k < d.k) s += `<circle cx="${x}" cy="390" r="28" fill="none" stroke="#fcd34d" stroke-width="2" stroke-dasharray="5 4"/>`;
+            else if (k === d.k) s += drag('n' + k, `<g><circle cx="${x}" cy="390" r="30" fill="#facc15" stroke="#a16207" stroke-width="4"/>${TX(x, 403, CIRC[k], { fs: 34, fill: '#713f12', w: 900 })}</g>`, 'b2cue');
+            else s += `<g opacity=".45"><circle cx="${x}" cy="390" r="28" fill="#fde68a" stroke="#ca8a04" stroke-width="3"/>${TX(x, 402, CIRC[k], { fs: 30, fill: '#713f12', w: 900 })}</g>`; });
+          s += TX(480 + 230, 396, `${CIRC[d.k]}번은 어디?`, { fs: 18, fill: '#7c3aed', w: 900 }); }
+        else s += TX(480, 400, '🎉 계산 순서를 모두 찾았어요!', { fs: 24, fill: '#15803d', w: 900 });
+        const info = `<div class="ex5lh">🔢 계산 순서</div>` + (d.k ? '' : `<div class="ex5log">1️⃣ 괄호 안</div><div class="ex5log">2️⃣ 곱셈·나눗셈 (앞에서부터)</div><div class="ex5log">3️⃣ 덧셈·뺄셈 (앞에서부터)</div>`) + plan.slice(0, d.k).map((P, k) => `<div class="ex5log">${CIRC[k]} ${F(P.a)} ${S[P.op]} ${F(P.b)} = <b>${F(P.v)}</b></div>`).join('') + (d.ok ? M4.eq(`${EX.t(T0)} = ${F(plan[plan.length - 1].v)}`, 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v);
+          if (m.a === 'tap') { api.say(false, `<b>${CIRC[d.k]}</b> 스티커를 잡아 먼저 계산할 연산 기호 밑의 동그라미로 끌어요.`, true); return; }
+          if (m.a !== 'drop' || m.p !== 'n' + d.k || !/^op\d+$/.test(m.t)) return;
+          const i = +m.t.slice(2), P = plan[d.k];
+          if (i !== P.oi) { plan.forEach((x, k) => x.done = k < d.k); d.bad = i; api.say(false, '❗ ' + why(i), true); try { Sound.wrong(); } catch (e) {} api.later(() => { d.bad = -1; api.redraw(); }, 900); return; }
+          d.at[i] = d.k; d.k++; pop(); api.clear(); api.say(true, `${CIRC[d.k - 1]} ${F(P.a)} ${S[P.op]} ${F(P.b)} = <b>${F(P.v)}</b>`, true);
+          if (d.k >= plan.length) { d.ok = true; api.win(c.say ? c.say(d) : EX.chain(c.e)); } } },
+      _solve(d, on) { plan.forEach((P, k) => on('act:m4set', `drop:n${k}:op${P.oi}`)); } }; }
   (() => { const st = document.createElement('style'); st.textContent = `.ex5lh{font-weight:900;color:#5b21b6;font-size:1.05rem;margin:6px 0 2px}.ex5log{font-weight:800;color:#334155;font-size:1rem;padding:3px 8px;border-left:4px solid #c4b5fd;margin:3px 0;background:#faf5ff;border-radius:0 8px 8px 0}
 #toolBody .ex5go{animation:ex5go .7s ease}#toolBody .ex5arc{stroke-dasharray:900;stroke-dashoffset:900;animation:ex5arc .7s ease forwards}@keyframes ex5arc{to{stroke-dashoffset:0}}@keyframes ex5go{0%{transform:translateX(-30px)}100%{transform:none}}`; document.head.appendChild(st); })();
 
@@ -13363,7 +13551,7 @@ const EX5 = (() => {
           pop(); api.clear();
           if (d.ci >= st.cards.length) { if (d.si < c.steps.length - 1) { d.si++; d.ci = 0; d.tied = null; api.say(true, `좋아요! 다음은 <b>${c.steps[d.si].name}</b>.`, true); } else { d.ok = true; api.win(c.say(d, d.e)); } } } },
       _solve(d, on) { c.steps.forEach(st => { if (st.tie) { on('act:m4set', 'drop:c:0:c1'); on('act:m4set', 'drop:c:all:hold'); } else st.cards.forEach((k, i) => on('act:m4set', `drop:c:${i}:hold`)); }); } }; }
-  return { BUS, JUMP, FOLD, CHAIN, ccard };
+  return { BUS, JUMP, STEPS, FOLD, ORDER, CHAIN, ccard, K: { drag, zone, TX, RC, LN, F, stand, seat, crowd, tagB, scene, ART } };
 })();
 
 
@@ -13455,34 +13643,63 @@ const JX = (() => {
 /* 5-1-1-3 덧셈·뺄셈·곱셈이 섞여 있는 식 — 계산대에 올리기(곱셈 묶음 먼저) · 세트로 사기(괄호) · 식 접기 + 보스전 도전 2·3 */
 (function () {
   const cmp = (a, b) => `<span class="ex5cmp"><b>${a}</b> ≠ <b>${b}</b></span>`;
+  const { RC, TX, ART } = EX5.K, F = n => Number(n).toLocaleString();
+  const BG = `<rect width="960" height="470" fill="#f0fdf4"/><rect y="400" width="960" height="70" fill="#d6d3d1"/><rect x="20" y="96" width="330" height="20" rx="6" fill="#a16207"/><rect x="20" y="250" width="330" height="20" rx="6" fill="#a16207"/>`;
+  /* 계산대: 공책은 이미 올라가 있고, 볼펜을 묶음 상자에 넣어 묶음째 올려요 */
+  function cartArt(c) { return (d, K) => { let s = BG; const grp = d.gi >= 1, on = d.gi >= 2;
+      s += K.zone('counter', `<g>${ART.counter(540, 230, 380)}${ART.note(570, 200)}${ART.tag(560, 170, F(c.a) + '원', '#1d4ed8')}${on ? Array.from({ length: c.k }, (_, i) => ART.pen(680 + i * 30, 214, .9, '#ef4444')).join('') + ART.tag(670, 170, `${F(c.b)}원 × ${c.k}`, '#b91c1c') : ''}</g>`);
+      s += TX(730, 136, '🧾 계산대', { fs: 20, fill: '#713f12', w: 900 });
+      if (!grp) s += K.drag('pen', `<g>${RC(40, 126, 120, 120, '#fff', { st: '#ef4444', sw: 3, rx: 14 })}${ART.pen(78, 150, 1)}${ART.tag(52, 224, F(c.b) + '원', '#b91c1c')}</g>`, 'b2cue') + TX(100, 86, '🖊️ 볼펜 한 자루', { fs: 16, fill: '#7f1d1d', w: 900 });
+      const holder = `<g>${RC(190, 306, 280, 100, grp ? '#fee2e2' : '#fff', { st: '#ef4444', sw: 3, rx: 16, da: grp ? '' : '9 6' })}${Array.from({ length: c.k }, (_, i) => grp ? ART.pen(220 + i * 70, 330, .85) : RC(214 + i * 84, 320, 60, 72, 'none', { st: '#fca5a5', sw: 2, rx: 8, da: '5 4' })).join('')}${TX(330, 298, grp ? `볼펜 ${c.k}자루 묶음 = ${F(c.b)} × ${c.k}` : `같은 볼펜 ${c.k}자루 묶음 상자`, { fs: 16, fill: '#b91c1c', w: 900 })}</g>`;
+      s += grp && !on ? K.drag('bundle', holder, 'b2cue') : on ? '' : K.zone('pens', holder);
+      return s; }; }
+  function setArt(c) { return (d, K) => { let s = BG; const pen = d.gi >= 1, done = d.gi >= 2;
+      const bagIn = `${ART.bag(0, 0, 150, 130)}${ART.note(22, 40, .8)}${pen ? ART.pen(84, 44, .8) : ''}`;
+      if (!done) s += (pen ? K.drag('bag', `<g transform="translate(400,170)">${bagIn}</g>`, 'b2cue') : K.zone('bag', `<g transform="translate(400,170)">${bagIn}</g>`)) + TX(475, 150, pen ? `세트 하나 = ${F(c.a)} + ${F(c.b)}` : `세트 봉투 (${c.an || '공책'} ${F(c.a)}원)`, { fs: 16, fill: '#581c87', w: 900 });
+      if (!pen) s += K.drag('pen', `<g>${RC(40, 126, 120, 120, '#fff', { st: '#ef4444', sw: 3, rx: 14 })}${ART.pen(78, 150, 1)}${ART.tag(52, 224, F(c.b) + '원', '#b91c1c')}</g>`, 'b2cue');
+      s += K.zone('copier', done ? `<g>${Array.from({ length: c.k }, (_, i) => `<g transform="translate(${560 + (i % 4) * 92},${160 + Math.floor(i / 4) * 120}) scale(.55)">${ART.bag(0, 0, 150, 130)}${ART.note(22, 40, .8)}${ART.pen(84, 44, .8)}</g>`).join('')}${TX(740, 140, `${c.k}세트 = (${F(c.a)} + ${F(c.b)}) × ${c.k}`, { fs: 18, fill: '#6d28d9', w: 900 })}</g>` : ART.copier(660, 190, c.k, `${c.k}세트 만들기`));
+      return s; }; }
+  function walletArt(c) { return (d, K) => { let s = BG; const paidNote = d.gi >= 1, grp = d.gi >= 2, done = d.gi >= 3;
+      s += ART.wallet(40, 320, EX.val(d.e));
+      s += K.zone('counter', `<g>${ART.counter(540, 230, 380)}${paidNote ? ART.note(570, 200) : ''}${done ? Array.from({ length: c.k }, (_, i) => ART.pen(680 + i * 30, 214, .9)).join('') : ''}</g>`) + TX(730, 136, '🧾 계산대 (낸 돈)', { fs: 20, fill: '#713f12', w: 900 });
+      if (!paidNote) s += K.drag('note', `<g>${RC(40, 126, 120, 120, '#fff', { st: '#1d4ed8', sw: 3, rx: 14 })}${ART.note(70, 140, .9)}${ART.tag(52, 224, F(c.a) + '원', '#1d4ed8')}</g>`, 'b2cue');
+      if (paidNote && !grp) s += K.drag('pen', `<g>${RC(40, 126, 120, 120, '#fff', { st: '#ef4444', sw: 3, rx: 14 })}${ART.pen(78, 150, 1)}${ART.tag(52, 224, F(c.b) + '원', '#b91c1c')}</g>`, 'b2cue');
+      const holder = `<g>${RC(230, 160, 260, 100, grp ? '#fee2e2' : '#fff', { st: '#ef4444', sw: 3, rx: 16, da: grp ? '' : '9 6' })}${Array.from({ length: c.k }, (_, i) => grp ? ART.pen(256 + i * 66, 184, .85) : RC(250 + i * 78, 174, 58, 72, 'none', { st: '#fca5a5', sw: 2, rx: 8, da: '5 4' })).join('')}${TX(360, 152, grp ? `볼펜 묶음 ${F(c.b)} × ${c.k}` : `볼펜 ${c.k}자루 묶음 상자`, { fs: 16, fill: '#b91c1c', w: 900 })}</g>`;
+      if (paidNote && !done) s += grp ? K.drag('bundle', holder, 'b2cue') : K.zone('pens', holder);
+      return s; }; }
   CK.install([
     { k: 'cart', vk: 'tilt', icon: '🛒', name: '계산대에 올리기', short: '곱셈 먼저', dnd: [],
-      sub: '같은 물건 여러 개는 <b>한 묶음(곱셈)</b>으로 계산대에 올려요. 카드를 겹쳐 묶음을 만든 뒤 계산대로 끌어 놓아요.', taunt: '무조건 앞에서부터 계산해!', msg: '물건을 계산대에 올려 보자!',
+      sub: '같은 볼펜 3자루는 <b>한 묶음(곱셈)</b>으로 계산대에 올려요. 볼펜을 <b>직접 끌어</b> 묶음 상자에 넣고, 묶음째 계산대로 옮겨요.', taunt: '무조건 앞에서부터 계산해!', msg: '물건을 계산대에 올려 보자!',
       summary: '덧셈, 뺄셈, 곱셈이 섞여 있는 식은 <b>곱셈을 먼저</b> 계산해요. <b>1200 + 600 × 3</b> = 1200 + 1800 = <b>3000</b> (1200 + 600을 먼저 하면 5400이 되어 산 물건과 달라져요.)',
-      stages: [EX5.CHAIN({ t: '공책 + 볼펜 3자루', start: 1200, unit: '원', hold: { name: '계산대', icon: '🧾', col: '#16a34a' },
-          q: '계산대에 <b>공책값 1200원</b>이 올라와 있어요. <b>한 자루 600원인 볼펜 3자루</b>를 올려요. 두 카드를 겹쳐 볼펜 묶음을 만든 뒤 계산대로!',
-          steps: [{ name: '볼펜 3자루 올리기', cards: [{ n: 600, lab: '볼펜 한 자루', icon: '🖊️', big: '600원' }, { n: 3, lab: '3자루', icon: '✋', big: '3' }],
-            tie: { op: '*', apply: '+', u: '원', msg: v => `볼펜 600원씩 3자루 = <b>${v}원</b> 한 묶음! 이제 계산대로 옮겨요.`, why: '볼펜 3자루는 <b>한 묶음</b>으로 계산해요. 먼저 두 카드를 겹쳐 볼펜값을 구해요.' }, label: v => `내야 할 돈 ${v}원` }],
+      stages: [EX5.STEPS({ t: '공책 + 볼펜 3자루', start: 1200, unit: '원', infoT: '🧾 계산대', infoL: '낼 돈', art: cartArt({ a: 1200, b: 600, k: 3 }),
+          q: '계산대에 <b>공책(1200원)</b>이 있어요. <b>한 자루 600원인 볼펜 3자루</b>를 올려요. 볼펜을 묶음 상자에 넣은 뒤 묶음째 계산대로!',
+          steps: [{ p: 'pen', t: 'pens', kind: 'grp', a: 600, gop: '*', b: 3, lab: '볼펜을 묶음 상자로 끌어 3자루를 채워요', say: '볼펜 600원씩 3자루 = 600 × 3 = <b>1800원</b> 한 묶음!' },
+            { p: 'bundle', t: 'counter', kind: 'gapply', op: '+', lab: '볼펜 묶음을 계산대로', why: '먼저 볼펜 3자루를 한 묶음으로 만들어요.' }],
           say: () => '1200 + 600 × 3 = 1200 + 1800 = <b>3000</b>원! 볼펜 묶음(600 × 3)을 <b>먼저</b> 구했어요.',
-          done: (d, e) => `<b>${EX.t(e)} = 3000</b><br>${VN}의 계산: (1200 + 600) × 3 = 5400 → ${cmp(5400, 3000)} 산 물건과 달라요!` }),
-        EX5.CHAIN({ t: '지갑에서 내기', start: 5000, unit: '원', hold: { name: '지갑', icon: '👛', col: '#db2777' },
-          q: '지갑에 <b>5000원</b>. 공책값 <b>1200원</b>을 내고, 볼펜 <b>600원씩 3자루</b> 값을 내요. 남는 돈은?',
-          steps: [{ name: '공책값 내기', cards: [{ n: 1200, op: '-', lab: '공책 1권 값 내기', icon: '📒', big: '1200원', label: v => `지갑에 ${v}원` }] },
-            { name: '볼펜 3자루 값 내기', cards: [{ n: 600, lab: '볼펜 한 자루', icon: '🖊️', big: '600원' }, { n: 3, lab: '3자루', icon: '✋', big: '3' }], tie: { op: '*', apply: '-', u: '원' }, label: v => `남은 돈 ${v}원` }],
-          say: () => '5000 − 1200 − 600 × 3 = 5000 − 1200 − 1800 = 3800 − 1800 = <b>2000</b>원! 곱셈 먼저, 나머지는 앞에서부터.', done: (d, e) => `<b>${EX.t(e)} = 2000</b>` })] },
+          done: () => `<b>1200 + 600 × 3 = 3000</b><br>${VN}의 계산: (1200 + 600) × 3 = 5400 → ${cmp(5400, 3000)} 산 물건과 달라요!` }),
+        EX5.STEPS({ t: '확인', kind: 'check', start: 2000, unit: '원', infoT: '🧾 계산대', infoL: '낼 돈', art: cartArt({ a: 2000, b: 300, k: 4 }),
+          q: '공책(2000원)이 계산대에 있어요. <b>300원짜리 볼펜 4자루</b>를 묶음으로 올려요.',
+          steps: [{ p: 'pen', t: 'pens', kind: 'grp', a: 300, gop: '*', b: 4, lab: '볼펜을 묶음 상자로' }, { p: 'bundle', t: 'counter', kind: 'gapply', op: '+', lab: '묶음을 계산대로', why: '먼저 묶음을 만들어요.' }],
+          say: () => '2000 + 300 × 4 = 2000 + 1200 = <b>3200</b>원!', done: () => '<b>2000 + 300 × 4 = 3200</b>' })] },
     { k: 'set', vk: 'mixup', icon: '🎁', name: '세트로 사기', short: '괄호 안을 먼저', dnd: [],
-      sub: '이번에는 <b>공책 1권과 볼펜 1자루를 한 세트</b>로 묶어 3세트를 사요. 앞의 계산과 무엇이 다를까요?', taunt: '괄호가 있든 없든 똑같아!', msg: '세트를 만들어 여러 세트를 사 보자!',
+      sub: '이번에는 <b>공책 1권과 볼펜 1자루를 한 봉투</b>에 넣어 세트를 만들고, 그 세트를 <b>3세트</b> 사요. 무엇을 먼저 계산해야 할까요?', taunt: '괄호가 있든 없든 똑같아!', msg: '세트를 만들어 여러 세트를 사 보자!',
       summary: '괄호가 있으면 <b>괄호 안을 먼저</b> 계산해요. <b>(1200 + 600) × 3</b> = 1800 × 3 = <b>5400</b>, 괄호가 없는 <b>1200 + 600 × 3</b> = <b>3000</b> — 괄호가 계산 순서를 바꿔요.',
-      stages: [EX5.CHAIN({ t: '세트 3개 사기', start: 1200, unit: '원', hold: { name: '세트 바구니', icon: '🎁', col: '#7c3aed' },
-          q: '바구니에 공책(1200원)이 있어요. <b>볼펜 1자루(600원)</b>를 더해 세트를 만들고, 그 세트를 <b>3세트</b> 사요.',
-          steps: [{ name: '세트 하나 만들기', cards: [{ n: 600, op: '+', lab: '볼펜 1자루 더하기', icon: '🖊️', big: '600원', label: v => `세트 하나 ${v}원` }] },
-            { name: '3세트 사기', cards: [{ n: 3, op: '*', lab: '3세트 사기', icon: '🎁', big: '× 3', label: v => `3세트 ${v}원` }] }],
-          say: () => '(1200 + 600) × 3 = 1800 × 3 = <b>5400</b>원! 세트 값을 <b>먼저</b> 구해야 하니 괄호로 묶였어요.',
-          done: () => `(1200 + 600) × 3 = <b>5400</b> · 1200 + 600 × 3 = <b>3000</b><br>괄호가 있으면 <b>괄호 안을 먼저</b>!` }),
-        EX5.CHAIN({ t: '확인', kind: 'check', start: 800, unit: '원', hold: { name: '세트 바구니', icon: '🎁', col: '#7c3aed' },
-          q: '지우개(800원)에 <b>연필 1자루(400원)</b>를 더한 세트를 <b>5세트</b> 사요.',
-          steps: [{ name: '세트 하나 만들기', cards: [{ n: 400, op: '+', lab: '연필 1자루 더하기', icon: '✏️', big: '400원', label: v => `세트 하나 ${v}원` }] }, { name: '5세트 사기', cards: [{ n: 5, op: '*', lab: '5세트 사기', icon: '🎁', big: '× 5', label: v => `5세트 ${v}원` }] }],
-          say: () => '(800 + 400) × 5 = 1200 × 5 = <b>6000</b>원! 괄호 안을 먼저.', done: (d, e) => `<b>${EX.t(e)} = 6000</b>` })] },
+      stages: [EX5.STEPS({ t: '세트 3개 사기', start: 1200, unit: '원', infoT: '🎁 세트', infoL: '값', art: setArt({ a: 1200, b: 600, k: 3 }),
+          q: '봉투에 공책(1200원)이 있어요. <b>볼펜(600원)</b>을 봉투에 넣어 세트를 만들고, 봉투를 <b>×3 마법 상자</b>로 옮겨 3세트를 만들어요.',
+          steps: [{ p: 'pen', t: 'bag', op: '+', n: 600, lab: '볼펜을 봉투 안으로', say: '세트 하나 = 1200 + 600 = <b>1800원</b>' }, { p: 'bag', t: 'copier', op: '*', n: 3, lab: '세트 봉투를 ×3 마법 상자로', why: '먼저 세트를 완성해요.' }],
+          say: () => '(1200 + 600) × 3 = 1800 × 3 = <b>5400</b>원! 세트 값을 먼저 구해야 하니 괄호로 묶였어요.',
+          done: () => '(1200 + 600) × 3 = <b>5400</b> · 1200 + 600 × 3 = <b>3000</b><br>괄호가 있으면 <b>괄호 안을 먼저</b>!' }),
+        EX5.STEPS({ t: '확인', kind: 'check', start: 800, unit: '원', infoT: '🎁 세트', infoL: '값', art: setArt({ a: 800, b: 400, k: 5, an: '지우개' }),
+          q: '봉투에 지우개(800원)가 있어요. 볼펜(400원)을 넣어 세트를 만들고 <b>5세트</b>를 사요.',
+          steps: [{ p: 'pen', t: 'bag', op: '+', n: 400, lab: '볼펜을 봉투 안으로' }, { p: 'bag', t: 'copier', op: '*', n: 5, lab: '봉투를 ×5 마법 상자로', why: '먼저 세트를 완성해요.' }],
+          say: () => '(800 + 400) × 5 = 1200 × 5 = <b>6000</b>원!', done: () => '<b>(800 + 400) × 5 = 6000</b>' })] },
+    { k: 'wallet', vk: 'half', icon: '👛', name: '지갑에서 내기', short: '곱셈 먼저, 나머지는 앞에서부터', dnd: [],
+      sub: '지갑에 5000원이 있어요. 물건을 <b>직접 끌어</b> 계산대에 올릴 때마다 지갑의 돈이 줄어요. 볼펜 3자루는 한 묶음으로!', taunt: '앞에서부터 빼면 되지!', msg: '지갑에서 돈을 내 보자!',
+      summary: '<b>5000 − 1200 − 600 × 3</b> = 5000 − 1200 − 1800 = 3800 − 1800 = <b>2000</b>. 곱셈을 먼저, 뺄셈끼리는 앞에서부터!',
+      stages: [EX5.STEPS({ t: '지갑에서 내기', start: 5000, unit: '원', infoT: '👛 지갑', infoL: '남은 돈', art: walletArt({ a: 1200, b: 600, k: 3 }),
+          q: '지갑에 <b>5000원</b>. <b>공책(1200원)</b>을 계산대에 올리고, <b>600원짜리 볼펜 3자루</b>를 묶음으로 올려요.',
+          steps: [{ p: 'note', t: 'counter', op: '-', n: 1200, lab: '공책을 계산대로', say: '5000 − 1200 = <b>3800원</b> 남음' }, { p: 'pen', t: 'pens', kind: 'grp', a: 600, gop: '*', b: 3, lab: '볼펜을 묶음 상자로', say: '볼펜 묶음 600 × 3 = <b>1800원</b>' }, { p: 'bundle', t: 'counter', kind: 'gapply', op: '-', lab: '볼펜 묶음을 계산대로', why: '먼저 볼펜을 묶음으로 만들어요.' }],
+          say: () => '5000 − 1200 − 600 × 3 = 5000 − 1200 − 1800 = 3800 − 1800 = <b>2000</b>원! 곱셈 먼저, 나머지는 앞에서부터.', done: () => '<b>5000 − 1200 − 600 × 3 = 2000</b>' })] },
     { k: 'fold', vk: 'clock', icon: '🧮', name: '식 접기', short: '계산 순서대로 접기', dnd: [],
       sub: '이야기 없이 식만 남았어요. <b>먼저 계산할 두 수</b>를 잡아 겹치면 그 부분이 한 수로 접혀요. 이번엔 앞에서부터일까요?', taunt: '앞에서부터 접으면 되지!', msg: '계산 순서대로 식을 접어 보자!',
       summary: '덧셈, 뺄셈, 곱셈이 섞여 있으면 <b>곱셈을 먼저</b>, 괄호가 있으면 <b>괄호 안을 먼저</b> 계산해요.<br>▲ + ● × ■ → (● × ■)부터 · (▲ + ●) × ■ → (▲ + ●)부터',
