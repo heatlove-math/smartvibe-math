@@ -4119,7 +4119,7 @@ renderResult = function (k) {
   _renderResult(k);
   const ul = $('.ritems'); if (!ul || k !== 's1') return;
   const has = Gems.earned();
-  ul.insertAdjacentHTML('beforebegin', `<div class="font-black mt-2" style="color:${has ? '#c2410c' : '#64748b'}">${has ? `💎 ${esc(CHARS[GUIDE()].name)} 보석을 획득했어요!` : `💎 보석 조각 ${Gems.frag().filter(Boolean).length}/3 · 개념 도구 3개·기본 문제·보스전을 모두 해내면 보석이 생겨요`}</div>`);
+  ul.insertAdjacentHTML('beforebegin', `<div class="font-black mt-2" style="color:${has ? '#c2410c' : '#64748b'}">${has ? `💎 ${esc(CHARS[GUIDE()].name)} 보석을 획득했어요!` : `💎 보석 조각 ${Gems.frag().filter(Boolean).length}/3 · 개념 도구 ${S1_TOOLS.length}개·기본 문제·보스전을 모두 해내면 보석이 생겨요`}</div>`);
 };
 setInterval(() => { try { Gems.tick(); } catch (e) {} }, 600);
 
@@ -9043,6 +9043,34 @@ function miniKit(defs) { /* defs: [{ id, v, name, title, goal, dur, sub, desc, k
 }
 (() => { const st = document.createElement('style'); st.textContent = `.dxfig{margin:6px 0;overflow-x:auto}.mgpair{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.mgpair .btn{min-height:64px;font-size:1.2rem;font-weight:900}@media(max-width:560px){.mgpair{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .qzstage .dxpts{font-size:2.2rem}`; document.head.appendChild(st); })();
+/* ---------- 문제 상황 그림 (작은 장면) : 문장만 있는 문제 옆에 붙여요 ---------- */
+const SCN = (() => {
+  const SK = ['#fcd5b4', '#f1c27d', '#e0ac69', '#ffdbac'], SH = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+  const man = (x, y, k) => `<g transform="translate(${x},${y})"><rect x="-3.6" y="16" width="3" height="9" rx="1.4" fill="#334155"/><rect x="0.6" y="16" width="3" height="9" rx="1.4" fill="#334155"/><rect x="-5.5" y="5" width="11" height="13" rx="4" fill="${SH[k % 6]}"/><circle r="5" fill="${SK[k % 4]}"/><path d="M-5.2,-1 q0,-6 5.2,-6 q5.2,0 5.2,6 q-2.4,-2.6 -5.2,-2.6 q-2.8,0 -5.2,2.6z" fill="#3f2a1d"/></g>`;
+  const grp = (x, y, n, k0) => { let s = ''; for (let i = 0; i < Math.min(n, 6); i++) s += man(x + (i % 3) * 14, y + Math.floor(i / 3) * 30, k0 + i); return s; };
+  const tag = (x, y, t, c) => `<rect x="${x - 46}" y="${y - 16}" width="92" height="23" rx="11" fill="#fff" stroke="${c}" stroke-width="2.5"/><text x="${x}" y="${y}" text-anchor="middle" font-size="13.5" font-weight="900" fill="${c}">${t}</text>`;
+  const busI = (x, y, n) => `<g transform="translate(${x},${y})"><rect width="124" height="58" rx="14" fill="#fbbf24" stroke="#92400e" stroke-width="3"/>${[0, 1, 2].map(i => `<rect x="${10 + i * 30}" y="9" width="24" height="22" rx="4" fill="#bae6fd" stroke="#334155" stroke-width="2"/>`).join('')}<rect x="102" y="9" width="14" height="34" rx="3" fill="#bae6fd" stroke="#334155" stroke-width="2"/><rect y="38" width="124" height="6" fill="#0f766e"/><circle cx="28" cy="60" r="10" fill="#1f2937"/><circle cx="98" cy="60" r="10" fill="#1f2937"/><text x="52" y="56" text-anchor="middle" font-size="13" font-weight="900" fill="#7c2d12">${n}명</text></g>`;
+  /* 버스: 출발 n명 → 정류장들 [{ nm, off:n, on:n, tie:[a,b] }] */
+  function bus(n, stops) { const W = 150 + stops.length * 210; let s = `<rect width="${W}" height="176" rx="16" fill="#e0f2fe"/><rect y="132" width="${W}" height="44" fill="#64748b"/><line x1="0" y1="154" x2="${W}" y2="154" stroke="#fff" stroke-width="3" stroke-dasharray="18 12"/>` + busI(12, 80, n);
+    stops.forEach((st, i) => { const x = 160 + i * 210; s += `<rect x="${x + 96}" y="34" width="5" height="98" fill="#475569"/><rect x="${x + 44}" y="14" width="110" height="28" rx="9" fill="#16a34a"/><text x="${x + 99}" y="33" text-anchor="middle" font-size="13.5" font-weight="900" fill="#fff">🚏 ${st.nm || (i + 1) + '번째 정류장'}</text>`;
+      if (st.tie) { s += `<rect x="${x + 2}" y="70" width="190" height="62" rx="10" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5 4"/>` + grp(x + 12, 78, st.tie[0], i * 7) + grp(x + 120, 78, st.tie[1], i * 7 + 3) + tag(x + 97, 64, `${st.tie[0]}명·${st.tie[1]}명 함께 ${st.tieOn ? '탐' : '내림'}`, st.tieOn ? '#16a34a' : '#dc2626'); }
+      else { if (st.off) s += grp(x + 12, 78, st.off, i * 7) + tag(x + 40, 64, `${st.off}명 내림`, '#dc2626'); if (st.on) s += grp(x + 118, 78, st.on, i * 7 + 4) + tag(x + 150, 64, `${st.on}명 탐`, '#16a34a'); } });
+    return FIG(`<svg class="scnfig" viewBox="0 0 ${W} 176" style="width:100%;max-width:${Math.min(620, W * 1.1)}px;height:auto">${s}</svg>`); }
+  /* 흐름 그림: [아이콘, 이름, 수, 단위, 색] 상자들을 화살표로 이어요 (− 는 빨강, + 는 초록) */
+  function flow(items) { const w = 150, g = 46, W = items.length * w + (items.length - 1) * g + 20; let s = `<rect width="${W}" height="150" rx="16" fill="#f8fafc"/>`;
+    items.forEach((it, i) => { const [ic, nm, val, sign] = it, x = 10 + i * (w + g), col = sign === '-' ? '#dc2626' : sign === '+' ? '#16a34a' : sign === '÷' ? '#ea580c' : sign === '×' ? '#7c3aed' : '#0369a1', bg = sign === '-' ? '#fee2e2' : sign === '+' ? '#dcfce7' : sign === '÷' ? '#ffedd5' : sign === '×' ? '#ede9fe' : '#e0f2fe';
+      s += `<rect x="${x}" y="16" width="${w}" height="118" rx="16" fill="${bg}" stroke="${col}" stroke-width="3"/><text x="${x + w / 2}" y="62" text-anchor="middle" font-size="38">${ic}</text><text x="${x + w / 2}" y="92" text-anchor="middle" font-size="15" font-weight="900" fill="#334155">${nm}</text><text x="${x + w / 2}" y="122" text-anchor="middle" font-size="22" font-weight="900" fill="${col}">${val}</text>`;
+      if (i < items.length - 1) s += `<path d="M${x + w + 8},75 h${g - 18}" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/><path d="M${x + w + g - 14},65 l10,10 l-10,10" fill="none" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>`; });
+    return FIG(`<svg class="scnfig" viewBox="0 0 ${W} 150" style="width:100%;max-width:${Math.min(640, W)}px;height:auto">${s}</svg>`); }
+  return { bus, man, flow };
+})();
+
+/* 계산 노트(악당이 틀리게 쓴 계산) · 가나다라 식 카드 */
+const NOTE = (t, body) => FIG(`<div class="ex5note"><div class="ex5nh">📒 ${t}</div><div class="ex5nb">${body}</div><div class="ex5nq">어디가 틀렸을까?</div></div>`);
+const LCARDS = (O, K = ['가', '나', '다', '라']) => FIG(`<div class="ex5cards">${O.map((o, i) => `<div><b>${K[i]}</b>${EX.h(o)}</div>`).join('')}</div>`);
+(() => { const st = document.createElement('style'); st.textContent = `.ex5note{display:inline-block;min-width:300px;background:repeating-linear-gradient(#fffbeb 0 38px,#fde68a 38px 40px);border:3px solid #f59e0b;border-left:14px solid #dc2626;border-radius:14px;padding:10px 22px 14px;text-align:left;box-shadow:0 6px 0 #fcd34d}
+.ex5nh{font-weight:900;color:#b45309;font-size:1.05rem;margin-bottom:4px}.ex5nb{font-weight:900;font-size:1.7rem;color:#1e293b;line-height:40px;font-variant-numeric:tabular-nums}.ex5nq{font-weight:900;color:#dc2626;margin-top:6px;font-size:1rem}
+.ex5cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:360px}.ex5cards>div{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #c4b5fd;border-radius:16px;padding:12px 16px;font-size:1.4rem;box-shadow:0 4px 0 #ddd6fe}.ex5cards>div>b{display:inline-flex;width:36px;height:36px;border-radius:50%;background:#7c3aed;color:#fff;align-items:center;justify-content:center;font-size:1.1rem;flex:none}`; document.head.appendChild(st); })();
 
 /* =====================================================================
    🧮 EX · 5학년 1단원 「자연수의 혼합 계산」 식 도구 (차시 파일·도구·게임 공통)
@@ -9081,6 +9109,64 @@ const EX = (() => {
 })();
 (() => { const st = document.createElement('style'); st.textContent = `.exq{display:inline-flex;align-items:baseline;gap:.28em;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}.exq .exo{color:#7c3aed}.exq .exb{color:#dc2626;font-size:1.12em}
 .exq.big{font-size:1.5em}.exline{display:block;margin:.2em 0;line-height:1.5}`; document.head.appendChild(st); })();
+
+/* =====================================================================
+   🧮 5학년 1단원 · 문제 옆 「식 접기 연습판」
+   기본 문제·문제은행·단원 평가에서 문제 속 식(.exq)을 찾아, 보기 아래 빈 곳에 작은 접기 판을 붙여요.
+   먼저 계산할 두 수를 끌어 겹치면 한 수로 접혀요. 순서가 틀리면 접히지 않고 까닭을 알려 줘요.
+   (정답을 대신 골라 주지 않아요 — 학생이 직접 계산 순서를 따라가 보는 연습 칸이에요)
+   ===================================================================== */
+(function () {
+  if (window.__ex5think) return; window.__ex5think = 1;
+  const SYM = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+  const toksOf = q => { const e = q.querySelector('.exq'); if (!e) return null; const T = [];
+    for (const c of e.children) { const t = c.textContent.trim(); if (c.classList.contains('exn')) { if (!/^\d+$/.test(t)) return null; T.push(+t); } else if (c.classList.contains('exb')) T.push(t); else if (c.classList.contains('exo')) T.push(({ '+': '+', '−': '-', '×': '*', '÷': '/' })[t] || t); else return null; }
+    if (T.length < 5 || EX.val(EX.str(T)) == null) return null; return T; };
+  const inB = (T, i) => { let d = 0; for (let k = 0; k < i; k++) { if (T[k] === '(') d++; else if (T[k] === ')') d--; } return d > 0; };
+  const why = (T, i) => { const w = EX.next(T), hasB = T.includes('('), md = T.some(x => x === '*' || x === '/');
+    if (hasB && !inB(T, i) && inB(T, w)) return '괄호 안을 먼저 계산해요.';
+    if (md && (T[w] === '*' || T[w] === '/') && (T[i] === '+' || T[i] === '-')) return '곱셈·나눗셈을 덧셈·뺄셈보다 먼저 계산해요.';
+    return '같은 단계끼리는 앞에서부터 차례로 계산해요.'; };
+  function paint(box) { const S = box._s, T = S.T;
+    const row = T.map((t, i) => typeof t === 'number' ? `<span class="x5n ${i === S.fresh ? 'fresh' : ''}" data-i="${i}">${t}</span>` : t === '(' || t === ')' ? `<span class="x5b">${t}</span>` : `<span class="x5o ${i === S.bad ? 'bad' : ''}">${SYM[t]}</span>`).join('');
+    box.querySelector('.x5row').innerHTML = row;
+    box.querySelector('.x5hist').innerHTML = S.hist.length > 1 ? S.hist.map(EX.t).join(' = ') : '';
+    box.querySelector('.x5msg').innerHTML = S.msg || (T.length === 1 ? '🎉 다 접었어요! 보기에서 같은 값을 찾아봐요.' : '✋ 먼저 계산할 두 수 중 하나를 끌어 옆의 수 위에 겹쳐요');
+    box.classList.toggle('done', T.length === 1); }
+  function attach(card) { const ans = card.querySelector('.svsl-qans') || card.querySelector('.choices') && card.querySelector('.choices').parentElement; if (!ans || ans.querySelector('.x5think') || card.closest('#mgxStage,#bxArea')) return;
+    if (/순서로 알맞은|먼저 계산해야|가장 먼저|가장 큰|가장 작은|ex5cards/.test(card.textContent)) return; const T = toksOf(card); if (!T) return;
+    const box = document.createElement('div'); box.className = 'x5think';
+    box.innerHTML = `<div class="x5h">🧮 식 접기 연습판 <button type="button" class="x5re">↺ 처음부터</button></div><div class="x5row"></div><div class="x5hist"></div><div class="x5msg"></div>`;
+    box._s = { T0: T.slice(), T: T.slice(), hist: [T.slice()], fresh: -1, bad: -1, msg: '' };
+    ans.appendChild(box); paint(box);
+    box.querySelector('.x5re').onclick = () => { const S = box._s; S.T = S.T0.slice(); S.hist = [S.T0.slice()]; S.fresh = S.bad = -1; S.msg = ''; paint(box); }; }
+  /* 끌기: 수 타일을 잡아 옆의 수 위로 */
+  let D = null;
+  document.addEventListener('pointerdown', e => { const n = e.target.closest && e.target.closest('.x5think .x5n'); if (!n) return; const box = n.closest('.x5think'); if (box._s.T.length === 1) return; e.preventDefault();
+    const r = n.getBoundingClientRect(), g = n.cloneNode(true); g.classList.add('x5ghost'); Object.assign(g.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' }); document.body.appendChild(g);
+    D = { box, i: +n.dataset.i, g, dx: e.clientX - r.left, dy: e.clientY - r.top, id: e.pointerId }; n.classList.add('lift'); try { document.body.setPointerCapture(e.pointerId); } catch (er) {} try { Sound.click(); } catch (er) {} }, true);
+  document.addEventListener('pointermove', e => { if (!D || e.pointerId !== D.id) return; e.preventDefault(); D.g.style.left = (e.clientX - D.dx) + 'px'; D.g.style.top = (e.clientY - D.dy) + 'px';
+    D.box.querySelectorAll('.x5n').forEach(t => { const r = t.getBoundingClientRect(); t.classList.toggle('hov', +t.dataset.i !== D.i && e.clientX > r.left && e.clientX < r.right && e.clientY > r.top - 10 && e.clientY < r.bottom + 10); }); }, { passive: false });
+  const up = e => { if (!D || (e.pointerId != null && e.pointerId !== D.id)) return; const { box, i, g } = D; D = null; g.remove(); try { document.body.releasePointerCapture(e.pointerId); } catch (er) {}
+    const tgt = box.querySelector('.x5n.hov'); box.querySelectorAll('.x5n').forEach(t => t.classList.remove('hov', 'lift')); if (!tgt) return;
+    const S = box._s, T = S.T, j = +tgt.dataset.i, lo = Math.min(i, j), hi = Math.max(i, j);
+    if (hi - lo !== 2 || typeof T[lo + 1] !== 'string' || !'+-*/'.includes(T[lo + 1])) { S.msg = '연산 기호 하나를 사이에 둔 <b>바로 옆의 수</b>와 겹쳐요.'; paint(box); return; }
+    const k = lo + 1, w = EX.next(T);
+    if (k !== w) { S.bad = k; S.msg = '❗ ' + why(T, k); paint(box); try { Sound.wrong(); } catch (er) {} setTimeout(() => { S.bad = -1; paint(box); }, 900); return; }
+    const R = EX.fold(T, k); if (!R) { S.msg = '이 두 수는 계산할 수 없어요.'; paint(box); return; }
+    S.T = R; S.hist.push(R); S.fresh = lo; S.msg = ''; paint(box); try { Sound.pop(); } catch (er) {} };
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  const scan = () => document.querySelectorAll('#s1body .qx, #s1body .qcard, #s2body .qx, #s2body .qcard, #s2body .card').forEach(c => { if (c.querySelector('.choices')) attach(c); });
+  try { new MutationObserver(() => { clearTimeout(scan.t); scan.t = setTimeout(scan, 60); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  const st = document.createElement('style'); st.textContent = `.x5think{margin-top:12px;background:#f5f3ff;border:3px dashed #a78bfa;border-radius:18px;padding:10px 12px;text-align:center}.x5think.done{border-style:solid;border-color:#22c55e;background:#f0fdf4}
+.x5h{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;color:#6d28d9;font-size:1rem}.x5re{border:2px solid #c4b5fd;background:#fff;border-radius:999px;padding:2px 10px;font-weight:800;color:#6d28d9;cursor:pointer;font-size:.85rem}
+.x5row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;margin:10px 0 6px;min-height:52px}.x5n{min-width:52px;height:50px;padding:0 8px;border-radius:12px;background:#fff;border:3px solid #6366f1;box-shadow:0 4px 0 #4338ca;font-weight:900;font-size:1.4rem;color:#1e1b4b;display:inline-flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.x5n.fresh{background:#dcfce7;border-color:#16a34a;box-shadow:0 4px 0 #15803d;animation:x5pop .35s}.x5n.lift{opacity:.3}.x5n.hov{outline:4px solid #f59e0b;outline-offset:2px}@keyframes x5pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:none}}
+.x5o{width:36px;height:36px;border-radius:50%;background:#ede9fe;border:2px solid #7c3aed;color:#5b21b6;font-weight:900;font-size:1.3rem;display:inline-flex;align-items:center;justify-content:center}.x5o.bad{background:#fee2e2;border-color:#ef4444;animation:b2sh .45s}.x5b{font-size:2rem;font-weight:900;color:#dc2626}
+.x5hist{font-weight:800;color:#334155;font-size:.95rem;min-height:1.2em}.x5msg{font-weight:800;color:#7c3aed;font-size:.92rem;margin-top:4px}.x5think.done .x5msg{color:#15803d}
+.x5ghost{position:fixed;z-index:99999;pointer-events:none;transform:scale(1.1) rotate(-4deg);filter:drop-shadow(0 8px 12px rgba(0,0,0,.25));margin:0}
+@media(max-width:640px){.x5n{min-width:42px;height:42px;font-size:1.15rem}.x5o{width:30px;height:30px}}`; document.head.appendChild(st);
+})();
 
 /* ---------- MPD · 미니게임·보드게임에서 손가락으로 집어 옮기기 ----------
    집기: [data-mpd="값"] · 놓을 곳: [data-mpt="자리"] → 미니게임: AN.mgx('drop:값|자리') · 보드게임: data-mpb 가 있으면 그 단추를 눌러요(값|자리)
@@ -13062,68 +13148,140 @@ const EX5 = (() => {
   const pop = () => { try { Sound.pop(); } catch (e) {} };
   const S = { '+': '+', '-': '−', '*': '×', '/': '÷' };
 
-  /* ---------- 그림 조각 ---------- */
-  const person = (x, y, s, col) => `<g transform="translate(${x},${y}) scale(${s})"><circle cx="0" cy="-15" r="7" fill="${col}"/><path d="M-10,8 q0,-16 10,-16 q10,0 10,16 z" fill="${col}"/></g>`;
-  /* 승객 묶음 카드: 사람 그림(최대 5) + 「17명」 */
-  const COLS = ['#2563eb', '#db2777', '#16a34a', '#ea580c', '#7c3aed', '#0891b2'];
-  function pcard(x, y, n, o = {}) { const w = o.w || 132, h = o.h || 84, col = o.col || COLS[n % COLS.length], k = Math.min(5, Math.max(1, Math.round(n / 4)));
-    let s = RC(x, y, w, h, o.fill || '#fff', { st: o.st || col, sw: 3.5, rx: 16 });
-    for (let i = 0; i < k; i++) s += person(x + 20 + i * ((w - 40) / Math.max(1, k - 1 || 1)) * (k > 1 ? 1 : 0) + (k === 1 ? w / 2 - 20 : 0), y + 40, .95, col);
-    s += TX(x + w / 2, y + h - 10, `${n}명`, { fs: 26, fill: '#0f172a', w: 900 });
-    if (o.tag) s += RC(x + w - 46, y - 14, 52, 26, o.tagc || '#fee2e2', { st: o.tagst || '#ef4444', sw: 2, rx: 13 }) + TX(x + w - 20, y + 5, o.tag, { fs: 15, fill: o.tagt || '#b91c1c', w: 900 });
-    return s; }
-  /* 괄호 끈: 두 카드를 감싼 빨간 괄호 */
-  const brace = (x, y, w, h) => `<path d="M${x + 14},${y} q-14,0 -14,14 v${h - 28} q0,14 14,14" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/><path d="M${x + w - 14},${y} q14,0 14,14 v${h - 28} q0,14 -14,14" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>`;
-  function bus(x, y, n, moving) { let s = `<g class="${moving ? 'ex5go' : ''}">`;
-    s += RC(x, y, 470, 210, '#fbbf24', { st: '#b45309', sw: 4, rx: 34 }) + RC(x, y + 150, 470, 60, '#f59e0b', { rx: 0 }) + RC(x, y + 150, 470, 60, 'none', { st: '#b45309', sw: 4, rx: 0, op: 0 });
-    s += RC(x + 400, y + 26, 54, 96, '#bae6fd', { st: '#0369a1', sw: 3, rx: 10 }) + RC(x + 14, y + 26, 372, 104, '#e0f2fe', { st: '#0369a1', sw: 3, rx: 14 });
-    s += `<circle cx="${x + 96}" cy="${y + 214}" r="30" fill="#334155"/><circle cx="${x + 96}" cy="${y + 214}" r="12" fill="#cbd5e1"/><circle cx="${x + 380}" cy="${y + 214}" r="30" fill="#334155"/><circle cx="${x + 380}" cy="${y + 214}" r="12" fill="#cbd5e1"/>`;
-    s += RC(x + 120, y + 156, 230, 46, '#fff', { st: '#b45309', sw: 3, rx: 23 }) + TX(x + 235, y + 189, `버스 안 ${n}명`, { fs: 28, fill: '#7c2d12', w: 900 }) + '</g>';
-    return s; }
-  function stopSign(x, y, name) { return LN(x, y, x, y + 150, '#64748b', 6) + RC(x - 70, y - 44, 140, 50, '#16a34a', { st: '#14532d', sw: 3, rx: 12 }) + TX(x, y - 11, name, { fs: 21, fill: '#fff', w: 900 }); }
+  /* ---------- 그림 조각 (하늘 순환 버스) ---------- */
+  const SKIN = ['#fcd5b4', '#f1c27d', '#e0ac69', '#ffdbac', '#c68642'], HAIR = ['#3f2a1d', '#1f2937', '#7c4a1e', '#111827', '#a16207'];
+  const SHIRT = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#6366f1'];
+  /* 앉은 승객(창문 속 머리·어깨) */
+  const seat = (x, y, k, ring) => `<g>${ring ? `<circle cx="${x}" cy="${y + 4}" r="11.5" fill="${ring}" opacity=".28"/>` : ''}<path d="M${x - 8},${y + 16} q0,-9 8,-9 q8,0 8,9 z" fill="${SHIRT[k % 8]}"/><circle cx="${x}" cy="${y}" r="6.2" fill="${SKIN[k % 5]}"/><path d="M${x - 6.4},${y - 1} q0,-7.5 6.4,-7.5 q6.4,0 6.4,7.5 q-3,-3.5 -6.4,-3.5 q-3.4,0 -6.4,3.5z" fill="${HAIR[(k * 3) % 5]}"/></g>`;
+  /* 서 있는 사람 */
+  const stand = (x, y, k, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-4.5" y="22" width="3.6" height="13" rx="1.6" fill="#334155"/><rect x="0.9" y="22" width="3.6" height="13" rx="1.6" fill="#334155"/><rect x="-7" y="7" width="14" height="17" rx="5" fill="${SHIRT[k % 8]}"/><circle cx="0" cy="0" r="6.4" fill="${SKIN[k % 5]}"/><path d="M-6.6,-1 q0,-7.6 6.6,-7.6 q6.6,0 6.6,7.6 q-3,-3.4 -6.6,-3.4 q-3.6,0 -6.6,3.4z" fill="${HAIR[(k * 3) % 5]}"/></g>`;
+  /* 사람 무리: n명을 줄 맞춰 세워요 (한 줄 per명) → [svg, 너비, 높이] */
+  const crowd = (x, y, n, k0, per = 6, gap = 19, row = 42, s = 1) => { let h = ''; for (let i = 0; i < n; i++) h += stand(x + (i % per) * gap * s, y + Math.floor(i / per) * row * s, k0 + i, s); return h; };
+  const crowdWH = (n, per = 6, gap = 19, row = 42, s = 1) => [Math.min(n, per) * gap * s, Math.ceil(n / per) * row * s];
+  /* 버스: 창문 6칸 × 좌석 10 = 60석, 문 쪽(앞)부터 채워요 */
+  const BX = 22, BY = 150, NW = 6;
+  const seatXY = i => { const w = NW - 1 - Math.floor(i / 10), r = i % 10, col = r % 5, rw = Math.floor(r / 5); return [BX + 30 + w * 78 + col * 13.4, BY + 50 + rw * 36]; };
+  function busBody(n, seats, moving, doorOpen) {
+    let s = `<g class="${moving ? 'ex5go' : ''}"><ellipse cx="${BX + 300}" cy="${BY + 232}" rx="300" ry="12" fill="#0f172a" opacity=".18"/>`;
+    s += `<path d="M${BX + 14},${BY} h${540} q${44},0 ${50},${46} l6,${118} q0,${42} -${36},${42} h-${560} q-${14},0 -${14},-${14} v-${178} q0,-${14} ${14},-${14}z" fill="url(#ex5bus)" stroke="#92400e" stroke-width="4"/>`;
+    s += `<rect x="${BX}" y="${BY + 150}" width="604" height="16" fill="#0f766e"/><rect x="${BX}" y="${BY + 166}" width="604" height="6" fill="#fbbf24"/>`;
+    s += `<rect x="${BX + 20}" y="${BY - 18}" width="240" height="22" rx="8" fill="#1e293b"/><text x="${BX + 140}" y="${BY - 2}" text-anchor="middle" font-size="15" font-weight="900" fill="#fde047">하늘 순환 01 · 계산 순서의 탑</text>`;
+    for (let w = 0; w < NW; w++) s += `<rect x="${BX + 20 + w * 78}" y="${BY + 24}" width="70" height="84" rx="9" fill="url(#ex5glass)" stroke="#334155" stroke-width="3"/>`;
+    /* 좌석 머리 */
+    seats.forEach(i => { const [x, y] = seatXY(i); s += seat(x, y, i * 7 + 3); });
+    for (let w = 0; w < NW; w++) s += `<path d="M${BX + 24 + w * 78},${BY + 30} l14,0 l-10,18z" fill="#fff" opacity=".45"/>`;
+    /* 문 · 앞 유리 · 바퀴 */
+    s += doorOpen ? `<rect x="${BX + 494}" y="${BY + 22}" width="52" height="142" rx="6" fill="#0f172a" opacity=".85"/><rect x="${BX + 488}" y="${BY + 22}" width="10" height="142" fill="#7dd3fc" stroke="#334155" stroke-width="2"/>` : `<rect x="${BX + 494}" y="${BY + 22}" width="52" height="142" rx="6" fill="url(#ex5glass)" stroke="#334155" stroke-width="3"/><line x1="${BX + 520}" y1="${BY + 22}" x2="${BX + 520}" y2="${BY + 164}" stroke="#334155" stroke-width="3"/>`;
+    s += `<path d="M${BX + 556},${BY + 18} h14 q22,4 26,40 v50 h-40z" fill="url(#ex5glass)" stroke="#334155" stroke-width="3"/><circle cx="${BX + 596}" cy="${BY + 140}" r="9" fill="#fef08a" stroke="#92400e" stroke-width="2"/>`;
+    [BX + 110, BY + 186, BX + 470, BY + 186].forEach((v, i, a) => { if (i % 2) return; const x = a[i], y = a[i + 1]; s += `<circle cx="${x}" cy="${y}" r="30" fill="#1f2937"/><circle cx="${x}" cy="${y}" r="14" fill="#cbd5e1"/><circle cx="${x}" cy="${y}" r="5" fill="#64748b"/>`; });
+    s += `<rect x="${BX + 230}" y="${BY + 122}" width="150" height="26" rx="13" fill="#fff" stroke="#92400e" stroke-width="2.5"/><text x="${BX + 305}" y="${BY + 141}" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">버스 안 ${n}명</text>`;
+    return s + '</g>'; }
+  const scene = () => `<defs><linearGradient id="ex5sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bae6fd"/><stop offset="1" stop-color="#f0f9ff"/></linearGradient>
+    <linearGradient id="ex5bus" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset=".55" stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+    <linearGradient id="ex5glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0f2fe"/><stop offset="1" stop-color="#93c5fd"/></linearGradient></defs>
+    <rect width="960" height="470" fill="url(#ex5sky)"/><path d="M0,250 q120,-70 260,-30 q120,34 240,-10 q140,-50 300,0 q80,24 160,4 v60 h-960z" fill="#bbf7d0" opacity=".8" transform="translate(0,-10)"/>
+    <g opacity=".95"><ellipse cx="80" cy="128" rx="46" ry="15" fill="#fff"/><ellipse cx="112" cy="118" rx="30" ry="14" fill="#fff"/><ellipse cx="860" cy="122" rx="56" ry="16" fill="#fff"/><ellipse cx="830" cy="112" rx="30" ry="13" fill="#fff"/></g>
+    <rect y="404" width="960" height="66" fill="#475569"/><rect y="396" width="960" height="10" fill="#94a3b8"/><line x1="0" y1="440" x2="960" y2="440" stroke="#f8fafc" stroke-width="5" stroke-dasharray="40 26"/>`;
+  function stopPost(name, x) { return `<rect x="${x}" y="200" width="7" height="170" fill="#475569"/><rect x="${x - 66}" y="176" width="140" height="40" rx="11" fill="#16a34a" stroke="#14532d" stroke-width="3"/><text x="${x + 4}" y="203" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">🚏 ${name}</text>`; }
+  const tagB = (x, y, t, c1, c2) => `<rect x="${x - 4}" y="${y - 19}" width="${t.length * 15 + 18}" height="26" rx="13" fill="${c1}" stroke="${c2}" stroke-width="2"/><text x="${x + 5}" y="${y}" font-size="15" font-weight="900" fill="${c2}">${t}</text>`;
 
-  /* ============ BUS: 내리고 태우며 식 만들기 ============
-     c = { t, kind, q, start, stops:[{ name, off:[n…], on:[n…], tie:true(내리는 묶음이 단체) }], say() }  */
+  const brace = (x, y, w, h) => `<path d="M${x + 14},${y} q-14,0 -14,14 v${h - 28} q0,14 14,14" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/><path d="M${x + w - 14},${y} q14,0 14,14 v${h - 28} q0,14 -14,14" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>`;
+  /* ============ BUS: 승객을 직접 내리고 태우며 식 만들기 ============
+     c = { t, kind, q, start, stops:[{ name, off:[n…], on:[n…], tie:true(내리는 묶음이 단체) }], say(), done() } */
   function BUS(c) {
     const expr = d => { let e = String(c.start); d.ops.forEach(o => { e += ` ${o.op} ${o.g.length > 1 ? '(' + o.g.join(' + ') + ')' : o.g[0]}`; }); return e; };
     const cur = d => c.stops[Math.min(d.si, c.stops.length - 1)];
+    const RING = ['#ef4444', '#2563eb', '#f97316'];
     return { _ty: 'ex5bus', t: c.t, kind: c.kind, q: d => d.ok ? '도착!' : (typeof c.q === 'function' ? c.q(d) : c.q),
-      init: () => ({ si: 0, n: c.start, offLeft: c.stops[0].off.slice(), onLeft: c.stops[0].on.slice(), tied: false, ops: [], log: [], ok: false, mv: false }),
-      view: d => { const st = cur(d); let s = '';
-        s += RC(0, 0, 960, 440, '#e0f2fe', { rx: 0 }) + RC(0, 380, 960, 60, '#cbd5e1', { rx: 0 }) + LN(0, 410, 960, 410, '#fff', 4, { da: '30 22' });
-        s += `<circle cx="60" cy="50" r="24" fill="#fde68a"/><ellipse cx="880" cy="44" rx="60" ry="16" fill="#fff"/>`;
-        s += RC(130, 18, 700, 86, '#fff', { st: '#c4b5fd', sw: 3, rx: 22 }) + TX(170, 50, '식', { fs: 20, fill: '#7c3aed', w: 900 }) + TX(480, 82, d.ops.length ? EX.t(expr(d)) + (d.ok ? ' = ' + d.n : '') : `처음 버스 안 ${c.start}명`, { fs: 40, fill: '#1e1b4b', w: 900 });
-        s += zone('bus', bus(20, 150, d.n, d.mv));
-        /* 내릴 손님: 버스 창 안 */
-        const off = d.offLeft;
-        if (st.tie && off.length > 1 && !d.tied) { off.forEach((n, i) => { s += zone('off' + i, drag('off:' + i, pcard(48 + i * 175, 182, n, { tag: '단체', w: 150 }))); }); s += TX(220, 145, '👨‍👩‍👧 단체 손님은 한 묶음으로 모아서 함께 내려요', { fs: 19, fill: '#b91c1c', w: 900 }); }
-        else if (st.tie && d.tied && off.length) { const w = 330; s += drag('off:all', `<g>${RC(42, 172, w + 16, 104, '#fff1f2', { rx: 18 })}${brace(40, 170, w + 20, 108)}${off.map((n, i) => pcard(56 + i * 160, 182, n, { w: 150 })).join('')}${TX(42 + (w + 16) / 2, 300, `(${off.join(' + ')}) = ${off.reduce((a, b) => a + b, 0)}명`, { fs: 22, fill: '#b91c1c', w: 900 })}</g>`); }
-        else off.forEach((n, i) => { s += drag('off:' + i, pcard(48 + i * 175, 182, n, { tag: '내림', w: 150 })); });
-        /* 정류장 */
-        s += stopSign(560, 160, st.name) + zone('plat', RC(600, 240, 340, 140, '#f1f5f9', { st: '#94a3b8', sw: 3, rx: 18, da: '10 8', c: 'b2tz' }));
-        s += TX(770, 232, '🚏 정류장', { fs: 20, fill: '#475569', w: 900 });
-        d.onLeft.forEach((n, i) => { s += drag('on:' + i, pcard(616 + i * 160, 262, n, { tag: '탐', tagc: '#dcfce7', tagst: '#16a34a', tagt: '#166534', w: 150 }), off.length ? '' : 'b2cue'); });
-        if (d.ok) s += TX(770, 150, '🏁 종점 도착!', { fs: 32, fill: '#15803d', w: 900 });
-        const info = M4.rows(`🚏 ${st.name}`, [['버스 안', d.n, '명', 1]], '') + `<div class="ex5lh">🧾 운행 기록</div>` + (d.log.length ? d.log.map(x => `<div class="ex5log">${x}</div>`).join('') : `<div class="ex5log">출발 · ${c.start}명</div>`) + (d.ok && c.done ? M4.eq(c.done(d, expr(d)), 'ok') : '');
+      init: () => ({ si: 0, n: c.start, offLeft: c.stops[0].off.slice(), onLeft: c.stops[0].on.slice(), tied: false, ops: [], log: [], ok: false, mv: false, gone: [], door: false }),
+      view: d => { const st = cur(d), off = d.offLeft; let s = scene();
+        /* 식 표지판 */
+        s += `<rect x="150" y="14" width="660" height="80" rx="20" fill="#fff" stroke="#a78bfa" stroke-width="4"/><text x="186" y="44" font-size="17" font-weight="900" fill="#7c3aed">식</text>`;
+        s += TX(480, 70, d.ops.length ? EX.t(expr(d)) + (d.ok ? ' = ' + d.n : '') : `처음 버스 안 ${c.start}명`, { fs: d.ops.length > 2 ? 32 : 38, fill: '#1e1b4b', w: 900 });
+        /* 내릴 승객 자리(앞쪽 좌석부터) */
+        const offSum = off.reduce((a, b) => a + b, 0); let k = 0;
+        /* 무리가 둘 이상이면 무리마다 다른 창문에서 시작해요 */
+        const sep = off.length > 1 && off.every(m => m <= 10);
+        const groups = off.map((m, gi) => { const a = sep ? gi * 10 : k; k = a + m; return [a, a + m, gi]; });
+        const taken = new Set(); groups.forEach(([a, b]) => { const e = sep ? Math.ceil(b / 10) * 10 : b; for (let i = a; i < e; i++) taken.add(i); });
+        const seats = []; for (let i = 0; i < 60 && seats.length < d.n - offSum; i++) if (!taken.has(i)) seats.push(i);
+        s += '<g transform="translate(-6,-44) scale(1.2)">';
+        s += zone('bus', busBody(d.n, seats, d.mv, d.door));
+        /* 그 자리에 내릴 승객을 그룹으로 다시 그림 (잡아서 끌 수 있게) */
+        const grp = (a, b, gi, lab, col) => { let g = ''; for (let i = a; i < b; i++) { const [x, y] = seatXY(i); g += seat(x, y, i * 7 + 3, col); }
+          const ws = [...new Set(Array.from({ length: b - a }, (_, j) => NW - 1 - Math.floor((a + j) / 10)))], x0 = BX + 18 + Math.min(...ws) * 78, x1 = BX + 18 + (Math.max(...ws) + 1) * 78 - 4;
+          return `<rect x="${x0}" y="${BY + 22}" width="${x1 - x0}" height="88" rx="12" fill="${col}" opacity=".22" stroke="${col}" stroke-width="4"/>${g}${lab ? tagB(x0 + 2, gi % 2 ? BY + 134 : BY - 2, lab, col, '#fff') : ''}`; };
+        if (off.length) {
+          if (st.tie && off.length > 1 && !d.tied) groups.forEach(([a, b, gi]) => { s += zone('off' + gi, drag('off:' + gi, grp(a, b, gi, `단체 ${off[gi]}명`, RING[gi + 1]))); });
+          else if (st.tie && d.tied) { let g = ''; groups.forEach(([a, b, gi]) => { g += grp(a, b, gi, gi ? '' : `단체 (${off.join(' + ')})명`, RING[gi + 1]); });
+            const [x1] = seatXY(groups[0][0]), [x2] = seatXY(groups[groups.length - 1][1] - 1); s += drag('off:all', `<g>${g}<path d="M${Math.min(x1, x2) - 12},${BY + 112} q${(Math.abs(x1 - x2) + 24) / 2},26 ${Math.abs(x1 - x2) + 24},0" fill="none" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/></g>`); }
+          else groups.forEach(([a, b, gi]) => { s += drag('off:' + gi, grp(a, b, gi, `내릴 승객 ${off[gi]}명`, RING[0])); });
+        }
+        s += '</g>';
+        /* 정류장 · 기다리는 승객 · 내린 승객 */
+        s += stopPost(st.name, 810) + zone('plat', `<rect x="776" y="222" width="178" height="174" rx="16" fill="#e2e8f0" opacity=".85" stroke="#64748b" stroke-width="3" stroke-dasharray="10 7" class="b2tz"/>`);
+        d.gone.forEach((g, j) => { if (j < d.gone.length - 1) return; s += `<g opacity=".55">${crowd(788, 262, Math.min(g, 24), 11, 8, 18, 30, .62)}</g>` + TX(866, 388, `내린 승객 ${g}명`, { fs: 15, fill: '#475569', w: 800 }); });
+        d.onLeft.forEach((m, i) => { const [w] = crowdWH(m, 4, 24, 46); const x = 866 - w / 2, y = 262;
+          s += drag('on:' + i, `<g>${off.length ? '' : `<rect x="${x - 10}" y="${y - 30}" width="${w + 20}" height="${Math.ceil(m / 4) * 46 + 36}" rx="12" fill="#dcfce7" opacity=".7" stroke="#16a34a" stroke-width="3" stroke-dasharray="7 5"/>`}${crowd(x + 10, y, m, 40 + i * 9, 4, 24, 46)}${tagB(x - 6, y - 12, `탈 승객 ${m}명`, '#dcfce7', '#15803d')}</g>`, off.length ? '' : 'b2cue'); });
+        if (off.length) s += `<rect x="420" y="414" width="480" height="38" rx="19" fill="#fff" stroke="#ef4444" stroke-width="3"/><text x="660" y="440" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c">${st.tie && !d.tied && off.length > 1 ? '👆 한 무리를 잡아 다른 무리 위에 겹쳐 묶어요' : '👆 내릴 승객 무리를 잡아 정류장으로!'}</text>`;
+        if (d.ok) s += TX(856, 150, '🏁 종점 도착!', { fs: 28, fill: '#15803d', w: 900 });
+        const info = M4.rows(`🚏 ${st.name}`, [['버스 안', d.n, '명', 1]], '') + `<div class="ex5lh">🧾 운행 기록</div><div class="ex5log">출발 · ${c.start}명</div>` + d.log.map(x => `<div class="ex5log">${x}</div>`).join('') + (d.ok && c.done ? M4.eq(c.done(d, expr(d)), 'ok') : '');
         return box(s, info, d.ok); },
       on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v), st = cur(d);
-          if (m.a === 'tap') { api.say(false, '승객 카드를 <b>잡아 끌어서</b> 옮겨요.', true); return; }
+          if (m.a === 'tap') { api.say(false, '승객 무리를 <b>잡아 끌어서</b> 옮겨요.', true); return; }
           if (m.a !== 'drop') return;
-          /* 단체 손님 묶기: 한 카드를 다른 카드 위로 */
-          if (st.tie && !d.tied && m.p.startsWith('off') && /^off\d$/.test(m.t) && m.t !== 'off' + m.p.split(':')[1] && m.p !== 'off:all') { d.tied = true; pop(); api.say(true, `단체 손님 ${d.offLeft.join('명과 ')}명을 한 묶음으로! 이제 묶음째 정류장으로 내려요.`, true); return; }
+          if (st.tie && !d.tied && m.p.startsWith('off') && /^off\d$/.test(m.t) && m.t !== 'off' + m.p.split(':')[1] && m.p !== 'off:all') { d.tied = true; pop(); api.say(true, `단체 손님 ${d.offLeft.join('명과 ')}명을 끈으로 한 묶음! 이제 묶음째 정류장으로 내려요. 식에는 <b>괄호</b>가 생겨요.`, true); return; }
           if (m.p.startsWith('off') && m.t === 'plat') {
-            if (st.tie && !d.tied && d.offLeft.length > 1) { api.say(false, '단체 손님은 <b>함께</b> 내려요. 먼저 카드를 다른 카드 위에 겹쳐 <b>한 묶음</b>으로 모아요.', true); return; }
+            if (st.tie && !d.tied && d.offLeft.length > 1) { api.say(false, '단체 손님은 <b>함께</b> 내려요. 한 무리를 다른 무리 위에 겹쳐 <b>한 묶음</b>으로 묶어요.', true); return; }
             const g = m.p === 'off:all' ? d.offLeft.slice() : [d.offLeft[+m.p.split(':')[1]]], sum = g.reduce((a, b) => a + b, 0), n0 = d.n;
-            d.n -= sum; d.ops.push({ op: '-', g }); d.log.push(g.length > 1 ? `${n0} − (${g.join(' + ')}) = ${n0} − ${sum} = <b>${d.n}</b>` : `${n0} − ${sum} = <b>${d.n}</b>`);
+            d.n -= sum; d.ops.push({ op: '-', g }); d.gone.push(sum); d.log.push(g.length > 1 ? `${n0} − (${g.join(' + ')}) = ${n0} − ${sum} = <b>${d.n}</b>` : `${n0} − ${sum} = <b>${d.n}</b>`);
             d.offLeft = m.p === 'off:all' ? [] : d.offLeft.filter((_, i) => i !== +m.p.split(':')[1]); pop(); api.clear(); }
           else if (m.p.startsWith('on') && m.t === 'bus') {
-            if (d.offLeft.length) { api.say(false, '버스에서는 <b>내릴 사람이 먼저 내리고</b> 타요. 내릴 손님부터 정류장으로 옮겨요.', true); return; }
+            if (d.offLeft.length) { api.say(false, '버스에서는 <b>내릴 사람이 먼저 내리고</b> 타요. 내릴 승객부터 정류장으로 옮겨요.', true); return; }
             const i = +m.p.split(':')[1], g = d.onLeft[i], n0 = d.n; d.n += g; d.ops.push({ op: '+', g: [g] }); d.log.push(`${n0} + ${g} = <b>${d.n}</b>`); d.onLeft = d.onLeft.filter((_, j) => j !== i); pop(); api.clear(); }
           else return;
           if (!d.offLeft.length && !d.onLeft.length) {
-            if (d.si < c.stops.length - 1) { d.si++; const ns = c.stops[d.si]; d.offLeft = ns.off.slice(); d.onLeft = ns.on.slice(); d.tied = false; d.mv = true; api.say(true, `출발! 다음은 <b>${ns.name}</b>이에요.`, true); api.later(() => { d.mv = false; api.redraw(); }, 700); }
+            if (d.si < c.stops.length - 1) { d.si++; const ns = c.stops[d.si]; d.offLeft = ns.off.slice(); d.onLeft = ns.on.slice(); d.tied = false; d.gone = []; d.mv = true; api.say(true, `출발! 다음은 <b>${ns.name}</b>이에요.`, true); api.later(() => { d.mv = false; api.redraw(); }, 700); }
             else { d.ok = true; api.win(c.say(d, expr(d))); } } } },
-      _solve(d, on) { c.stops.forEach((st, k) => { if (st.tie && st.off.length > 1) { on('act:m4set', 'drop:off:0:off1'); on('act:m4set', 'drop:off:all:plat'); } else st.off.forEach(() => on('act:m4set', 'drop:off:0:plat')); st.on.forEach(() => on('act:m4set', 'drop:on:0:bus')); }); } }; }
+      _solve(d, on) { c.stops.forEach(st => { if (st.tie && st.off.length > 1) { on('act:m4set', 'drop:off:0:off1'); on('act:m4set', 'drop:off:all:plat'); } else st.off.forEach(() => on('act:m4set', 'drop:off:0:plat')); st.on.forEach(() => on('act:m4set', 'drop:on:0:bus')); }); } }; }
+
+  /* ============ JUMP: 수직선 위 버스 점프 — 이야기 순서 vs 묶어서 먼저 ============
+     c = { t, kind, q, start, lo, hi, chips:[{ id, v(±), lab }], want:[id…], e(식), say(), done(), cmp:{v, lab}(비교 표시) } */
+  function JUMP(c) {
+    const lo = c.lo || 0, hi = c.hi || 60, X = v => 70 + (v - lo) / (hi - lo) * 820, LY = 250;
+    return { _ty: 'ex5jump', t: c.t, kind: c.kind, q: d => d.ok ? '도착!' : c.q,
+      init: () => ({ pos: c.start, path: [], used: [], ok: false, bad: null }),
+      view: d => { let s = `<rect width="960" height="440" fill="#f8fafc"/><rect x="20" y="16" width="920" height="80" rx="20" fill="#fff" stroke="#a78bfa" stroke-width="4"/>`;
+        s += TX(480, 66, c.e ? EX.t(c.e) + (d.ok ? ' = ' + d.pos : ' = ?') : '', { fs: 36, fill: '#1e1b4b', w: 900 });
+        /* 수직선 */
+        s += `<line x1="${X(lo) - 20}" y1="${LY}" x2="${X(hi) + 20}" y2="${LY}" stroke="#334155" stroke-width="5" stroke-linecap="round"/><path d="M${X(hi) + 22},${LY - 9} l14,9 l-14,9z" fill="#334155"/>`;
+        for (let v = lo; v <= hi; v++) { const big = v % 10 === 0, mid = v % 5 === 0; s += `<line x1="${X(v)}" y1="${LY - (big ? 16 : mid ? 11 : 6)}" x2="${X(v)}" y2="${LY + (big ? 16 : mid ? 11 : 6)}" stroke="#475569" stroke-width="${big ? 3 : 1.6}"/>`; if (big) s += TX(X(v), LY + 46, v, { fs: 28, fill: '#334155', w: 900 }); }
+        /* 비교: 앞에서 만든 도착점 */
+        if (c.cmp) s += `<g><line x1="${X(c.cmp.v)}" y1="${LY - 40}" x2="${X(c.cmp.v)}" y2="${LY + 18}" stroke="#16a34a" stroke-width="3" stroke-dasharray="6 5"/>${TX(X(c.cmp.v), LY + 72, `${c.cmp.lab} ${c.cmp.v}`, { fs: 20, fill: '#15803d', w: 900 })}</g>`;
+        /* 지나온 점프 */
+        let p = c.start; d.path.forEach((j, k) => { const q = p + j.v, x1 = X(p), x2 = X(q), h = Math.min(120, 30 + Math.abs(x2 - x1) * .45), col = j.v < 0 ? '#dc2626' : '#16a34a', mx = (x1 + x2) / 2;
+          s += `<path class="${k === d.path.length - 1 ? 'ex5arc' : ''}" d="M${x1},${LY - 4} Q${mx},${LY - 4 - h * 2} ${x2},${LY - 4}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/><path d="M${x2},${LY - 6} l${j.v < 0 ? 12 : -12},-10 M${x2},${LY - 6} l${j.v < 0 ? 14 : -14},4" stroke="${col}" stroke-width="5" stroke-linecap="round"/>`;
+          s += `<rect x="${mx - 44}" y="${LY - h - 22}" width="88" height="30" rx="15" fill="#fff" stroke="${col}" stroke-width="3"/>` + TX(mx, LY - h, (j.v < 0 ? '−' : '+') + Math.abs(j.v), { fs: 20, fill: col, w: 900 }); p = q; });
+        /* 출발점·현재 위치(작은 버스) */
+        s += `<circle cx="${X(c.start)}" cy="${LY}" r="7" fill="#7c3aed"/>` + TX(X(c.start), LY + 72, `출발 ${c.start}`, { fs: 20, fill: '#6d28d9', w: 900 });
+        const bx = X(d.pos); s += `<g transform="translate(${bx - 36},${LY - 60}) scale(1.4)"><rect width="52" height="30" rx="8" fill="#fbbf24" stroke="#92400e" stroke-width="2.5"/><rect x="5" y="5" width="12" height="11" rx="2" fill="#bae6fd"/><rect x="20" y="5" width="12" height="11" rx="2" fill="#bae6fd"/><rect x="35" y="5" width="12" height="11" rx="2" fill="#bae6fd"/><circle cx="12" cy="32" r="5" fill="#1f2937"/><circle cx="40" cy="32" r="5" fill="#1f2937"/></g>`;
+        if (d.path.length) s += TX(bx, LY - 70, d.pos, { fs: 26, fill: '#1e1b4b', w: 900 });
+        /* 점프 카드 */
+        const left = c.chips.filter(ch => !d.used.includes(ch.id)), cw = 250, gap = 30, tot = left.length * cw + (left.length - 1) * gap; let cx = 480 - tot / 2;
+        s += zone('line', `<rect x="40" y="${LY - 150}" width="880" height="${150 + 70}" rx="20" fill="#ede9fe" opacity=".001" class="b2tz"/>`);
+        left.forEach(ch => { const col = ch.v < 0 ? '#dc2626' : '#16a34a', bg = ch.v < 0 ? '#fee2e2' : '#dcfce7';
+          s += drag('j:' + ch.id, `<g><rect x="${cx}" y="350" width="${cw}" height="72" rx="18" fill="${bg}" stroke="${col}" stroke-width="4"/><path d="M${cx + 20},392 q22,-26 44,0" fill="none" stroke="${col}" stroke-width="4"/><path d="M${cx + 64},392 l-9,-3 M${cx + 64},392 l-2,-9" stroke="${col}" stroke-width="4" stroke-linecap="round"/>${TX(cx + 150, 384, (ch.v < 0 ? '−' : '+') + Math.abs(ch.v), { fs: 30, fill: col, w: 900 })}${TX(cx + 150, 410, ch.lab, { fs: 15, fill: '#334155', w: 800 })}</g>`, d.path.length ? '' : 'b2cue'); cx += cw + gap; });
+        if (!d.ok && left.length) s += TX(480, 128, '✋ 점프 카드를 잡아 수직선 위에 놓으면 버스가 그만큼 뛰어요', { fs: 20, fill: '#7c3aed', w: 800 });
+        const info = M4.rows('🚌 버스의 자리', [['지금', d.pos, '명', 1]], '') + `<div class="ex5lh">🦘 점프 기록</div><div class="ex5log">출발 · ${c.start}</div>` + (() => { let q = c.start; return d.path.map(j => { const r = `${q} ${j.v < 0 ? '−' : '+'} ${Math.abs(j.v)} = <b>${q + j.v}</b>`; q += j.v; return `<div class="ex5log">${r}</div>`; }).join(''); })() + (d.ok && c.done ? M4.eq(c.done(d), 'ok') : '');
+        return box(s, info, d.ok); },
+      on: { 'act:m4set'(d, v, el, api) { if (d.ok) return; const m = msg(v);
+          if (m.a === 'tap') { api.say(false, '점프 카드를 <b>잡아서</b> 수직선 위로 끌어 놓아요.', true); return; }
+          if (m.a !== 'drop' || m.t !== 'line' || !m.p.startsWith('j:')) return;
+          const id = m.p.slice(2), ch = c.chips.find(x => x.id === id), want = c.want[d.path.length]; if (!ch) return;
+          if (id !== want) { const w = c.chips.find(x => x.id === want); api.say(false, c.why ? c.why(ch, w, d) : `이야기 순서를 다시 봐요. 지금은 <b>${w.lab}</b> 차례예요.`, true); try { Sound.wrong(); } catch (e) {} return; }
+          d.path.push(ch); d.used.push(id); d.pos += ch.v; pop(); api.clear();
+          if (d.path.length === c.want.length) { d.ok = true; api.win(c.say(d)); } } },
+      _solve(d, on) { c.want.forEach(id => on('act:m4set', `drop:j:${id}:line`)); } }; }
 
   /* ============ FOLD: 식 접기 ============
      c = { t, kind, q, e:'50 - 20 + 10', story?:'버스 이야기', say(d) } */
@@ -13162,7 +13320,7 @@ const EX5 = (() => {
       _solve(d, on) { let T = d.T; for (let k = 0; k < 20 && T.length > 1; k++) { const i = EX.next(T); on('act:m4set', `drop:n:${i - 1}:n${i + 1}`); T = d.T; } } }; }
 
   (() => { const st = document.createElement('style'); st.textContent = `.ex5lh{font-weight:900;color:#5b21b6;font-size:1.05rem;margin:6px 0 2px}.ex5log{font-weight:800;color:#334155;font-size:1rem;padding:3px 8px;border-left:4px solid #c4b5fd;margin:3px 0;background:#faf5ff;border-radius:0 8px 8px 0}
-#toolBody .ex5go{animation:ex5go .7s ease}@keyframes ex5go{0%{transform:translateX(-30px)}100%{transform:none}}`; document.head.appendChild(st); })();
+#toolBody .ex5go{animation:ex5go .7s ease}#toolBody .ex5arc{stroke-dasharray:900;stroke-dashoffset:900;animation:ex5arc .7s ease forwards}@keyframes ex5arc{to{stroke-dashoffset:0}}@keyframes ex5go{0%{transform:translateX(-30px)}100%{transform:none}}`; document.head.appendChild(st); })();
 
   /* ============ CHAIN: 이야기 순서대로 카드를 끌어 놓으며 식 만들기 (차시 2~5) ============
      c = { t, kind, q, start, unit, hold:{ name, icon, col }, steps:[{ name, label?:v=>'한 상자에 9개',
@@ -13205,7 +13363,7 @@ const EX5 = (() => {
           pop(); api.clear();
           if (d.ci >= st.cards.length) { if (d.si < c.steps.length - 1) { d.si++; d.ci = 0; d.tied = null; api.say(true, `좋아요! 다음은 <b>${c.steps[d.si].name}</b>.`, true); } else { d.ok = true; api.win(c.say(d, d.e)); } } } },
       _solve(d, on) { c.steps.forEach(st => { if (st.tie) { on('act:m4set', 'drop:c:0:c1'); on('act:m4set', 'drop:c:all:hold'); } else st.cards.forEach((k, i) => on('act:m4set', `drop:c:${i}:hold`)); }); } }; }
-  return { BUS, FOLD, CHAIN, pcard, person, ccard };
+  return { BUS, JUMP, FOLD, CHAIN, ccard };
 })();
 
 
