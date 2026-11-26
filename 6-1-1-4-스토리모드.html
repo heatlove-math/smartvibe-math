@@ -11944,7 +11944,8 @@ body.svsl-on #toolBody .svsl-side .cfb .face-e{display:none}
 /* 휴대폰 세로 화면: 조작 활동(개념 탐험·미니게임·보드게임)에서는 가로로 돌려 달라는 안내 — 문제 풀이는 세로 그대로 */
 (function () { if (window.__uniRot) return; window.__uniRot = 1;
   const isPhone = () => Math.min(screen.width, screen.height) < 600 && matchMedia('(pointer:coarse)').matches;
-  const act = () => { const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
+  const isWrap = () => /-U-/.test(decodeURIComponent(location.pathname)) || /-U$/.test(String((window.CONFIG || {}).LESSON_ID || ''));
+  const act = () => { if (isWrap()) return false; const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
   let el = null, dis = {};
   function upd() { const port = innerHeight > innerWidth, on = isPhone() && port && act(); const key = (document.body.dataset.svst || '') + '|' + (document.body.dataset.svset || '');
     if (!el) { el = document.createElement('div'); el.id = 'uniRot'; el.innerHTML = '<div class="uniRotBox"><div class="uniRotPh">📱</div><b>휴대폰을 가로로 돌려 주세요</b><p>직접 끌어 조작하는 활동은 가로 화면에서 그림이 크게 보여요.</p><button type="button">세로로 그냥 할게요</button></div>'; const off = e => { e.preventDefault(); e.stopPropagation(); try { sessionStorage.setItem('uniRotOff', '1'); } catch (x) {} dis.all = 1; el.classList.remove('on'); };
