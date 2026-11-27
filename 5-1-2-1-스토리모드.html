@@ -12210,7 +12210,7 @@ const EB = (() => {
 
 </script>
 <!--BG-END-->
-<style id="u52fit">#svslTop .ti{white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15!important;text-overflow:clip!important}#svslNav .lb b,#svslNav .lb small{white-space:normal!important;text-overflow:clip!important;overflow:visible!important;text-align:center;line-height:1.2}@media (max-height:520px) and (orientation:landscape){.svh-hud{overflow-y:auto!important;align-content:start!important;max-height:100%!important;box-sizing:border-box}.svh-stage{display:flex!important}.svh-stage>*{min-height:0}}html body :is(#s1body,#s2body) .svsl-paged.svsl-paged :is(div,section):has(> .svsl-pgoff):not(:has(> :not(.svsl-pgoff,style,script))){display:none!important}.svsl-pgd b{white-space:nowrap}</style>
+<style id="u52fit">#svslTop .ti{white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15!important;text-overflow:clip!important}#svslNav .lb b,#svslNav .lb small{white-space:normal!important;text-overflow:clip!important;overflow:visible!important;text-align:center;line-height:1.2}@media (max-width:640px){#svslNav .lb small{display:none!important}#svslNav .lb b{font-size:12px!important;display:-webkit-box!important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden!important}}@media (max-height:520px) and (orientation:landscape){.svh-hud{overflow-y:auto!important;align-content:start!important;max-height:100%!important;box-sizing:border-box}.svh-stage{display:flex!important}.svh-stage>*{min-height:0}}html body :is(#s1body,#s2body) .svsl-paged.svsl-paged :is(div,section):has(> .svsl-pgoff):not(:has(> :not(.svsl-pgoff,style,script))){display:none!important}.svsl-pgd b{white-space:nowrap}@media (max-height:520px) and (orientation:landscape){html body.svsl-on.svsl-land .svh-stage{grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr)!important}html body.svsl-on.svsl-land .svh-hud{gap:6px 10px!important;padding:8px 12px!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"title title" "vs vs" "talk goal" "talk obj"!important;align-content:start!important}html body.svsl-on.svsl-land .svh-hud .svh-goal{margin-top:0!important}html body.svsl-on.svsl-land .svh-hud .svh-obj{position:relative!important;left:auto!important;top:auto!important;transform:none!important;padding:4px 10px!important}html body .m4info:has(.dvlh) .dvlh,html body .m4info:has(.dvlh) .dvlog{display:none!important}html body .m4info:has(.dvlh){justify-content:center!important}}</style>
 <!--CK-START--><style>/* 4-1-1-1 개념 탐험 조작 도구 */
 .t11hubx{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 @media(max-width:640px){.t11hubx{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
@@ -12932,7 +12932,7 @@ body.b2drag,body.b2drag *{cursor:grabbing!important}
 #toolBody .b2shake{animation:b2sh .45s}@keyframes b2sh{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}`; document.head.appendChild(s); } catch (er) {} }
   /* 그림 칸 맞춤: 단계마다 처음 그린 그림 상자(투명 틀 포함)에 맞춰 viewBox 를 정해요 → 그림이 칸을 가득 채워요 */
   if (!window.__b2fit) { window.__b2fit = 1; const VB = {};
-    const fit = () => document.querySelectorAll('#toolBody svg.b2svg').forEach(sv => { if (!sv.getClientRects().length) return; let key = ''; try { const k = state.s1.tool; key = k + ':' + CK.S(k).i; } catch (e) {}
+    const fit = () => document.querySelectorAll('#toolBody svg.b2svg').forEach(sv => { if (!sv.getClientRects().length) return; let key = ''; try { const k = state.s1.tool; key = k + ':' + CK.S(k).i + (sv.classList.contains('dvpsvg') ? ':p' : ''); } catch (e) {}
       let b; try { b = sv.getBBox(); } catch (e) { return; } if (!b.width) return; const p = 16; let r = [b.x - p, b.y - p, b.x + b.width + p, b.y + b.height + p];
       const o = VB[key]; if (o) r = [Math.min(o[0], r[0]), Math.min(o[1], r[1]), Math.max(o[2], r[2]), Math.max(o[3], r[3])];   /* 단계 안에서는 넓어지기만(그림이 줄었다 커졌다 하지 않게) */
       VB[key] = r; const vb = [r[0], r[1], r[2] - r[0], r[3] - r[1]].map(v => +v.toFixed(1)).join(' '); if (sv.getAttribute('viewBox') !== vb) sv.setAttribute('viewBox', vb); });
@@ -13307,8 +13307,9 @@ const DV5 = (() => {
   const pop = () => { try { Sound.pop(); } catch (e) {} }, bad = () => { try { Sound.wrong(); } catch (e) {} };
   const divs = n => { const o = []; for (let k = 1; k <= n; k++) if (n % k === 0) o.push(k); return o; };
   const box = (s, info, done, H) => M4.box(M4.svg(960, H || 470, s, 'b2svg'), info, { done, wide: true });
-  const head = (t, sub) => `<rect x="120" y="8" width="720" height="${sub ? 84 : 66}" rx="18" fill="#fff" stroke="#a78bfa" stroke-width="4"/>` + TX(480, 50, t, { fs: t.length > 26 ? 26 : 32, fill: '#1e1b4b', w: 900 }) + (sub ? TX(480, 80, sub, { fs: 18, fill: '#7c3aed', w: 800 }) : '');
-  const hint = (t, y = 432) => `<rect x="${480 - Math.min(440, t.length * 9 + 40)}" y="${y}" width="${Math.min(880, t.length * 18 + 80)}" height="34" rx="17" fill="#fff" stroke="#7c3aed" stroke-width="3"/>` + TX(480, y + 23, '👆 ' + t, { fs: 17, fill: '#5b21b6', w: 900 });
+  const HD = { t: '', s: '', h: '' };
+  const head = (t, sub) => (HD.t = t, HD.s = sub || '', '') + `<rect x="120" y="8" width="720" height="${sub ? 84 : 66}" rx="18" fill="#fff" stroke="#a78bfa" stroke-width="4"/>` + TX(480, 50, t, { fs: t.length > 26 ? 26 : 32, fill: '#1e1b4b', w: 900 }) + (sub ? TX(480, 80, sub, { fs: 18, fill: '#7c3aed', w: 800 }) : '');
+  const hint = (t, y = 432) => (HD.h = t, '') + `<rect x="${480 - Math.min(440, t.length * 9 + 40)}" y="${y}" width="${Math.min(880, t.length * 18 + 80)}" height="34" rx="17" fill="#fff" stroke="#7c3aed" stroke-width="3"/>` + TX(480, y + 23, '👆 ' + t, { fs: 17, fill: '#5b21b6', w: 900 });
   const info = (title, rows, done, st) => (st ? M4.rows(st[0], [[st[1], st[2], st[3] || '', 1]], '') : '') + `<div class="dvlh">${title}</div>` + (rows.length > 4 ? [[`⋯ 앞에서 ${rows.length - 4}번 더 했어요`, null, 1]].concat(rows.slice(-4)) : rows).map(r => `<div class="dvlog ${r[1] ? 'ok' : r[1] === false ? 'no' : ''}">${r[0]}</div>`).join('') + (done ? M4.eq(done, 'ok') : '');
   /* ---------- 그림 조각 ---------- */
   const cookie = (x, y, r, c) => `<g><circle cx="${x}" cy="${y}" r="${r}" fill="${c || '#e7a64b'}" stroke="#92400e" stroke-width="${Math.max(1.5, r / 9)}"/><circle cx="${x - r * .35}" cy="${y - r * .3}" r="${r * .14}" fill="#5b3412"/><circle cx="${x + r * .32}" cy="${y - r * .05}" r="${r * .13}" fill="#5b3412"/><circle cx="${x - r * .05}" cy="${y + r * .38}" r="${r * .13}" fill="#5b3412"/></g>`;
@@ -13765,7 +13766,251 @@ const DV5 = (() => {
   }
 
   (() => { const st = document.createElement('style'); st.textContent = `.dvlh{font-weight:900;color:#5b21b6;font-size:1.05rem;margin:6px 0 4px}.dvlog{font-weight:800;color:#334155;font-size:1rem;padding:4px 10px;border-left:4px solid #c4b5fd;margin:3px 0;background:#faf5ff;border-radius:0 8px 8px 0}.dvlog.ok{border-color:#22c55e;background:#f0fdf4;color:#14532d}.dvlog.no{border-color:#f87171;background:#fef2f2;color:#7f1d1d}.m4info:has(.dvlh){justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain}body.svsl-on.svsl-land .m4info:has(.dvlh),html body .m4p .m4info:has(.dvlh){justify-content:flex-start!important;overflow-y:auto!important}`; document.head.appendChild(st); })();
-  return { SPLIT, RECT, ARC, PROBE, HOP, GRID, REL, SORTM, TWO, VENN, SQT, LADDER, FROGS, BRICK, K: { drag, zone, TX, RC, LN, F, msg, pop, bad, divs, box, head, hint, info, cookie, bag, tile, divider, magnifier } };
+  return { SPLIT, RECT, ARC, PROBE, HOP, GRID, REL, SORTM, TWO, VENN, SQT, LADDER, FROGS, BRICK, K: { drag, zone, TX, RC, LN, F, msg, pop, bad, divs, box, head, hint, info, cookie, bag, tile, divider, magnifier, HD } };
+})();
+
+/* =====================================================================
+   📱 DV5P · 휴대폰 세로 화면용 개념 도구 배치 (5학년 2단원)
+   가로 화면 그림(960 폭)은 그대로 두고, 세로 휴대폰에서만 좁고 긴 판(600 폭)으로 다시 그려요.
+   - 제목·도움말은 그림 밖 글자(HTML)로 크게 보여 줘요
+   - 집기(data-p)·놓을 곳(data-t) 이름은 가로 화면과 똑같아서 조작 방법·정답 판단은 그대로예요
+   ===================================================================== */
+(() => {
+  if (typeof DV5 === 'undefined' || DV5.__p) return; DV5.__p = 1;
+  const K = DV5.K, { drag, zone, TX, RC, LN, divs, cookie, bag, tile, divider, magnifier, HD } = K;
+  const PT = () => typeof innerWidth !== 'undefined' && innerWidth < 700 && innerHeight > innerWidth * 1.05;
+  const T = (x, y, t, fs, fill, a) => TX(x, y, t, { fs, fill: fill || '#0f172a', w: 900, a });
+  const gcd = (a, b) => b ? gcd(b, a % b) : a, lcm = (a, b) => a / gcd(a, b) * b;
+  const jo2 = v => { const t = String(v).slice(-1); return '2459'.includes(t) ? '는' : '은'; };
+  const FC = ['#f87171', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#f472b6', '#2dd4bf', '#fb923c', '#a3e635', '#e879f9', '#38bdf8', '#facc15'];
+  const W = 600;
+  /* 가로 화면 결과에서 그림 칸만 세로 그림으로 바꿔요 (오른쪽 기록 칸은 그대로) */
+  const swap = (L, s, H, bg) => { const a = L.indexOf('<div class="m4fig">'); if (a < 0) return L; const b = L.indexOf('</div>', a); const t = HD.t, sub = HD.s, h = String(HD.h || '').replace(/\((\d+)\/(\d+)칸\)/, '($2칸 중 $1칸)');
+    const fig = `<div class="dvpw">${t || sub ? `<div class="dvph">${t ? `<b>${t}</b>` : ''}${sub ? `<span>${sub}</span>` : ''}</div>` : ''}<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" class="b2svg dvpsvg" style="background:${bg}">${s}</svg>${h ? `<div class="dvphint">👆 ${h}</div>` : ''}</div>`;
+    return L.slice(0, a + '<div class="m4fig">'.length) + fig + L.slice(b); };
+  const hookup = (name, P) => { const B = DV5[name]; DV5[name] = c => { const o = B(c), lv = o.view, pv = P(c); o.view = d => { HD.t = HD.s = HD.h = ''; const L = lv(d); if (!PT()) return L; try { const r = pv(d); return swap(L, r[0], r[1], r[2]); } catch (e) { return L; } }; return o; }; };
+  const grid = (n, per, cw, ch, x0, y0) => i => [x0 + ((i - 1) % per) * cw + cw / 2, y0 + Math.floor((i - 1) / per) * ch + ch / 2];
+
+  /* SPLIT · 쿠키 줄은 여러 줄로 감아요. 칸막이 자리는 쿠키 사이마다 */
+  hookup('SPLIT', c => { const n = c.n, U = c.unit || '개', IT = c.item || '쿠키', per = n <= 8 ? n : n <= 12 ? 6 : 8, sp = 540 / per, r = Math.min(30, sp * .4), rows = Math.ceil(n / per), RH = 104, Y0 = 56;
+    const pos = i => [30 + sp / 2 + (i % per) * sp, Y0 + Math.floor(i / per) * RH];
+    return d => { const k = d.last, q = k ? Math.floor(n / k) : 0, rm = k ? n % k : 0; let s = '';
+      for (let i = 0; i < n; i++) { const [x, y] = pos(i), g = k ? Math.floor(i / k) : -1, left = k && i >= q * k; s += cookie(x, y, r, !k ? '#e7a64b' : left ? '#fca5a5' : g % 2 ? '#f6c56f' : '#e7a64b'); }
+      if (k) for (let g = 1; g <= q; g++) if (g * k < n) { const [x, y] = pos(g * k - 1); s += divider(x + sp / 2, y - r - 20, 2 * r + 40); }
+      if (!d.ok) for (let i = 1; i < n; i++) { const [x, y] = pos(i - 1), gx = x + sp / 2, w = Math.max(24, sp * .55);
+        s += zone('g' + i, `<rect class="b2tz" x="${gx - w / 2}" y="${y - r - 24}" width="${w}" height="${2 * r + 48}" rx="8" fill="rgba(255,255,255,.01)"/><line x1="${gx}" y1="${y - r - 10}" x2="${gx}" y2="${y + r + 10}" stroke="#cbd5e1" stroke-width="2.5" stroke-dasharray="3 4"/>`); }
+      let y = Y0 + (rows - 1) * RH + r + 34;
+      if (rm) { s += T(300, y + 6, `남는 ${IT} ${rm}${U} (빨강)`, 24, '#b91c1c'); y += 30; }
+      if (!d.ok) { s += drag('div', `<g>${RC(30, y, 250, 110, '#fff', { st: '#ef4444', sw: 3, rx: 18 })}${divider(80, y + 16, 78)}${T(190, y + 66, '칸막이', 28, '#b91c1c')}</g>`, 'b2cue');
+        s += zone('g' + n, `<rect class="b2tz" x="310" y="${y}" width="260" height="110" rx="18" fill="#fef3c7" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 6"/>${T(440, y + 50, '통째로', 26, '#92400e')}${T(440, y + 84, '한 봉지', 26, '#92400e')}`); y += 130; }
+      if (k) { const cnt = q, pr = Math.min(6, cnt), bw = Math.min(84, 540 / pr - 10), bh = Math.min(84, bw * 1.05), br = Math.ceil(cnt / pr);
+        for (let g = 0; g < cnt; g++) { const rr = Math.floor(g / pr), inR = Math.min(pr, cnt - rr * pr), bx = 300 - (inR * (bw + 10) - 10) / 2 + (g % pr) * (bw + 10); s += bag(bx, y + rr * (bh + 34), bw, bh, g % 2 ? '#fde68a' : '#fcd34d', null) + T(bx + bw / 2, y + rr * (bh + 34) + bh + 26, `${k}${U}`, 24, '#78350f'); }
+        y += br * (bh + 34) + 34; s += T(300, y, rm ? `${q}봉지 · ${rm}${U} 남음` : `${q}봉지 · 남는 것 없음`, 32, rm ? '#b91c1c' : '#15803d'); y += 16; }
+      return [s, y + 10, '#fff7ed']; }; });
+
+  /* RECT · 위: 타일 더미 + 찾은 직사각형 / 가운데: 한 줄에 몇 개씩(수 칸) / 아래: 놓인 타일 */
+  hookup('RECT', c => { const n = c.n, per = 6, cw = 90, ch = 64, rows = Math.ceil(n / per);
+    return d => { const w = d.w; let s = '';
+      if (!d.ok) { let st = ''; for (let i = 0; i < Math.min(n, 12); i++) st += tile(70 + (i % 4) * 34, 24 + Math.floor(i / 4) * 34 - (i % 2) * 2, 34, '#60a5fa');
+        s += drag('pile', `<g>${RC(30, 8, 250, 176, '#fff', { st: '#2563eb', sw: 3, rx: 18 })}${st}${T(155, 168, `타일 ${n}개`, 26, '#1e3a8a')}</g>`, 'b2cue'); }
+      const fx = d.ok ? 30 : 300, fw = d.ok ? 540 : 270; s += RC(fx, 8, fw, 176, '#fff', { st: '#16a34a', sw: 3, rx: 18 }) + T(fx + fw / 2, 42, '찾은 직사각형', 28, '#15803d');
+      d.got.forEach((p, i) => { s += T(fx + fw / 2, 84 + i * 34, `${p[0]} × ${p[1]}`, 32, '#14532d'); });
+      s += T(300, 232, '한 줄에 몇 개씩 놓을까요?', 28, '#475569');
+      const pos = grid(n, per, cw, ch, 30, 246);
+      for (let k = 1; k <= n; k++) { const [x, y] = pos(k), on = k === w, got = d.got.some(p => p[0] === k || p[1] === k);
+        s += zone('w' + k, `<rect class="b2tz" x="${x - cw / 2 + 4}" y="${y - ch / 2 + 4}" width="${cw - 8}" height="${ch - 8}" rx="12" fill="${on ? '#bbf7d0' : got ? '#dcfce7' : '#f8fafc'}" stroke="${on ? '#16a34a' : '#cbd5e1'}" stroke-width="2.5"/>${T(x, y + 11, k, 32, got ? '#15803d' : '#334155')}`); }
+      let y = 246 + rows * ch + 20;
+      if (w) { const rr = Math.ceil(n / w), full = n % w === 0, sz = Math.min(48, 480 / w, 320 / rr), gw = w * sz, gx = 300 - gw / 2, gy = y + 10;
+        for (let i = 0; i < n; i++) { const a = Math.floor(i / w), b = i % w; s += tile(gx + b * sz, gy + a * sz, sz, full ? '#4ade80' : a === rr - 1 ? '#fca5a5' : '#60a5fa'); }
+        s += `<rect x="${gx - 4}" y="${gy - 4}" width="${gw + 8}" height="${rr * sz + 8}" rx="8" fill="none" stroke="${full ? '#16a34a' : '#dc2626'}" stroke-width="3" stroke-dasharray="${full ? '' : '8 6'}"/>`;
+        if (full) s += T(gx - 14, gy + rr * sz / 2 + 9, `${n / w}`, 28, '#15803d', 'end') + T(300, gy + rr * sz + 34, `${w}`, 28, '#15803d');
+        y = gy + rr * sz + 44; }
+      return [s, y, '#f0fdf4']; }; });
+
+  /* ARC · 수 판(6칸씩) 위에서 짝을 잇고, 아래에 찾은 약수로 무지개를 그려요 */
+  hookup('ARC', c => { const n = c.n, D = divs(n), P = D.filter(a => a <= n / a), per = 6, cw = 90, ch = 76, rows = Math.ceil(n / per), COL = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6'];
+    return d => { let s = ''; const colOf = {}; d.got.forEach(a => { const col = COL[P.indexOf(a) % 6]; colOf[a] = col; colOf[n / a] = col; });
+      const pos = grid(n, per, cw, ch, 30, 10);
+      for (let k = 1; k <= n; k++) { const [x, y] = pos(k), col = colOf[k], tl = `<rect x="${x - cw / 2 + 5}" y="${y - ch / 2 + 5}" width="${cw - 10}" height="${ch - 10}" rx="14" fill="${col ? '#fff' : '#fff'}" stroke="${col || '#94a3b8'}" stroke-width="${col ? 6 : 2.5}"/>` + T(x, y + 11, k, 30, '#0f172a');
+        s += d.ok || col ? tl : zone('t' + k, drag('a' + k, tl)); }
+      let y = 10 + rows * ch + 14;
+      if (!d.ok && P.some(a => a * a === n)) { s += zone('mir', `<rect class="b2tz" x="150" y="${y}" width="300" height="64" rx="16" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="8 6"/>${T(300, y + 42, '🪞 같은 수끼리 곱하기', 26, '#6d28d9')}`); y += 80; }
+      /* 무지개 */
+      const L = Object.keys(colOf).map(Number).sort((a, b) => a - b);
+      if (L.length) { const sp = Math.min(84, 520 / L.length), x0 = 300 - sp * (L.length - 1) / 2, Hh = Math.min(170, 30 + L.length * 22), Yb = y + Hh + 20;
+        L.forEach((a, i) => { const b = n / a, j = L.indexOf(b); if (j <= i) return; const xa = x0 + i * sp, xb = x0 + j * sp; s += `<path d="M${xa},${Yb - 22} A${(xb - xa) / 2},${Math.min((xb - xa) / 2, Hh)} 0 0 1 ${xb},${Yb - 22}" fill="none" stroke="${colOf[a]}" stroke-width="7" stroke-linecap="round"/>`; });
+        L.forEach((a, i) => { const x = x0 + i * sp; if (a * a === n) s += `<circle cx="${x}" cy="${Yb - 52}" r="18" fill="none" stroke="${colOf[a]}" stroke-width="6"/>`; s += `<circle cx="${x}" cy="${Yb}" r="${Math.min(30, sp * .44)}" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/>` + T(x, Yb + 10, a, Math.min(28, sp * .5), '#0f172a'); });
+        y = Yb + 44; }
+      return [s, y, '#eff6ff']; }; });
+
+  /* PROBE · 돋보기 + 수 판(6칸씩) */
+  hookup('PROBE', c => { const n = c.n, per = 6, cw = 90, ch = 76, rows = Math.ceil(n / per);
+    return d => { const k = d.last; let s = ''; const lit = new Set(); d.ck.forEach(x => { if (n % x === 0) { lit.add(x); lit.add(n / x); } });
+      let y0 = 10;
+      if (!d.ok) { s += drag('mag', `<g>${RC(150, 8, 300, 120, '#fff', { st: '#0ea5e9', sw: 3, rx: 18 })}${magnifier(220, 62, 1.25)}${T(345, 76, '돋보기', 30, '#0369a1')}</g>`, 'b2cue'); y0 = 146; }
+      const pos = grid(n, per, cw, ch, 30, y0);
+      for (let i = 1; i <= n; i++) { const [x, y] = pos(i), on = lit.has(i), no = d.ck.includes(i) && n % i, cur = i === k;
+        const t = `<rect class="b2tz" x="${x - cw / 2 + 5}" y="${y - ch / 2 + 5}" width="${cw - 10}" height="${ch - 10}" rx="14" fill="${on ? '#dcfce7' : no ? '#f1f5f9' : '#fff'}" stroke="${cur ? '#f59e0b' : on ? '#16a34a' : '#94a3b8'}" stroke-width="${cur ? 5 : 2.5}"/>` + T(x, y + 11, i, 30, no ? '#94a3b8' : '#0f172a') + (no ? `<line x1="${x - 24}" y1="${y + 20}" x2="${x + 24}" y2="${y - 18}" stroke="#94a3b8" stroke-width="3"/>` : '');
+        s += d.ok ? t : zone('k' + i, t); }
+      return [s, y0 + rows * ch + 10, '#f8fafc']; }; });
+
+  /* 수직선을 여러 줄로 감아요 (HOP·FROGS 함께 씀) */
+  const LINE = (M, S) => { const cw = 520 / S, rowOf = v => Math.min(Math.floor(v / S), Math.floor(M / S)), xv = v => 40 + (v - rowOf(v) * S) * cw; return { cw, rowOf, xv, rows: Math.floor(M / S) + 1 }; };
+  const hopArc = (Lx, a, b, yOf, col, lab) => { const ra = Lx.rowOf(a), rb = Lx.rowOf(b); let s = '';
+    if (ra === rb) { const xa = Lx.xv(a), xb = Lx.xv(b), y = yOf(ra), h = Math.min(90, (xb - xa) * .75); s += `<path d="M${xa},${y - 6} Q${(xa + xb) / 2},${y - h} ${xb},${y - 6}" fill="none" stroke="${col}" stroke-width="5"/>` + (lab ? T((xa + xb) / 2, y - h / 2 - 12, lab, 22, col) : ''); }
+    else { const xa = Lx.xv(a), ya = yOf(ra), xe = 40 + 520 + 20; s += `<path d="M${xa},${ya - 6} Q${(xa + xe) / 2},${ya - 60} ${xe},${ya - 18}" fill="none" stroke="${col}" stroke-width="5" stroke-dasharray="10 6"/>`;
+      const xb = Lx.xv(b), yb = yOf(rb), xs = 20; s += `<path d="M${xs},${yb - 18} Q${(xs + xb) / 2},${yb - 60} ${xb},${yb - 6}" fill="none" stroke="${col}" stroke-width="5"/>` + (lab ? T((xs + xb) / 2 + 10, yb - 52, lab, 22, col) : ''); }
+    return s; };
+
+  /* HOP · 수직선을 3줄 안팎으로 감아 개구리가 뛰어요 */
+  hookup('HOP', c => { const st = c.step, M = c.max, S = M <= 36 ? 12 : 15, Lx = LINE(M, S), RH = 150, yOf = r => 120 + r * RH;
+    const frog = (x, y, sc = 1) => `<g transform="translate(${x},${y}) scale(${sc})"><ellipse cx="0" cy="6" rx="24" ry="17" fill="#4ade80" stroke="#166534" stroke-width="3"/><circle cx="-11" cy="-10" r="9" fill="#4ade80" stroke="#166534" stroke-width="3"/><circle cx="11" cy="-10" r="9" fill="#4ade80" stroke="#166534" stroke-width="3"/><circle cx="-11" cy="-11" r="4" fill="#0f172a"/><circle cx="11" cy="-11" r="4" fill="#0f172a"/><path d="M-9,8 q9,8 18,0" fill="none" stroke="#166534" stroke-width="2.5"/></g>`;
+    return d => { let s = '';
+      for (let r = 0; r < Lx.rows; r++) { const y = yOf(r), lo = r * S, hi = Math.min(M, lo + S - 1 + (r === Lx.rows - 1 ? 1 : 0)); s += `<rect x="10" y="${y - 4}" width="580" height="60" rx="14" fill="#7dd3fc" opacity=".55"/>` + LN(30, y, 570, y, '#0f172a', 3);
+        for (let v = lo; v <= hi; v++) { const x = Lx.xv(v), big = v % 5 === 0, mul = v > 0 && v % st === 0 && d.path.includes(v); s += LN(x, y - (big ? 12 : 7), x, y + (big ? 12 : 7), '#334155', big ? 2.5 : 1.5) + (big || mul ? T(x, y + 40, v, mul ? 26 : 22, mul ? '#c2410c' : '#334155') : '');
+          if (!d.ok && v > d.at && v <= Math.min(M, d.at + st * 2 + 2)) s += zone('v' + v, `<rect class="b2tz" x="${x - Lx.cw / 2}" y="${y - 64}" width="${Lx.cw}" height="96" fill="rgba(255,255,255,.01)"/>`); } }
+      d.path.forEach(v => { s += `<ellipse cx="${Lx.xv(v)}" cy="${yOf(Lx.rowOf(v)) + 4}" rx="16" ry="8" fill="#22c55e" stroke="#15803d" stroke-width="2.5"/>`; });
+      d.path.slice(1).forEach((v, i) => { s += hopArc(Lx, d.path[i], v, yOf, '#f97316', `+${st}`) + `<circle cx="${Lx.xv(v)}" cy="${yOf(Lx.rowOf(v))}" r="9" fill="#f97316" stroke="#fff" stroke-width="3"/>`; });
+      const fx = Lx.xv(d.at), fy = yOf(Lx.rowOf(d.at)) - 36; s += d.ok ? frog(fx, fy, 1.5) : drag('frog', frog(fx, fy, 1.5), 'b2cue');
+      const y = yOf(Lx.rows - 1) + 76; s += RC(20, y, 560, 120, '#fff', { st: '#f97316', sw: 4, rx: 18 }) + T(44, y + 40, `🐸 ${st}의 배수`, 26, '#9a3412', 'start') + T(44, y + 92, d.path.slice(1).join(', ') + (d.ok ? ', …' : d.path.length > 1 ? ', ?' : '?'), 34, '#c2410c', 'start');
+      return [s, y + 130, '#e0f2fe']; }; });
+
+  /* GRID · 붓 + 수 배열표(10칸 그대로, 칸을 크게) */
+  hookup('GRID', c => { const st = c.step, n = c.n, cols = c.cols || 10, rows = Math.ceil(n / cols), cw = 540 / cols, ch = Math.min(64, cw * 1.1), M = []; for (let v = st; v <= n; v += st) M.push(v);
+    return d => { let s = ''; let y0 = 14;
+      if (!d.ok) { s += drag('brush', `<g>${RC(30, 8, 250, 120, '#fff', { st: c.col || '#fb923c', sw: 3, rx: 18 })}<rect x="${70}" y="${30}" width="18" height="56" rx="6" fill="#a16207"/><path d="M62,86 h34 l-4,30 q-13,12 -26,0z" fill="${c.col || '#fb923c'}" stroke="#7c2d12" stroke-width="2.5"/>${T(190, 78, `${st}의 배수 붓`, 26, '#7c2d12')}</g>`, 'b2cue'); }
+      s += RC(300, 8, 270, 120, '#fff', { st: '#ca8a04', sw: 3, rx: 18 }) + T(435, 54, '칠한 칸', 24, '#92400e') + T(435, 104, `${d.got.length} / ${M.length}`, 38, '#c2410c'); y0 = 146;
+      s += `<rect x="22" y="${y0 - 8}" width="556" height="${ch * rows + 16}" rx="14" fill="#fff" stroke="#ca8a04" stroke-width="3"/>`;
+      for (let v = 1; v <= n; v++) { const r = Math.floor((v - 1) / cols), cc = (v - 1) % cols, x = 30 + cc * cw, y = y0 + r * ch, on = d.got.includes(v);
+        const t = `<rect class="b2tz" x="${x + 2}" y="${y + 2}" width="${cw - 4}" height="${ch - 4}" rx="8" fill="${on ? (c.col || '#fb923c') : '#fff'}" stroke="${on ? '#9a3412' : '#e2e8f0'}" stroke-width="2"/>` + T(x + cw / 2, y + ch / 2 + 9, v, Math.min(26, cw * .48), on ? '#fff' : '#334155');
+        s += d.ok || on ? t : zone('c' + v, t); }
+      return [s, y0 + rows * ch + 16, '#fefce8']; }; });
+
+  /* REL · 타일 → 곱셈식 칸 세 개 → 이름표 두 장 */
+  hookup('REL', c => { const a = c.a, b = c.b, n = a * b, sz = Math.min(40, 300 / Math.max(a, b));
+    return d => { let s = ''; const gx = 300 - a * sz / 2, gy = 44;
+      for (let r = 0; r < b; r++) for (let cc = 0; cc < a; cc++) s += tile(gx + cc * sz, gy + r * sz, sz, '#60a5fa');
+      s += T(300, gy - 12, `가로 ${a}`, 24, '#1d4ed8') + T(gx - 12, gy + b * sz / 2 + 8, `세로 ${b}`, 24, '#1d4ed8', 'end');
+      let y = gy + b * sz + 30; const X = [110, 300, 490];
+      const slot = (k, x, val) => { const t = d.tag[k], col = t === 'f' ? '#16a34a' : t === 'm' ? '#ea580c' : '#94a3b8';
+        const body = `<rect class="b2tz" x="${x - 70}" y="${y}" width="140" height="110" rx="18" fill="#fff" stroke="${col}" stroke-width="4"/>` + T(x, y + 74, val, 50, '#0f172a') + (t ? `<rect x="${x - 86}" y="${y + 120}" width="172" height="44" rx="22" fill="${t === 'f' ? '#dcfce7' : '#ffedd5'}" stroke="${col}" stroke-width="3"/>` + T(x, y + 150, t === 'f' ? `${n}의 약수` : `${a}·${b}의 배수`, 22, col) : T(x, y + 150, '이름표 자리', 20, '#94a3b8'));
+        return d.ok || t ? body : zone(k, body); };
+      s += slot('pa', X[0], a) + T(205, y + 70, '×', 44, '#64748b') + slot('pb', X[1], b) + T(395, y + 70, '=', 44, '#64748b') + slot('pn', X[2], n); y += 180;
+      if (Object.keys(d.tag).length === 3) { s += T(300, y + 6, `${a}, ${b}${jo2(b)} ${n}의 약수`, 26, '#15803d') + T(300, y + 42, `${n}${jo2(n)} ${a}, ${b}의 배수`, 26, '#c2410c'); y += 64; }
+      if (!d.ok) { s += drag('tf', `<g>${RC(60, y, 220, 70, '#dcfce7', { st: '#16a34a', sw: 3, rx: 35 })}${T(170, y + 46, '🏷️ 약수', 30, '#15803d')}</g>`, 'b2cue') + drag('tm', `<g>${RC(320, y, 220, 70, '#ffedd5', { st: '#ea580c', sw: 3, rx: 35 })}${T(430, y + 46, '🏷️ 배수', 30, '#c2410c')}</g>`, 'b2cue'); y += 84; }
+      return [s, y, '#f0f9ff']; }; });
+
+  /* SORTM · 위: 수 카드 / 아래: 두 상자 */
+  hookup('SORTM', c => { const k = c.k, IT = c.items;
+    return d => { let s = ''; const left = IT.filter(v => !d.put[v]), per = 4, cw = 130, chh = 92;
+      left.forEach((v, i) => { const rr = Math.floor(i / per), inR = Math.min(per, left.length - rr * per), x = 300 - inR * cw / 2 + (i % per) * cw; s += drag('n' + v, `<g>${RC(x + 6, 8 + rr * chh, cw - 12, chh - 14, '#fff', { st: '#7c3aed', sw: 4, rx: 16 })}${T(x + cw / 2, 8 + rr * chh + 54, v, 40, '#1e1b4b')}</g>`, 'b2cue'); });
+      const y = 8 + Math.max(1, Math.ceil(left.length / per)) * chh + 10, inY = IT.filter(v => d.put[v] === 'yes'), inN = IT.filter(v => d.put[v] === 'no'), bh = 70 + Math.max(1, Math.ceil(Math.max(inY.length, inN.length) / 3)) * 62 + 10;
+      const bin = (id, x, l1, l2, col, bg) => zone(id, `<rect class="b2tz" x="${x}" y="${y}" width="276" height="${bh}" rx="22" fill="${bg}" stroke="${col}" stroke-width="4" stroke-dasharray="10 7"/>${T(x + 138, y + 36, l1, 28, col)}${T(x + 138, y + 66, l2, 24, col)}`);
+      s += bin('yes', 16, `✅ ${k}의 배수`, '나누어떨어져요', '#16a34a', '#f0fdf4') + bin('no', 308, `✖ ${k}의 배수 아님`, '나머지가 있어요', '#dc2626', '#fef2f2');
+      const put = (arr, x0, col, tc) => arr.forEach((v, i) => { const x = x0 + 14 + (i % 3) * 84, yy = y + 80 + Math.floor(i / 3) * 62; s += RC(x, yy, 76, 54, '#fff', { st: col, sw: 3, rx: 12 }) + T(x + 38, yy + 38, v, 32, tc); });
+      put(inY, 16, '#16a34a', '#14532d'); put(inN, 308, '#dc2626', '#7f1d1d');
+      return [s, y + bh + 10, '#f5f3ff']; }; });
+
+  const candy = (x, y, r, c) => `<g><rect x="${x - r}" y="${y - r * .7}" width="${2 * r}" height="${1.4 * r}" rx="${r * .5}" fill="${c}" stroke="#334155" stroke-width="1.5"/><path d="M${x - r},${y} l${-r * .6},${-r * .5} v${r} z M${x + r},${y} l${r * .6},${-r * .5} v${r} z" fill="${c}" stroke="#334155" stroke-width="1.5"/></g>`;
+  const choco = (x, y, r, c) => `<rect x="${x - r}" y="${y - r}" width="${2 * r}" height="${2 * r}" rx="3" fill="${c}" stroke="#451a03" stroke-width="1.5"/><path d="M${x},${y - r} v${2 * r} M${x - r},${y} h${2 * r}" stroke="#451a03" stroke-width="1" opacity=".6"/>`;
+
+  /* TWO · 사탕 줄·초콜릿 줄을 12개씩 감고, 친구 수 칸은 7칸씩 */
+  hookup('TWO', c => { const a = c.a, b = c.b, m = Math.min(a, b), G = gcd(a, b), CD = divs(G), AN = c.an || '사탕', BN = c.bn || '초콜릿';
+    const rowP = (n, y, k, draw, lab) => { const per = 12, sp = 540 / per, ok = k && n % k === 0, q = k ? Math.floor(n / k) : 0; let s = T(30, y, lab, 28, '#334155', 'start') + (k && !ok ? T(570, y, `남음 ${n % k}`, 28, '#dc2626', 'end') : ''); y += 34;
+      for (let i = 0; i < n; i++) { const f = k ? Math.floor(i / q) : -1, left = k && (!ok && i >= q * k), x = 30 + sp / 2 + (i % per) * sp, yy = y + Math.floor(i / per) * 46; s += draw(x, yy, 15, !k ? '#e2e8f0' : left ? '#fecaca' : FC[f % 12]); }
+      return [s, y + Math.ceil(n / per) * 46]; };
+    return d => { const k = d.k; let s = '', y = 30, r;
+      r = rowP(a, y, k, candy, `🍬 ${AN} ${a}개`); s += r[0]; y = r[1] + 14; r = rowP(b, y, k, choco, `🍫 ${BN} ${b}개`); s += r[0]; y = r[1] + 20;
+      s += T(30, y + 10, '친구 수', 28, '#6b21a8', 'start'); y += 24; const per = 7, cw = 540 / per, ch = 70;
+      for (let i = 1; i <= m; i++) { const x = 30 + cw / 2 + ((i - 1) % per) * cw, yy = y + Math.floor((i - 1) / per) * ch, t = d.tried[i], both = a % i === 0 && b % i === 0;
+        const tl = `<rect class="b2tz" x="${x - cw / 2 + 4}" y="${yy}" width="${cw - 8}" height="${ch - 10}" rx="12" fill="${t ? (both ? '#dcfce7' : '#f1f5f9') : '#fff'}" stroke="${i === k ? '#a21caf' : t && both ? '#16a34a' : '#c4b5fd'}" stroke-width="${i === k ? 5 : 2.5}"/>` + T(x, yy + 42, i, 30, t && !both ? '#94a3b8' : '#1e1b4b') + (t && both && i === G && d.ok ? T(x + cw / 2 - 12, yy + 18, '👑', 22) : '');
+        s += d.ok ? tl : zone('k' + i, tl); }
+      y += Math.ceil(m / per) * ch + 10; const found = CD.filter(x => d.tried[x]);
+      if (!d.ok) s += drag('fr', `<g>${RC(20, y, 180, 120, '#fff', { st: '#a21caf', sw: 3, rx: 18 })}<rect x="56" y="${y + 16}" width="7" height="80" fill="#78350f"/><path d="M63,${y + 18} l56,15 l-56,17z" fill="#e879f9" stroke="#86198f" stroke-width="2"/>${T(110, y + 108, '친구 수', 22, '#86198f')}</g>`, 'b2cue');
+      const fx = d.ok ? 20 : 216, fw = d.ok ? 560 : 364; s += RC(fx, y, fw, 120, '#fff', { st: '#16a34a', sw: 3, rx: 18 }) + T(fx + 20, y + 40, '함께 나누어떨어지는 수', 26, '#15803d', 'start') + T(fx + 20, y + 94, found.length ? found.join(', ') + (d.ok ? ` → 가장 큰 수 ${G}` : '') : '아직 없어요', 34, '#14532d', 'start');
+      return [s, y + 130, '#fdf4ff']; }; });
+
+  /* VENN · 위: 수 카드 / 가운데: 두 원 / 아래 오른쪽: 둘 다 아니에요 */
+  hookup('VENN', c => { const a = c.a, b = c.b, mul = c.mode === 'mul', IT = c.items, L = mul ? '배수' : '약수', R0 = 168, CA = 200, CB = 400;
+    const inA = v => mul ? v % a === 0 : a % v === 0, inB = v => mul ? v % b === 0 : b % v === 0, where = v => inA(v) && inB(v) ? 'AB' : inA(v) ? 'A' : inB(v) ? 'B' : 'N';
+    return d => { let s = ''; const left = IT.filter(v => !d.put[v]), per = 6, cw = 90;
+      left.forEach((v, i) => { const rr = Math.floor(i / per), inR = Math.min(per, left.length - rr * per), x = 300 - inR * cw / 2 + (i % per) * cw; s += drag('n' + v, `<g>${RC(x + 5, 8 + rr * 76, cw - 10, 64, '#fff', { st: '#7c3aed', sw: 3, rx: 14 })}${T(x + cw / 2, 8 + rr * 76 + 44, v, 32, '#1e1b4b')}</g>`, 'b2cue'); });
+      const cy = 8 + Math.max(1, Math.ceil(left.length / per)) * 76 + 60 + R0, h = Math.sqrt(R0 * R0 - ((CB - CA) / 2) ** 2), mx = (CA + CB) / 2;
+      s += T(CA - 40, cy - R0 - 18, `${a}의 ${L}`, 30, '#1d4ed8') + T(CB + 40, cy - R0 - 18, `${b}의 ${L}`, 30, '#c2410c');
+      s += `<circle cx="${CA}" cy="${cy}" r="${R0}" fill="rgba(59,130,246,.12)" stroke="#2563eb" stroke-width="4"/><circle cx="${CB}" cy="${cy}" r="${R0}" fill="rgba(234,88,12,.12)" stroke="#ea580c" stroke-width="4"/>` + T(mx, cy - h + 34, `공${L}`, 26, '#7c3aed');
+      const ny = cy + R0 + 20;
+      const zr = { A: `<path class="b2tz" d="M${mx},${cy - h} A${R0},${R0} 0 1 0 ${mx},${cy + h} A${R0},${R0} 0 0 1 ${mx},${cy - h}z" fill="rgba(255,255,255,.01)"/>`, AB: `<path class="b2tz" d="M${mx},${cy - h} A${R0},${R0} 0 0 1 ${mx},${cy + h} A${R0},${R0} 0 0 1 ${mx},${cy - h}z" fill="rgba(255,255,255,.01)"/>`, B: `<path class="b2tz" d="M${mx},${cy - h} A${R0},${R0} 0 1 1 ${mx},${cy + h} A${R0},${R0} 0 0 0 ${mx},${cy - h}z" fill="rgba(255,255,255,.01)"/>`,
+        N: `<rect class="b2tz" x="290" y="${ny}" width="300" height="130" rx="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="7 5"/>` + T(440, ny + 32, '둘 다 아니에요', 26, '#64748b') };
+      if (!d.ok) Object.keys(zr).forEach(k => { s += zone(k, zr[k]); }); else s += zr.N;
+      const Z = { A: [CA - 72, cy - 40], AB: [mx, cy - 40], B: [CB + 72, cy - 40], N: [440, ny + 70] }, AB = IT.filter(x => where(x) === 'AB');
+      Object.keys(Z).forEach(k => { const vs = IT.filter(v => d.put[v] === k); vs.forEach((v, i) => { const [cx, cy0] = Z[k], pr = k === 'N' ? 4 : 2, x = cx + ((i % pr) - (pr - 1) / 2) * (k === 'AB' ? 62 : 64), y = cy0 + Math.floor(i / pr) * 58;
+        const top = d.ok && k === 'AB' && v === (mul ? Math.min(...AB) : Math.max(...AB)); s += RC(x - 30, y - 24, 60, 50, top ? '#fde68a' : '#fff', { st: top ? '#ca8a04' : k === 'AB' ? '#7c3aed' : '#64748b', sw: 2.5, rx: 10 }) + T(x, y + 11, v, 30) + (top ? T(x, y - 24, '👑', 20) : ''); }); });
+      return [s, ny + 130, '#f8fafc']; }; });
+
+  /* SQT · 위: 바닥 / 아래: 타일 카드 */
+  hookup('SQT', c => { const a = c.a, b = c.b, SZ = c.sizes, sc = Math.min(500 / a, 300 / b);
+    return d => { const k = d.s; let s = ''; const fx = 300 - a * sc / 2 + 20, fy = 20;
+      s += zone('floor', `<rect class="b2tz" x="${fx}" y="${fy}" width="${a * sc}" height="${b * sc}" fill="#fde68a" stroke="#92400e" stroke-width="4"/>`);
+      if (k) { const nx = Math.floor(a / k), ny = Math.floor(b / k); for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) s += `<rect x="${fx + i * k * sc + 1.5}" y="${fy + j * k * sc + 1.5}" width="${k * sc - 3}" height="${k * sc - 3}" rx="3" fill="${FC[(i + j) % 12]}" stroke="#fff" stroke-width="2" opacity=".9"/>`;
+        if (a % k) s += `<rect x="${fx + nx * k * sc}" y="${fy}" width="${(a % k) * sc}" height="${b * sc}" fill="#fecaca" stroke="#dc2626" stroke-width="3" stroke-dasharray="6 4"/>`;
+        if (b % k) s += `<rect x="${fx}" y="${fy + ny * k * sc}" width="${a * sc}" height="${(b % k) * sc}" fill="#fecaca" stroke="#dc2626" stroke-width="3" stroke-dasharray="6 4"/>`; }
+      s += T(fx + a * sc / 2, fy + b * sc + 34, `가로 ${a} cm`, 26, '#92400e') + `<text x="${fx - 14}" y="${fy + b * sc / 2}" text-anchor="middle" font-size="26" font-weight="900" fill="#92400e" transform="rotate(-90 ${fx - 14} ${fy + b * sc / 2})">세로 ${b} cm</text>`;
+      let y = fy + b * sc + 60;
+      if (!d.ok) { const n = SZ.length, cw = Math.min(140, 560 / n); SZ.forEach((z, i) => { const x = 300 - n * cw / 2 + i * cw, w = Math.min(64, 24 + z * 4); s += drag('s' + z, `<g>${RC(x + 6, y, cw - 12, 130, '#fff', { st: '#ca8a04', sw: 3, rx: 16 })}<rect x="${x + cw / 2 - w / 2}" y="${y + 14}" width="${w}" height="${w}" rx="4" fill="#60a5fa" stroke="#1e3a8a" stroke-width="2"/>${T(x + cw / 2, y + 116, `${z} cm`, 28, '#1e3a8a')}</g>`, 'b2cue'); }); y += 140; }
+      return [s, y, '#fefce8']; }; });
+
+  /* LADDER · 가운데 사다리 + 아래 수 카드 */
+  hookup('LADDER', c => { const a = c.a, b = c.b, G = gcd(a, b), Lm = lcm(a, b), CARDS = c.cards, lcmMode = c.mode === 'lcm';
+    return d => { let s = ''; const cur = d.st[d.st.length - 1], done = gcd(cur[0], cur[1]) === 1, X = 270, Y0 = 20, H = 70;
+      d.st.forEach((p, i) => { const y = Y0 + i * H; if (i < d.ds.length) s += T(X - 90, y + 46, d.ds[i], 38, '#0f766e') + `<path d="M${X - 50},${y + 6} v${H - 8} h280" fill="none" stroke="#0f766e" stroke-width="5"/>`;
+        s += T(X + 20, y + 46, p[0], 40) + T(X + 160, y + 46, p[1], 40); });
+      const yN = Y0 + (d.st.length - 1) * H;
+      if (!done && !d.ok) s += zone('slot', `<rect class="b2tz" x="${X - 130}" y="${yN + 4}" width="76" height="62" rx="12" fill="#fff" stroke="#14b8a6" stroke-width="3" stroke-dasharray="7 5"/>${T(X - 92, yN + 47, '?', 34, '#94a3b8')}`);
+      let y = yN + H + 20;
+      if (done) { s += `<rect x="${X - 140}" y="${Y0 - 6}" width="${lcmMode ? 400 : 100}" height="${(d.st.length - 1) * H + 8}" rx="14" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="${lcmMode ? '' : '8 5'}"/>`;
+        if (lcmMode) s += `<path d="M${X - 90},${yN + 70} h290" stroke="#f59e0b" stroke-width="4"/>`;
+        s += T(300, y + 14, lcmMode ? '최소공배수' : '최대공약수', 26, '#b45309') + T(300, y + 54, lcmMode ? `${d.ds.join(' × ')} × ${cur[0]} × ${cur[1]} = ${Lm}` : `${d.ds.join(' × ')} = ${G}`, 32, '#b45309'); y += 70; }
+      if (!done && !d.ok) { const per = 5, cw = 110; CARDS.forEach((k, i) => { const rr = Math.floor(i / per), inR = Math.min(per, CARDS.length - rr * per), x = 300 - inR * cw / 2 + (i % per) * cw; s += drag('c' + k, `<g>${RC(x + 8, y + rr * 100, cw - 16, 86, '#fff', { st: '#0d9488', sw: 3, rx: 16 })}${T(x + cw / 2, y + rr * 100 + 58, k, 40, '#115e59')}</g>`, 'b2cue'); }); y += Math.ceil(CARDS.length / per) * 100; }
+      return [s, y + 6, '#f0fdfa']; }; });
+
+  /* FROGS · 수직선 두 줄(초록·주황)을 함께 감아요 */
+  hookup('FROGS', c => { const A = c.a, B = c.b, M = c.max, S = M <= 36 ? 12 : 15, Lx = LINE(M, S), RH = 300, yA = r => 100 + r * RH, yB = r => 236 + r * RH;
+    const frog = (x, y, col) => `<g transform="translate(${x},${y}) scale(1.25)"><ellipse cx="0" cy="6" rx="22" ry="15" fill="${col}" stroke="#14532d" stroke-width="3"/><circle cx="-10" cy="-8" r="8" fill="${col}" stroke="#14532d" stroke-width="3"/><circle cx="10" cy="-8" r="8" fill="${col}" stroke="#14532d" stroke-width="3"/><circle cx="-10" cy="-9" r="3.5" fill="#0f172a"/><circle cx="10" cy="-9" r="3.5" fill="#0f172a"/></g>`;
+    return d => { const meet = d.pa.filter(v => v > 0 && d.pb.includes(v)); let s = '';
+      [[yA, d.pa, A, '#4ade80', 'fa', '#15803d'], [yB, d.pb, B, '#fb923c', 'fb', '#c2410c']].forEach(([yOf, P, st, col, id, tc]) => {
+        for (let r = 0; r < Lx.rows; r++) { const y = yOf(r), lo = r * S, hi = Math.min(M, lo + S - 1 + (r === Lx.rows - 1 ? 1 : 0)); s += LN(30, y, 570, y, '#334155', 3) + T(30, y - 58, `${st}칸씩`, 26, tc, 'start');
+          for (let v = lo; v <= hi; v++) { const x = Lx.xv(v), big = v % st === 0; s += LN(x, y - (big ? 10 : 5), x, y + (big ? 10 : 5), '#64748b', big ? 2.5 : 1); if (v % 6 === 0 || P.includes(v)) s += T(x, y + 36, v, P.includes(v) && v ? 28 : 24, P.includes(v) && v ? '#0f172a' : '#64748b'); } }
+        P.slice(1).forEach((v, i) => { s += hopArc(Lx, P[i], v, yOf, col, ''); });
+        const at = P[P.length - 1], fx = Lx.xv(at), fy = yOf(Lx.rowOf(at)) - 30;
+        if (!d.ok) { s += drag(id, frog(fx, fy, col), 'b2cue'); for (let v = at + 1; v <= Math.min(M, at + st + 3); v++) s += zone(id + v, `<rect class="b2tz" x="${Lx.xv(v) - Lx.cw / 2}" y="${yOf(Lx.rowOf(v)) - 60}" width="${Lx.cw}" height="84" fill="rgba(255,255,255,.01)"/>`); } else s += frog(fx, fy, col); });
+      meet.forEach(v => { const r = Lx.rowOf(v), x = Lx.xv(v); s += `<line x1="${x}" y1="${yA(r)}" x2="${x}" y2="${yB(r)}" stroke="#a855f7" stroke-width="4" stroke-dasharray="7 5"/><circle cx="${x}" cy="${(yA(r) + yB(r)) / 2}" r="18" fill="#f3e8ff" stroke="#7c3aed" stroke-width="3"/>` + T(x, (yA(r) + yB(r)) / 2 + 8, '★', 20, '#7c3aed'); });
+      const y = yB(Lx.rows - 1) + 60; s += RC(20, y, 560, 110, '#fff', { st: '#a855f7', sw: 3, rx: 16 }) + T(40, y + 44, `${A}의 배수: ${d.pa.slice(1).join(', ') || '?'}`, 28, '#15803d', 'start') + T(40, y + 90, `${B}의 배수: ${d.pb.slice(1).join(', ') || '?'}`, 28, '#c2410c', 'start');
+      return [s, y + 120, '#ecfeff']; }; });
+
+  /* BRICK · 위: 벽돌 두 장 / 아래: 두 탑과 눈금 */
+  hookup('BRICK', c => { const A = c.a, B = c.b, L = lcm(A, B), MH = L * 2, sc = 380 / MH, TA = 160, TB = 400;
+    return d => { const ha = d.na * A, hb = d.nb * B; let s = ''; let top = 10;
+      if (!d.ok) { s += drag('ba', `<g>${RC(20, 10, 270, 110, '#fff', { st: '#ea580c', sw: 3, rx: 16 })}<rect x="45" y="${36}" width="220" height="${Math.max(20, Math.min(40, A * 4))}" rx="4" fill="#fb923c" stroke="#7c2d12" stroke-width="2"/>${T(155, 106, `${A} cm 벽돌`, 26, '#9a3412')}</g>`, 'b2cue') + drag('bb', `<g>${RC(310, 10, 270, 110, '#fff', { st: '#2563eb', sw: 3, rx: 16 })}<rect x="335" y="${36}" width="220" height="${Math.max(20, Math.min(40, B * 4))}" rx="4" fill="#60a5fa" stroke="#1e3a8a" stroke-width="2"/>${T(445, 106, `${B} cm 벽돌`, 26, '#1e3a8a')}</g>`, 'b2cue'); top = 140; }
+      const base = top + 30 + MH * sc; s += `<rect x="0" y="${base}" width="600" height="56" fill="#d6d3d1"/>`;
+      for (let v = 0; v <= MH; v += (MH > 40 ? 6 : 2)) { const y = base - v * sc; s += LN(272, y, 290, y, '#94a3b8', 1.5) + (v % 6 === 0 ? T(296, y + 7, v, 18, '#64748b', 'start') : ''); }
+      const tower = (x, n, h, col, id) => { let t = ''; for (let i = 0; i < n; i++) t += `<rect x="${x - 80}" y="${base - (i + 1) * h * sc}" width="160" height="${h * sc - 2}" rx="4" fill="${col}" stroke="#7c2d12" stroke-width="2"/>`;
+        return zone(id, `<rect class="b2tz" x="${x - 92}" y="${base - MH * sc - 10}" width="184" height="${MH * sc + 10}" fill="rgba(255,255,255,.01)"/>${t}`); };
+      s += tower(TA, d.na, A, '#fb923c', 'ta') + tower(TB, d.nb, B, '#60a5fa', 'tb') + T(TA, base + 38, `${ha} cm`, 28, '#9a3412') + T(TB, base + 38, `${hb} cm`, 28, '#1e3a8a');
+      d.eq.forEach(h => { const y = base - h * sc; s += `<line x1="${TA - 90}" y1="${y}" x2="${TB + 90}" y2="${y}" stroke="#a855f7" stroke-width="4" stroke-dasharray="8 5"/>` + T(TB + 90, y - 8, `${h} cm ★`, 22, '#7c3aed', 'end'); });
+      return [s, base + 60, '#fff7ed']; }; });
+
+  /* 세로 판 글자·크기 */
+  try { const st = document.createElement('style'); st.textContent = `.m4fig:has(>.dvpw){height:auto!important;display:block!important;padding:4px!important;border-width:2px!important;overflow:visible!important}
+.dvpw svg.b2svg{border-radius:14px}
+.dvpw{display:flex;flex-direction:column;gap:8px;width:100%}
+.dvph{background:#fff;border:3px solid #a78bfa;border-radius:16px;padding:8px 12px;text-align:center}
+.dvph b{display:block;font-size:1.12rem;color:#1e1b4b;line-height:1.35;word-break:keep-all}
+.dvph span{display:block;font-size:.95rem;color:#7c3aed;font-weight:800;margin-top:3px;line-height:1.4;word-break:keep-all}
+.dvpw svg.b2svg{width:100%!important;height:auto!important;display:block;touch-action:none;user-select:none;-webkit-user-select:none;font-family:inherit;font-weight:900}
+.dvphint{text-align:center;font-weight:900;color:#5b21b6;background:#fff;border:2.5px solid #7c3aed;border-radius:999px;padding:6px 12px;font-size:.95rem;line-height:1.4;word-break:keep-all}
+body[data-svst="concept"] ~ #uniRot{display:none!important}`; document.head.appendChild(st); } catch (e) {}
+  /* 휴대폰을 돌리면 그 자리에서 다시 그려요 */
+  let lastP = PT(); addEventListener('resize', () => { const p = PT(); if (p === lastP) return; lastP = p; clearTimeout(DV5.__rt); DV5.__rt = setTimeout(() => { try { if (state.s1 && state.s1.tool && CK.T[state.s1.tool]) CK.render(state.s1.tool); } catch (e) {} }, 120); });
 })();
 
 
@@ -14248,7 +14493,8 @@ body.svnet-wait #s2body>*:not(.svbg-bar){pointer-events:none}body.svnet-wait #s2
 })();
 
 </script><!--SW-END-->
-<!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
+<!--SL3-START--><style>html body .svsl-paged .svsl-pgempty{display:none!important}.svsl-pgd b{white-space:nowrap}
+/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
 #svslTop,#svslTabs,#svslNav,#svslFab{display:none}
 body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
 html:has(body.svsl-on){overflow:hidden}
@@ -15067,7 +15313,7 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 /* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
 const PG = { key: '', i: 0 };
-function pgClear(q) { $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
+function pgClear(q) { $$('.svsl-pgempty', q).forEach(e => e.classList.remove('svsl-pgempty')); $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
 function pageCard(q, box, deep) { pgClear(q);
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const cs = getComputedStyle(q), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 8;
@@ -15089,6 +15335,8 @@ function pageCard(q, box, deep) { pgClear(q);
   const key = SET() + '|' + step() + '|' + (q.id || '') + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 40);
   if (PG.key !== key) { PG.key = key; PG.i = 0; } PG.i = Math.max(0, Math.min(PG.i, pages.length - 1));
   pages.forEach((P, i) => P.forEach(b => b.classList.toggle('svsl-pgoff', i !== PG.i)));
+  /* 이 쪽에 보일 것이 하나도 없는 틀(빈 테두리 상자)은 함께 숨겨요 */
+  [...q.querySelectorAll('div,section')].reverse().forEach(e => { const K = [...e.children]; if (K.length && !e.closest('.svsl-pager') && K.every(k => k.classList.contains('svsl-pgoff') || k.classList.contains('svsl-pgempty') || /^(STYLE|SCRIPT)$/.test(k.tagName)) && ![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) e.classList.add('svsl-pgempty'); });
   q.classList.add('svsl-paged');
   q.insertAdjacentHTML('beforeend', `<div class="svsl-pager"><button type="button" data-svpg="-1" ${PG.i ? '' : 'disabled'}>◀ 앞 장면</button><span class="svsl-pgd">${pages.map((_, i) => `<i class="${i === PG.i ? 'on' : ''}"></i>`).join('')}<b>${PG.i + 1} / ${pages.length}</b></span><button type="button" data-svpg="1" ${PG.i < pages.length - 1 ? '' : 'disabled'}>다음 장면 ▶</button></div>`);
   return true; }
