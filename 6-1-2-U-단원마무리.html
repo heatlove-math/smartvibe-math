@@ -7871,7 +7871,8 @@ img[src*="/g56/villains/"]{object-fit:contain!important;background:transparent!i
 })();
 
 </script><!--JOFIX-END-->
-<!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
+<!--SL3-START--><style>html body .svsl-paged .svsl-pgempty{display:none!important}.svsl-pgd b{white-space:nowrap}
+/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
 #svslTop,#svslTabs,#svslNav,#svslFab{display:none}
 body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
 html:has(body.svsl-on){overflow:hidden}
@@ -8690,14 +8691,14 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 /* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
 const PG = { key: '', i: 0 };
-function pgClear(q) { $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
+function pgClear(q) { $$('.svsl-pgempty', q).forEach(e => e.classList.remove('svsl-pgempty')); $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
 function pageCard(q, box, deep) { pgClear(q);
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const cs = getComputedStyle(q), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 8;
   let H = box.clientHeight - others - pad - (B.classList.contains("svsl-land") ? 62 : 96); if (H < (B.classList.contains("svsl-land") ? 160 : 110)) return false;
   const part = deep ? q.querySelector(':scope > [id^="part-"]') : null, blocks = [];
   /* 한 쪽보다 큰 덩어리(그림 + 답 칸 등)는 줄이지 않고 안쪽 칸으로 나누어 쪽을 더 만들어요 (휴대폰 세로 화면) */
-  const flat = (c, d) => { if (d < 6 && !(c instanceof SVGElement) && c.getBoundingClientRect().height + 10 > H) { const K = [...c.children].filter(k => k.offsetParent !== null && k.getBoundingClientRect().height > 4); if (K.length >= 2) { K.forEach(k => flat(k, d + 1)); return; } if (K.length === 1) { flat(K[0], d + 1); return; } } blocks.push(c); };
+  const flat = (c, d) => { if (d < 6 && !(c instanceof SVGElement) && ![...c.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && !/^(P|SPAN|B|I|EM|STRONG|LABEL|BUTTON|H[1-6])$/.test(c.tagName) && c.getBoundingClientRect().height + 10 > H) { const K = [...c.children].filter(k => k.offsetParent !== null && k.getBoundingClientRect().height > 4); if (K.length >= 2) { K.forEach(k => flat(k, d + 1)); return; } if (K.length === 1) { flat(K[0], d + 1); return; } } blocks.push(c); };
   [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) flat(k, 0); }); else flat(c, 0); });
   if (blocks.length < 2) return false;
   const hh = b => b.getBoundingClientRect().height + 10;
@@ -8712,6 +8713,8 @@ function pageCard(q, box, deep) { pgClear(q);
   const key = SET() + '|' + step() + '|' + (q.id || '') + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 40);
   if (PG.key !== key) { PG.key = key; PG.i = 0; } PG.i = Math.max(0, Math.min(PG.i, pages.length - 1));
   pages.forEach((P, i) => P.forEach(b => b.classList.toggle('svsl-pgoff', i !== PG.i)));
+  /* 이 쪽에 보일 것이 하나도 없는 틀(빈 테두리 상자)은 함께 숨겨요 */
+  [...q.querySelectorAll('div,section')].reverse().forEach(e => { const K = [...e.children]; if (K.length && !e.closest('.svsl-pager') && K.every(k => k.classList.contains('svsl-pgoff') || k.classList.contains('svsl-pgempty') || /^(STYLE|SCRIPT)$/.test(k.tagName)) && ![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) e.classList.add('svsl-pgempty'); });
   q.classList.add('svsl-paged');
   q.insertAdjacentHTML('beforeend', `<div class="svsl-pager"><button type="button" data-svpg="-1" ${PG.i ? '' : 'disabled'}>◀ 앞 장면</button><span class="svsl-pgd">${pages.map((_, i) => `<i class="${i === PG.i ? 'on' : ''}"></i>`).join('')}<b>${PG.i + 1} / ${pages.length}</b></span><button type="button" data-svpg="1" ${PG.i < pages.length - 1 ? '' : 'disabled'}>다음 장면 ▶</button></div>`);
   return true; }
@@ -9048,6 +9051,685 @@ window.SV_ARENA={"u":"6-1-2-U","unit":"2단원 「각기둥과 각뿔」","games
 })();
 
 </script><!--ARHUB-END-->
+<!--FLOWU-START--><style>/* 단원 마무리 새 순서: 단원 평가 하 · 중 · 상 화면 */
+.fu-menu .gates{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fu-fin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px 26px;align-items:center}
+.fu-fin .fu-finb{grid-column:1/-1;flex-wrap:wrap;gap:8px;margin-top:8px}
+.fu-fin .dgtab{margin:0 auto}
+.fu-tip{margin:10px 0 0;font-weight:800;color:#92400e;background:#fffbeb;border:2px dashed #fcd34d;border-radius:14px;padding:8px 12px;text-align:left;line-height:1.5}
+@media (max-width:760px){.fu-fin{grid-template-columns:1fr}.fu-menu .gates{grid-template-columns:1fr}}
+
+/* ⚔️ 도전장 (단원 마무리 첫 장면) */
+#stOv.fu-chal #stBox{width:min(1120px,95vw)!important;max-width:none!important;max-height:94vh;overflow:auto;padding:18px 22px!important;background:radial-gradient(circle at 18% 30%,#4c1d95 0,#1e1b4b 55%,#0f172a 100%)!important;border:4px solid #a78bfa!important;color:#fff}
+.fuch{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px;align-items:center}
+.fuchL{text-align:center}.fuchV{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:250px}.fuchV img{width:100%;max-height:min(62vh,460px);object-fit:contain;border-radius:18px;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}.fuchV img+.fuchF{display:none}
+.fuchF{animation:fuchBob 2.4s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(167,139,250,.9))}@keyframes fuchBob{50%{transform:translateY(-8px) scale(1.03)}}
+.fuchN{font-family:'Jua',sans-serif;font-size:1.6rem;color:#fde68a;text-shadow:0 2px 0 #7c2d12;margin-top:4px}
+.fuchR{display:flex;flex-direction:column;gap:10px}.fuchR .stcap{align-self:flex-start}.fuchT{font-family:'Jua',sans-serif;font-size:2rem;color:#fde68a;text-shadow:0 3px 0 #7c2d12,0 0 18px rgba(253,230,138,.5);line-height:1.2}
+.fuchB{position:relative;background:#fff;color:#1e1b4b;border:4px solid #f43f5e;border-radius:20px;padding:12px 16px;font-weight:800;font-size:1.08rem;line-height:1.55}.fuchB b{color:#e11d48}
+.fuchB::before{content:'';position:absolute;left:-18px;top:26px;border:10px solid transparent;border-right:12px solid #f43f5e}
+.fuchG{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap}.fugt{flex:1 1 0;min-width:120px;background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.35);border-radius:16px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.fugt b{font-size:1.05rem}.fugt small{font-size:.82rem;opacity:.85;font-weight:700}.fugi{font-size:1.7rem}.fugt.now{border-color:#fde68a;background:rgba(253,230,138,.18);box-shadow:0 0 18px rgba(253,230,138,.45)}.fugt.ok{border-color:#4ade80;background:rgba(74,222,128,.15)}
+.fuga{align-self:center;font-weight:900;color:#fde68a;font-size:1.3rem}
+#stOv.fu-chal .stline .stbub2{color:#1e1b4b}#stOv.fu-chal .stwho{color:#e9d5ff}#stOv.fu-chal .stbtns{justify-content:flex-start}
+@media(max-width:760px){.fuch{grid-template-columns:1fr}.fuchV{min-height:150px}.fuchT{font-size:1.5rem}.fuchB::before{display:none}}
+@media(max-height:700px){.fuchV{min-height:170px}.fuchV img{max-height:52vh}.fuchT{font-size:1.6rem}.fuchB{font-size:.98rem;padding:9px 12px}.fugi{font-size:1.3rem}}
+.fuchFull{max-height:min(58vh,420px);max-width:100%;object-fit:contain}
+/* 🏰 보스 성 탈환전 */
+.ucw-on .gate .gi{overflow:visible}.ucwall{border-radius:14px}
+.ucwst{font-size:.82rem;font-weight:900;color:#334155;background:#fff;border:2px solid #e2e8f0;border-radius:999px;padding:2px 10px;margin:4px auto 0;width:max-content;max-width:100%}
+.ucw-broken .ucwst{color:#166534;border-color:#86efac;background:#f0fdf4}.ucw-crack .ucwst{color:#9a3412;border-color:#fdba74;background:#fff7ed}
+.ucw-shake{animation:ucwShake .5s linear}@keyframes ucwShake{0%,100%{transform:none}20%{transform:translate(-4px,2px) rotate(-2deg)}40%{transform:translate(4px,-2px) rotate(2deg)}60%{transform:translate(-3px,1px)}80%{transform:translate(3px,-1px)}}
+.ucwfx{position:absolute;inset:0;pointer-events:none;z-index:5}.ucwfx i{position:absolute;left:50%;top:60%;width:14px;height:10px;background:#a8a29e;border:1.5px solid #57534e;border-radius:2px;transform:translate(-50%,-50%) scale(var(--s));animation:ucwFly 1.1s cubic-bezier(.2,.7,.4,1) forwards}
+.ucwfx b{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%) scale(.2);font-size:3rem;animation:ucwBoom .7s ease-out forwards}
+@keyframes ucwFly{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 60px)) rotate(var(--r)) scale(var(--s));opacity:0}}@keyframes ucwBoom{50%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(-50%,-50%) scale(1.8);opacity:0}}
+.ucwfin{margin:0 auto 10px;padding:8px 14px;border-radius:14px;background:#fff7ed;border:3px solid #fdba74;color:#9a3412;font-weight:900;font-size:1.05rem;grid-column:1/-1}.ucwfin.ok{background:#f0fdf4;border-color:#4ade80;color:#166534}
+.ucseal{display:inline-block;margin:6px auto 2px;padding:5px 16px;border-radius:999px;font-weight:900;color:#4c1d95;background:#ede9fe;border:2.5px dashed #8b5cf6}.ucseal.ok{color:#14532d;background:#dcfce7;border:2.5px solid #16a34a;transform:rotate(-2deg)}
+.ucrec{margin-top:14px;border-top:2px dashed #e2e8f0;padding-top:10px}.ucrec .rp-t{margin-bottom:6px}
+.ucrow{display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:8px;padding:5px 8px;border-radius:12px;background:#f8fafc;margin:5px 0;font-weight:800}
+.ucrow.ok{background:#f0fdf4}.ucrow>span{border:0!important;background:none!important;padding:0!important;box-shadow:none!important}.ucrow .ucr-i{font-size:1.3rem;text-align:center}.ucrow .ucr-s{color:#475569;font-size:.9rem}.ucrow .ucgo{white-space:nowrap}
+@media(max-width:520px){.ucrow{grid-template-columns:28px 1fr auto}.ucrow .ucr-s{grid-column:2;grid-row:2;font-size:.8rem}.ucrow .ucgo{grid-row:1/3;grid-column:3}}
+
+#svslTop .ti[data-uc]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#svslTop .ti[data-uc] small{margin-right:6px}
+#svslTop .ti[data-uc]{font-size:.92rem}
+@media(max-width:560px){.ucw-on .gate{overflow:hidden}.ucw-on .gate .gt{font-size:1.05rem!important;white-space:normal!important}.ucw-on .gate .ucwst,.ucw-on .gate .gs{width:auto;max-width:100%;white-space:normal;font-size:.74rem}.ucw-on .gate .qstat{flex-wrap:wrap}}
+@media(min-width:1000px){body.svsl-on #s2body .card.rp-head,body.svsl-on #s2body .card:has(.ucrec){min-height:calc(100vh - 170px);display:flex;flex-direction:column;justify-content:center}
+  body.svsl-on #s2body .card:has(.ucrec){justify-content:center}body.svsl-on #s2body .card:has(.ucrec)>*{flex:none}}
+@media(min-width:1000px) and (min-height:860px){.ucrow{padding:10px 12px;font-size:1.15rem;margin:8px 0}.ucrow .ucr-s{font-size:1rem}body.svsl-on #s2body .rp-head .score-big{font-size:6rem}body.svsl-on #s2body .rp-head .stars{font-size:3.4rem}}
+@media(min-width:1600px) and (min-height:900px){body.svsl-on #s2body .card.rp-head>*,body.svsl-on #s2body .card:has(.ucrec)>*{zoom:1.28}}
+/* ===== 성벽 3관문 (11-20 새 디자인): 그림이 카드를 가득 채우는 관문 포스터 ===== */
+#s2body .fu-menu.ucw-on{display:flex;flex-direction:column}
+#s2body .fu-menu.ucw-on .gates{flex:1 1 auto;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important;margin-top:12px!important;align-items:stretch}
+#s2body .fu-menu.ucw-on .gate{--gc:#10b981;--gcd:#047857;--gcl:#ecfdf5;position:relative;display:flex!important;flex-direction:column;align-items:stretch;padding:0!important;border-radius:22px!important;overflow:hidden!important;background:#fff!important;border:3px solid var(--gc)!important;box-shadow:0 7px 0 var(--gcd),0 16px 30px rgba(15,23,42,.18)!important;color:#1e293b!important;text-align:center!important;transform:none;min-height:0}
+#s2body .fu-menu.ucw-on .gate[data-v="lv2"]{--gc:#3b82f6;--gcd:#1d4ed8;--gcl:#eff6ff}
+#s2body .fu-menu.ucw-on .gate[data-v="lv3"]{--gc:#f43f5e;--gcd:#be123c;--gcl:#fff1f2}
+#s2body .fu-menu.ucw-on .gate:hover{transform:translateY(-3px)}
+#s2body .fu-menu.ucw-on .gate:before,#s2body .fu-menu.ucw-on .gate:after{display:none!important}
+#s2body .fu-menu.ucw-on .gate .gi{position:relative!important;inset:auto!important;grid-row:auto!important;width:100%!important;height:auto!important;flex:1 1 auto;min-height:160px;aspect-ratio:16/10;margin:0!important;padding:0!important;filter:none!important;display:block!important;overflow:hidden!important;border:0!important;border-bottom:3px solid var(--gc)!important;border-radius:0!important;background:none!important;box-shadow:none!important;font-size:0!important}
+#s2body .fu-menu.ucw-on .gate .gi svg.ucg{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;border-radius:0}
+#s2body .fu-menu.ucw-on .gate .qrib{position:absolute!important;left:12px!important;top:12px!important;right:auto!important;transform:none!important;margin:0!important;z-index:3;background:var(--gc)!important;color:#fff!important;border:2px solid #fff!important;border-radius:999px!important;padding:3px 12px!important;font-size:.85rem!important;font-weight:900!important;box-shadow:0 3px 0 var(--gcd)!important;width:auto!important;clip-path:none!important}
+#s2body .fu-menu.ucw-on .gate .gt{margin:10px 12px 0!important;font-size:clamp(1.15rem,1.55vw,1.5rem)!important;font-weight:900!important;color:#1e1b4b!important;white-space:nowrap;line-height:1.2!important;text-align:center!important}
+#s2body .fu-menu.ucw-on .gate .ucwst{margin:6px auto 0!important;font-size:.84rem!important;padding:3px 12px!important;background:var(--gcl)!important;border-color:var(--gc)!important;color:var(--gcd)!important}
+#s2body .fu-menu.ucw-on .gate.ucw-broken .ucwst{background:#f0fdf4!important;border-color:#22c55e!important;color:#166534!important}
+#s2body .fu-menu.ucw-on .gate.ucw-crack .ucwst{background:#fff7ed!important;border-color:#fb923c!important;color:#9a3412!important}
+#s2body .fu-menu.ucw-on .gate .gs{display:none!important}
+#s2body .fu-menu.ucw-on .gate .qstat{display:flex!important;justify-content:center;gap:6px;flex-wrap:wrap;margin:8px 12px 0!important}
+#s2body .fu-menu.ucw-on .gate .qstat span{background:#f8fafc!important;border:1.5px solid #e2e8f0!important;color:#334155!important;border-radius:999px!important;padding:2px 9px!important;font-size:.78rem!important;font-weight:800!important}
+#s2body .fu-menu.ucw-on .gate .qgo{margin:10px 12px 12px!important;padding:9px 10px!important;border-radius:14px!important;background:linear-gradient(180deg,var(--gc),var(--gcd))!important;color:#fff!important;font-weight:900!important;font-size:1.05rem!important;box-shadow:0 4px 0 rgba(0,0,0,.18)!important;border:0!important;width:auto!important}
+#s2body .fu-menu.ucw-on .fu-menu-st{margin-top:10px!important;font-size:.9rem}
+.ucg .ucg-flag{animation:ucgWave 1.6s ease-in-out infinite}
+.ucg .ucg-glow{animation:ucgGlow .9s ease-in-out infinite alternate}
+.ucg .ucg-fire{animation:ucgFire .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+.ucg .ucg-tw{animation:ucgTw 1.8s ease-in-out infinite}
+@keyframes ucgWave{0%,100%{transform:skewY(0)}50%{transform:skewY(-6deg) scaleX(.94)}}
+@keyframes ucgGlow{from{opacity:.55}to{opacity:1}}
+@keyframes ucgFire{from{transform:scale(1,1)}to{transform:scale(.85,1.15)}}
+@keyframes ucgTw{0%,100%{opacity:.25}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ucg *{animation:none!important}}
+@media(max-width:760px){
+  #s2body .fu-menu.ucw-on .gates{grid-template-columns:1fr!important;gap:14px!important}
+  #s2body .fu-menu.ucw-on .gate .gi{min-height:0;aspect-ratio:16/8.2;flex:none}
+  #s2body .fu-menu.ucw-on .gate .gt{font-size:1.1rem!important;margin:8px 8px 0!important}
+  #s2body .fu-menu.ucw-on .gate .qstat span{font-size:.72rem!important;padding:1px 8px!important}
+  #s2body .fu-menu.ucw-on .gate .ucwst{font-size:.76rem!important;white-space:normal}
+  #s2body .fu-menu.ucw-on .gate .qgo{margin:8px 10px 10px!important;font-size:.95rem!important;padding:8px!important}
+  #s2body .fu-menu.ucw-on .gate .qrib{font-size:.74rem!important;padding:2px 10px!important;left:8px!important;top:8px!important}
+}
+
+/* ===== 단원 평가 문제 화면 (11-20 새 구성): 머리 줄 · 문제 줄 · [그림 판 | 보기 2×2 + 피드백 자리] ===== */
+@media(min-width:761px){
+html body.svsl-on #s2body .skb:has(>.udq){display:flex!important;flex-direction:column}
+html body.svsl-on #sec-s2 #s2body .card.udq.udq{zoom:1!important;height:auto!important;flex:1 1 0!important;min-height:0!important;max-height:100%!important;overflow:hidden;box-sizing:border-box;display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr)!important;gap:12px 18px!important;align-content:stretch!important;padding:14px 18px 16px!important}
+html body #sec-s2 #s2body .card.udq>*{grid-column:1/-1!important;grid-row:auto!important;margin:0!important;min-width:0}
+html body #sec-s2 #s2body .card.udq>.row:first-child{align-items:center}
+html body #sec-s2 #s2body .card.udq>.mt-3 .qhead{align-items:center}
+html body #sec-s2 #s2body .card.udq>.mt-3 .qtext{font-size:clamp(1.3rem,2.1vw,2rem)!important;line-height:1.35!important}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig{grid-column:1!important;grid-row:3!important;align-self:stretch!important;position:relative!important;top:0!important;zoom:1!important;display:flex!important;align-items:center;justify-content:center;padding:34px 12px 10px!important;border-radius:18px;border:2px solid #cbd5e1;background:#f8fafc;background-image:linear-gradient(#e2e8f0 1px,transparent 1px),linear-gradient(90deg,#e2e8f0 1px,transparent 1px);background-size:24px 24px;overflow:hidden;min-height:0;max-width:none!important;width:auto!important}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig:before{content:'🧩 그림';position:absolute;left:12px;top:8px;font-size:.78rem;font-weight:900;color:#475569;background:#fff;border:1.5px solid #cbd5e1;border-radius:999px;padding:1px 10px}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig .uqin{display:flex;align-items:center;justify-content:center}
+html body #sec-s2 #s2body .card.udq>.svsl-qR{grid-row:3!important;display:flex!important;flex-direction:column;gap:10px;min-height:0;align-self:stretch}
+html body #sec-s2 #s2body .card.udq.hasfig>.svsl-qR{grid-column:2!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices{flex:1 1 auto;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:1fr;gap:12px!important;margin:0!important;min-height:0}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices .choice{height:auto!important;min-height:64px;font-size:clamp(1.1rem,2vw,1.9rem)!important;display:flex;align-items:center;justify-content:center;margin:0!important;padding:8px 12px!important;line-height:1.3}
+html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices{grid-template-columns:1fr!important}
+html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices .choice{font-size:clamp(1rem,1.5vw,1.35rem)!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.udrow{flex:none;min-height:56px;justify-content:center;align-items:center;margin:0!important;border:2px dashed #e2e8f0;border-radius:14px;padding:4px 8px}
+}
+@media(max-width:760px){
+html body #sec-s2 #s2body .card.udq>.svsl-qR{width:100%!important;max-width:none!important;display:block!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
+html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices{grid-template-columns:1fr!important}
+html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices .choice{width:auto!important;min-height:58px;font-size:1.15rem!important}
+html body #sec-s2 #s2body .card.udq.hasfig>.uqfig{border-radius:16px;border:2px solid #cbd5e1;background:#f8fafc;padding:8px!important;margin:8px 0!important}
+}
+@media(max-width:760px){
+html body #sec-s2 #s2body .card.udq>.choices{flex:1 1 100%!important;width:100%!important;max-width:none!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;grid-column:1/-1!important}
+html body #sec-s2 #s2body .card.udq.uqlong>.choices{grid-template-columns:1fr!important}
+html body #sec-s2 #s2body .card.udq>.choices .choice{width:auto!important;min-height:58px;font-size:1.15rem!important}
+}
+/* 여러 개의 띠그래프·막대가 한 그림에 있을 때 옆으로 흘러넘치지 않고 위아래로 쌓기 */
+html body #sec-s2 #s2body .card.udq .uqin:has(.grstrip){flex-direction:column!important;align-items:stretch!important;width:100%}
+html body #sec-s2 #s2body .card.udq .rffig:has(.grstrip){display:flex!important;flex-direction:column;gap:10px;width:100%;max-width:640px;margin:0 auto}
+html body #sec-s2 #s2body .card.udq .rffig .grstrip{width:100%;min-width:0;flex:none}
+/* 👑 학년 최종 대장 */
+.gbx{position:relative;display:inline-block;vertical-align:middle;line-height:0}
+.gbx>img,.gbx>svg:not(.gbcr){width:100%!important;height:100%!important;object-fit:contain}
+.gbx .gbcr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.gbx.gbs2>img,.gbx.gbs2>svg:not(.gbcr){filter:saturate(.85)}
+.gbx.gbs3>img,.gbx.gbs3>svg:not(.gbcr){filter:saturate(.65) brightness(.95)}
+.gbx.gbs4>img,.gbx.gbs4>svg:not(.gbcr){filter:grayscale(.6);opacity:.85}
+/* 도전장: 단원 악당 뒤의 대장 그림자 */
+.fuchL{position:relative}
+.gbsh{position:absolute;right:-6px;top:-8px;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.9;filter:drop-shadow(0 0 10px rgba(0,0,0,.55));pointer-events:none;z-index:2}
+.gbsh .gbx{filter:brightness(.55) saturate(.6)}
+.gbsh span{font-size:.72rem;font-weight:900;color:#fde68a;background:rgba(15,23,42,.75);border-radius:999px;padding:1px 8px;line-height:1.4}
+.gbsay{display:flex;gap:8px;align-items:center;margin:8px 0 2px;padding:7px 10px;border-radius:14px;background:rgba(15,23,42,.55);border:1.5px solid rgba(253,230,138,.6);color:#fef3c7;font-size:.9rem;line-height:1.45;text-align:left}
+.gbsay small{display:block;font-size:.68rem;font-weight:900;color:#fde68a;opacity:.9}
+.gbsay b{color:#fde047;margin-right:4px}
+.gbsay .gbav{flex:none;line-height:0}
+/* 왕중왕전 2:1 */
+.gbh{color:#7c2d12}
+.gbvs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px 10px;align-items:center;margin:8px 0 10px;padding:10px 12px;border-radius:16px;background:linear-gradient(90deg,#fff1f2,#fef3c7 50%,#e0e7ff);border:2px solid #fca5a5}
+.gbvs .gbf{display:flex;gap:8px;align-items:center;min-width:0}
+.gbvs .gbf.boss{flex-direction:row-reverse;text-align:right}
+.gbvs .gbav{flex:none;line-height:0}
+.gbvs .gbko{filter:grayscale(1);opacity:.6;transform:rotate(-12deg)}
+.gbvs .gbm{flex:1;min-width:0}
+.gbvs .gbm b{display:block;font-size:1rem;font-weight:900;color:#1f2937}
+.gbvs .gbm small{display:block;font-size:.7rem;font-weight:800;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbhp{position:relative;height:16px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:3px;border:1.5px solid #9ca3af}
+.gbhp i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:999px;transition:width .6s}
+.gbhp.b i{left:auto;right:0;background:linear-gradient(90deg,#6366f1,#1d4ed8)}
+.gbhp span{position:relative;display:block;text-align:center;font-size:.68rem;font-weight:900;line-height:13px;color:#111827}
+.gbx2{font-size:1.25rem;font-weight:900;color:#b91c1c;background:#fff;border:2px solid #fca5a5;border-radius:12px;padding:2px 8px}
+.gbline{grid-column:1/-1;text-align:center;font-size:.86rem;font-weight:800;color:#312e81;background:rgba(255,255,255,.7);border-radius:10px;padding:4px 8px}
+.gbvs.down{border-color:#86efac;background:linear-gradient(90deg,#f0fdf4,#fef9c3 50%,#eef2ff)}
+/* 결과 */
+.gbres{display:flex;gap:10px;align-items:center;justify-content:center;margin:8px auto 0;max-width:560px;padding:8px 12px;border-radius:14px;background:#eef2ff;border:2px dashed #818cf8;font-size:.9rem;font-weight:700;color:#312e81;text-align:left;line-height:1.45}
+.gbres.ok{background:#f0fdf4;border-color:#4ade80;color:#14532d}
+.gbres .gbav{flex:none;line-height:0}
+@media(max-width:600px){
+  .gbvs:not(.gbnar){grid-template-columns:1fr;padding:8px}
+  .gbvs:not(.gbnar) .gbf.boss{flex-direction:row;text-align:left}
+  .gbvs:not(.gbnar) .gbhp.b i{left:0;right:auto}
+  .gbx2{justify-self:center;font-size:.95rem;padding:0 6px}
+  .gbvs.gbnar{gap:4px 6px;padding:8px}
+  .gbvs.gbnar .gbf{flex-direction:column;align-items:center;text-align:center;gap:2px}
+  .gbvs.gbnar .gbm{width:100%}
+  .gbvs.gbnar .gbline{font-size:.8rem}
+  .gbsh{right:-2px;top:-4px}
+  .gbsh .gbx{width:70px!important;height:70px!important}
+}
+/* 새 왕중왕전 화면(uar) — 성문 양옆의 두 악당 */
+.uar-gates.gbon .uar-torch{display:none}
+.gbfl{position:absolute;top:0;width:150px;display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2;text-align:center}
+.gbfl.l{left:14px}.gbfl.r{right:14px}
+.gbfl .gbav{line-height:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.gbfl>b{font-size:.86rem;font-weight:900;color:#fff;background:rgba(30,27,75,.82);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.gbfl .gbhp{width:130px;margin-top:2px}
+.gbfl.r .gbhp i{left:0;right:auto}
+.gbbub{position:absolute;right:100%;top:6px;margin-right:2px;width:160px;padding:6px 9px;border-radius:12px;background:#fff;border:2px solid #6366f1;font-size:.74rem;font-weight:800;color:#312e81;line-height:1.35;text-align:left;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.gbbub:after{content:'';position:absolute;right:-8px;top:14px;border:6px solid transparent;border-left-color:#6366f1}
+.gbem{font-style:normal;font-weight:900;color:#b91c1c}.gbem.b{color:#1d4ed8}
+.gbvs.gbnar{display:none;margin:6px 10px 8px}
+@media(max-width:1300px){.gbbub{display:none}}
+@media(max-width:900px){.gbfl{display:none}.gbvs.gbnar{display:grid}}
+</style><script>
+/* =====================================================================
+   🧭 단원 마무리 새 순서 (6학년 1학기 · SV_LF.flowU)
+     세트 1 : 개념 복습(개념 카드 + 확인 문제) → 결과
+     세트 2 : 단원 평가 하 · 중 · 상 (각 10문항) → 왕중왕전 → 결과(단원 보고서)
+   · 예전의 오늘의 문제 · 기본 문제 · 보스전 단계는 흐름에서 뺐어요 (코드는 남아 있어요).
+   · 하 = 차시의 기본 문제 + 문제은행 1단계, 중 = 문제은행 2단계, 상 = 문제은행 3단계 — 차시마다 골고루.
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__FLOWU) return; window.__FLOWU = 1;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  const N = BADGES.length, LVN = { 1: '하', 2: '중', 3: '상' }, LVS = { 1: '기초 다지기', 2: '실력 올리기', 3: '생각 넓히기' };
+  const LVC = { 1: 'linear-gradient(135deg,#34d399,#0ea5a4)', 2: 'linear-gradient(135deg,#52c0ff,#2f7cf5)', 3: 'linear-gradient(135deg,#ffa53d,#ff5a76)' }, LVI = { 1: '🌱', 2: '⛵', 3: '🌋' };
+  const lvOf = () => { const d = (state.s2 || {}).drill; if (!d) return {}; if (!d.lv) d.lv = {}; return d.lv; };
+  const plain = x => String(x == null ? '' : x).replace(/<[^>]+>/g, '');
+
+  /* ---------- 세트 1: 카드마다 점수 (확인 문제 2개) ---------- */
+  S1_ITEMS.length = 0;
+  BADGES.forEach(([k, nm], i) => S1_ITEMS.push({ id: 'c' + (i + 1), card: k, label: nm, keys: [], max: Math.floor(100 / N) + (i < 100 % N ? 1 : 0) }));
+  const up0 = ucPick;
+  ucPick = function (v) { T(() => { const k = state.s1.tool || BADGES[0][0], s = cardState(k), q = s.q; if (q && !s.picked && !state.s1.badges[k] && v !== q.ans) s.wr = (s.wr || 0) + 1; }); return up0.apply(this, arguments); };
+  const cr0 = computeResult;
+  computeResult = function (k) {
+    if (k === 's1') {
+      const st = state.s1, elapsed = st.start ? Math.round(((st.end || Date.now()) - st.start) / 1000) : 0;
+      const items = S1_ITEMS.map(it => { const got = !!(st.badges || {})[it.card], cs = (st.cs || {})[it.card] || {}, wr = cs.wr || 0, okn = Math.min(2, cs.ok || 0);
+        return { label: it.label, state: got ? (wr ? 'retry' : 'ok') : 'todo', note: got ? (wr ? `배지 획득 · 틀린 적 ${wr}번` : '확인 문제를 한 번에 통과') : (okn ? `확인 문제 2개 중 ${okn}개 맞힘` : '아직 안 했어요'),
+          pt: got ? Math.round(it.max * (wr ? Math.max(.6, 1 - .1 * wr) : 1)) : Math.round(it.max * .25 * okn), max: it.max }; });
+      const wrong = ulog().filter(e => e.set === 's1' && !e.ok).map(e => `${chTag(e.ch)} · ${plain(e.text)} → ${e.my}`);
+      return { k, setName: '세트 1: 개념 복습', score: items.reduce((a, i) => a + i.pt, 0), elapsed, items, wrong };
+    }
+    const r = cr0(k); if (k !== 's2') return r;
+    const s = T(() => SVHUB.stats()) || { mAvg: 0, bAvg: 0 }, lv = lvOf();
+    const items = [1, 2, 3].map(L => { const x = lv[L] || {}; return { label: `단원 평가 「${LVN[L]}」 10문항`, state: x.rounds ? (x.best >= 80 ? 'ok' : 'retry') : 'todo', note: x.rounds ? `${x.rounds}회 · 최고 ${x.best}점` : '미도전', pt: Math.round((x.best || 0) * .2), max: 20 }; });
+    if (r.items[1]) items.push(Object.assign({}, r.items[1], { pt: Math.round((s.mAvg || 0) * .2), max: 20 }));
+    if (r.items[2]) items.push(Object.assign({}, r.items[2], { pt: Math.round((s.bAvg || 0) * .2), max: 20 }));
+    return Object.assign(r, { setName: '세트 2: 단원 평가 · 왕중왕전', items, score: items.reduce((a, i) => a + i.pt, 0) });
+  };
+  /* 세트 1 화면 글: 기본 문제 대신 결과로 */
+  const rc0 = renderS1Concept;
+  renderS1Concept = function () { const r = rc0.apply(this, arguments); T(() => { const b = document.querySelector('#s1body > .next-row [data-act="step"]'); if (b) { b.dataset.v = 'result'; b.textContent = '🏆 세트 1 결과 보기 ➜'; } }); return r; };
+  const rb0 = renderBadges;
+  renderBadges = function () { const r = rb0.apply(this, arguments); T(() => { const m = document.querySelector('#badgeWrap .badgebar .muted'); if (m && /기본 문제/.test(m.textContent)) m.textContent = `배지 ${N}개 완성! 결과를 확인해요 ➜`; }); return r; };
+  const rr0 = renderResult;
+  try { const st0 = document.createElement('style'); st0.textContent = '.fu-res li.fu-go{cursor:pointer;transition:transform .12s,box-shadow .12s;outline:2px dashed transparent}.fu-res li.fu-go:hover,.fu-res li.fu-go:focus{transform:translateY(-2px);box-shadow:0 4px 0 #fdba74;outline-color:#fb923c}.fu-gob{margin-left:8px;font-weight:900;font-size:.85rem;color:#fff;background:#f97316;border-radius:999px;padding:3px 10px;white-space:nowrap}'; document.head.appendChild(st0); } catch (e) {}
+  renderResult = function (k) { const r = rr0.apply(this, arguments); if (k !== 's1') return r;
+    T(() => { const card = document.querySelector('#s1body > .card.center'); if (!card) return; card.classList.add('fu-res');
+      [...card.children].forEach(c => { if (c.matches('div.font-black') && /보석/.test(c.textContent) && !c.querySelector('button')) c.innerHTML = UnitGem.has() ? '💎 수호 보석을 완성했어요!' : '💎 수호 보석은 세트 2의 <b>단원 평가</b>와 <b>왕중왕전</b>까지 마치면 완성돼요.';
+        if (c.matches('p') && /단원 전체 보고서/.test(c.textContent)) c.textContent = '단원 전체 보고서(차시 진단 · 오답노트 · 제출 · 인쇄)는 세트 2의 「결과」에서 볼 수 있어요.'; });
+      const b = [...card.querySelectorAll('button')].find(x => /세트 2/.test(x.textContent)); if (b) b.textContent = '📋 세트 2 단원 평가로 ➜';
+      /* 아직 안 한(배지 없는) 카드는 눌러서 바로 그 복습 카드로 */
+      const lis = [...card.querySelectorAll('ul li')]; lis.forEach((li, i) => { const it = S1_ITEMS[i]; if (!it || (state.s1.badges || {})[it.card]) return;
+        li.classList.add('fu-go'); li.setAttribute('role', 'button'); li.tabIndex = 0; li.title = '눌러서 바로 해 보기';
+        const go = document.createElement('span'); go.className = 'fu-gob'; go.textContent = '▶ 하러 가기'; li.appendChild(go);
+        const open = () => { state.s1.tool = it.card; goStep('s1', 'concept'); setTimeout(() => { const t = document.querySelector(`[data-act="tool"][data-v="${it.card}"]`); if (t) t.click(); }, 120); };
+        li.addEventListener('click', open); li.addEventListener('keydown', e => { if (e.key === 'Enter') open(); }); }); });
+    return r; };
+
+  /* ---------- 세트 2: 단원 평가 하 · 중 · 상 (각 10문항) ---------- */
+  function lvQs(L) {
+    const Ns = LESSONS.map(l => l.n), base = Math.floor(10 / Ns.length), cnt = {}; Ns.forEach(n => cnt[n] = base);
+    shuffle(Ns).slice(0, 10 - base * Ns.length).forEach(n => cnt[n]++);
+    const qs = [];
+    Ns.forEach(n => { const all = UPOOL[n] || [], gs = all.filter(g => L === 1 ? (g.k === 'b' || g.lv === 1) : g.lv === L), use = gs.length >= cnt[n] ? gs : all;
+      shuffle(use).slice(0, cnt[n]).forEach(g => qs.push(upq(n, g, use))); });
+    return qs;
+  }
+  const sd0 = startDrill, dn0 = drillNext, dp0 = drillPick, rd0 = renderDrill;
+  startDrill = function (mode) { const m = /^lv([123])$/.exec(mode), d = state.s2.drill; if (!m) { d.level = 0; return sd0.apply(this, arguments); }
+    const L = +m[1]; touch('s2'); d.mode = 'unit'; d.level = L; d.qs = lvQs(L).map(q => { try { return window.UAUTOFIG ? UAUTOFIG(q) : q; } catch (e) { return q; } }); d.idx = 0; d.ans = []; d.lastScore = null; d.streak = 0; d.hint = false;
+    T(() => { say(`단원 평가 「${LVN[L]}」 시작! 모두 10문제야.`); mood('wow', 1200); }); renderDrill(); };
+  drillNext = function () { const d = state.s2.drill, L = d.level;
+    if (L && d.mode === 'unit' && d.qs.length && d.idx === d.qs.length - 1) { const sc = Math.round(d.ans.filter(a => a && a.ok).length / d.qs.length * 100), lv = lvOf(), x = lv[L] || (lv[L] = { rounds: 0, best: 0 }); x.rounds++; x.last = sc; if (sc > x.best) x.best = sc; }
+    return dn0.apply(this, arguments); };
+  drillPick = function () { const d = state.s2.drill, lq = logQ;
+    if (d.level && d.mode === 'unit') logQ = function (e) { if (e && e.set === 's2') e.src = `CH.2 단원 평가 (${LVN[d.level]})`; return lq.apply(this, arguments); };
+    try { return dp0.apply(this, arguments); } finally { logQ = lq; } };
+  function menuHTML() { const lv = lvOf(), done = [1, 2, 3].filter(L => (lv[L] || {}).rounds).length;
+    return `<div class="card fu-menu">
+      <div class="stage-head"><span class="ti" style="background:#fff0dc">📋</span><div><span class="stchap">CHAPTER 2</span><h2 class="h2">단원 평가 · 하 · 중 · 상</h2><p class="sub" style="margin:3px 0 0">단계마다 <b>10문제</b>씩, ${LESSONS.length}개 차시에서 골고루 나와요. 문제마다 몇 차시 내용인지 표시되고, 끝나면 차시별로 진단해 줘요. <b>하 → 중 → 상</b> 차례로 도전해 봐요.</p></div></div>
+      <div class="gates mt-3">${[1, 2, 3].map(L => { const x = lv[L] || {};
+        return `<button class="gate" style="background:${LVC[L]}" data-act="drill-level" data-v="lv${L}"><div class="gi">${LVI[L]}</div><div class="gt">단원 평가 「${LVN[L]}」 10문항</div><div class="gs">${LVS[L]} · ${x.rounds ? `최고 ${x.best}점${x.best >= 80 ? ' 🏅' : ''}` : '아직 도전 전'}</div></button>`; }).join('')}</div>
+      <p class="center font-bold muted mt-3 fu-menu-st">${done ? `세 단계 중 ${done}단계 도전 · ${done === 3 ? '모두 도전했어요! 왕중왕전으로 가요 👑' : '남은 단계도 도전해 봐요'}` : '쉬운 단계부터 시작해요. 세 단계를 모두 도전하면 왕중왕전 준비 끝!'}</p></div>`; }
+  function finHTML() { const d = state.s2.drill, L = d.level, ok = d.ans.filter(a => a && a.ok).length, sc = d.lastScore || 0, nx = L < 3 ? L + 1 : 0;
+    const per = LESSONS.map(l => ({ l, xs: d.qs.map((q, i) => ({ q, a: d.ans[i] || {} })).filter(x => x.q.ch === l.n) })).filter(x => x.xs.length);
+    const tip = sc >= 80 ? (nx ? `탄탄해요! 「${LVN[nx]}」 단계에 도전해 봐요.` : '세 단계를 모두 해냈어요! 왕중왕전에서 실력을 뽐내 봐요.') : sc >= 50 ? '거의 다 왔어요. ❌ 표시가 있는 차시의 풀이를 다시 읽고 한 번 더 풀어 봐요.' : '괜찮아요! 세트 1의 개념 카드를 다시 넘겨 보고 한 번 더 도전해 봐요.';
+    return `<div class="card center fu-fin">
+      <div class="fu-finl"><div class="row" style="justify-content:center">${JARAM(84)}</div><h2 class="h2 mt-2">📋 단원 평가 「${LVN[L]}」 완료!</h2>
+        <div class="score-big" id="drillScore">0<span style="font-size:1.6rem">점</span></div><p class="font-bold muted">${ok} / ${d.qs.length} 문제 정답</p></div>
+      <div class="fu-finr"><table class="dgtab"><tr><th>차시</th><th>결과</th></tr>${per.map(x => `<tr><td>${chTag(x.l.n)}</td><td>${x.xs.map(y => y.a.ok ? '✅' : '❌').join(' ')}</td></tr>`).join('')}</table><p class="fu-tip">💡 ${tip}</p></div>
+      <div class="row fu-finb" style="justify-content:center">${nx ? `<button class="btn btn-primary" data-act="drill-level" data-v="lv${nx}">「${LVN[nx]}」 단계 도전 ➜</button>` : ''}<button class="btn btn-sub" data-act="drill-level" data-v="lv${L}">🔁 「${LVN[L]}」 다시 풀기</button><button class="btn btn-sub" data-act="drill-menu">단계 고르기</button><button class="btn ${nx ? 'btn-green' : 'btn-primary'}" data-act="step" data-v="arena">👑 왕중왕전 ➜</button></div></div>`; }
+  renderDrill = function () { const d = state.s2.drill, body = document.getElementById('s2body'); if (!body) return;
+    if (!d.qs.length) { body.innerHTML = menuHTML(); T(() => window.SV_LF_decoGates && SV_LF_decoGates()); return; }
+    if (d.idx >= d.qs.length && d.mode === 'unit' && d.level) { body.innerHTML = finHTML(); T(() => countUp(document.getElementById('drillScore'), d.lastScore || 0, '점')); if (d.lastScore >= 80) T(() => FX.rain(100)); return; }
+    const r = rd0.apply(this, arguments);
+    if (d.mode === 'unit' && d.level) T(() => { const pill = body.querySelector('.card .pill'); if (pill) pill.textContent = `단원 평가 · ${LVN[d.level]}`; });
+    return r; };
+
+  /* ---------- 이야기: 4장으로 다시 묶기 ---------- */
+  T(() => { const o = CHAPTERS.slice(), v = o[0].v, G = T(() => SV_ARENA.games.length) || 0; CHAPTERS.length = 0;
+    CHAPTERS.push({ n: 1, v, icon: '🧭', title: '개념 복습', sub: o[0].sub, go: ['s1', 'concept'] }, { n: 2, v, icon: '📋', title: '단원 평가', sub: '하 · 중 · 상 각 10문항', go: ['s2', 'drill'] },
+      { n: 3, v, icon: '👑', title: '왕중왕전', sub: `차시 게임 ${G}개 도전과 경쟁`, go: ['s2', 'arena'] }, { n: 4, v, icon: '📜', title: '결과', sub: (o[4] || o[o.length - 1]).sub, go: ['s2', 'result'] });
+    Object.keys(STEP_CH).forEach(k => delete STEP_CH[k]); Object.assign(STEP_CH, { 's1:concept': 1, 's1:result': 1, 's2:drill': 2, 's2:arena': 3, 's2:result': 4 }); });
+  T(() => { const vw = (BEATS.ch1.lines.find(l => l.w !== 'guide' && l.w !== 'narr') || {}).w || 'dark', vn = T(() => VILLAINS[vw].name) || '악당', ro = T(() => josa(vn, '을', '를')) || '를', old4 = BEATS.ch4;
+    const g1 = BEATS.ch1.lines.filter(l => l.w === 'guide').pop(); if (g1) g1.t = `배지 ${N}개 완성! 세트 1 결과를 확인하고, 세트 2 <b>단원 평가</b>에서 실력을 확인하자!`;
+    BEATS.ch1.btns = [{ t: '🏆 세트 1 결과 보기 ➜', act: 'go', to: ['s1', 'result'] }, { t: '닫기', c: 'btn-sub', act: 'close' }];
+    BEATS.ch2 = { cap: 'CHAPTER 2 CLEAR', ttl: '단원 평가 하 · 중 · 상 돌파!', v: BEATS.ch1.v, pose: 'angry',
+      lines: [{ w: vw, p: 'angry', t: '크윽! 하, 중, 상 단원 평가를 모두 넘다니…! 하지만 왕중왕전에서 마지막 승부다!' }, { w: 'guide', p: 'cheer', t: `왕중왕전으로 가자! 차시마다 했던 게임으로 ${vn}${/[을를]$/.test(ro) ? ro : '를'} 끝까지 몰아붙이자!` }],
+      btns: [{ t: '👑 CH.3 왕중왕전으로 ➜', act: 'go', to: ['s2', 'arena'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] };
+    if (old4) BEATS.ch3 = Object.assign({}, old4, { cap: 'CHAPTER 3 CLEAR', btns: [{ t: '📜 CH.4 결과 보고서 ➜', act: 'go', to: ['s2', 'result'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] }); });
+  T(() => { const pr0 = Story.prog.bind(Story);
+    Story.prog = function () { const p = pr0(), s = T(() => SVHUB.stats()) || { played: 0 }, G = T(() => SV_ARENA.games.length) || 1, lv = lvOf(), ld = [1, 2, 3].filter(L => (lv[L] || {}).rounds).length;
+      const dmg = p.tools / N * .3 + ld / 3 * .4 + (s.played || 0) / G * .3;
+      p.basic = 0; p.jump = 0; p.drill = ld > 0; p.lvDone = ld;
+      p.tiltHp = Math.max(0, 100 - Math.round(100 * dmg)); p.tilt = p.tiltHp === 0; p.darkHp = p.tiltHp; p.dark = p.tilt;
+      p.ch = [p.tools === N, ld === 3, (s.played || 0) >= G, p.tilt]; return p; };
+    Story.sync = function () { const p = this.prog(); this.paint();
+      if (p.ch[0]) this.once('ch1', () => this.scene('ch1'));
+      if (p.ch[1]) this.once('ch2', () => this.scene('ch2'));
+      if (p.ch[2] && !p.tilt) this.once('ch3', () => this.scene('ch3'));
+      if (p.tilt) this.once('final', () => { T(() => UnitGem.earn()); T(() => { FX.rain(260); Sound.win(); }); this.scene('final'); }); };
+    const sv0 = Story.stepV.bind(Story);
+    Story.stepV = function () { const r = sv0(), tab = state.tab, step = (state[tab] || {}).step || (tab === 's2' ? 'drill' : 'concept');
+      const M = { 's1:concept': `카드를 넘기며 배운 내용을 떠올리고, 확인 문제로 핵심 개념 배지 ${N}개를 모으자!`, 's1:result': '세트 1 결과를 확인하고 세트 2 단원 평가로!', 's2:drill': '단원 평가 하 · 중 · 상! 단계마다 10문제로 실력을 확인하자!', 's2:result': '단원 보고서 — 차시 진단 · 오답노트 · 제출 · 인쇄!' };
+      if (r && M[tab + ':' + step]) r.m = M[tab + ':' + step]; return r; }; });
+  /* ---------- ⚔️ 도전장: 단원 마무리 첫 장면 (악당이 "나를 이겨 봐!") ---------- */
+  T(() => { const sc0 = Story.scene.bind(Story), P0 = BEATS.prologue;
+    Story.scene = function (id) {
+      if (id !== 'prologue' || !P0 || !document.getElementById('stBox')) { T(() => document.getElementById('stOv').classList.remove('fu-chal')); return sc0(id); }
+      this.cur = P0; const vk = P0.v || 'dark', V = VILLAINS[vk] || {}, vn = V.name || '악당', p = T(() => this.prog()) || { ch: [] }, G = T(() => SV_ARENA.games.length) || 0;
+      const dl = (P0.lines || []).find(l => l.w !== 'guide' && l.w !== 'narr'), gl = (P0.lines || []).filter(l => l.w === 'guide').pop();
+      const lid = String(CONFIG.LESSON_ID || ''), img = `./assets/scenes/${lid}-challenge.webp`;
+      const gates = [['🧭', '개념 복습', `개념 카드 ${N}장 · 확인 문제`, p.ch[0]], ['📋', '단원 평가', '하 · 중 · 상 각 10문항', p.ch[1]], ['👑', '왕중왕전', `차시 게임 ${G}개`, p.ch[2]]];
+      const nx = gates.findIndex(g => !g[3]), go = nx === 0 ? ['s1', 'concept'] : nx === 1 ? ['s2', 'drill'] : nx === 2 ? ['s2', 'arena'] : ['s2', 'result'];
+      P0.btns = [{ t: nx < 0 ? '📜 결과 보러 가기' : nx ? `⚔️ ${gates[nx][1]}에 도전!` : '⚔️ 도전 받기!', act: 'go', to: go }, { t: '😈 악당 보기', c: 'btn-sub', act: 'scene', to: 'villains' }];
+      $('#stBox').innerHTML = `<div class="fuch">
+        <div class="fuchL"><div class="fuchV"><img src="${img}" alt="" onerror="this.remove()"><div class="fuchF">${(() => { const u = T(() => typeof G56 !== 'undefined' && G56.full && G56.full(vk, 'laugh')); return u ? `<img class="fuchFull" src="${u}" alt="">` : this.face(vk, 230, 'happy'); })()}</div></div><div class="fuchN">${esc(vn)}</div></div>
+        <div class="fuchR"><span class="stcap">${esc(P0.cap || '최종 결전')}</span><div class="fuchT">📜 ${esc(vn)}의 도전장</div>
+          <div class="fuchB">${dl ? dl.t : ''} <b>세 관문을 모두 넘어 나를 이겨 봐라!</b></div>
+          <div class="fuchG">${gates.map((g, i) => `<div class="fugt ${g[3] ? 'ok' : i === nx ? 'now' : ''}"><span class="fugi">${g[3] ? '✅' : g[0]}</span><b>${i + 1}. ${g[1]}</b><small>${g[2]}</small></div>${i < 2 ? '<span class="fuga">➜</span>' : ''}`).join('')}</div>
+          ${gl ? `<div class="stline me"><span class="stav">${avatar(GUIDE(), 46, 'determined')}</span><div style="flex:1;min-width:0"><div class="stwho">${esc(CHARS[GUIDE()].name)}</div><div class="stbub2">${gl.t}</div></div></div>` : ''}
+          <div class="stbtns">${P0.btns.map((x, k) => `<button class="btn ${x.c || 'btn-primary'}" data-st="btn" data-i="${k}">${x.t}</button>`).join('')}</div></div></div>`;
+      const ov = document.getElementById('stOv'); ov.classList.add('fu-chal'); ov.classList.remove('hidden'); T(() => { Sound.whoosh(); });
+    };
+    /* 처음 열 때 다른 곳(수업 흐름)에서 옛 모양으로 그린 첫 장면도 도전장으로 바꿔 그려요 */
+    const box = document.getElementById('stBox'), cap = P0 && P0.cap;
+    if (box && cap) new MutationObserver(() => { if (box.querySelector('.fuch')) return; const c = box.querySelector('.stcap'); if (c && c.textContent.trim() === String(cap).trim() && !document.getElementById('stOv').classList.contains('hidden')) Story.scene('prologue'); else T(() => document.getElementById('stOv').classList.remove('fu-chal')); }).observe(box, { childList: true }); });
+  /* 수호 보석: 6학년 1학기 차시 보석으로 세기 */
+  T(() => { const uid = String(CONFIG.LESSON_ID || '').replace(/-U$/, ''); UnitGem.lessons = function () { const g = Gems.load(); return LESSONS.map(l => !!g[uid + '-' + l.n]); }; });
+  T(() => { if (state.tab === 's2') renderS2(); else renderS1(); });
+})();
+
+/* =====================================================================
+   🏰 보스 성 탈환전 — 모든 단원 마무리의 공통 컨셉
+     ① 머리글 「○단원 마무리 · ○○ 탈환전」  ② 단원 평가 하·중·상 = 성벽 3관문 (돌파하면 성벽이 무너져요)
+     ④ 결과 = 「성 탈환 증서」 + 탈환 작전 기록(하러 가기)
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__UCASTLE) return; window.__UCASTLE = 1;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
+  const CASTLE = { '4-1-1': '삐딱이의 수의 탑', '4-1-2': '뒤죽이의 각도 성', '4-1-3': '반쪽이의 축제 성', '4-1-4': '뒤죽이의 거울 성', '4-1-5': '뒤죽이의 그래프 성', '4-1-6': '시간도둑의 규칙 성',
+    '5-1-1': '브래킷의 계산 순서 탑', '5-1-2': '파편마의 톱니바퀴 수정 동굴', '6-1-1': '디바이드의 분수 성', '6-1-2': '폴리곤의 입체 성', '6-1-3': '데시말의 소수 성', '6-1-4': '라티오의 비율 성', '6-1-5': '차트 마스터의 그래프 성', '6-1-6': '볼륨 킹의 부피 성' };
+  const P = UID.split('-'), GR = P[0], UN = P[2], CS = CASTLE[UID] || '보스 성';
+  const UNM = T(() => (String(SV_LF.review.title).match(/「[^」]+」/) || [''])[0]) || '';
+  window.UCASTLE = { name: CS, title: `${UN}단원 마무리 · ${CS} 탈환전` };
+  const lsg = k => T(() => localStorage.getItem(k)), lss = (k, v) => T(() => localStorage.setItem(k, v));
+  /* ① 머리글 */
+  function head() { const ti = document.querySelector('#svslTop .ti'); if (!ti || ti.dataset.uc) return; ti.dataset.uc = '1';
+    ti.innerHTML = `<small>${UN}단원 마무리</small>🏰 ${CS} 탈환전`; ti.title = window.UCASTLE.title + ' · ' + UNM; }
+  /* ② 관문 그림 (11-20 새 그림): 하 = 아침 숲 성문 · 중 = 노을 협곡 요새 · 상 = 밤의 대성채
+       st 0 굳게 닫힘 · 1 금이 감 · 2 무너짐(우리 깃발) */
+  function wall(st, L) {
+    const id = 'ucg' + L + st + Math.random().toString(36).slice(2, 6);
+    const P = [null,
+      { s1: '#7dd3fc', s2: '#e0f2fe', m1: '#a7f3d0', m2: '#6ee7b7', g1: '#4ade80', g2: '#16a34a', rf: '#0d9488', rf2: '#115e59', fl: '#14b8a6', st1: '#e7e5e4', st2: '#a8a29e', lab: '하', top: 84, keep: 0 },
+      { s1: '#fb923c', s2: '#fde68a', m1: '#fdba74', m2: '#f59e0b', g1: '#a3e635', g2: '#4d7c0f', rf: '#2563eb', rf2: '#1e3a8a', fl: '#3b82f6', st1: '#e7e5e4', st2: '#a8a29e', lab: '중', top: 74, keep: 1 },
+      { s1: '#1e1b4b', s2: '#6d28d9', m1: '#4c1d95', m2: '#312e81', g1: '#166534', g2: '#052e16', rf: '#e11d48', rf2: '#881337', fl: '#f43f5e', st1: '#d6d3d1', st2: '#78716c', lab: '상', top: 66, keep: 2 }][L] || null;
+    if (!P) return '';
+    const T0 = P.top, win = st === 2, flc = win ? '#22c55e' : P.fl;
+    const merl = (x0, x1, y, w = 9, g = 5) => { let s = ''; for (let x = x0; x + w <= x1 + .1; x += w + g) s += `<rect x="${x}" y="${y - 8}" width="${w}" height="9" rx="1.2"/>`; return s; };
+    const tower = (cx, top, w) => { const x = cx - w / 2;
+      return `<g><rect x="${x}" y="${top}" width="${w}" height="${172 - top}" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/>
+        <rect x="${x}" y="${top}" width="${w}" height="${172 - top}" fill="url(#${id}b)" opacity=".55"/>
+        <g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.2">${merl(x - 3, x + w + 3, top, 8, 4)}</g>
+        <path d="M${x - 5} ${top - 8}L${cx} ${top - 38}L${x + w + 5} ${top - 8}z" fill="url(#${id}r)" stroke="${P.rf2}" stroke-width="1.4"/>
+        <path d="M${cx} ${top - 38}L${x + w + 5} ${top - 8}H${cx + 4}z" fill="#000" opacity=".16"/>
+        <path d="M${cx} ${top - 38}V${top - 58}" stroke="#3f3f46" stroke-width="1.8"/>
+        <path class="ucg-flag" d="M${cx + 1} ${top - 57}q8 3 16 0t16 2v11q-8 3-16 0t-16 -1z" fill="${flc}" stroke="#0f172a" stroke-width=".8" style="transform-origin:${cx}px ${top - 52}px"/>
+        ${win ? `<path d="M${cx + 13} ${top - 54}l3 6 6 .6-4.6 4 1.4 6-5.8-3.2-5.8 3.2 1.4-6-4.6-4 6-.6z" fill="#fef08a"/>` : ''}
+        <rect x="${cx - 4}" y="${top + 16}" width="8" height="13" rx="4" fill="#1c1917"/><rect x="${cx - 4}" y="${top + 46}" width="8" height="13" rx="4" fill="#1c1917"/>
+        <path d="M${x + 4} ${top + 4}v${70}" stroke="#fff" stroke-width="2" opacity=".18"/>
+        ${win ? '' : `<path d="M${cx - 8} ${top + 8}h16v26l-8 7-8-7z" fill="${P.fl}" stroke="${P.rf2}" stroke-width="1"/><circle cx="${cx}" cy="${top + 20}" r="3.2" fill="#fde68a"/>`}</g>`; };
+    const sky = L === 3 ? `<g fill="#fff">${[[22, 18, 1.2], [60, 34, .9], [94, 14, 1.1], [250, 22, 1], [286, 44, 1.3], [210, 12, .8], [140, 30, .7], [300, 12, .9], [40, 58, .8]].map(s => `<circle class="ucg-tw" cx="${s[0]}" cy="${s[1]}" r="${s[2]}"/>`).join('')}</g><circle cx="270" cy="34" r="15" fill="#fef3c7"/><circle cx="276" cy="30" r="13" fill="${P.s1}"/>`
+      : L === 2 ? `<circle cx="252" cy="96" r="30" fill="#fff7ed" opacity=".95"/><circle cx="252" cy="96" r="44" fill="#fff7ed" opacity=".25"/>`
+      : `<circle cx="44" cy="34" r="16" fill="#fef9c3"/><circle cx="44" cy="34" r="26" fill="#fef9c3" opacity=".3"/><g fill="#fff" opacity=".92"><ellipse cx="236" cy="38" rx="24" ry="9"/><ellipse cx="252" cy="32" rx="15" ry="9"/><ellipse cx="110" cy="52" rx="18" ry="6"/></g>`;
+    const KY = T0 - 8, KP = KY - 34 - (P.keep - 1) * 6;
+    const keep = P.keep ? `<g><rect x="128" y="${KY}" width="64" height="${110 - KY}" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.3"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(126, 194, KY, 8, 4)}</g>
+        <path d="M122 ${KY - 8}L160 ${KP}L198 ${KY - 8}z" fill="url(#${id}r)" stroke="${P.rf2}" stroke-width="1.3"/><path d="M160 ${KP}L198 ${KY - 8}H164z" fill="#000" opacity=".16"/><path d="M160 ${KP}V${KP - 18}" stroke="#3f3f46" stroke-width="1.8"/>
+        <path class="ucg-flag" d="M161 ${KP - 17}q9 3 18 0t17 2v11q-9 3-17 0t-18 -1z" fill="${flc}" stroke="#0f172a" stroke-width=".8" style="transform-origin:160px ${KP - 12}px"/>
+        <rect x="154" y="${KY + 8}" width="12" height="16" rx="6" fill="${L === 3 ? '#fde047' : '#1c1917'}"/></g>` : '';
+    const torch = x => `<g><circle class="ucg-glow" cx="${x}" cy="126" r="${L === 3 ? 16 : 10}" fill="url(#${id}g)"/><rect x="${x - 1.5}" y="128" width="3" height="11" fill="#78350f"/><path class="ucg-fire" d="M${x} 118c4 4 4 8 0 11-4-3-4-7 0-11z" fill="#f97316"/><path d="M${x} 122c2 2 2 4 0 6-2-2-2-4 0-6z" fill="#fde047"/></g>`;
+    const door = st === 2
+      ? `<path d="M138 172V134a22 22 0 0 1 44 0v38z" fill="#0c0a09"/><path d="M146 172V140" stroke="#1c1917"/><g transform="rotate(-38 138 172)"><rect x="126" y="140" width="13" height="32" rx="1.5" fill="url(#${id}w)" stroke="#451a03"/></g><g transform="rotate(30 182 172)"><rect x="181" y="142" width="12" height="30" rx="1.5" fill="url(#${id}w)" stroke="#451a03"/></g>
+         <g fill="${P.st2}" stroke="#44403c" stroke-width=".8"><path d="M112 178l9-7 8 3 2 8z"/><path d="M186 180l7-8 9 2 1 9z"/><path d="M150 182l6-6 8 2 1 6z"/><path d="M128 186l5-5 6 1v5z"/><path d="M196 188l6-4 5 3-2 4z"/></g>`
+      : `<path d="M138 172V134a22 22 0 0 1 44 0v38z" fill="url(#${id}w)" stroke="#451a03" stroke-width="1.6"/><path d="M160 112V172" stroke="#451a03" stroke-width="1.4"/>
+         <g stroke="#78350f" stroke-width=".8" opacity=".7">${[144, 150, 155, 165, 170, 176].map(x => `<path d="M${x} ${x < 147 || x > 173 ? 128 : 116}V172"/>`).join('')}</g>
+         <g stroke="#3f3f46" stroke-width="2.2" fill="none"><path d="M139 142H181M139 158H181"/></g><g fill="#a1a1aa">${[143, 152, 168, 177].map(x => `<circle cx="${x}" cy="142" r="1.4"/><circle cx="${x}" cy="158" r="1.4"/>`).join('')}</g>
+         <g stroke="#27272a" stroke-width="1.6" opacity=".85">${[143, 150, 157, 164, 171, 178].map(x => `<path d="M${x} ${st ? 150 : 132}V172"/>`).join('')}<path d="M139 ${st ? 160 : 150}H181"/></g>`;
+    const crack = st >= 1 ? `<g stroke="#1c1917" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M134 100l6 10-5 7 7 9"/><path d="M188 104l-5 9 6 6-4 10"/><path d="M80 ${T0 + 30}l7 9-5 8 6 11"/><path d="M236 ${T0 + 36}l-6 8 5 9"/></g><g stroke="#fff" stroke-width=".7" fill="none" opacity=".55"><path d="M135 101l6 10-5 7 7 9"/><path d="M81 ${T0 + 31}l7 9-5 8 6 11"/></g>` : '';
+    const smoke = st === 1 ? `<g fill="#e7e5e4" opacity=".8"><circle cx="186" cy="92" r="6"/><circle cx="193" cy="85" r="5"/><circle cx="199" cy="78" r="3.5"/></g>` : '';
+    const spark = st === 2 ? `<g fill="#fef08a">${[[104, 60], [214, 52], [160, 30], [60, 100], [262, 96]].map(p => `<path class="ucg-tw" d="M${p[0]} ${p[1] - 6}l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z"/>`).join('')}</g>` : '';
+    return `<svg viewBox="0 0 320 200" class="qart ucwall ucg" preserveAspectRatio="xMidYMax meet"><defs>
+      <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.s1}"/><stop offset="1" stop-color="${P.s2}"/></linearGradient>
+      <linearGradient id="${id}t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${P.st1}"/><stop offset=".55" stop-color="${P.st2}"/><stop offset="1" stop-color="#57534e"/></linearGradient>
+      <linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${P.rf}"/><stop offset="1" stop-color="${P.rf2}"/></linearGradient>
+      <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b45309"/><stop offset="1" stop-color="#78350f"/></linearGradient>
+      <linearGradient id="${id}gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.g1}"/><stop offset="1" stop-color="${P.g2}"/></linearGradient>
+      <radialGradient id="${id}g"><stop offset="0" stop-color="#fde047" stop-opacity=".95"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>
+      <pattern id="${id}b" width="16" height="10" patternUnits="userSpaceOnUse"><path d="M0 10H16M8 0V5M0 5H16M16 5V10M0 5V10" stroke="#57534e" stroke-width=".7" fill="none"/></pattern></defs>
+      <rect width="320" height="200" fill="url(#${id}s)"/>${sky}
+      <path d="M0 132L40 96L78 120L120 84L168 118L214 80L262 114L296 92L320 108V200H0z" fill="${P.m1}" opacity=".75"/>
+      <path d="M0 150L52 122L96 140L150 116L204 142L250 120L320 138V200H0z" fill="${P.m2}" opacity=".85"/>
+      ${keep}
+      <g><rect x="18" y="114" width="284" height="58" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/><rect x="18" y="114" width="284" height="58" fill="url(#${id}b)" opacity=".5"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(18, 302, 114)}</g></g>
+      ${tower(92, T0, 46)}${tower(228, T0, 46)}${L === 3 ? tower(36, T0 + 26, 34) + tower(284, T0 + 26, 34) : ''}
+      <g><rect x="128" y="98" width="64" height="74" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/><rect x="128" y="98" width="64" height="74" fill="url(#${id}b)" opacity=".5"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(126, 194, 98, 8, 4)}</g>
+        <path d="M134 172V132a26 26 0 0 1 52 0v40z" fill="#57534e" opacity=".55"/></g>
+      ${door}
+      <g><path d="M150 102h20v12l-10 8-10-8z" fill="${win ? '#22c55e' : P.fl}" stroke="#0f172a" stroke-width="1"/><text x="160" y="114.5" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff" font-family="inherit">${win ? '✓' : P.lab}</text></g>
+      ${torch(122)}${torch(198)}${crack}${smoke}
+      <path d="M0 172H320V200H0z" fill="url(#${id}gr)"/><path d="M138 172H182L214 200H106z" fill="#d6b98c" opacity="${L === 3 ? .55 : .9}"/>
+      <g fill="${P.g2}" opacity=".8"><ellipse cx="40" cy="178" rx="20" ry="7"/><ellipse cx="282" cy="180" rx="24" ry="8"/><ellipse cx="88" cy="190" rx="14" ry="5"/></g>${spark}
+      ${L === 3 && !win ? `<rect width="320" height="200" fill="#1e1b4b" opacity=".12"/>` : ''}</svg>`;
+  }
+  function boom(gi) { const fx = document.createElement('div'); fx.className = 'ucwfx';
+    fx.innerHTML = Array.from({ length: 12 }, (_, i) => { const a = (i / 12) * Math.PI * 2 + Math.random() * .4, d = 60 + Math.random() * 70; return `<i style="--dx:${(Math.cos(a) * d).toFixed(0)}px;--dy:${(Math.sin(a) * d - 30).toFixed(0)}px;--r:${(Math.random() * 540 - 270).toFixed(0)}deg;--s:${(.6 + Math.random() * .8).toFixed(2)}"></i>`; }).join('') + '<b>💥</b>';
+    gi.appendChild(fx); setTimeout(() => fx.remove(), 1400); T(() => Sound.shield()); }
+  function gates() { const g = document.querySelector('#s2body .gates'); if (!g || !g.querySelector('.qrib')) return; const lv = T(() => state.s2.drill.lv) || {}, card = g.closest('.card');
+    if (card && !card.classList.contains('ucw-on')) { card.classList.add('ucw-on'); const h2 = card.querySelector('.stage-head h2'); if (h2) h2.textContent = '🧱 성벽 3관문 · 단원 평가 하 · 중 · 상';
+      const sb = card.querySelector('.stage-head .sub'); if (sb) sb.innerHTML = `${CS}에 들어가려면 성벽 <b>3관문</b>을 부숴야 해요. 관문마다 <b>10문제</b>, <b>60점 이상</b>이면 성벽이 무너져요! 하 → 중 → 상 차례로 공격해 봐요.`;
+      const ti = card.querySelector('.stage-head .ti'); if (ti) ti.textContent = '🏰'; }
+    g.querySelectorAll('.gate').forEach((el, i) => { const L = i + 1, x = lv[L] || {}, st = x.rounds ? (x.best >= 60 ? 2 : 1) : 0; if (el.dataset.ucw === String(st)) return; el.dataset.ucw = st;
+      const rib = el.querySelector('.qrib'); if (rib) rib.textContent = `제${L}관문 · ${['하', '중', '상'][i]}`;
+      const gi = el.querySelector('.gi'), k = 'ucwall:' + UID + ':' + L, fresh = st === 2 && !lsg(k);
+      if (gi) { gi.innerHTML = wall(fresh ? 1 : st, L); gi.style.position = 'relative'; gi.style.background = ['', 'linear-gradient(180deg,#7dd3fc,#e0f2fe 70%,#16a34a 70%)', 'linear-gradient(180deg,#fb923c,#fde68a 70%,#4d7c0f 70%)', 'linear-gradient(180deg,#1e1b4b,#6d28d9 70%,#052e16 70%)'][L]; }
+      el.classList.toggle('ucw-broken', st === 2); el.classList.toggle('ucw-crack', st === 1);
+      let bd = el.querySelector('.ucwst'); if (!bd) { bd = document.createElement('div'); bd.className = 'ucwst'; (el.querySelector('.gt') || el).after(bd); }
+      bd.textContent = st === 2 ? `🧱 성벽 돌파! · 최고 ${x.best}점` : st === 1 ? `⚠️ 금만 갔어요 · 최고 ${x.best}점 (60점 이상이면 돌파)` : '🛡️ 아직 굳게 닫혀 있어요';
+      el.querySelectorAll('.qstat span').forEach(sp => { if (/👾/.test(sp.textContent)) sp.textContent = '👾 ' + CS.replace(/의 .*$/, ''); });
+      const go = el.querySelector('.qgo'); if (go) go.textContent = st === 2 ? '🔁 다시 공격하기' : '⚔️ 성벽 공격하기';
+      if (fresh && gi) { lss(k, '1'); setTimeout(() => { gi.classList.add('ucw-shake'); setTimeout(() => { gi.innerHTML = wall(2, L); gi.classList.remove('ucw-shake'); boom(gi); }, 520); }, 450); } });
+  }
+  /* 단원 평가를 마친 화면: 관문 결과 띠 */
+  function fin() { const f = document.querySelector('#s2body .fu-fin'); if (!f || f.dataset.uc) return; f.dataset.uc = '1'; const d = T(() => state.s2.drill) || {}, sc = d.lastScore || 0, L = d.level || 1;
+    f.insertAdjacentHTML('afterbegin', `<div class="ucwfin ${sc >= 60 ? 'ok' : ''}">${sc >= 60 ? `🧱💥 제${L}관문 성벽 돌파!${L < 3 ? ' 다음 관문으로 진격해요!' : ' 성벽 3관문이 모두 열렸어요. 왕중왕전으로!'}` : `🛡️ 제${L}관문 성벽에 금만 갔어요. 60점 이상이면 무너뜨릴 수 있어요!`}</div>`); }
+  /* ④ 결과: 성 탈환 증서 + 탈환 작전 기록 */
+  function goS(tab, step, after) { T(() => showTab(tab)); T(() => goStep(tab, step)); if (after) setTimeout(() => T(after), 120); }
+  function result() { const b = document.getElementById('s2body'); if (!b) return; const hd = b.querySelector('.rp-head'); if (!hd || hd.dataset.uc) return; hd.dataset.uc = '1';
+    const h2 = hd.querySelector('h2'); if (h2) h2.innerHTML = `📜 ${UN}단원 ${UNM.replace(/[「」]/g, '')} · 성 탈환 증서`;
+    const s1 = T(() => computeResult('s1')) || { score: 0 }, lv = T(() => state.s2.drill.lv) || {}, bd = T(() => Object.values(state.s1.badges || {}).filter(Boolean).length) || 0, NB = T(() => BADGES.length) || 3;
+    const G = T(() => SV_ARENA.games) || [], best = g => +(lsg('svarena:' + g.lid + ':' + g.id) || 0), crown = G.filter(g => best(g) >= 80).length, played = G.filter(g => best(g) > 0).length;
+    const walls = [1, 2, 3].filter(L => (lv[L] || {}).best >= 60).length, all = bd >= NB && walls === 3 && played === G.length && G.length;
+    hd.querySelector('h2').insertAdjacentHTML('afterend', `<div class="ucseal ${all ? 'ok' : ''}">${all ? `🏰 ${CS} 탈환 완료!` : `🏰 ${CS} 탈환 작전 진행 중`}</div>`);
+    const right = b.querySelector('.abars'); const host = right ? right.closest('.card') : null; if (!host) return;
+    const sub = host.querySelector('p.sub'); if (sub && /보스전/.test(sub.textContent)) sub.innerHTML = '개념 카드의 확인 문제와 단원 평가에서 <b>처음 푼 답</b>으로 계산해요.';
+    const row = (ic, nm, st, ok, btn, act) => `<div class="ucrow ${ok ? 'ok' : ''}"><span class="ucr-i">${ic}</span><span class="ucr-n">${nm}</span><span class="ucr-s">${st}</span><button class="btn ${ok ? 'btn-sub' : 'btn-primary'} sm ucgo" data-ucgo="${act}">${btn}</button></div>`;
+    host.insertAdjacentHTML('beforeend', `<div class="ucrec"><div class="font-black rp-t">🏰 탈환 작전 기록</div>
+      ${row('🧭', '개념 카드 배지', `${bd} / ${NB}`, bd >= NB, bd >= NB ? '🔄 다시 하기' : '▶ 하러 가기', 'c')}
+      ${[1, 2, 3].map(L => { const x = lv[L] || {}, ok = x.best >= 60; return row(ok ? '🧱' : '🛡️', `제${L}관문 「${['하', '중', '상'][L - 1]}」`, x.rounds ? `최고 ${x.best}점${ok ? ' · 돌파' : ''}` : '도전 전', ok, ok ? '🔄 다시 하기' : '▶ 하러 가기', 'w' + L); }).join('')}
+      ${row('👑', '왕중왕전 게임', `${played} / ${G.length} 도전 · 왕관 ${crown}`, G.length && played === G.length, G.length && played === G.length ? '🔄 다시 하기' : '▶ 하러 가기', 'a')}</div>`);
+    host.querySelectorAll('[data-ucgo]').forEach(x => x.onclick = () => { const a = x.dataset.ucgo; if (a === 'c') goS('s1', 'concept'); else if (a === 'a') goS('s2', 'arena'); else goS('s2', 'drill', () => startDrill('lv' + a.slice(1))); });
+    b.querySelectorAll('.advice li').forEach(li => { li.innerHTML = li.innerHTML.replace(/단원 평가 \d+문항/g, '단원 평가 하 · 중 · 상'); });
+  }
+  function run() { T(head); T(gates); T(fin); T(result); }
+  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  setTimeout(run, 300);
+})();
+
+/* =====================================================================
+   🖼️ 단원 평가 문제 화면 (11-20 새 구성)
+     [머리 줄] [문제 줄 — 가로 전체] [그림 판 | 보기 2×2 + 피드백 자리]
+     그림 판은 칸 크기가 정해져 있고, 그림만 판 안에서 가득 차게 키워 가운데 놓아요 (답한 뒤에도 그대로)
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__UFIT3 || typeof ufigFit1 !== 'function') return; window.__UFIT3 = 1;
+  const old = ufigFit1;
+  const fit = () => document.querySelectorAll('#s2body .udq.hasfig>.uqfig').forEach(f => { try {
+    if (!f.getClientRects().length) return; f.style.zoom = ''; f.style.top = ''; const kids = [...f.children]; if (!kids.length) return;
+    let inner = f.querySelector(':scope>.uqin'); if (!inner) { inner = document.createElement('div'); inner.className = 'uqin'; kids.forEach(k => inner.appendChild(k)); f.appendChild(inner); }
+    inner.style.zoom = ''; const W = f.clientWidth - 28, H = f.clientHeight - 44; if (W < 80 || H < 60) return;
+    let L = 1e9, R = -1e9, T = 1e9, B = -1e9;
+    inner.querySelectorAll('*').forEach(e => { if (e.tagName !== 'svg' && (e.children.length || e.closest('svg'))) return; const q = e.getBoundingClientRect(); if (q.width < 1 || q.height < 1) return; L = Math.min(L, q.left); R = Math.max(R, q.right); T = Math.min(T, q.top); B = Math.max(B, q.bottom); });
+    if (R <= L) return; let z = Math.max(.6, Math.min(2.8, W / (R - L), H / (B - T))); if (Math.abs(z - 1) > .02) inner.style.zoom = z.toFixed(2);
+    const fr = f.getBoundingClientRect(); for (let i = 0; i < 16 && z > .6; i++) { const q = inner.getBoundingClientRect(); if (q.bottom <= fr.bottom - 6 && q.top >= fr.top + 26 && q.right <= fr.right - 4 && q.left >= fr.left + 4 && inner.scrollHeight * z <= f.clientHeight) break; z *= .95; inner.style.zoom = z.toFixed(2); }
+  } catch (e) {} });
+  const longMark = () => document.querySelectorAll('#s2body .udq').forEach(c => { const L = Math.max(0, ...[...c.querySelectorAll('.choices .choice')].map(b => b.textContent.trim().length)); c.classList.toggle('uqlong', L > 11); });
+  ufigFit1 = function () { old(); requestAnimationFrame(() => requestAnimationFrame(fit)); setTimeout(fit, 400); setTimeout(fit, 1000); };
+  addEventListener('resize', () => { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); });
+  try { new MutationObserver(() => { longMark(); clearTimeout(fit.m); fit.m = setTimeout(fit, 60); }).observe(document.getElementById('s2body') || document.body, { childList: true, subtree: true }); } catch (e) {}
+})();
+
+/* =====================================================================
+   🖼️ 단원 평가 · 그림 없는 문제에 문제 종류별 그림 붙이기 (11-26)
+     보기를 키워 빈 곳을 채우지 않고, 문제를 이해하는 그림을 넣어요 (정답은 드러내지 않아요)
+     · 뛰어 세기 → 점프 줄 · 큰 수 → 자리 표 · ×, ÷ 세로셈 → 세로셈 틀 · 분수 → 막대 모형
+     · 혼합 계산 식 → 식 카드(접기 연습판이 붙어요) · 그 밖 → 그 차시의 개념 카드 그림
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.UAUTOFIG) return;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  const plain = x => String(x == null ? '' : x).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
+  const box = (inner, cap) => `<div class="uafig sv-fig">${cap ? `<div class="uacap">${cap}</div>` : ''}${inner}</div>`;
+  /* 뛰어 세기: a, b, c, □ */
+  function jump(t) { const m = /([\d,]+\s*(?:조|억|만)?(?:\s*[\d,]+\s*(?:억|만))?)씩\s*뛰어\s*세었어요\.?\s*(.+?)(?:\s*에\s*알맞|에서\s*□|$)/.exec(t); if (!m) return null;
+    const seq = m[2].split(/\s*,\s*|\s+(?=□)/).map(s => s.trim()).filter(Boolean).slice(0, 6); if (seq.length < 3) return null;
+    const n = seq.length, W = 120 * n + 40; let s = `<line x1="20" y1="110" x2="${W - 20}" y2="110" stroke="#334155" stroke-width="4" stroke-linecap="round"/>`;
+    seq.forEach((v, i) => { const x = 60 + i * 120, q = /□/.test(v); s += `<circle cx="${x}" cy="110" r="9" fill="${q ? '#f59e0b' : '#7c3aed'}"/><rect x="${x - 54}" y="128" width="108" height="40" rx="12" fill="${q ? '#fff7ed' : '#fff'}" stroke="${q ? '#f59e0b' : '#a78bfa'}" stroke-width="3"/><text x="${x}" y="156" text-anchor="middle" font-size="${v.length > 7 ? 15 : 20}" font-weight="900" fill="#1e1b4b">${v}</text>`;
+      if (i < n - 1) s += `<path d="M${x + 8},100 Q${x + 60},40 ${x + 112},100" fill="none" stroke="#16a34a" stroke-width="4"/><path d="M${x + 112},100 l-12,-4 M${x + 112},100 l-4,-12" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/><text x="${x + 60}" y="52" text-anchor="middle" font-size="16" font-weight="900" fill="#15803d">+${m[1].trim()}</text>`; });
+    return box(`<svg viewBox="0 0 ${W} 180" style="width:100%;max-width:${W}px">${s}</svg>`, '🐸 같은 만큼씩 뛰어 세기'); }
+  /* 큰 수 자리 표 */
+  const UNITS = ['일', '만', '억', '조'], SUB = ['천', '백', '십', ''];
+  function place(t) { const m = /(\d{5,16})/.exec(t.replace(/,/g, '')); const um = /(조|억|만)이\s*\d+\s*개/.exec(t);
+    if (!m && !um) return null; const digits = m ? m[1] : '', len = Math.max(digits.length, um ? ({ 만: 5, 억: 9, 조: 13 })[um[1]] + 3 : 0), G = Math.min(4, Math.ceil(len / 4));
+    let head = '', row = ''; for (let g = G - 1; g >= 0; g--) for (let k = 0; k < 4; k++) { const pos = g * 4 + (3 - k), d = digits ? digits[digits.length - 1 - pos] : '', hot = um && UNITS[g] === um[1] && k === 3;
+      head += `<th class="${g % 2 ? 'ua2' : ''} ${hot ? 'hot' : ''}">${SUB[k]}${k === 3 ? (UNITS[g] === '일' ? '일' : UNITS[g]) : ''}</th>`; row += `<td class="${g % 2 ? 'ua2' : ''} ${hot ? 'hot' : ''}">${d == null ? '' : d}</td>`; }
+    return box(`<table class="uapv"><tr>${head}</tr><tr>${row}</tr></table>`, '🗂️ 자리 표로 살펴보기'); }
+  /* 세로셈 틀 (곱셈·나눗셈) */
+  function vert(t) { let m = /(\d{2,4})\s*×\s*(\d{1,3})/.exec(t); if (m && !/[+−-]/.test(t.split(m[0])[0].slice(-3))) { const a = m[1], b = m[2], w = Math.max(a.length, b.length) + 2;
+      const cell = (v, k) => `<span class="uavc ${v === '?' ? 'q' : ''}">${v}</span>`, line = (str, pre) => `<div class="uavr">${pre ? `<span class="uavc op">${pre}</span>` : '<span class="uavc"></span>'}${Array.from({ length: w - 1 - str.length }, () => cell('')).join('')}${[...str].map(cell).join('')}</div>`;
+      return box(`<div class="uav">${line(a)}${line(b, '×')}<div class="uavl"></div><div class="uavr"><span class="uavans">?</span></div></div>`, '✏️ 세로셈으로 계산해 보기'); }
+    m = /(\d{2,4})\s*÷\s*(\d{1,2})/.exec(t); if (m && !/\//.test(t)) { const a = m[1], b = m[2];
+      return box(`<div class="uadv"><span class="uadb">${b}</span><span class="uadh"><span class="uadq">${'<i class="w">?</i>'}</span><span class="uada">${[...a].map(c => `<i>${c}</i>`).join('')}</span></span></div>`, '✏️ 나눗셈 세로셈 틀'); }
+    return null; }
+  /* 분수 막대 */
+  function frac(t) { const m = /(?:(\d+)\s+)?(\d+)\/(\d+)\s*(?:L|m|kg|cm)?\s*÷\s*(\d+)/.exec(t); if (!m) return null; const w = +(m[1] || 0), n = +m[2], d = +m[3], k = +m[4]; if (d > 16 || w > 3) return null;
+    let s = '', y = 10; const bar = (on, lab) => { let r = ''; for (let i = 0; i < d; i++) r += `<rect x="${20 + i * (360 / d)}" y="${y}" width="${360 / d}" height="34" fill="${i < on ? '#c4b5fd' : '#fff'}" stroke="#7c3aed" stroke-width="2"/>`; r += `<text x="392" y="${y + 24}" font-size="16" font-weight="900" fill="#5b21b6">${lab}</text>`; y += 44; return r; };
+    for (let i = 0; i < w; i++) s += bar(d, '1'); s += bar(n, `${n}/${d}`);
+    s += `<text x="200" y="${y + 18}" text-anchor="middle" font-size="18" font-weight="900" fill="#0f766e">이만큼을 ${k}${'으로'}로 똑같이 나누면?</text>`.replace('으로로', k % 10 === 1 || k % 10 === 7 || k % 10 === 8 ? '로' : '으로');
+    return box(`<svg viewBox="0 0 440 ${y + 30}" style="width:100%;max-width:460px">${s}</svg>`, '🍫 분수 막대로 살펴보기'); }
+  /* 혼합 계산 식 (5학년) */
+  function expr(t) { if (typeof EX === 'undefined') return null; const m = /((?:\(?\s*\d+\s*\)?\s*[+−×÷]\s*){2,}\(?\s*\d+\s*\)?)/.exec(t); if (!m) return null; const e = m[1].trim(); if (EX.val(e) == null) return null;
+    return box(`<div class="ex5card">${EX.h(e, { cls: 'big' })}</div>`, '🧮 계산 순서를 생각하며 접어 보기'); }
+  /* 그 차시의 개념 카드 그림 */
+  function card(q) { const C = T(() => CARDS[q.area]) || T(() => CARDS[BADGES[Math.max(0, (q.ch || 1) - 1)][0]]); if (!C || !C.slides || !C.slides[0]) return null; const sl = C.slides[0]; const v = T(() => sl[1]()) || '';
+    return box(`<div class="uacard" style="--cc:${C.col || '#7c3aed'}"><b>${C.ic || '📘'} ${C.t}</b><div class="uacv">${v}</div></div>`, '🔎 떠올려 볼 개념'); }
+  window.UAUTOFIG = q => { if (!q || (q.img && String(q.img).trim())) return q; const t = plain(q.text);
+    const UID = (window.CONFIG && CONFIG.UNIT_ID) || ''; const h = UID === '5-1-2' ? card(q) : (jump(t) || frac(t) || vert(t) || place(t) || expr(t) || card(q)); if (h) q.img = h; return q; };
+  const st = document.createElement('style'); st.textContent = `.uafig{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}.uacap{font-weight:900;color:#475569;font-size:.95rem;background:#f1f5f9;border-radius:999px;padding:3px 14px}
+.uapv{border-collapse:collapse;font-weight:900;width:100%;max-width:720px;table-layout:fixed}.uapv th,.uapv td{border:2px solid #94a3b8;padding:6px 0;text-align:center;overflow:hidden}.uapv th{background:#e0f2fe;color:#0c4a6e;font-size:clamp(.55rem,1.4vw,.8rem)}.uapv td{font-size:clamp(.9rem,2.4vw,1.4rem);height:42px;background:#fff}.uapv .ua2{background:#fef3c7}.uapv th.ua2{background:#fde68a}.uapv .hot{outline:3px solid #ef4444;outline-offset:-3px}
+.uav{display:inline-flex;flex-direction:column;gap:2px;background:#fff;border:3px solid #c4b5fd;border-radius:14px;padding:12px 18px}.uavr{display:flex;gap:2px}.uavc{width:40px;height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900;color:#1e1b4b}.uavc.q{border:2px dashed #f59e0b;border-radius:8px;color:#f59e0b;font-size:1.2rem}.uavc.op{color:#7c3aed}.uavans{flex:1;height:44px;border:2px dashed #f59e0b;border-radius:8px;color:#f59e0b;font-size:1.3rem;font-weight:900;display:flex;align-items:center;justify-content:center}.uadq i.w{width:auto;flex:1}.uavl{height:3px;background:#1e1b4b;margin:2px 0}
+.uadv{display:inline-flex;align-items:flex-end;gap:4px;background:#fff;border:3px solid #c4b5fd;border-radius:14px;padding:12px 20px;font-weight:900;font-size:1.7rem}.uadb{padding-bottom:4px}.uadh{display:flex;flex-direction:column}.uadq,.uada{display:flex}.uadq i,.uada i{font-style:normal;width:36px;text-align:center}.uadq i{color:#f59e0b;border-bottom:2px dashed #f59e0b;font-size:1.1rem;margin:0 2px}.uada{border-left:3px solid #1e1b4b;border-top:3px solid #1e1b4b;border-top-left-radius:14px;padding:2px 4px}
+.uacard{border:3px solid var(--cc);border-radius:16px;padding:10px 14px;background:#fff;text-align:center;max-width:520px;min-width:min(260px,100%);box-sizing:border-box}.uacard>b{display:block;color:var(--cc);margin-bottom:6px}.uacv{font-size:.95rem}`; document.head.appendChild(st);
+})();
+
+/* =====================================================================
+   🧱 단원 평가 중 성벽 체력: 맞힐 때마다 성벽 벽돌이 떨어져 나가요
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__UWALLHP) return; window.__UWALLHP = 1;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  let last = -1;
+  function paint() { const c = document.querySelector('#s2body .udq'); const d = T(() => state.s2.drill); if (!c || !d || !d.qs || !d.level) return;
+    const ok = (d.ans || []).filter(a => a && a.ok).length, N = d.qs.length, need = Math.ceil(N * .6);
+    let bar = c.querySelector('.uwhp'); const fresh = !bar; if (!bar) { bar = document.createElement('div'); bar.className = 'uwhp'; const r0 = c.querySelector(':scope>.row'), pw = r0 && r0.querySelector('.paws'); if (pw) pw.after(bar); else if (r0) r0.appendChild(bar); else return; }
+    const k = ok + ':' + N + ':' + d.level; if (!fresh && bar.dataset.k === k) return; const gain = !fresh && last >= 0 && ok > last; bar.dataset.k = k; last = ok;
+    bar.innerHTML = `<span class="uwlab">🏰 제${d.level}관문 성벽</span><span class="uwb">${Array.from({ length: N }, (_, i) => `<i class="${i < ok ? 'gone' : ''} ${gain && i === ok - 1 ? 'fall' : ''} ${i === need - 1 ? 'goal' : ''}"></i>`).join('')}</span><span class="uwtx">${ok >= need ? '💥 무너지는 중!' : `${need - ok}개 더 맞히면 무너져요`}</span>`;
+    if (gain) { T(() => Sound.hit()); bar.classList.remove('shake'); void bar.offsetWidth; bar.classList.add('shake'); } }
+  try { new MutationObserver(() => { clearTimeout(paint.t); paint.t = setTimeout(paint, 20); }).observe(document.getElementById('s2body') || document.body, { childList: true, subtree: true }); } catch (e) {}
+  const st = document.createElement('style'); st.textContent = `.uwhp{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;margin:0;font-weight:900}.uwlab{color:#57534e;font-size:.95rem}.uwtx{color:#b45309;font-size:.9rem}
+.uwb{display:inline-flex;gap:3px;padding:4px 6px;background:#44403c;border-radius:8px;box-shadow:inset 0 2px 4px rgba(0,0,0,.4)}.uwb i{width:26px;height:18px;border-radius:3px;background:linear-gradient(180deg,#d6d3d1,#a8a29e);border:2px solid #57534e;transition:.3s}.uwb i.goal{box-shadow:0 0 0 2px #fbbf24}
+.uwb i.gone{opacity:.12;transform:translateY(6px) rotate(10deg)}.uwb i.fall{animation:uwfall .7s ease forwards}@keyframes uwfall{0%{opacity:1;transform:none}40%{transform:translateY(-8px) rotate(-14deg)}100%{opacity:.12;transform:translateY(16px) rotate(30deg)}}
+.uwhp.shake .uwb{animation:uwsh .45s}@keyframes uwsh{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@media(max-width:640px){.uwb i{width:16px;height:13px}.uwlab{font-size:.8rem}}`; document.head.appendChild(st);
+})();
+
+/* =====================================================================
+   👑 학년 최종 대장 — 모든 단원 마무리 공통 (11-20 기준)
+     학년마다 최종 대장은 한 명: 4학년 다크몽 · 5학년 베일 · 6학년 메트릭
+     ① 도전장: 단원 악당 뒤에 대장의 그림자 + 한마디
+     ② 왕중왕전: 단원 악당 + 최종 대장 2:1 결전 (HP 줄 2개)
+     ③ 결과·엔딩: 대장은 힘이 약해진 채 물러나며 다음 단원을 예고
+     대장의 약해지는 정도(0~4)는 학년 전체에 걸쳐 쌓여요:
+       1학기 3단원 뒤 조금 상함(1) → 1학기 끝 절반(2) → 2학기 3단원 뒤 거의(3) → 학년 최종 결전(4)
+   ===================================================================== */
+(function () {
+  if (!(window.SV_LF && SV_LF.flowU) || window.__GBOSS) return; window.__GBOSS = 1;
+  const T = f => { try { return f(); } catch (e) { return undefined; } };
+  const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
+  const P = UID.split('-'), GR = P[0], SEM = +P[1] || 1, UN = +P[2] || 1;
+  const CFG = {
+    '4': { k: 'dark', name: '다크몽', ttl: '4학년 최종 대장', part: '그림자 갑옷', col: '#6d28d9' },
+    '5': { k: 'gboss', name: '베일', ttl: '5학년 최종 대장', part: '장막', col: '#0f766e', img: 'veil' },
+    '6': { k: 'gboss', name: '메트릭', ttl: '6학년 최종 대장', part: '계측 코어', col: '#1d4ed8' }
+  };
+  const B = CFG[GR]; if (!B) return;
+  const hasJ = s => { const c = String(s).charCodeAt(String(s).length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
+  const J = (s, a, b) => s + (hasJ(s) ? a : b);
+  /* 약해지는 단계 */
+  const after = u => SEM === 1 ? (u >= 6 ? 2 : u >= 3 ? 1 : 0) : (u >= 6 ? 4 : u >= 3 ? 3 : 2);
+  const ST0 = after(UN - 1 < 1 && SEM === 1 ? 0 : UN - 1), ST1 = after(UN);
+  const won = () => !!T(() => Story.prog().tilt);
+  const stage = () => (won() ? ST1 : ST0);
+  const crk = () => Math.min(4, (SEM - 1) * 6 + (won() ? UN : UN - 1));   // 금 줄 수 = 학년에서 끝낸 단원 수(최대 4줄)
+  const STN = ['온전함', '조금 상함', '절반', '거의 벗겨짐', '완전히 벗겨짐'];
+  const LAST = UN >= 6;   // 학기 마지막 단원
+
+  /* ---------- 대장 그림: 시트 그림이 오기 전까지 쓰는 임시 그림 ---------- */
+  function metricSvg(px, pose) {
+    const red = /angry|attack/.test(pose || ''), eye = red ? '#f43f5e' : '#22d3ee', id = 'gbm' + Math.random().toString(36).slice(2, 7);
+    const ticks = Array.from({ length: 9 }, (_, i) => { const a = Math.PI * (1.12 + i * .095), r1 = 17, r2 = i % 2 ? 13.5 : 12; return `<path d="M${50 + r1 * Math.cos(a)} ${50 + r1 * Math.sin(a)}L${50 + r2 * Math.cos(a)} ${50 + r2 * Math.sin(a)}"/>`; }).join('');
+    return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" class="gbmetric" aria-label="메트릭"><defs><radialGradient id="${id}h" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient></defs>
+      <path d="M14 98c3-20 16-30 36-30s33 10 36 30z" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><path d="M38 70l12 14 12-14" fill="#facc15" stroke="#a16207" stroke-width="1.5"/>
+      <rect x="27" y="10" width="46" height="9" rx="2" fill="#facc15" stroke="#a16207" stroke-width="1.5"/><g stroke="#a16207" stroke-width="1.2">${[31, 35, 39, 43, 47, 51, 55, 59, 63, 67].map((x, i) => `<path d="M${x} 10v${i % 2 ? 3 : 5}"/>`).join('')}</g>
+      <circle cx="50" cy="44" r="27" fill="url(#${id}h)" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M31 50a19 19 0 0 1 38 0" fill="#e0f2fe" stroke="#0f172a" stroke-width="1.8"/><g stroke="#0f172a" stroke-width="1.4">${ticks}</g>
+      <path d="M50 50L${red ? 62 : 58} ${red ? 36 : 38}" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round"/><circle cx="50" cy="50" r="2.6" fill="#0f172a"/>
+      <path d="M33 57h12M55 57h12" stroke="${eye}" stroke-width="4" stroke-linecap="round"/><path d="M33 57h12M55 57h12" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
+      <path d="M42 64q8 ${red ? -3 : 4} 16 0" fill="none" stroke="#e0f2fe" stroke-width="2" stroke-linecap="round"/></svg>`;
+  }
+  function cracks(st) {
+    if (!st) return '';
+    const L = [`<path d="M30 30l7 9-4 7 6 9"/>`, `<path d="M68 26l-5 10 6 6-3 10"/>`, `<path d="M45 60l6 7-5 6 4 8"/><path d="M22 58l8 3 3 8"/>`, `<path d="M74 52l-7 6 2 9-6 6"/><path d="M52 18l-2 9 5 5"/>`];
+    const chip = st >= 2 ? `<g fill="#1e1b4b" opacity=".85"><path d="M12 80l6-4 3 6z"/><path d="M84 84l5-6 3 7z"/>${st >= 3 ? '<path d="M20 90l6-3 1 6z"/><path d="M76 92l4-5 4 5z"/>' : ''}</g>` : '';
+    return `<svg class="gbcr" viewBox="0 0 100 100"><g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".9">${L.slice(0, st).join('')}</g><g fill="none" stroke="#111827" stroke-width="1.3" stroke-linecap="round">${L.slice(0, st).join('')}</g>${chip}</svg>`;
+  }
+  const av0 = T(() => avatar);
+  if (typeof av0 === 'function') {
+    if (B.k === 'gboss') T(() => { VILLAINS.gboss = { name: B.name, role: B.ttl + ' · 단원마다 간부 뒤에서 힘을 실어 주는 대장', emoji: '👑', color: B.col, bg: '#e0e7ff' };
+      if (typeof ST_AREA !== 'undefined') ST_AREA.gboss = GR + '학년 전체'; if (typeof ST_VK !== 'undefined' && !ST_VK.includes('gboss')) ST_VK.unshift('gboss'); });
+    avatar = function (key, px, pose) {
+      if (key !== B.k) return av0(key, px, pose);
+      let inner;
+      if (B.k === 'gboss') { const g = B.img && T(() => G56.src(B.img, pose === 'attack' ? 'angry' : pose || 'idle')); inner = g ? `<img src="${g}" alt="${B.name}" style="width:${px}px;height:${px}px;object-fit:contain">` : metricSvg(px, pose); }
+      else inner = av0(key, px, pose);
+      return `<span class="gbx gbs${stage()}" style="width:${px}px;height:${px}px" title="${B.name} · ${B.part} ${STN[stage()]}">${inner}${cracks(crk())}</span>`;
+    };
+  }
+  const BA = (px, pose) => avatar(B.k, px, pose);
+
+  /* ---------- 대사 ---------- */
+  const vk = T(() => BEATS.prologue.v) || 'dark', vn = T(() => VILLAINS[vk].name) || '악당';
+  const PT = B.part;
+  const LN = {
+    pro: `${J(vn, '이', '가')} 지면 내가 직접 나선다. <b>왕중왕전</b>에서 기다리마!`,
+    a0: `${vn} 혼자로는 부족하겠지? 내 ${PT}의 힘을 빌려주마. 2:1로 덤벼 봐라!`,
+    a1: `흥, 제법이군. 하지만 내 ${J(PT, '은', '는')} 아직 끄떡없다!`,
+    a2: `크윽… ${PT}에 금이…! 이번만은 물러나 주지.`,
+    fin: LAST && SEM === 1 ? `${J(PT, '이', '가')} 절반이나…! 2학기에는 더 강한 힘으로 돌아오겠다!` : LAST ? `내 ${J(PT, '이', '가')}… 모두…! 이, 이럴 수가!` : `${PT} 한 조각을 잃었군… 다음 단원에서 두고 보자!`
+  };
+  T(() => { const f = BEATS.final; if (!f || f.__gb) return; f.__gb = 1; const gi = f.lines.map(l => l.w).lastIndexOf('guide');
+    const add = [{ w: B.k, p: 'angry', t: LN.fin }, { w: 'narr', t: `${B.ttl} <b>${B.name}</b>의 ${PT}에 금이 갔다. ${LAST && SEM === 1 ? '힘이 절반으로 줄어든 채 어둠 속으로 사라졌다.' : '대장은 약해진 채 물러났다.'}` }];
+    f.lines.splice(gi < 0 ? f.lines.length : gi, 0, ...add); });
+  T(() => { const c = BEATS.ch3; if (!c || c.__gb) return; c.__gb = 1; c.lines.splice(1, 0, { w: B.k, p: 'angry', t: LN.a2 }); });
+
+  /* ---------- ① 도전장 ---------- */
+  function chal() { const f = document.querySelector('#stBox .fuch'); if (!f || f.querySelector('.gbch')) return;
+    const L = f.querySelector('.fuchL'); if (L) L.insertAdjacentHTML('beforeend', `<div class="gbch gbsh">${BA(110, 'happy')}<span>👑 ${B.name}</span></div>`);
+    const b = f.querySelector('.fuchB'); if (b) b.insertAdjacentHTML('afterend', `<div class="gbsay gbch"><span class="gbav">${BA(40, 'happy')}</span><div><small>${B.ttl}</small><b>${B.name}</b> ${LN.pro}</div></div>`); }
+  /* ---------- ② 왕중왕전 2:1 ---------- */
+  function arena() { const w = document.querySelector('#s2body .arwrap'); if (!w || w.querySelector('.gbvs,.gbfl')) return;
+    const G = T(() => SV_ARENA.games) || [], best = g => +(T(() => localStorage.getItem('svarena:' + g.lid + ':' + g.id)) || 0);
+    const n = G.length || 1, pl = G.filter(g => best(g) > 0).length, cr = G.filter(g => best(g) >= 80).length;
+    const vHP = Math.max(0, 100 - Math.round(pl / n * 100)), bHP = Math.max(0, 100 - Math.round(pl / n * 60 + cr / n * 40));
+    const line = pl >= n ? LN.a2 : pl ? LN.a1 : LN.a0, down = pl >= n;
+    const foe = (side) => side === 'l'
+      ? `<div class="gbfl l"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 74, down ? 'attack' : 'angry')}</span><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div>`
+      : `<div class="gbfl r"><span class="gbav">${BA(78, down ? 'angry' : 'happy')}</span><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div>`;
+    const uar = w.querySelector('.uar');
+    if (uar) {   /* 새 왕중왕전 화면: 넓은 화면은 성문 양옆에, 좁은 화면은 머리 아래 띠로 */
+      const sm = uar.querySelector('.uar-title small'); if (sm) sm.innerHTML = `⚔️ <em class="gbem">${vn}</em> + <em class="gbem b">👑 ${B.name}</em> 2:1 결전! 게임을 깰수록 둘의 힘이 줄어요`;
+      const g = uar.querySelector('.uar-gates'); if (g) { g.classList.add('gbon'); g.insertAdjacentHTML('afterbegin', foe('l')); g.insertAdjacentHTML('beforeend', foe('r')); }
+      const hero = uar.querySelector('.uar-hero'); if (hero) hero.insertAdjacentHTML('afterend', `<div class="gbvs gbnar ${down ? 'down' : ''}">
+        <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 46, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
+        <b class="gbx2">2 : 1</b>
+        <div class="gbf boss"><span class="gbav">${BA(50, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
+        <div class="gbline">“${line}”</div></div>`);
+      const say = uar.querySelector('.gbfl.r'); if (say) say.insertAdjacentHTML('beforeend', `<div class="gbbub">${line}</div>`);
+      return;
+    }
+    const h2 = w.querySelector('.stage-head h2'); if (h2) h2.innerHTML = `왕중왕전 · <span class="gbh">${vn} + ${B.name} 2:1 결전</span>`;
+    const hd = w.querySelector('.stage-head'); if (!hd) return;
+    hd.insertAdjacentHTML('afterend', `<div class="gbvs ${down ? 'down' : ''}">
+      <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 54, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><small>${T(() => SV_LF.hero.villainSub) || '단원 악당'}</small><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
+      <b class="gbx2">2 : 1</b>
+      <div class="gbf boss"><span class="gbav">${BA(58, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><small>${B.ttl} · ${PT} ${STN[stage()]}</small><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
+      <div class="gbline">“${line}”</div></div>`); }
+  /* ---------- ③ 결과 ---------- */
+  function result() { const s = document.querySelector('#s2body .ucseal'); if (!s || document.querySelector('#s2body .gbres')) return; const ok = won();
+    s.insertAdjacentHTML('afterend', `<div class="gbres ${ok ? 'ok' : ''}"><span class="gbav">${BA(46, ok ? 'angry' : 'happy')}</span><div><b>👑 ${B.ttl} ${B.name}</b><br>${ok ? `${PT}에 금이 간 채 물러났어요. ${LAST && SEM === 1 ? '2학기에 다시 나타날 거예요!' : LAST ? '학년 최종 결전 승리!' : '다음 단원에서 또 만나요.'}` : '왕중왕전에서 단원 악당과 함께 기다리고 있어요.'}</div></div>`); }
+  function run() { T(chal); T(arena); T(result); }
+  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  setTimeout(run, 350);
+})();
+
+</script><!--FLOWU-END-->
 <!--UNI-START--><style>/* ===== 공통 통일 스킨 (모든 차시·단원 마무리, 4·6학년) — skin/uni/uni_apply.py 로 주입 ===== */
 /* 미니게임 고르기(악당 소굴): 가운데 정렬 · 카드 크게 · 빈 곳 없이 */
 .card:has(>.lair)>.vrow{justify-content:center!important;margin:8px auto 0!important}
@@ -9822,684 +10504,5 @@ window.UMQ = {
     if (k !== last && r.width > 0) { last = k; ucFit(); } } catch (e) {} };
   setInterval(chk, 700); addEventListener('resize', () => { last = ''; chk(); }); })();
 </script><!--BGUP-END-->
-<!--FLOWU-START--><style>/* 단원 마무리 새 순서: 단원 평가 하 · 중 · 상 화면 */
-.fu-menu .gates{grid-template-columns:repeat(3,minmax(0,1fr))}
-.fu-fin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px 26px;align-items:center}
-.fu-fin .fu-finb{grid-column:1/-1;flex-wrap:wrap;gap:8px;margin-top:8px}
-.fu-fin .dgtab{margin:0 auto}
-.fu-tip{margin:10px 0 0;font-weight:800;color:#92400e;background:#fffbeb;border:2px dashed #fcd34d;border-radius:14px;padding:8px 12px;text-align:left;line-height:1.5}
-@media (max-width:760px){.fu-fin{grid-template-columns:1fr}.fu-menu .gates{grid-template-columns:1fr}}
-
-/* ⚔️ 도전장 (단원 마무리 첫 장면) */
-#stOv.fu-chal #stBox{width:min(1120px,95vw)!important;max-width:none!important;max-height:94vh;overflow:auto;padding:18px 22px!important;background:radial-gradient(circle at 18% 30%,#4c1d95 0,#1e1b4b 55%,#0f172a 100%)!important;border:4px solid #a78bfa!important;color:#fff}
-.fuch{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px;align-items:center}
-.fuchL{text-align:center}.fuchV{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:250px}.fuchV img{width:100%;max-height:min(62vh,460px);object-fit:contain;border-radius:18px;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}.fuchV img+.fuchF{display:none}
-.fuchF{animation:fuchBob 2.4s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(167,139,250,.9))}@keyframes fuchBob{50%{transform:translateY(-8px) scale(1.03)}}
-.fuchN{font-family:'Jua',sans-serif;font-size:1.6rem;color:#fde68a;text-shadow:0 2px 0 #7c2d12;margin-top:4px}
-.fuchR{display:flex;flex-direction:column;gap:10px}.fuchR .stcap{align-self:flex-start}.fuchT{font-family:'Jua',sans-serif;font-size:2rem;color:#fde68a;text-shadow:0 3px 0 #7c2d12,0 0 18px rgba(253,230,138,.5);line-height:1.2}
-.fuchB{position:relative;background:#fff;color:#1e1b4b;border:4px solid #f43f5e;border-radius:20px;padding:12px 16px;font-weight:800;font-size:1.08rem;line-height:1.55}.fuchB b{color:#e11d48}
-.fuchB::before{content:'';position:absolute;left:-18px;top:26px;border:10px solid transparent;border-right:12px solid #f43f5e}
-.fuchG{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap}.fugt{flex:1 1 0;min-width:120px;background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.35);border-radius:16px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
-.fugt b{font-size:1.05rem}.fugt small{font-size:.82rem;opacity:.85;font-weight:700}.fugi{font-size:1.7rem}.fugt.now{border-color:#fde68a;background:rgba(253,230,138,.18);box-shadow:0 0 18px rgba(253,230,138,.45)}.fugt.ok{border-color:#4ade80;background:rgba(74,222,128,.15)}
-.fuga{align-self:center;font-weight:900;color:#fde68a;font-size:1.3rem}
-#stOv.fu-chal .stline .stbub2{color:#1e1b4b}#stOv.fu-chal .stwho{color:#e9d5ff}#stOv.fu-chal .stbtns{justify-content:flex-start}
-@media(max-width:760px){.fuch{grid-template-columns:1fr}.fuchV{min-height:150px}.fuchT{font-size:1.5rem}.fuchB::before{display:none}}
-@media(max-height:700px){.fuchV{min-height:170px}.fuchV img{max-height:52vh}.fuchT{font-size:1.6rem}.fuchB{font-size:.98rem;padding:9px 12px}.fugi{font-size:1.3rem}}
-.fuchFull{max-height:min(58vh,420px);max-width:100%;object-fit:contain}
-/* 🏰 보스 성 탈환전 */
-.ucw-on .gate .gi{overflow:visible}.ucwall{border-radius:14px}
-.ucwst{font-size:.82rem;font-weight:900;color:#334155;background:#fff;border:2px solid #e2e8f0;border-radius:999px;padding:2px 10px;margin:4px auto 0;width:max-content;max-width:100%}
-.ucw-broken .ucwst{color:#166534;border-color:#86efac;background:#f0fdf4}.ucw-crack .ucwst{color:#9a3412;border-color:#fdba74;background:#fff7ed}
-.ucw-shake{animation:ucwShake .5s linear}@keyframes ucwShake{0%,100%{transform:none}20%{transform:translate(-4px,2px) rotate(-2deg)}40%{transform:translate(4px,-2px) rotate(2deg)}60%{transform:translate(-3px,1px)}80%{transform:translate(3px,-1px)}}
-.ucwfx{position:absolute;inset:0;pointer-events:none;z-index:5}.ucwfx i{position:absolute;left:50%;top:60%;width:14px;height:10px;background:#a8a29e;border:1.5px solid #57534e;border-radius:2px;transform:translate(-50%,-50%) scale(var(--s));animation:ucwFly 1.1s cubic-bezier(.2,.7,.4,1) forwards}
-.ucwfx b{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%) scale(.2);font-size:3rem;animation:ucwBoom .7s ease-out forwards}
-@keyframes ucwFly{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 60px)) rotate(var(--r)) scale(var(--s));opacity:0}}@keyframes ucwBoom{50%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(-50%,-50%) scale(1.8);opacity:0}}
-.ucwfin{margin:0 auto 10px;padding:8px 14px;border-radius:14px;background:#fff7ed;border:3px solid #fdba74;color:#9a3412;font-weight:900;font-size:1.05rem;grid-column:1/-1}.ucwfin.ok{background:#f0fdf4;border-color:#4ade80;color:#166534}
-.ucseal{display:inline-block;margin:6px auto 2px;padding:5px 16px;border-radius:999px;font-weight:900;color:#4c1d95;background:#ede9fe;border:2.5px dashed #8b5cf6}.ucseal.ok{color:#14532d;background:#dcfce7;border:2.5px solid #16a34a;transform:rotate(-2deg)}
-.ucrec{margin-top:14px;border-top:2px dashed #e2e8f0;padding-top:10px}.ucrec .rp-t{margin-bottom:6px}
-.ucrow{display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:8px;padding:5px 8px;border-radius:12px;background:#f8fafc;margin:5px 0;font-weight:800}
-.ucrow.ok{background:#f0fdf4}.ucrow>span{border:0!important;background:none!important;padding:0!important;box-shadow:none!important}.ucrow .ucr-i{font-size:1.3rem;text-align:center}.ucrow .ucr-s{color:#475569;font-size:.9rem}.ucrow .ucgo{white-space:nowrap}
-@media(max-width:520px){.ucrow{grid-template-columns:28px 1fr auto}.ucrow .ucr-s{grid-column:2;grid-row:2;font-size:.8rem}.ucrow .ucgo{grid-row:1/3;grid-column:3}}
-
-#svslTop .ti[data-uc]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#svslTop .ti[data-uc] small{margin-right:6px}
-#svslTop .ti[data-uc]{font-size:.92rem}
-@media(max-width:560px){.ucw-on .gate{overflow:hidden}.ucw-on .gate .gt{font-size:1.05rem!important;white-space:normal!important}.ucw-on .gate .ucwst,.ucw-on .gate .gs{width:auto;max-width:100%;white-space:normal;font-size:.74rem}.ucw-on .gate .qstat{flex-wrap:wrap}}
-@media(min-width:1000px){body.svsl-on #s2body .card.rp-head,body.svsl-on #s2body .card:has(.ucrec){min-height:calc(100vh - 170px);display:flex;flex-direction:column;justify-content:center}
-  body.svsl-on #s2body .card:has(.ucrec){justify-content:center}body.svsl-on #s2body .card:has(.ucrec)>*{flex:none}}
-@media(min-width:1000px) and (min-height:860px){.ucrow{padding:10px 12px;font-size:1.15rem;margin:8px 0}.ucrow .ucr-s{font-size:1rem}body.svsl-on #s2body .rp-head .score-big{font-size:6rem}body.svsl-on #s2body .rp-head .stars{font-size:3.4rem}}
-@media(min-width:1600px) and (min-height:900px){body.svsl-on #s2body .card.rp-head>*,body.svsl-on #s2body .card:has(.ucrec)>*{zoom:1.28}}
-/* ===== 성벽 3관문 (11-20 새 디자인): 그림이 카드를 가득 채우는 관문 포스터 ===== */
-#s2body .fu-menu.ucw-on{display:flex;flex-direction:column}
-#s2body .fu-menu.ucw-on .gates{flex:1 1 auto;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important;margin-top:12px!important;align-items:stretch}
-#s2body .fu-menu.ucw-on .gate{--gc:#10b981;--gcd:#047857;--gcl:#ecfdf5;position:relative;display:flex!important;flex-direction:column;align-items:stretch;padding:0!important;border-radius:22px!important;overflow:hidden!important;background:#fff!important;border:3px solid var(--gc)!important;box-shadow:0 7px 0 var(--gcd),0 16px 30px rgba(15,23,42,.18)!important;color:#1e293b!important;text-align:center!important;transform:none;min-height:0}
-#s2body .fu-menu.ucw-on .gate[data-v="lv2"]{--gc:#3b82f6;--gcd:#1d4ed8;--gcl:#eff6ff}
-#s2body .fu-menu.ucw-on .gate[data-v="lv3"]{--gc:#f43f5e;--gcd:#be123c;--gcl:#fff1f2}
-#s2body .fu-menu.ucw-on .gate:hover{transform:translateY(-3px)}
-#s2body .fu-menu.ucw-on .gate:before,#s2body .fu-menu.ucw-on .gate:after{display:none!important}
-#s2body .fu-menu.ucw-on .gate .gi{position:relative!important;inset:auto!important;grid-row:auto!important;width:100%!important;height:auto!important;flex:1 1 auto;min-height:160px;aspect-ratio:16/10;margin:0!important;padding:0!important;filter:none!important;display:block!important;overflow:hidden!important;border:0!important;border-bottom:3px solid var(--gc)!important;border-radius:0!important;background:none!important;box-shadow:none!important;font-size:0!important}
-#s2body .fu-menu.ucw-on .gate .gi svg.ucg{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;border-radius:0}
-#s2body .fu-menu.ucw-on .gate .qrib{position:absolute!important;left:12px!important;top:12px!important;right:auto!important;transform:none!important;margin:0!important;z-index:3;background:var(--gc)!important;color:#fff!important;border:2px solid #fff!important;border-radius:999px!important;padding:3px 12px!important;font-size:.85rem!important;font-weight:900!important;box-shadow:0 3px 0 var(--gcd)!important;width:auto!important;clip-path:none!important}
-#s2body .fu-menu.ucw-on .gate .gt{margin:10px 12px 0!important;font-size:clamp(1.15rem,1.55vw,1.5rem)!important;font-weight:900!important;color:#1e1b4b!important;white-space:nowrap;line-height:1.2!important;text-align:center!important}
-#s2body .fu-menu.ucw-on .gate .ucwst{margin:6px auto 0!important;font-size:.84rem!important;padding:3px 12px!important;background:var(--gcl)!important;border-color:var(--gc)!important;color:var(--gcd)!important}
-#s2body .fu-menu.ucw-on .gate.ucw-broken .ucwst{background:#f0fdf4!important;border-color:#22c55e!important;color:#166534!important}
-#s2body .fu-menu.ucw-on .gate.ucw-crack .ucwst{background:#fff7ed!important;border-color:#fb923c!important;color:#9a3412!important}
-#s2body .fu-menu.ucw-on .gate .gs{display:none!important}
-#s2body .fu-menu.ucw-on .gate .qstat{display:flex!important;justify-content:center;gap:6px;flex-wrap:wrap;margin:8px 12px 0!important}
-#s2body .fu-menu.ucw-on .gate .qstat span{background:#f8fafc!important;border:1.5px solid #e2e8f0!important;color:#334155!important;border-radius:999px!important;padding:2px 9px!important;font-size:.78rem!important;font-weight:800!important}
-#s2body .fu-menu.ucw-on .gate .qgo{margin:10px 12px 12px!important;padding:9px 10px!important;border-radius:14px!important;background:linear-gradient(180deg,var(--gc),var(--gcd))!important;color:#fff!important;font-weight:900!important;font-size:1.05rem!important;box-shadow:0 4px 0 rgba(0,0,0,.18)!important;border:0!important;width:auto!important}
-#s2body .fu-menu.ucw-on .fu-menu-st{margin-top:10px!important;font-size:.9rem}
-.ucg .ucg-flag{animation:ucgWave 1.6s ease-in-out infinite}
-.ucg .ucg-glow{animation:ucgGlow .9s ease-in-out infinite alternate}
-.ucg .ucg-fire{animation:ucgFire .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
-.ucg .ucg-tw{animation:ucgTw 1.8s ease-in-out infinite}
-@keyframes ucgWave{0%,100%{transform:skewY(0)}50%{transform:skewY(-6deg) scaleX(.94)}}
-@keyframes ucgGlow{from{opacity:.55}to{opacity:1}}
-@keyframes ucgFire{from{transform:scale(1,1)}to{transform:scale(.85,1.15)}}
-@keyframes ucgTw{0%,100%{opacity:.25}50%{opacity:1}}
-@media (prefers-reduced-motion:reduce){.ucg *{animation:none!important}}
-@media(max-width:760px){
-  #s2body .fu-menu.ucw-on .gates{grid-template-columns:1fr!important;gap:14px!important}
-  #s2body .fu-menu.ucw-on .gate .gi{min-height:0;aspect-ratio:16/8.2;flex:none}
-  #s2body .fu-menu.ucw-on .gate .gt{font-size:1.1rem!important;margin:8px 8px 0!important}
-  #s2body .fu-menu.ucw-on .gate .qstat span{font-size:.72rem!important;padding:1px 8px!important}
-  #s2body .fu-menu.ucw-on .gate .ucwst{font-size:.76rem!important;white-space:normal}
-  #s2body .fu-menu.ucw-on .gate .qgo{margin:8px 10px 10px!important;font-size:.95rem!important;padding:8px!important}
-  #s2body .fu-menu.ucw-on .gate .qrib{font-size:.74rem!important;padding:2px 10px!important;left:8px!important;top:8px!important}
-}
-
-/* ===== 단원 평가 문제 화면 (11-20 새 구성): 머리 줄 · 문제 줄 · [그림 판 | 보기 2×2 + 피드백 자리] ===== */
-@media(min-width:761px){
-html body.svsl-on #s2body .skb:has(>.udq){display:flex!important;flex-direction:column}
-html body.svsl-on #sec-s2 #s2body .card.udq.udq{zoom:1!important;height:auto!important;flex:1 1 0!important;min-height:0!important;max-height:100%!important;overflow:hidden;box-sizing:border-box;display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr)!important;gap:12px 18px!important;align-content:stretch!important;padding:14px 18px 16px!important}
-html body #sec-s2 #s2body .card.udq>*{grid-column:1/-1!important;grid-row:auto!important;margin:0!important;min-width:0}
-html body #sec-s2 #s2body .card.udq>.row:first-child{align-items:center}
-html body #sec-s2 #s2body .card.udq>.mt-3 .qhead{align-items:center}
-html body #sec-s2 #s2body .card.udq>.mt-3 .qtext{font-size:clamp(1.3rem,2.1vw,2rem)!important;line-height:1.35!important}
-html body #sec-s2 #s2body .card.udq.hasfig>.uqfig{grid-column:1!important;grid-row:3!important;align-self:stretch!important;position:relative!important;top:0!important;zoom:1!important;display:flex!important;align-items:center;justify-content:center;padding:34px 12px 10px!important;border-radius:18px;border:2px solid #cbd5e1;background:#f8fafc;background-image:linear-gradient(#e2e8f0 1px,transparent 1px),linear-gradient(90deg,#e2e8f0 1px,transparent 1px);background-size:24px 24px;overflow:hidden;min-height:0;max-width:none!important;width:auto!important}
-html body #sec-s2 #s2body .card.udq.hasfig>.uqfig:before{content:'🧩 그림';position:absolute;left:12px;top:8px;font-size:.78rem;font-weight:900;color:#475569;background:#fff;border:1.5px solid #cbd5e1;border-radius:999px;padding:1px 10px}
-html body #sec-s2 #s2body .card.udq.hasfig>.uqfig .uqin{display:flex;align-items:center;justify-content:center}
-html body #sec-s2 #s2body .card.udq>.svsl-qR{grid-row:3!important;display:flex!important;flex-direction:column;gap:10px;min-height:0;align-self:stretch}
-html body #sec-s2 #s2body .card.udq.hasfig>.svsl-qR{grid-column:2!important}
-html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices{flex:1 1 auto;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:1fr;gap:12px!important;margin:0!important;min-height:0}
-html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices .choice{height:auto!important;min-height:64px;font-size:clamp(1.1rem,2vw,1.9rem)!important;display:flex;align-items:center;justify-content:center;margin:0!important;padding:8px 12px!important;line-height:1.3}
-html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices{grid-template-columns:1fr!important}
-html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices .choice{font-size:clamp(1rem,1.5vw,1.35rem)!important}
-html body #sec-s2 #s2body .card.udq>.svsl-qR>.udrow{flex:none;min-height:56px;justify-content:center;align-items:center;margin:0!important;border:2px dashed #e2e8f0;border-radius:14px;padding:4px 8px}
-}
-@media(max-width:760px){
-html body #sec-s2 #s2body .card.udq>.svsl-qR{width:100%!important;max-width:none!important;display:block!important}
-html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
-html body #sec-s2 #s2body .card.udq.uqlong>.svsl-qR>.choices{grid-template-columns:1fr!important}
-html body #sec-s2 #s2body .card.udq>.svsl-qR>.choices .choice{width:auto!important;min-height:58px;font-size:1.15rem!important}
-html body #sec-s2 #s2body .card.udq.hasfig>.uqfig{border-radius:16px;border:2px solid #cbd5e1;background:#f8fafc;padding:8px!important;margin:8px 0!important}
-}
-@media(max-width:760px){
-html body #sec-s2 #s2body .card.udq>.choices{flex:1 1 100%!important;width:100%!important;max-width:none!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;grid-column:1/-1!important}
-html body #sec-s2 #s2body .card.udq.uqlong>.choices{grid-template-columns:1fr!important}
-html body #sec-s2 #s2body .card.udq>.choices .choice{width:auto!important;min-height:58px;font-size:1.15rem!important}
-}
-/* 여러 개의 띠그래프·막대가 한 그림에 있을 때 옆으로 흘러넘치지 않고 위아래로 쌓기 */
-html body #sec-s2 #s2body .card.udq .uqin:has(.grstrip){flex-direction:column!important;align-items:stretch!important;width:100%}
-html body #sec-s2 #s2body .card.udq .rffig:has(.grstrip){display:flex!important;flex-direction:column;gap:10px;width:100%;max-width:640px;margin:0 auto}
-html body #sec-s2 #s2body .card.udq .rffig .grstrip{width:100%;min-width:0;flex:none}
-/* 👑 학년 최종 대장 */
-.gbx{position:relative;display:inline-block;vertical-align:middle;line-height:0}
-.gbx>img,.gbx>svg:not(.gbcr){width:100%!important;height:100%!important;object-fit:contain}
-.gbx .gbcr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.gbx.gbs2>img,.gbx.gbs2>svg:not(.gbcr){filter:saturate(.85)}
-.gbx.gbs3>img,.gbx.gbs3>svg:not(.gbcr){filter:saturate(.65) brightness(.95)}
-.gbx.gbs4>img,.gbx.gbs4>svg:not(.gbcr){filter:grayscale(.6);opacity:.85}
-/* 도전장: 단원 악당 뒤의 대장 그림자 */
-.fuchL{position:relative}
-.gbsh{position:absolute;right:-6px;top:-8px;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.9;filter:drop-shadow(0 0 10px rgba(0,0,0,.55));pointer-events:none;z-index:2}
-.gbsh .gbx{filter:brightness(.55) saturate(.6)}
-.gbsh span{font-size:.72rem;font-weight:900;color:#fde68a;background:rgba(15,23,42,.75);border-radius:999px;padding:1px 8px;line-height:1.4}
-.gbsay{display:flex;gap:8px;align-items:center;margin:8px 0 2px;padding:7px 10px;border-radius:14px;background:rgba(15,23,42,.55);border:1.5px solid rgba(253,230,138,.6);color:#fef3c7;font-size:.9rem;line-height:1.45;text-align:left}
-.gbsay small{display:block;font-size:.68rem;font-weight:900;color:#fde68a;opacity:.9}
-.gbsay b{color:#fde047;margin-right:4px}
-.gbsay .gbav{flex:none;line-height:0}
-/* 왕중왕전 2:1 */
-.gbh{color:#7c2d12}
-.gbvs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px 10px;align-items:center;margin:8px 0 10px;padding:10px 12px;border-radius:16px;background:linear-gradient(90deg,#fff1f2,#fef3c7 50%,#e0e7ff);border:2px solid #fca5a5}
-.gbvs .gbf{display:flex;gap:8px;align-items:center;min-width:0}
-.gbvs .gbf.boss{flex-direction:row-reverse;text-align:right}
-.gbvs .gbav{flex:none;line-height:0}
-.gbvs .gbko{filter:grayscale(1);opacity:.6;transform:rotate(-12deg)}
-.gbvs .gbm{flex:1;min-width:0}
-.gbvs .gbm b{display:block;font-size:1rem;font-weight:900;color:#1f2937}
-.gbvs .gbm small{display:block;font-size:.7rem;font-weight:800;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gbhp{position:relative;height:16px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:3px;border:1.5px solid #9ca3af}
-.gbhp i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:999px;transition:width .6s}
-.gbhp.b i{left:auto;right:0;background:linear-gradient(90deg,#6366f1,#1d4ed8)}
-.gbhp span{position:relative;display:block;text-align:center;font-size:.68rem;font-weight:900;line-height:13px;color:#111827}
-.gbx2{font-size:1.25rem;font-weight:900;color:#b91c1c;background:#fff;border:2px solid #fca5a5;border-radius:12px;padding:2px 8px}
-.gbline{grid-column:1/-1;text-align:center;font-size:.86rem;font-weight:800;color:#312e81;background:rgba(255,255,255,.7);border-radius:10px;padding:4px 8px}
-.gbvs.down{border-color:#86efac;background:linear-gradient(90deg,#f0fdf4,#fef9c3 50%,#eef2ff)}
-/* 결과 */
-.gbres{display:flex;gap:10px;align-items:center;justify-content:center;margin:8px auto 0;max-width:560px;padding:8px 12px;border-radius:14px;background:#eef2ff;border:2px dashed #818cf8;font-size:.9rem;font-weight:700;color:#312e81;text-align:left;line-height:1.45}
-.gbres.ok{background:#f0fdf4;border-color:#4ade80;color:#14532d}
-.gbres .gbav{flex:none;line-height:0}
-@media(max-width:600px){
-  .gbvs:not(.gbnar){grid-template-columns:1fr;padding:8px}
-  .gbvs:not(.gbnar) .gbf.boss{flex-direction:row;text-align:left}
-  .gbvs:not(.gbnar) .gbhp.b i{left:0;right:auto}
-  .gbx2{justify-self:center;font-size:.95rem;padding:0 6px}
-  .gbvs.gbnar{gap:4px 6px;padding:8px}
-  .gbvs.gbnar .gbf{flex-direction:column;align-items:center;text-align:center;gap:2px}
-  .gbvs.gbnar .gbm{width:100%}
-  .gbvs.gbnar .gbline{font-size:.8rem}
-  .gbsh{right:-2px;top:-4px}
-  .gbsh .gbx{width:70px!important;height:70px!important}
-}
-/* 새 왕중왕전 화면(uar) — 성문 양옆의 두 악당 */
-.uar-gates.gbon .uar-torch{display:none}
-.gbfl{position:absolute;top:0;width:150px;display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2;text-align:center}
-.gbfl.l{left:14px}.gbfl.r{right:14px}
-.gbfl .gbav{line-height:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
-.gbfl>b{font-size:.86rem;font-weight:900;color:#fff;background:rgba(30,27,75,.82);border-radius:999px;padding:1px 10px;white-space:nowrap}
-.gbfl .gbhp{width:130px;margin-top:2px}
-.gbfl.r .gbhp i{left:0;right:auto}
-.gbbub{position:absolute;right:100%;top:6px;margin-right:2px;width:160px;padding:6px 9px;border-radius:12px;background:#fff;border:2px solid #6366f1;font-size:.74rem;font-weight:800;color:#312e81;line-height:1.35;text-align:left;box-shadow:0 3px 8px rgba(0,0,0,.15)}
-.gbbub:after{content:'';position:absolute;right:-8px;top:14px;border:6px solid transparent;border-left-color:#6366f1}
-.gbem{font-style:normal;font-weight:900;color:#b91c1c}.gbem.b{color:#1d4ed8}
-.gbvs.gbnar{display:none;margin:6px 10px 8px}
-@media(max-width:1300px){.gbbub{display:none}}
-@media(max-width:900px){.gbfl{display:none}.gbvs.gbnar{display:grid}}
-</style><script>
-/* =====================================================================
-   🧭 단원 마무리 새 순서 (6학년 1학기 · SV_LF.flowU)
-     세트 1 : 개념 복습(개념 카드 + 확인 문제) → 결과
-     세트 2 : 단원 평가 하 · 중 · 상 (각 10문항) → 왕중왕전 → 결과(단원 보고서)
-   · 예전의 오늘의 문제 · 기본 문제 · 보스전 단계는 흐름에서 뺐어요 (코드는 남아 있어요).
-   · 하 = 차시의 기본 문제 + 문제은행 1단계, 중 = 문제은행 2단계, 상 = 문제은행 3단계 — 차시마다 골고루.
-   ===================================================================== */
-(function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.__FLOWU) return; window.__FLOWU = 1;
-  const T = f => { try { return f(); } catch (e) { return undefined; } };
-  const N = BADGES.length, LVN = { 1: '하', 2: '중', 3: '상' }, LVS = { 1: '기초 다지기', 2: '실력 올리기', 3: '생각 넓히기' };
-  const LVC = { 1: 'linear-gradient(135deg,#34d399,#0ea5a4)', 2: 'linear-gradient(135deg,#52c0ff,#2f7cf5)', 3: 'linear-gradient(135deg,#ffa53d,#ff5a76)' }, LVI = { 1: '🌱', 2: '⛵', 3: '🌋' };
-  const lvOf = () => { const d = (state.s2 || {}).drill; if (!d) return {}; if (!d.lv) d.lv = {}; return d.lv; };
-  const plain = x => String(x == null ? '' : x).replace(/<[^>]+>/g, '');
-
-  /* ---------- 세트 1: 카드마다 점수 (확인 문제 2개) ---------- */
-  S1_ITEMS.length = 0;
-  BADGES.forEach(([k, nm], i) => S1_ITEMS.push({ id: 'c' + (i + 1), card: k, label: nm, keys: [], max: Math.floor(100 / N) + (i < 100 % N ? 1 : 0) }));
-  const up0 = ucPick;
-  ucPick = function (v) { T(() => { const k = state.s1.tool || BADGES[0][0], s = cardState(k), q = s.q; if (q && !s.picked && !state.s1.badges[k] && v !== q.ans) s.wr = (s.wr || 0) + 1; }); return up0.apply(this, arguments); };
-  const cr0 = computeResult;
-  computeResult = function (k) {
-    if (k === 's1') {
-      const st = state.s1, elapsed = st.start ? Math.round(((st.end || Date.now()) - st.start) / 1000) : 0;
-      const items = S1_ITEMS.map(it => { const got = !!(st.badges || {})[it.card], cs = (st.cs || {})[it.card] || {}, wr = cs.wr || 0, okn = Math.min(2, cs.ok || 0);
-        return { label: it.label, state: got ? (wr ? 'retry' : 'ok') : 'todo', note: got ? (wr ? `배지 획득 · 틀린 적 ${wr}번` : '확인 문제를 한 번에 통과') : (okn ? `확인 문제 2개 중 ${okn}개 맞힘` : '아직 안 했어요'),
-          pt: got ? Math.round(it.max * (wr ? Math.max(.6, 1 - .1 * wr) : 1)) : Math.round(it.max * .25 * okn), max: it.max }; });
-      const wrong = ulog().filter(e => e.set === 's1' && !e.ok).map(e => `${chTag(e.ch)} · ${plain(e.text)} → ${e.my}`);
-      return { k, setName: '세트 1: 개념 복습', score: items.reduce((a, i) => a + i.pt, 0), elapsed, items, wrong };
-    }
-    const r = cr0(k); if (k !== 's2') return r;
-    const s = T(() => SVHUB.stats()) || { mAvg: 0, bAvg: 0 }, lv = lvOf();
-    const items = [1, 2, 3].map(L => { const x = lv[L] || {}; return { label: `단원 평가 「${LVN[L]}」 10문항`, state: x.rounds ? (x.best >= 80 ? 'ok' : 'retry') : 'todo', note: x.rounds ? `${x.rounds}회 · 최고 ${x.best}점` : '미도전', pt: Math.round((x.best || 0) * .2), max: 20 }; });
-    if (r.items[1]) items.push(Object.assign({}, r.items[1], { pt: Math.round((s.mAvg || 0) * .2), max: 20 }));
-    if (r.items[2]) items.push(Object.assign({}, r.items[2], { pt: Math.round((s.bAvg || 0) * .2), max: 20 }));
-    return Object.assign(r, { setName: '세트 2: 단원 평가 · 왕중왕전', items, score: items.reduce((a, i) => a + i.pt, 0) });
-  };
-  /* 세트 1 화면 글: 기본 문제 대신 결과로 */
-  const rc0 = renderS1Concept;
-  renderS1Concept = function () { const r = rc0.apply(this, arguments); T(() => { const b = document.querySelector('#s1body > .next-row [data-act="step"]'); if (b) { b.dataset.v = 'result'; b.textContent = '🏆 세트 1 결과 보기 ➜'; } }); return r; };
-  const rb0 = renderBadges;
-  renderBadges = function () { const r = rb0.apply(this, arguments); T(() => { const m = document.querySelector('#badgeWrap .badgebar .muted'); if (m && /기본 문제/.test(m.textContent)) m.textContent = `배지 ${N}개 완성! 결과를 확인해요 ➜`; }); return r; };
-  const rr0 = renderResult;
-  try { const st0 = document.createElement('style'); st0.textContent = '.fu-res li.fu-go{cursor:pointer;transition:transform .12s,box-shadow .12s;outline:2px dashed transparent}.fu-res li.fu-go:hover,.fu-res li.fu-go:focus{transform:translateY(-2px);box-shadow:0 4px 0 #fdba74;outline-color:#fb923c}.fu-gob{margin-left:8px;font-weight:900;font-size:.85rem;color:#fff;background:#f97316;border-radius:999px;padding:3px 10px;white-space:nowrap}'; document.head.appendChild(st0); } catch (e) {}
-  renderResult = function (k) { const r = rr0.apply(this, arguments); if (k !== 's1') return r;
-    T(() => { const card = document.querySelector('#s1body > .card.center'); if (!card) return; card.classList.add('fu-res');
-      [...card.children].forEach(c => { if (c.matches('div.font-black') && /보석/.test(c.textContent) && !c.querySelector('button')) c.innerHTML = UnitGem.has() ? '💎 수호 보석을 완성했어요!' : '💎 수호 보석은 세트 2의 <b>단원 평가</b>와 <b>왕중왕전</b>까지 마치면 완성돼요.';
-        if (c.matches('p') && /단원 전체 보고서/.test(c.textContent)) c.textContent = '단원 전체 보고서(차시 진단 · 오답노트 · 제출 · 인쇄)는 세트 2의 「결과」에서 볼 수 있어요.'; });
-      const b = [...card.querySelectorAll('button')].find(x => /세트 2/.test(x.textContent)); if (b) b.textContent = '📋 세트 2 단원 평가로 ➜';
-      /* 아직 안 한(배지 없는) 카드는 눌러서 바로 그 복습 카드로 */
-      const lis = [...card.querySelectorAll('ul li')]; lis.forEach((li, i) => { const it = S1_ITEMS[i]; if (!it || (state.s1.badges || {})[it.card]) return;
-        li.classList.add('fu-go'); li.setAttribute('role', 'button'); li.tabIndex = 0; li.title = '눌러서 바로 해 보기';
-        const go = document.createElement('span'); go.className = 'fu-gob'; go.textContent = '▶ 하러 가기'; li.appendChild(go);
-        const open = () => { state.s1.tool = it.card; goStep('s1', 'concept'); setTimeout(() => { const t = document.querySelector(`[data-act="tool"][data-v="${it.card}"]`); if (t) t.click(); }, 120); };
-        li.addEventListener('click', open); li.addEventListener('keydown', e => { if (e.key === 'Enter') open(); }); }); });
-    return r; };
-
-  /* ---------- 세트 2: 단원 평가 하 · 중 · 상 (각 10문항) ---------- */
-  function lvQs(L) {
-    const Ns = LESSONS.map(l => l.n), base = Math.floor(10 / Ns.length), cnt = {}; Ns.forEach(n => cnt[n] = base);
-    shuffle(Ns).slice(0, 10 - base * Ns.length).forEach(n => cnt[n]++);
-    const qs = [];
-    Ns.forEach(n => { const all = UPOOL[n] || [], gs = all.filter(g => L === 1 ? (g.k === 'b' || g.lv === 1) : g.lv === L), use = gs.length >= cnt[n] ? gs : all;
-      shuffle(use).slice(0, cnt[n]).forEach(g => qs.push(upq(n, g, use))); });
-    return qs;
-  }
-  const sd0 = startDrill, dn0 = drillNext, dp0 = drillPick, rd0 = renderDrill;
-  startDrill = function (mode) { const m = /^lv([123])$/.exec(mode), d = state.s2.drill; if (!m) { d.level = 0; return sd0.apply(this, arguments); }
-    const L = +m[1]; touch('s2'); d.mode = 'unit'; d.level = L; d.qs = lvQs(L).map(q => { try { return window.UAUTOFIG ? UAUTOFIG(q) : q; } catch (e) { return q; } }); d.idx = 0; d.ans = []; d.lastScore = null; d.streak = 0; d.hint = false;
-    T(() => { say(`단원 평가 「${LVN[L]}」 시작! 모두 10문제야.`); mood('wow', 1200); }); renderDrill(); };
-  drillNext = function () { const d = state.s2.drill, L = d.level;
-    if (L && d.mode === 'unit' && d.qs.length && d.idx === d.qs.length - 1) { const sc = Math.round(d.ans.filter(a => a && a.ok).length / d.qs.length * 100), lv = lvOf(), x = lv[L] || (lv[L] = { rounds: 0, best: 0 }); x.rounds++; x.last = sc; if (sc > x.best) x.best = sc; }
-    return dn0.apply(this, arguments); };
-  drillPick = function () { const d = state.s2.drill, lq = logQ;
-    if (d.level && d.mode === 'unit') logQ = function (e) { if (e && e.set === 's2') e.src = `CH.2 단원 평가 (${LVN[d.level]})`; return lq.apply(this, arguments); };
-    try { return dp0.apply(this, arguments); } finally { logQ = lq; } };
-  function menuHTML() { const lv = lvOf(), done = [1, 2, 3].filter(L => (lv[L] || {}).rounds).length;
-    return `<div class="card fu-menu">
-      <div class="stage-head"><span class="ti" style="background:#fff0dc">📋</span><div><span class="stchap">CHAPTER 2</span><h2 class="h2">단원 평가 · 하 · 중 · 상</h2><p class="sub" style="margin:3px 0 0">단계마다 <b>10문제</b>씩, ${LESSONS.length}개 차시에서 골고루 나와요. 문제마다 몇 차시 내용인지 표시되고, 끝나면 차시별로 진단해 줘요. <b>하 → 중 → 상</b> 차례로 도전해 봐요.</p></div></div>
-      <div class="gates mt-3">${[1, 2, 3].map(L => { const x = lv[L] || {};
-        return `<button class="gate" style="background:${LVC[L]}" data-act="drill-level" data-v="lv${L}"><div class="gi">${LVI[L]}</div><div class="gt">단원 평가 「${LVN[L]}」 10문항</div><div class="gs">${LVS[L]} · ${x.rounds ? `최고 ${x.best}점${x.best >= 80 ? ' 🏅' : ''}` : '아직 도전 전'}</div></button>`; }).join('')}</div>
-      <p class="center font-bold muted mt-3 fu-menu-st">${done ? `세 단계 중 ${done}단계 도전 · ${done === 3 ? '모두 도전했어요! 왕중왕전으로 가요 👑' : '남은 단계도 도전해 봐요'}` : '쉬운 단계부터 시작해요. 세 단계를 모두 도전하면 왕중왕전 준비 끝!'}</p></div>`; }
-  function finHTML() { const d = state.s2.drill, L = d.level, ok = d.ans.filter(a => a && a.ok).length, sc = d.lastScore || 0, nx = L < 3 ? L + 1 : 0;
-    const per = LESSONS.map(l => ({ l, xs: d.qs.map((q, i) => ({ q, a: d.ans[i] || {} })).filter(x => x.q.ch === l.n) })).filter(x => x.xs.length);
-    const tip = sc >= 80 ? (nx ? `탄탄해요! 「${LVN[nx]}」 단계에 도전해 봐요.` : '세 단계를 모두 해냈어요! 왕중왕전에서 실력을 뽐내 봐요.') : sc >= 50 ? '거의 다 왔어요. ❌ 표시가 있는 차시의 풀이를 다시 읽고 한 번 더 풀어 봐요.' : '괜찮아요! 세트 1의 개념 카드를 다시 넘겨 보고 한 번 더 도전해 봐요.';
-    return `<div class="card center fu-fin">
-      <div class="fu-finl"><div class="row" style="justify-content:center">${JARAM(84)}</div><h2 class="h2 mt-2">📋 단원 평가 「${LVN[L]}」 완료!</h2>
-        <div class="score-big" id="drillScore">0<span style="font-size:1.6rem">점</span></div><p class="font-bold muted">${ok} / ${d.qs.length} 문제 정답</p></div>
-      <div class="fu-finr"><table class="dgtab"><tr><th>차시</th><th>결과</th></tr>${per.map(x => `<tr><td>${chTag(x.l.n)}</td><td>${x.xs.map(y => y.a.ok ? '✅' : '❌').join(' ')}</td></tr>`).join('')}</table><p class="fu-tip">💡 ${tip}</p></div>
-      <div class="row fu-finb" style="justify-content:center">${nx ? `<button class="btn btn-primary" data-act="drill-level" data-v="lv${nx}">「${LVN[nx]}」 단계 도전 ➜</button>` : ''}<button class="btn btn-sub" data-act="drill-level" data-v="lv${L}">🔁 「${LVN[L]}」 다시 풀기</button><button class="btn btn-sub" data-act="drill-menu">단계 고르기</button><button class="btn ${nx ? 'btn-green' : 'btn-primary'}" data-act="step" data-v="arena">👑 왕중왕전 ➜</button></div></div>`; }
-  renderDrill = function () { const d = state.s2.drill, body = document.getElementById('s2body'); if (!body) return;
-    if (!d.qs.length) { body.innerHTML = menuHTML(); T(() => window.SV_LF_decoGates && SV_LF_decoGates()); return; }
-    if (d.idx >= d.qs.length && d.mode === 'unit' && d.level) { body.innerHTML = finHTML(); T(() => countUp(document.getElementById('drillScore'), d.lastScore || 0, '점')); if (d.lastScore >= 80) T(() => FX.rain(100)); return; }
-    const r = rd0.apply(this, arguments);
-    if (d.mode === 'unit' && d.level) T(() => { const pill = body.querySelector('.card .pill'); if (pill) pill.textContent = `단원 평가 · ${LVN[d.level]}`; });
-    return r; };
-
-  /* ---------- 이야기: 4장으로 다시 묶기 ---------- */
-  T(() => { const o = CHAPTERS.slice(), v = o[0].v, G = T(() => SV_ARENA.games.length) || 0; CHAPTERS.length = 0;
-    CHAPTERS.push({ n: 1, v, icon: '🧭', title: '개념 복습', sub: o[0].sub, go: ['s1', 'concept'] }, { n: 2, v, icon: '📋', title: '단원 평가', sub: '하 · 중 · 상 각 10문항', go: ['s2', 'drill'] },
-      { n: 3, v, icon: '👑', title: '왕중왕전', sub: `차시 게임 ${G}개 도전과 경쟁`, go: ['s2', 'arena'] }, { n: 4, v, icon: '📜', title: '결과', sub: (o[4] || o[o.length - 1]).sub, go: ['s2', 'result'] });
-    Object.keys(STEP_CH).forEach(k => delete STEP_CH[k]); Object.assign(STEP_CH, { 's1:concept': 1, 's1:result': 1, 's2:drill': 2, 's2:arena': 3, 's2:result': 4 }); });
-  T(() => { const vw = (BEATS.ch1.lines.find(l => l.w !== 'guide' && l.w !== 'narr') || {}).w || 'dark', vn = T(() => VILLAINS[vw].name) || '악당', ro = T(() => josa(vn, '을', '를')) || '를', old4 = BEATS.ch4;
-    const g1 = BEATS.ch1.lines.filter(l => l.w === 'guide').pop(); if (g1) g1.t = `배지 ${N}개 완성! 세트 1 결과를 확인하고, 세트 2 <b>단원 평가</b>에서 실력을 확인하자!`;
-    BEATS.ch1.btns = [{ t: '🏆 세트 1 결과 보기 ➜', act: 'go', to: ['s1', 'result'] }, { t: '닫기', c: 'btn-sub', act: 'close' }];
-    BEATS.ch2 = { cap: 'CHAPTER 2 CLEAR', ttl: '단원 평가 하 · 중 · 상 돌파!', v: BEATS.ch1.v, pose: 'angry',
-      lines: [{ w: vw, p: 'angry', t: '크윽! 하, 중, 상 단원 평가를 모두 넘다니…! 하지만 왕중왕전에서 마지막 승부다!' }, { w: 'guide', p: 'cheer', t: `왕중왕전으로 가자! 차시마다 했던 게임으로 ${vn}${/[을를]$/.test(ro) ? ro : '를'} 끝까지 몰아붙이자!` }],
-      btns: [{ t: '👑 CH.3 왕중왕전으로 ➜', act: 'go', to: ['s2', 'arena'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] };
-    if (old4) BEATS.ch3 = Object.assign({}, old4, { cap: 'CHAPTER 3 CLEAR', btns: [{ t: '📜 CH.4 결과 보고서 ➜', act: 'go', to: ['s2', 'result'] }, { t: '닫기', c: 'btn-sub', act: 'close' }] }); });
-  T(() => { const pr0 = Story.prog.bind(Story);
-    Story.prog = function () { const p = pr0(), s = T(() => SVHUB.stats()) || { played: 0 }, G = T(() => SV_ARENA.games.length) || 1, lv = lvOf(), ld = [1, 2, 3].filter(L => (lv[L] || {}).rounds).length;
-      const dmg = p.tools / N * .3 + ld / 3 * .4 + (s.played || 0) / G * .3;
-      p.basic = 0; p.jump = 0; p.drill = ld > 0; p.lvDone = ld;
-      p.tiltHp = Math.max(0, 100 - Math.round(100 * dmg)); p.tilt = p.tiltHp === 0; p.darkHp = p.tiltHp; p.dark = p.tilt;
-      p.ch = [p.tools === N, ld === 3, (s.played || 0) >= G, p.tilt]; return p; };
-    Story.sync = function () { const p = this.prog(); this.paint();
-      if (p.ch[0]) this.once('ch1', () => this.scene('ch1'));
-      if (p.ch[1]) this.once('ch2', () => this.scene('ch2'));
-      if (p.ch[2] && !p.tilt) this.once('ch3', () => this.scene('ch3'));
-      if (p.tilt) this.once('final', () => { T(() => UnitGem.earn()); T(() => { FX.rain(260); Sound.win(); }); this.scene('final'); }); };
-    const sv0 = Story.stepV.bind(Story);
-    Story.stepV = function () { const r = sv0(), tab = state.tab, step = (state[tab] || {}).step || (tab === 's2' ? 'drill' : 'concept');
-      const M = { 's1:concept': `카드를 넘기며 배운 내용을 떠올리고, 확인 문제로 핵심 개념 배지 ${N}개를 모으자!`, 's1:result': '세트 1 결과를 확인하고 세트 2 단원 평가로!', 's2:drill': '단원 평가 하 · 중 · 상! 단계마다 10문제로 실력을 확인하자!', 's2:result': '단원 보고서 — 차시 진단 · 오답노트 · 제출 · 인쇄!' };
-      if (r && M[tab + ':' + step]) r.m = M[tab + ':' + step]; return r; }; });
-  /* ---------- ⚔️ 도전장: 단원 마무리 첫 장면 (악당이 "나를 이겨 봐!") ---------- */
-  T(() => { const sc0 = Story.scene.bind(Story), P0 = BEATS.prologue;
-    Story.scene = function (id) {
-      if (id !== 'prologue' || !P0 || !document.getElementById('stBox')) { T(() => document.getElementById('stOv').classList.remove('fu-chal')); return sc0(id); }
-      this.cur = P0; const vk = P0.v || 'dark', V = VILLAINS[vk] || {}, vn = V.name || '악당', p = T(() => this.prog()) || { ch: [] }, G = T(() => SV_ARENA.games.length) || 0;
-      const dl = (P0.lines || []).find(l => l.w !== 'guide' && l.w !== 'narr'), gl = (P0.lines || []).filter(l => l.w === 'guide').pop();
-      const lid = String(CONFIG.LESSON_ID || ''), img = `./assets/scenes/${lid}-challenge.webp`;
-      const gates = [['🧭', '개념 복습', `개념 카드 ${N}장 · 확인 문제`, p.ch[0]], ['📋', '단원 평가', '하 · 중 · 상 각 10문항', p.ch[1]], ['👑', '왕중왕전', `차시 게임 ${G}개`, p.ch[2]]];
-      const nx = gates.findIndex(g => !g[3]), go = nx === 0 ? ['s1', 'concept'] : nx === 1 ? ['s2', 'drill'] : nx === 2 ? ['s2', 'arena'] : ['s2', 'result'];
-      P0.btns = [{ t: nx < 0 ? '📜 결과 보러 가기' : nx ? `⚔️ ${gates[nx][1]}에 도전!` : '⚔️ 도전 받기!', act: 'go', to: go }, { t: '😈 악당 보기', c: 'btn-sub', act: 'scene', to: 'villains' }];
-      $('#stBox').innerHTML = `<div class="fuch">
-        <div class="fuchL"><div class="fuchV"><img src="${img}" alt="" onerror="this.remove()"><div class="fuchF">${(() => { const u = T(() => typeof G56 !== 'undefined' && G56.full && G56.full(vk, 'laugh')); return u ? `<img class="fuchFull" src="${u}" alt="">` : this.face(vk, 230, 'happy'); })()}</div></div><div class="fuchN">${esc(vn)}</div></div>
-        <div class="fuchR"><span class="stcap">${esc(P0.cap || '최종 결전')}</span><div class="fuchT">📜 ${esc(vn)}의 도전장</div>
-          <div class="fuchB">${dl ? dl.t : ''} <b>세 관문을 모두 넘어 나를 이겨 봐라!</b></div>
-          <div class="fuchG">${gates.map((g, i) => `<div class="fugt ${g[3] ? 'ok' : i === nx ? 'now' : ''}"><span class="fugi">${g[3] ? '✅' : g[0]}</span><b>${i + 1}. ${g[1]}</b><small>${g[2]}</small></div>${i < 2 ? '<span class="fuga">➜</span>' : ''}`).join('')}</div>
-          ${gl ? `<div class="stline me"><span class="stav">${avatar(GUIDE(), 46, 'determined')}</span><div style="flex:1;min-width:0"><div class="stwho">${esc(CHARS[GUIDE()].name)}</div><div class="stbub2">${gl.t}</div></div></div>` : ''}
-          <div class="stbtns">${P0.btns.map((x, k) => `<button class="btn ${x.c || 'btn-primary'}" data-st="btn" data-i="${k}">${x.t}</button>`).join('')}</div></div></div>`;
-      const ov = document.getElementById('stOv'); ov.classList.add('fu-chal'); ov.classList.remove('hidden'); T(() => { Sound.whoosh(); });
-    };
-    /* 처음 열 때 다른 곳(수업 흐름)에서 옛 모양으로 그린 첫 장면도 도전장으로 바꿔 그려요 */
-    const box = document.getElementById('stBox'), cap = P0 && P0.cap;
-    if (box && cap) new MutationObserver(() => { if (box.querySelector('.fuch')) return; const c = box.querySelector('.stcap'); if (c && c.textContent.trim() === String(cap).trim() && !document.getElementById('stOv').classList.contains('hidden')) Story.scene('prologue'); else T(() => document.getElementById('stOv').classList.remove('fu-chal')); }).observe(box, { childList: true }); });
-  /* 수호 보석: 6학년 1학기 차시 보석으로 세기 */
-  T(() => { const uid = String(CONFIG.LESSON_ID || '').replace(/-U$/, ''); UnitGem.lessons = function () { const g = Gems.load(); return LESSONS.map(l => !!g[uid + '-' + l.n]); }; });
-  T(() => { if (state.tab === 's2') renderS2(); else renderS1(); });
-})();
-
-/* =====================================================================
-   🏰 보스 성 탈환전 — 모든 단원 마무리의 공통 컨셉
-     ① 머리글 「○단원 마무리 · ○○ 탈환전」  ② 단원 평가 하·중·상 = 성벽 3관문 (돌파하면 성벽이 무너져요)
-     ④ 결과 = 「성 탈환 증서」 + 탈환 작전 기록(하러 가기)
-   ===================================================================== */
-(function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.__UCASTLE) return; window.__UCASTLE = 1;
-  const T = f => { try { return f(); } catch (e) { return undefined; } };
-  const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
-  const CASTLE = { '4-1-1': '삐딱이의 수의 탑', '4-1-2': '뒤죽이의 각도 성', '4-1-3': '반쪽이의 축제 성', '4-1-4': '뒤죽이의 거울 성', '4-1-5': '뒤죽이의 그래프 성', '4-1-6': '시간도둑의 규칙 성',
-    '5-1-1': '브래킷의 계산 순서 탑', '6-1-1': '디바이드의 분수 성', '6-1-2': '폴리곤의 입체 성', '6-1-3': '데시말의 소수 성', '6-1-4': '라티오의 비율 성', '6-1-5': '차트 마스터의 그래프 성', '6-1-6': '볼륨 킹의 부피 성' };
-  const P = UID.split('-'), GR = P[0], UN = P[2], CS = CASTLE[UID] || '보스 성';
-  const UNM = T(() => (String(SV_LF.review.title).match(/「[^」]+」/) || [''])[0]) || '';
-  window.UCASTLE = { name: CS, title: `${UN}단원 마무리 · ${CS} 탈환전` };
-  const lsg = k => T(() => localStorage.getItem(k)), lss = (k, v) => T(() => localStorage.setItem(k, v));
-  /* ① 머리글 */
-  function head() { const ti = document.querySelector('#svslTop .ti'); if (!ti || ti.dataset.uc) return; ti.dataset.uc = '1';
-    ti.innerHTML = `<small>${UN}단원 마무리</small>🏰 ${CS} 탈환전`; ti.title = window.UCASTLE.title + ' · ' + UNM; }
-  /* ② 관문 그림 (11-20 새 그림): 하 = 아침 숲 성문 · 중 = 노을 협곡 요새 · 상 = 밤의 대성채
-       st 0 굳게 닫힘 · 1 금이 감 · 2 무너짐(우리 깃발) */
-  function wall(st, L) {
-    const id = 'ucg' + L + st + Math.random().toString(36).slice(2, 6);
-    const P = [null,
-      { s1: '#7dd3fc', s2: '#e0f2fe', m1: '#a7f3d0', m2: '#6ee7b7', g1: '#4ade80', g2: '#16a34a', rf: '#0d9488', rf2: '#115e59', fl: '#14b8a6', st1: '#e7e5e4', st2: '#a8a29e', lab: '하', top: 84, keep: 0 },
-      { s1: '#fb923c', s2: '#fde68a', m1: '#fdba74', m2: '#f59e0b', g1: '#a3e635', g2: '#4d7c0f', rf: '#2563eb', rf2: '#1e3a8a', fl: '#3b82f6', st1: '#e7e5e4', st2: '#a8a29e', lab: '중', top: 74, keep: 1 },
-      { s1: '#1e1b4b', s2: '#6d28d9', m1: '#4c1d95', m2: '#312e81', g1: '#166534', g2: '#052e16', rf: '#e11d48', rf2: '#881337', fl: '#f43f5e', st1: '#d6d3d1', st2: '#78716c', lab: '상', top: 66, keep: 2 }][L] || null;
-    if (!P) return '';
-    const T0 = P.top, win = st === 2, flc = win ? '#22c55e' : P.fl;
-    const merl = (x0, x1, y, w = 9, g = 5) => { let s = ''; for (let x = x0; x + w <= x1 + .1; x += w + g) s += `<rect x="${x}" y="${y - 8}" width="${w}" height="9" rx="1.2"/>`; return s; };
-    const tower = (cx, top, w) => { const x = cx - w / 2;
-      return `<g><rect x="${x}" y="${top}" width="${w}" height="${172 - top}" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/>
-        <rect x="${x}" y="${top}" width="${w}" height="${172 - top}" fill="url(#${id}b)" opacity=".55"/>
-        <g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.2">${merl(x - 3, x + w + 3, top, 8, 4)}</g>
-        <path d="M${x - 5} ${top - 8}L${cx} ${top - 38}L${x + w + 5} ${top - 8}z" fill="url(#${id}r)" stroke="${P.rf2}" stroke-width="1.4"/>
-        <path d="M${cx} ${top - 38}L${x + w + 5} ${top - 8}H${cx + 4}z" fill="#000" opacity=".16"/>
-        <path d="M${cx} ${top - 38}V${top - 58}" stroke="#3f3f46" stroke-width="1.8"/>
-        <path class="ucg-flag" d="M${cx + 1} ${top - 57}q8 3 16 0t16 2v11q-8 3-16 0t-16 -1z" fill="${flc}" stroke="#0f172a" stroke-width=".8" style="transform-origin:${cx}px ${top - 52}px"/>
-        ${win ? `<path d="M${cx + 13} ${top - 54}l3 6 6 .6-4.6 4 1.4 6-5.8-3.2-5.8 3.2 1.4-6-4.6-4 6-.6z" fill="#fef08a"/>` : ''}
-        <rect x="${cx - 4}" y="${top + 16}" width="8" height="13" rx="4" fill="#1c1917"/><rect x="${cx - 4}" y="${top + 46}" width="8" height="13" rx="4" fill="#1c1917"/>
-        <path d="M${x + 4} ${top + 4}v${70}" stroke="#fff" stroke-width="2" opacity=".18"/>
-        ${win ? '' : `<path d="M${cx - 8} ${top + 8}h16v26l-8 7-8-7z" fill="${P.fl}" stroke="${P.rf2}" stroke-width="1"/><circle cx="${cx}" cy="${top + 20}" r="3.2" fill="#fde68a"/>`}</g>`; };
-    const sky = L === 3 ? `<g fill="#fff">${[[22, 18, 1.2], [60, 34, .9], [94, 14, 1.1], [250, 22, 1], [286, 44, 1.3], [210, 12, .8], [140, 30, .7], [300, 12, .9], [40, 58, .8]].map(s => `<circle class="ucg-tw" cx="${s[0]}" cy="${s[1]}" r="${s[2]}"/>`).join('')}</g><circle cx="270" cy="34" r="15" fill="#fef3c7"/><circle cx="276" cy="30" r="13" fill="${P.s1}"/>`
-      : L === 2 ? `<circle cx="252" cy="96" r="30" fill="#fff7ed" opacity=".95"/><circle cx="252" cy="96" r="44" fill="#fff7ed" opacity=".25"/>`
-      : `<circle cx="44" cy="34" r="16" fill="#fef9c3"/><circle cx="44" cy="34" r="26" fill="#fef9c3" opacity=".3"/><g fill="#fff" opacity=".92"><ellipse cx="236" cy="38" rx="24" ry="9"/><ellipse cx="252" cy="32" rx="15" ry="9"/><ellipse cx="110" cy="52" rx="18" ry="6"/></g>`;
-    const KY = T0 - 8, KP = KY - 34 - (P.keep - 1) * 6;
-    const keep = P.keep ? `<g><rect x="128" y="${KY}" width="64" height="${110 - KY}" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.3"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(126, 194, KY, 8, 4)}</g>
-        <path d="M122 ${KY - 8}L160 ${KP}L198 ${KY - 8}z" fill="url(#${id}r)" stroke="${P.rf2}" stroke-width="1.3"/><path d="M160 ${KP}L198 ${KY - 8}H164z" fill="#000" opacity=".16"/><path d="M160 ${KP}V${KP - 18}" stroke="#3f3f46" stroke-width="1.8"/>
-        <path class="ucg-flag" d="M161 ${KP - 17}q9 3 18 0t17 2v11q-9 3-17 0t-18 -1z" fill="${flc}" stroke="#0f172a" stroke-width=".8" style="transform-origin:160px ${KP - 12}px"/>
-        <rect x="154" y="${KY + 8}" width="12" height="16" rx="6" fill="${L === 3 ? '#fde047' : '#1c1917'}"/></g>` : '';
-    const torch = x => `<g><circle class="ucg-glow" cx="${x}" cy="126" r="${L === 3 ? 16 : 10}" fill="url(#${id}g)"/><rect x="${x - 1.5}" y="128" width="3" height="11" fill="#78350f"/><path class="ucg-fire" d="M${x} 118c4 4 4 8 0 11-4-3-4-7 0-11z" fill="#f97316"/><path d="M${x} 122c2 2 2 4 0 6-2-2-2-4 0-6z" fill="#fde047"/></g>`;
-    const door = st === 2
-      ? `<path d="M138 172V134a22 22 0 0 1 44 0v38z" fill="#0c0a09"/><path d="M146 172V140" stroke="#1c1917"/><g transform="rotate(-38 138 172)"><rect x="126" y="140" width="13" height="32" rx="1.5" fill="url(#${id}w)" stroke="#451a03"/></g><g transform="rotate(30 182 172)"><rect x="181" y="142" width="12" height="30" rx="1.5" fill="url(#${id}w)" stroke="#451a03"/></g>
-         <g fill="${P.st2}" stroke="#44403c" stroke-width=".8"><path d="M112 178l9-7 8 3 2 8z"/><path d="M186 180l7-8 9 2 1 9z"/><path d="M150 182l6-6 8 2 1 6z"/><path d="M128 186l5-5 6 1v5z"/><path d="M196 188l6-4 5 3-2 4z"/></g>`
-      : `<path d="M138 172V134a22 22 0 0 1 44 0v38z" fill="url(#${id}w)" stroke="#451a03" stroke-width="1.6"/><path d="M160 112V172" stroke="#451a03" stroke-width="1.4"/>
-         <g stroke="#78350f" stroke-width=".8" opacity=".7">${[144, 150, 155, 165, 170, 176].map(x => `<path d="M${x} ${x < 147 || x > 173 ? 128 : 116}V172"/>`).join('')}</g>
-         <g stroke="#3f3f46" stroke-width="2.2" fill="none"><path d="M139 142H181M139 158H181"/></g><g fill="#a1a1aa">${[143, 152, 168, 177].map(x => `<circle cx="${x}" cy="142" r="1.4"/><circle cx="${x}" cy="158" r="1.4"/>`).join('')}</g>
-         <g stroke="#27272a" stroke-width="1.6" opacity=".85">${[143, 150, 157, 164, 171, 178].map(x => `<path d="M${x} ${st ? 150 : 132}V172"/>`).join('')}<path d="M139 ${st ? 160 : 150}H181"/></g>`;
-    const crack = st >= 1 ? `<g stroke="#1c1917" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M134 100l6 10-5 7 7 9"/><path d="M188 104l-5 9 6 6-4 10"/><path d="M80 ${T0 + 30}l7 9-5 8 6 11"/><path d="M236 ${T0 + 36}l-6 8 5 9"/></g><g stroke="#fff" stroke-width=".7" fill="none" opacity=".55"><path d="M135 101l6 10-5 7 7 9"/><path d="M81 ${T0 + 31}l7 9-5 8 6 11"/></g>` : '';
-    const smoke = st === 1 ? `<g fill="#e7e5e4" opacity=".8"><circle cx="186" cy="92" r="6"/><circle cx="193" cy="85" r="5"/><circle cx="199" cy="78" r="3.5"/></g>` : '';
-    const spark = st === 2 ? `<g fill="#fef08a">${[[104, 60], [214, 52], [160, 30], [60, 100], [262, 96]].map(p => `<path class="ucg-tw" d="M${p[0]} ${p[1] - 6}l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z"/>`).join('')}</g>` : '';
-    return `<svg viewBox="0 0 320 200" class="qart ucwall ucg" preserveAspectRatio="xMidYMax meet"><defs>
-      <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.s1}"/><stop offset="1" stop-color="${P.s2}"/></linearGradient>
-      <linearGradient id="${id}t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${P.st1}"/><stop offset=".55" stop-color="${P.st2}"/><stop offset="1" stop-color="#57534e"/></linearGradient>
-      <linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${P.rf}"/><stop offset="1" stop-color="${P.rf2}"/></linearGradient>
-      <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b45309"/><stop offset="1" stop-color="#78350f"/></linearGradient>
-      <linearGradient id="${id}gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.g1}"/><stop offset="1" stop-color="${P.g2}"/></linearGradient>
-      <radialGradient id="${id}g"><stop offset="0" stop-color="#fde047" stop-opacity=".95"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>
-      <pattern id="${id}b" width="16" height="10" patternUnits="userSpaceOnUse"><path d="M0 10H16M8 0V5M0 5H16M16 5V10M0 5V10" stroke="#57534e" stroke-width=".7" fill="none"/></pattern></defs>
-      <rect width="320" height="200" fill="url(#${id}s)"/>${sky}
-      <path d="M0 132L40 96L78 120L120 84L168 118L214 80L262 114L296 92L320 108V200H0z" fill="${P.m1}" opacity=".75"/>
-      <path d="M0 150L52 122L96 140L150 116L204 142L250 120L320 138V200H0z" fill="${P.m2}" opacity=".85"/>
-      ${keep}
-      <g><rect x="18" y="114" width="284" height="58" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/><rect x="18" y="114" width="284" height="58" fill="url(#${id}b)" opacity=".5"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(18, 302, 114)}</g></g>
-      ${tower(92, T0, 46)}${tower(228, T0, 46)}${L === 3 ? tower(36, T0 + 26, 34) + tower(284, T0 + 26, 34) : ''}
-      <g><rect x="128" y="98" width="64" height="74" fill="url(#${id}t)" stroke="#44403c" stroke-width="1.4"/><rect x="128" y="98" width="64" height="74" fill="url(#${id}b)" opacity=".5"/><g fill="url(#${id}t)" stroke="#44403c" stroke-width="1.1">${merl(126, 194, 98, 8, 4)}</g>
-        <path d="M134 172V132a26 26 0 0 1 52 0v40z" fill="#57534e" opacity=".55"/></g>
-      ${door}
-      <g><path d="M150 102h20v12l-10 8-10-8z" fill="${win ? '#22c55e' : P.fl}" stroke="#0f172a" stroke-width="1"/><text x="160" y="114.5" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff" font-family="inherit">${win ? '✓' : P.lab}</text></g>
-      ${torch(122)}${torch(198)}${crack}${smoke}
-      <path d="M0 172H320V200H0z" fill="url(#${id}gr)"/><path d="M138 172H182L214 200H106z" fill="#d6b98c" opacity="${L === 3 ? .55 : .9}"/>
-      <g fill="${P.g2}" opacity=".8"><ellipse cx="40" cy="178" rx="20" ry="7"/><ellipse cx="282" cy="180" rx="24" ry="8"/><ellipse cx="88" cy="190" rx="14" ry="5"/></g>${spark}
-      ${L === 3 && !win ? `<rect width="320" height="200" fill="#1e1b4b" opacity=".12"/>` : ''}</svg>`;
-  }
-  function boom(gi) { const fx = document.createElement('div'); fx.className = 'ucwfx';
-    fx.innerHTML = Array.from({ length: 12 }, (_, i) => { const a = (i / 12) * Math.PI * 2 + Math.random() * .4, d = 60 + Math.random() * 70; return `<i style="--dx:${(Math.cos(a) * d).toFixed(0)}px;--dy:${(Math.sin(a) * d - 30).toFixed(0)}px;--r:${(Math.random() * 540 - 270).toFixed(0)}deg;--s:${(.6 + Math.random() * .8).toFixed(2)}"></i>`; }).join('') + '<b>💥</b>';
-    gi.appendChild(fx); setTimeout(() => fx.remove(), 1400); T(() => Sound.shield()); }
-  function gates() { const g = document.querySelector('#s2body .gates'); if (!g || !g.querySelector('.qrib')) return; const lv = T(() => state.s2.drill.lv) || {}, card = g.closest('.card');
-    if (card && !card.classList.contains('ucw-on')) { card.classList.add('ucw-on'); const h2 = card.querySelector('.stage-head h2'); if (h2) h2.textContent = '🧱 성벽 3관문 · 단원 평가 하 · 중 · 상';
-      const sb = card.querySelector('.stage-head .sub'); if (sb) sb.innerHTML = `${CS}에 들어가려면 성벽 <b>3관문</b>을 부숴야 해요. 관문마다 <b>10문제</b>, <b>60점 이상</b>이면 성벽이 무너져요! 하 → 중 → 상 차례로 공격해 봐요.`;
-      const ti = card.querySelector('.stage-head .ti'); if (ti) ti.textContent = '🏰'; }
-    g.querySelectorAll('.gate').forEach((el, i) => { const L = i + 1, x = lv[L] || {}, st = x.rounds ? (x.best >= 60 ? 2 : 1) : 0; if (el.dataset.ucw === String(st)) return; el.dataset.ucw = st;
-      const rib = el.querySelector('.qrib'); if (rib) rib.textContent = `제${L}관문 · ${['하', '중', '상'][i]}`;
-      const gi = el.querySelector('.gi'), k = 'ucwall:' + UID + ':' + L, fresh = st === 2 && !lsg(k);
-      if (gi) { gi.innerHTML = wall(fresh ? 1 : st, L); gi.style.position = 'relative'; gi.style.background = ['', 'linear-gradient(180deg,#7dd3fc,#e0f2fe 70%,#16a34a 70%)', 'linear-gradient(180deg,#fb923c,#fde68a 70%,#4d7c0f 70%)', 'linear-gradient(180deg,#1e1b4b,#6d28d9 70%,#052e16 70%)'][L]; }
-      el.classList.toggle('ucw-broken', st === 2); el.classList.toggle('ucw-crack', st === 1);
-      let bd = el.querySelector('.ucwst'); if (!bd) { bd = document.createElement('div'); bd.className = 'ucwst'; (el.querySelector('.gt') || el).after(bd); }
-      bd.textContent = st === 2 ? `🧱 성벽 돌파! · 최고 ${x.best}점` : st === 1 ? `⚠️ 금만 갔어요 · 최고 ${x.best}점 (60점 이상이면 돌파)` : '🛡️ 아직 굳게 닫혀 있어요';
-      el.querySelectorAll('.qstat span').forEach(sp => { if (/👾/.test(sp.textContent)) sp.textContent = '👾 ' + CS.replace(/의 .*$/, ''); });
-      const go = el.querySelector('.qgo'); if (go) go.textContent = st === 2 ? '🔁 다시 공격하기' : '⚔️ 성벽 공격하기';
-      if (fresh && gi) { lss(k, '1'); setTimeout(() => { gi.classList.add('ucw-shake'); setTimeout(() => { gi.innerHTML = wall(2, L); gi.classList.remove('ucw-shake'); boom(gi); }, 520); }, 450); } });
-  }
-  /* 단원 평가를 마친 화면: 관문 결과 띠 */
-  function fin() { const f = document.querySelector('#s2body .fu-fin'); if (!f || f.dataset.uc) return; f.dataset.uc = '1'; const d = T(() => state.s2.drill) || {}, sc = d.lastScore || 0, L = d.level || 1;
-    f.insertAdjacentHTML('afterbegin', `<div class="ucwfin ${sc >= 60 ? 'ok' : ''}">${sc >= 60 ? `🧱💥 제${L}관문 성벽 돌파!${L < 3 ? ' 다음 관문으로 진격해요!' : ' 성벽 3관문이 모두 열렸어요. 왕중왕전으로!'}` : `🛡️ 제${L}관문 성벽에 금만 갔어요. 60점 이상이면 무너뜨릴 수 있어요!`}</div>`); }
-  /* ④ 결과: 성 탈환 증서 + 탈환 작전 기록 */
-  function goS(tab, step, after) { T(() => showTab(tab)); T(() => goStep(tab, step)); if (after) setTimeout(() => T(after), 120); }
-  function result() { const b = document.getElementById('s2body'); if (!b) return; const hd = b.querySelector('.rp-head'); if (!hd || hd.dataset.uc) return; hd.dataset.uc = '1';
-    const h2 = hd.querySelector('h2'); if (h2) h2.innerHTML = `📜 ${UN}단원 ${UNM.replace(/[「」]/g, '')} · 성 탈환 증서`;
-    const s1 = T(() => computeResult('s1')) || { score: 0 }, lv = T(() => state.s2.drill.lv) || {}, bd = T(() => Object.values(state.s1.badges || {}).filter(Boolean).length) || 0, NB = T(() => BADGES.length) || 3;
-    const G = T(() => SV_ARENA.games) || [], best = g => +(lsg('svarena:' + g.lid + ':' + g.id) || 0), crown = G.filter(g => best(g) >= 80).length, played = G.filter(g => best(g) > 0).length;
-    const walls = [1, 2, 3].filter(L => (lv[L] || {}).best >= 60).length, all = bd >= NB && walls === 3 && played === G.length && G.length;
-    hd.querySelector('h2').insertAdjacentHTML('afterend', `<div class="ucseal ${all ? 'ok' : ''}">${all ? `🏰 ${CS} 탈환 완료!` : `🏰 ${CS} 탈환 작전 진행 중`}</div>`);
-    const right = b.querySelector('.abars'); const host = right ? right.closest('.card') : null; if (!host) return;
-    const sub = host.querySelector('p.sub'); if (sub && /보스전/.test(sub.textContent)) sub.innerHTML = '개념 카드의 확인 문제와 단원 평가에서 <b>처음 푼 답</b>으로 계산해요.';
-    const row = (ic, nm, st, ok, btn, act) => `<div class="ucrow ${ok ? 'ok' : ''}"><span class="ucr-i">${ic}</span><span class="ucr-n">${nm}</span><span class="ucr-s">${st}</span><button class="btn ${ok ? 'btn-sub' : 'btn-primary'} sm ucgo" data-ucgo="${act}">${btn}</button></div>`;
-    host.insertAdjacentHTML('beforeend', `<div class="ucrec"><div class="font-black rp-t">🏰 탈환 작전 기록</div>
-      ${row('🧭', '개념 카드 배지', `${bd} / ${NB}`, bd >= NB, bd >= NB ? '🔄 다시 하기' : '▶ 하러 가기', 'c')}
-      ${[1, 2, 3].map(L => { const x = lv[L] || {}, ok = x.best >= 60; return row(ok ? '🧱' : '🛡️', `제${L}관문 「${['하', '중', '상'][L - 1]}」`, x.rounds ? `최고 ${x.best}점${ok ? ' · 돌파' : ''}` : '도전 전', ok, ok ? '🔄 다시 하기' : '▶ 하러 가기', 'w' + L); }).join('')}
-      ${row('👑', '왕중왕전 게임', `${played} / ${G.length} 도전 · 왕관 ${crown}`, G.length && played === G.length, G.length && played === G.length ? '🔄 다시 하기' : '▶ 하러 가기', 'a')}</div>`);
-    host.querySelectorAll('[data-ucgo]').forEach(x => x.onclick = () => { const a = x.dataset.ucgo; if (a === 'c') goS('s1', 'concept'); else if (a === 'a') goS('s2', 'arena'); else goS('s2', 'drill', () => startDrill('lv' + a.slice(1))); });
-    b.querySelectorAll('.advice li').forEach(li => { li.innerHTML = li.innerHTML.replace(/단원 평가 \d+문항/g, '단원 평가 하 · 중 · 상'); });
-  }
-  function run() { T(head); T(gates); T(fin); T(result); }
-  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 30); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
-  setTimeout(run, 300);
-})();
-
-/* =====================================================================
-   🖼️ 단원 평가 문제 화면 (11-20 새 구성)
-     [머리 줄] [문제 줄 — 가로 전체] [그림 판 | 보기 2×2 + 피드백 자리]
-     그림 판은 칸 크기가 정해져 있고, 그림만 판 안에서 가득 차게 키워 가운데 놓아요 (답한 뒤에도 그대로)
-   ===================================================================== */
-(function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.__UFIT3 || typeof ufigFit1 !== 'function') return; window.__UFIT3 = 1;
-  const old = ufigFit1;
-  const fit = () => document.querySelectorAll('#s2body .udq.hasfig>.uqfig').forEach(f => { try {
-    if (!f.getClientRects().length) return; f.style.zoom = ''; f.style.top = ''; const kids = [...f.children]; if (!kids.length) return;
-    let inner = f.querySelector(':scope>.uqin'); if (!inner) { inner = document.createElement('div'); inner.className = 'uqin'; kids.forEach(k => inner.appendChild(k)); f.appendChild(inner); }
-    inner.style.zoom = ''; const W = f.clientWidth - 28, H = f.clientHeight - 44; if (W < 80 || H < 60) return;
-    let L = 1e9, R = -1e9, T = 1e9, B = -1e9;
-    inner.querySelectorAll('*').forEach(e => { if (e.tagName !== 'svg' && (e.children.length || e.closest('svg'))) return; const q = e.getBoundingClientRect(); if (q.width < 1 || q.height < 1) return; L = Math.min(L, q.left); R = Math.max(R, q.right); T = Math.min(T, q.top); B = Math.max(B, q.bottom); });
-    if (R <= L) return; let z = Math.max(.6, Math.min(2.8, W / (R - L), H / (B - T))); if (Math.abs(z - 1) > .02) inner.style.zoom = z.toFixed(2);
-    const fr = f.getBoundingClientRect(); for (let i = 0; i < 16 && z > .6; i++) { const q = inner.getBoundingClientRect(); if (q.bottom <= fr.bottom - 6 && q.top >= fr.top + 26 && q.right <= fr.right - 4 && q.left >= fr.left + 4 && inner.scrollHeight * z <= f.clientHeight) break; z *= .95; inner.style.zoom = z.toFixed(2); }
-  } catch (e) {} });
-  const longMark = () => document.querySelectorAll('#s2body .udq').forEach(c => { const L = Math.max(0, ...[...c.querySelectorAll('.choices .choice')].map(b => b.textContent.trim().length)); c.classList.toggle('uqlong', L > 11); });
-  ufigFit1 = function () { old(); requestAnimationFrame(() => requestAnimationFrame(fit)); setTimeout(fit, 400); setTimeout(fit, 1000); };
-  addEventListener('resize', () => { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); });
-  try { new MutationObserver(() => { longMark(); clearTimeout(fit.m); fit.m = setTimeout(fit, 60); }).observe(document.getElementById('s2body') || document.body, { childList: true, subtree: true }); } catch (e) {}
-})();
-
-/* =====================================================================
-   🖼️ 단원 평가 · 그림 없는 문제에 문제 종류별 그림 붙이기 (11-26)
-     보기를 키워 빈 곳을 채우지 않고, 문제를 이해하는 그림을 넣어요 (정답은 드러내지 않아요)
-     · 뛰어 세기 → 점프 줄 · 큰 수 → 자리 표 · ×, ÷ 세로셈 → 세로셈 틀 · 분수 → 막대 모형
-     · 혼합 계산 식 → 식 카드(접기 연습판이 붙어요) · 그 밖 → 그 차시의 개념 카드 그림
-   ===================================================================== */
-(function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.UAUTOFIG) return;
-  const T = f => { try { return f(); } catch (e) { return undefined; } };
-  const plain = x => String(x == null ? '' : x).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
-  const box = (inner, cap) => `<div class="uafig sv-fig">${cap ? `<div class="uacap">${cap}</div>` : ''}${inner}</div>`;
-  /* 뛰어 세기: a, b, c, □ */
-  function jump(t) { const m = /([\d,]+\s*(?:조|억|만)?(?:\s*[\d,]+\s*(?:억|만))?)씩\s*뛰어\s*세었어요\.?\s*(.+?)(?:\s*에\s*알맞|에서\s*□|$)/.exec(t); if (!m) return null;
-    const seq = m[2].split(/\s*,\s*|\s+(?=□)/).map(s => s.trim()).filter(Boolean).slice(0, 6); if (seq.length < 3) return null;
-    const n = seq.length, W = 120 * n + 40; let s = `<line x1="20" y1="110" x2="${W - 20}" y2="110" stroke="#334155" stroke-width="4" stroke-linecap="round"/>`;
-    seq.forEach((v, i) => { const x = 60 + i * 120, q = /□/.test(v); s += `<circle cx="${x}" cy="110" r="9" fill="${q ? '#f59e0b' : '#7c3aed'}"/><rect x="${x - 54}" y="128" width="108" height="40" rx="12" fill="${q ? '#fff7ed' : '#fff'}" stroke="${q ? '#f59e0b' : '#a78bfa'}" stroke-width="3"/><text x="${x}" y="156" text-anchor="middle" font-size="${v.length > 7 ? 15 : 20}" font-weight="900" fill="#1e1b4b">${v}</text>`;
-      if (i < n - 1) s += `<path d="M${x + 8},100 Q${x + 60},40 ${x + 112},100" fill="none" stroke="#16a34a" stroke-width="4"/><path d="M${x + 112},100 l-12,-4 M${x + 112},100 l-4,-12" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/><text x="${x + 60}" y="52" text-anchor="middle" font-size="16" font-weight="900" fill="#15803d">+${m[1].trim()}</text>`; });
-    return box(`<svg viewBox="0 0 ${W} 180" style="width:100%;max-width:${W}px">${s}</svg>`, '🐸 같은 만큼씩 뛰어 세기'); }
-  /* 큰 수 자리 표 */
-  const UNITS = ['일', '만', '억', '조'], SUB = ['천', '백', '십', ''];
-  function place(t) { const m = /(\d{5,16})/.exec(t.replace(/,/g, '')); const um = /(조|억|만)이\s*\d+\s*개/.exec(t);
-    if (!m && !um) return null; const digits = m ? m[1] : '', len = Math.max(digits.length, um ? ({ 만: 5, 억: 9, 조: 13 })[um[1]] + 3 : 0), G = Math.min(4, Math.ceil(len / 4));
-    let head = '', row = ''; for (let g = G - 1; g >= 0; g--) for (let k = 0; k < 4; k++) { const pos = g * 4 + (3 - k), d = digits ? digits[digits.length - 1 - pos] : '', hot = um && UNITS[g] === um[1] && k === 3;
-      head += `<th class="${g % 2 ? 'ua2' : ''} ${hot ? 'hot' : ''}">${SUB[k]}${k === 3 ? (UNITS[g] === '일' ? '일' : UNITS[g]) : ''}</th>`; row += `<td class="${g % 2 ? 'ua2' : ''} ${hot ? 'hot' : ''}">${d == null ? '' : d}</td>`; }
-    return box(`<table class="uapv"><tr>${head}</tr><tr>${row}</tr></table>`, '🗂️ 자리 표로 살펴보기'); }
-  /* 세로셈 틀 (곱셈·나눗셈) */
-  function vert(t) { let m = /(\d{2,4})\s*×\s*(\d{1,3})/.exec(t); if (m && !/[+−-]/.test(t.split(m[0])[0].slice(-3))) { const a = m[1], b = m[2], w = Math.max(a.length, b.length) + 2;
-      const cell = (v, k) => `<span class="uavc ${v === '?' ? 'q' : ''}">${v}</span>`, line = (str, pre) => `<div class="uavr">${pre ? `<span class="uavc op">${pre}</span>` : '<span class="uavc"></span>'}${Array.from({ length: w - 1 - str.length }, () => cell('')).join('')}${[...str].map(cell).join('')}</div>`;
-      return box(`<div class="uav">${line(a)}${line(b, '×')}<div class="uavl"></div><div class="uavr"><span class="uavans">?</span></div></div>`, '✏️ 세로셈으로 계산해 보기'); }
-    m = /(\d{2,4})\s*÷\s*(\d{1,2})/.exec(t); if (m && !/\//.test(t)) { const a = m[1], b = m[2];
-      return box(`<div class="uadv"><span class="uadb">${b}</span><span class="uadh"><span class="uadq">${'<i class="w">?</i>'}</span><span class="uada">${[...a].map(c => `<i>${c}</i>`).join('')}</span></span></div>`, '✏️ 나눗셈 세로셈 틀'); }
-    return null; }
-  /* 분수 막대 */
-  function frac(t) { const m = /(?:(\d+)\s+)?(\d+)\/(\d+)\s*(?:L|m|kg|cm)?\s*÷\s*(\d+)/.exec(t); if (!m) return null; const w = +(m[1] || 0), n = +m[2], d = +m[3], k = +m[4]; if (d > 16 || w > 3) return null;
-    let s = '', y = 10; const bar = (on, lab) => { let r = ''; for (let i = 0; i < d; i++) r += `<rect x="${20 + i * (360 / d)}" y="${y}" width="${360 / d}" height="34" fill="${i < on ? '#c4b5fd' : '#fff'}" stroke="#7c3aed" stroke-width="2"/>`; r += `<text x="392" y="${y + 24}" font-size="16" font-weight="900" fill="#5b21b6">${lab}</text>`; y += 44; return r; };
-    for (let i = 0; i < w; i++) s += bar(d, '1'); s += bar(n, `${n}/${d}`);
-    s += `<text x="200" y="${y + 18}" text-anchor="middle" font-size="18" font-weight="900" fill="#0f766e">이만큼을 ${k}${'으로'}로 똑같이 나누면?</text>`.replace('으로로', k % 10 === 1 || k % 10 === 7 || k % 10 === 8 ? '로' : '으로');
-    return box(`<svg viewBox="0 0 440 ${y + 30}" style="width:100%;max-width:460px">${s}</svg>`, '🍫 분수 막대로 살펴보기'); }
-  /* 혼합 계산 식 (5학년) */
-  function expr(t) { if (typeof EX === 'undefined') return null; const m = /((?:\(?\s*\d+\s*\)?\s*[+−×÷]\s*){2,}\(?\s*\d+\s*\)?)/.exec(t); if (!m) return null; const e = m[1].trim(); if (EX.val(e) == null) return null;
-    return box(`<div class="ex5card">${EX.h(e, { cls: 'big' })}</div>`, '🧮 계산 순서를 생각하며 접어 보기'); }
-  /* 그 차시의 개념 카드 그림 */
-  function card(q) { const C = T(() => CARDS[q.area]) || T(() => CARDS[BADGES[Math.max(0, (q.ch || 1) - 1)][0]]); if (!C || !C.slides || !C.slides[0]) return null; const sl = C.slides[0]; const v = T(() => sl[1]()) || '';
-    return box(`<div class="uacard" style="--cc:${C.col || '#7c3aed'}"><b>${C.ic || '📘'} ${C.t}</b><div class="uacv">${v}</div></div>`, '🔎 떠올려 볼 개념'); }
-  window.UAUTOFIG = q => { if (!q || (q.img && String(q.img).trim())) return q; const t = plain(q.text);
-    const h = jump(t) || frac(t) || vert(t) || place(t) || expr(t) || card(q); if (h) q.img = h; return q; };
-  const st = document.createElement('style'); st.textContent = `.uafig{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}.uacap{font-weight:900;color:#475569;font-size:.95rem;background:#f1f5f9;border-radius:999px;padding:3px 14px}
-.uapv{border-collapse:collapse;font-weight:900;width:100%;max-width:720px;table-layout:fixed}.uapv th,.uapv td{border:2px solid #94a3b8;padding:6px 0;text-align:center;overflow:hidden}.uapv th{background:#e0f2fe;color:#0c4a6e;font-size:clamp(.55rem,1.4vw,.8rem)}.uapv td{font-size:clamp(.9rem,2.4vw,1.4rem);height:42px;background:#fff}.uapv .ua2{background:#fef3c7}.uapv th.ua2{background:#fde68a}.uapv .hot{outline:3px solid #ef4444;outline-offset:-3px}
-.uav{display:inline-flex;flex-direction:column;gap:2px;background:#fff;border:3px solid #c4b5fd;border-radius:14px;padding:12px 18px}.uavr{display:flex;gap:2px}.uavc{width:40px;height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900;color:#1e1b4b}.uavc.q{border:2px dashed #f59e0b;border-radius:8px;color:#f59e0b;font-size:1.2rem}.uavc.op{color:#7c3aed}.uavans{flex:1;height:44px;border:2px dashed #f59e0b;border-radius:8px;color:#f59e0b;font-size:1.3rem;font-weight:900;display:flex;align-items:center;justify-content:center}.uadq i.w{width:auto;flex:1}.uavl{height:3px;background:#1e1b4b;margin:2px 0}
-.uadv{display:inline-flex;align-items:flex-end;gap:4px;background:#fff;border:3px solid #c4b5fd;border-radius:14px;padding:12px 20px;font-weight:900;font-size:1.7rem}.uadb{padding-bottom:4px}.uadh{display:flex;flex-direction:column}.uadq,.uada{display:flex}.uadq i,.uada i{font-style:normal;width:36px;text-align:center}.uadq i{color:#f59e0b;border-bottom:2px dashed #f59e0b;font-size:1.1rem;margin:0 2px}.uada{border-left:3px solid #1e1b4b;border-top:3px solid #1e1b4b;border-top-left-radius:14px;padding:2px 4px}
-.uacard{border:3px solid var(--cc);border-radius:16px;padding:10px 14px;background:#fff;text-align:center;max-width:520px;min-width:min(260px,100%);box-sizing:border-box}.uacard>b{display:block;color:var(--cc);margin-bottom:6px}.uacv{font-size:.95rem}`; document.head.appendChild(st);
-})();
-
-/* =====================================================================
-   🧱 단원 평가 중 성벽 체력: 맞힐 때마다 성벽 벽돌이 떨어져 나가요
-   ===================================================================== */
-(function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.__UWALLHP) return; window.__UWALLHP = 1;
-  const T = f => { try { return f(); } catch (e) { return undefined; } };
-  let last = -1;
-  function paint() { const c = document.querySelector('#s2body .udq'); const d = T(() => state.s2.drill); if (!c || !d || !d.qs || !d.level) return;
-    const ok = (d.ans || []).filter(a => a && a.ok).length, N = d.qs.length, need = Math.ceil(N * .6);
-    let bar = c.querySelector('.uwhp'); const fresh = !bar; if (!bar) { bar = document.createElement('div'); bar.className = 'uwhp'; const r0 = c.querySelector(':scope>.row'), pw = r0 && r0.querySelector('.paws'); if (pw) pw.after(bar); else if (r0) r0.appendChild(bar); else return; }
-    const k = ok + ':' + N + ':' + d.level; if (!fresh && bar.dataset.k === k) return; const gain = !fresh && last >= 0 && ok > last; bar.dataset.k = k; last = ok;
-    bar.innerHTML = `<span class="uwlab">🏰 제${d.level}관문 성벽</span><span class="uwb">${Array.from({ length: N }, (_, i) => `<i class="${i < ok ? 'gone' : ''} ${gain && i === ok - 1 ? 'fall' : ''} ${i === need - 1 ? 'goal' : ''}"></i>`).join('')}</span><span class="uwtx">${ok >= need ? '💥 무너지는 중!' : `${need - ok}개 더 맞히면 무너져요`}</span>`;
-    if (gain) { T(() => Sound.hit()); bar.classList.remove('shake'); void bar.offsetWidth; bar.classList.add('shake'); } }
-  try { new MutationObserver(() => { clearTimeout(paint.t); paint.t = setTimeout(paint, 20); }).observe(document.getElementById('s2body') || document.body, { childList: true, subtree: true }); } catch (e) {}
-  const st = document.createElement('style'); st.textContent = `.uwhp{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;margin:0;font-weight:900}.uwlab{color:#57534e;font-size:.95rem}.uwtx{color:#b45309;font-size:.9rem}
-.uwb{display:inline-flex;gap:3px;padding:4px 6px;background:#44403c;border-radius:8px;box-shadow:inset 0 2px 4px rgba(0,0,0,.4)}.uwb i{width:26px;height:18px;border-radius:3px;background:linear-gradient(180deg,#d6d3d1,#a8a29e);border:2px solid #57534e;transition:.3s}.uwb i.goal{box-shadow:0 0 0 2px #fbbf24}
-.uwb i.gone{opacity:.12;transform:translateY(6px) rotate(10deg)}.uwb i.fall{animation:uwfall .7s ease forwards}@keyframes uwfall{0%{opacity:1;transform:none}40%{transform:translateY(-8px) rotate(-14deg)}100%{opacity:.12;transform:translateY(16px) rotate(30deg)}}
-.uwhp.shake .uwb{animation:uwsh .45s}@keyframes uwsh{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
-@media(max-width:640px){.uwb i{width:16px;height:13px}.uwlab{font-size:.8rem}}`; document.head.appendChild(st);
-})();
-
-/* =====================================================================
-   👑 학년 최종 대장 — 모든 단원 마무리 공통 (11-20 기준)
-     학년마다 최종 대장은 한 명: 4학년 다크몽 · 5학년 베일 · 6학년 메트릭
-     ① 도전장: 단원 악당 뒤에 대장의 그림자 + 한마디
-     ② 왕중왕전: 단원 악당 + 최종 대장 2:1 결전 (HP 줄 2개)
-     ③ 결과·엔딩: 대장은 힘이 약해진 채 물러나며 다음 단원을 예고
-     대장의 약해지는 정도(0~4)는 학년 전체에 걸쳐 쌓여요:
-       1학기 3단원 뒤 조금 상함(1) → 1학기 끝 절반(2) → 2학기 3단원 뒤 거의(3) → 학년 최종 결전(4)
-   ===================================================================== */
-(function () {
-  if (!(window.SV_LF && SV_LF.flowU) || window.__GBOSS) return; window.__GBOSS = 1;
-  const T = f => { try { return f(); } catch (e) { return undefined; } };
-  const UID = T(() => String(CONFIG.LESSON_ID || SV_LF.id).replace(/-U$/, '')) || String(SV_LF.id || '').replace(/-U$/, '');
-  const P = UID.split('-'), GR = P[0], SEM = +P[1] || 1, UN = +P[2] || 1;
-  const CFG = {
-    '4': { k: 'dark', name: '다크몽', ttl: '4학년 최종 대장', part: '그림자 갑옷', col: '#6d28d9' },
-    '5': { k: 'gboss', name: '베일', ttl: '5학년 최종 대장', part: '장막', col: '#0f766e', img: 'veil' },
-    '6': { k: 'gboss', name: '메트릭', ttl: '6학년 최종 대장', part: '계측 코어', col: '#1d4ed8' }
-  };
-  const B = CFG[GR]; if (!B) return;
-  const hasJ = s => { const c = String(s).charCodeAt(String(s).length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
-  const J = (s, a, b) => s + (hasJ(s) ? a : b);
-  /* 약해지는 단계 */
-  const after = u => SEM === 1 ? (u >= 6 ? 2 : u >= 3 ? 1 : 0) : (u >= 6 ? 4 : u >= 3 ? 3 : 2);
-  const ST0 = after(UN - 1 < 1 && SEM === 1 ? 0 : UN - 1), ST1 = after(UN);
-  const won = () => !!T(() => Story.prog().tilt);
-  const stage = () => (won() ? ST1 : ST0);
-  const crk = () => Math.min(4, (SEM - 1) * 6 + (won() ? UN : UN - 1));   // 금 줄 수 = 학년에서 끝낸 단원 수(최대 4줄)
-  const STN = ['온전함', '조금 상함', '절반', '거의 벗겨짐', '완전히 벗겨짐'];
-  const LAST = UN >= 6;   // 학기 마지막 단원
-
-  /* ---------- 대장 그림: 시트 그림이 오기 전까지 쓰는 임시 그림 ---------- */
-  function metricSvg(px, pose) {
-    const red = /angry|attack/.test(pose || ''), eye = red ? '#f43f5e' : '#22d3ee', id = 'gbm' + Math.random().toString(36).slice(2, 7);
-    const ticks = Array.from({ length: 9 }, (_, i) => { const a = Math.PI * (1.12 + i * .095), r1 = 17, r2 = i % 2 ? 13.5 : 12; return `<path d="M${50 + r1 * Math.cos(a)} ${50 + r1 * Math.sin(a)}L${50 + r2 * Math.cos(a)} ${50 + r2 * Math.sin(a)}"/>`; }).join('');
-    return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" class="gbmetric" aria-label="메트릭"><defs><radialGradient id="${id}h" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient></defs>
-      <path d="M14 98c3-20 16-30 36-30s33 10 36 30z" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><path d="M38 70l12 14 12-14" fill="#facc15" stroke="#a16207" stroke-width="1.5"/>
-      <rect x="27" y="10" width="46" height="9" rx="2" fill="#facc15" stroke="#a16207" stroke-width="1.5"/><g stroke="#a16207" stroke-width="1.2">${[31, 35, 39, 43, 47, 51, 55, 59, 63, 67].map((x, i) => `<path d="M${x} 10v${i % 2 ? 3 : 5}"/>`).join('')}</g>
-      <circle cx="50" cy="44" r="27" fill="url(#${id}h)" stroke="#0f172a" stroke-width="2.2"/>
-      <path d="M31 50a19 19 0 0 1 38 0" fill="#e0f2fe" stroke="#0f172a" stroke-width="1.8"/><g stroke="#0f172a" stroke-width="1.4">${ticks}</g>
-      <path d="M50 50L${red ? 62 : 58} ${red ? 36 : 38}" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round"/><circle cx="50" cy="50" r="2.6" fill="#0f172a"/>
-      <path d="M33 57h12M55 57h12" stroke="${eye}" stroke-width="4" stroke-linecap="round"/><path d="M33 57h12M55 57h12" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
-      <path d="M42 64q8 ${red ? -3 : 4} 16 0" fill="none" stroke="#e0f2fe" stroke-width="2" stroke-linecap="round"/></svg>`;
-  }
-  function cracks(st) {
-    if (!st) return '';
-    const L = [`<path d="M30 30l7 9-4 7 6 9"/>`, `<path d="M68 26l-5 10 6 6-3 10"/>`, `<path d="M45 60l6 7-5 6 4 8"/><path d="M22 58l8 3 3 8"/>`, `<path d="M74 52l-7 6 2 9-6 6"/><path d="M52 18l-2 9 5 5"/>`];
-    const chip = st >= 2 ? `<g fill="#1e1b4b" opacity=".85"><path d="M12 80l6-4 3 6z"/><path d="M84 84l5-6 3 7z"/>${st >= 3 ? '<path d="M20 90l6-3 1 6z"/><path d="M76 92l4-5 4 5z"/>' : ''}</g>` : '';
-    return `<svg class="gbcr" viewBox="0 0 100 100"><g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".9">${L.slice(0, st).join('')}</g><g fill="none" stroke="#111827" stroke-width="1.3" stroke-linecap="round">${L.slice(0, st).join('')}</g>${chip}</svg>`;
-  }
-  const av0 = T(() => avatar);
-  if (typeof av0 === 'function') {
-    if (B.k === 'gboss') T(() => { VILLAINS.gboss = { name: B.name, role: B.ttl + ' · 단원마다 간부 뒤에서 힘을 실어 주는 대장', emoji: '👑', color: B.col, bg: '#e0e7ff' };
-      if (typeof ST_AREA !== 'undefined') ST_AREA.gboss = GR + '학년 전체'; if (typeof ST_VK !== 'undefined' && !ST_VK.includes('gboss')) ST_VK.unshift('gboss'); });
-    avatar = function (key, px, pose) {
-      if (key !== B.k) return av0(key, px, pose);
-      let inner;
-      if (B.k === 'gboss') { const g = B.img && T(() => G56.src(B.img, pose === 'attack' ? 'angry' : pose || 'idle')); inner = g ? `<img src="${g}" alt="${B.name}" style="width:${px}px;height:${px}px;object-fit:contain">` : metricSvg(px, pose); }
-      else inner = av0(key, px, pose);
-      return `<span class="gbx gbs${stage()}" style="width:${px}px;height:${px}px" title="${B.name} · ${B.part} ${STN[stage()]}">${inner}${cracks(crk())}</span>`;
-    };
-  }
-  const BA = (px, pose) => avatar(B.k, px, pose);
-
-  /* ---------- 대사 ---------- */
-  const vk = T(() => BEATS.prologue.v) || 'dark', vn = T(() => VILLAINS[vk].name) || '악당';
-  const PT = B.part;
-  const LN = {
-    pro: `${J(vn, '이', '가')} 지면 내가 직접 나선다. <b>왕중왕전</b>에서 기다리마!`,
-    a0: `${vn} 혼자로는 부족하겠지? 내 ${PT}의 힘을 빌려주마. 2:1로 덤벼 봐라!`,
-    a1: `흥, 제법이군. 하지만 내 ${J(PT, '은', '는')} 아직 끄떡없다!`,
-    a2: `크윽… ${PT}에 금이…! 이번만은 물러나 주지.`,
-    fin: LAST && SEM === 1 ? `${J(PT, '이', '가')} 절반이나…! 2학기에는 더 강한 힘으로 돌아오겠다!` : LAST ? `내 ${J(PT, '이', '가')}… 모두…! 이, 이럴 수가!` : `${PT} 한 조각을 잃었군… 다음 단원에서 두고 보자!`
-  };
-  T(() => { const f = BEATS.final; if (!f || f.__gb) return; f.__gb = 1; const gi = f.lines.map(l => l.w).lastIndexOf('guide');
-    const add = [{ w: B.k, p: 'angry', t: LN.fin }, { w: 'narr', t: `${B.ttl} <b>${B.name}</b>의 ${PT}에 금이 갔다. ${LAST && SEM === 1 ? '힘이 절반으로 줄어든 채 어둠 속으로 사라졌다.' : '대장은 약해진 채 물러났다.'}` }];
-    f.lines.splice(gi < 0 ? f.lines.length : gi, 0, ...add); });
-  T(() => { const c = BEATS.ch3; if (!c || c.__gb) return; c.__gb = 1; c.lines.splice(1, 0, { w: B.k, p: 'angry', t: LN.a2 }); });
-
-  /* ---------- ① 도전장 ---------- */
-  function chal() { const f = document.querySelector('#stBox .fuch'); if (!f || f.querySelector('.gbch')) return;
-    const L = f.querySelector('.fuchL'); if (L) L.insertAdjacentHTML('beforeend', `<div class="gbch gbsh">${BA(110, 'happy')}<span>👑 ${B.name}</span></div>`);
-    const b = f.querySelector('.fuchB'); if (b) b.insertAdjacentHTML('afterend', `<div class="gbsay gbch"><span class="gbav">${BA(40, 'happy')}</span><div><small>${B.ttl}</small><b>${B.name}</b> ${LN.pro}</div></div>`); }
-  /* ---------- ② 왕중왕전 2:1 ---------- */
-  function arena() { const w = document.querySelector('#s2body .arwrap'); if (!w || w.querySelector('.gbvs,.gbfl')) return;
-    const G = T(() => SV_ARENA.games) || [], best = g => +(T(() => localStorage.getItem('svarena:' + g.lid + ':' + g.id)) || 0);
-    const n = G.length || 1, pl = G.filter(g => best(g) > 0).length, cr = G.filter(g => best(g) >= 80).length;
-    const vHP = Math.max(0, 100 - Math.round(pl / n * 100)), bHP = Math.max(0, 100 - Math.round(pl / n * 60 + cr / n * 40));
-    const line = pl >= n ? LN.a2 : pl ? LN.a1 : LN.a0, down = pl >= n;
-    const foe = (side) => side === 'l'
-      ? `<div class="gbfl l"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 74, down ? 'attack' : 'angry')}</span><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div>`
-      : `<div class="gbfl r"><span class="gbav">${BA(78, down ? 'angry' : 'happy')}</span><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div>`;
-    const uar = w.querySelector('.uar');
-    if (uar) {   /* 새 왕중왕전 화면: 넓은 화면은 성문 양옆에, 좁은 화면은 머리 아래 띠로 */
-      const sm = uar.querySelector('.uar-title small'); if (sm) sm.innerHTML = `⚔️ <em class="gbem">${vn}</em> + <em class="gbem b">👑 ${B.name}</em> 2:1 결전! 게임을 깰수록 둘의 힘이 줄어요`;
-      const g = uar.querySelector('.uar-gates'); if (g) { g.classList.add('gbon'); g.insertAdjacentHTML('afterbegin', foe('l')); g.insertAdjacentHTML('beforeend', foe('r')); }
-      const hero = uar.querySelector('.uar-hero'); if (hero) hero.insertAdjacentHTML('afterend', `<div class="gbvs gbnar ${down ? 'down' : ''}">
-        <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 46, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
-        <b class="gbx2">2 : 1</b>
-        <div class="gbf boss"><span class="gbav">${BA(50, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
-        <div class="gbline">“${line}”</div></div>`);
-      const say = uar.querySelector('.gbfl.r'); if (say) say.insertAdjacentHTML('beforeend', `<div class="gbbub">${line}</div>`);
-      return;
-    }
-    const h2 = w.querySelector('.stage-head h2'); if (h2) h2.innerHTML = `왕중왕전 · <span class="gbh">${vn} + ${B.name} 2:1 결전</span>`;
-    const hd = w.querySelector('.stage-head'); if (!hd) return;
-    hd.insertAdjacentHTML('afterend', `<div class="gbvs ${down ? 'down' : ''}">
-      <div class="gbf"><span class="gbav ${down ? 'gbko' : ''}">${avatar(vk, 54, down ? 'attack' : 'angry')}</span><div class="gbm"><b>${vn}</b><small>${T(() => SV_LF.hero.villainSub) || '단원 악당'}</small><div class="gbhp"><i style="width:${vHP}%"></i><span>HP ${vHP}</span></div></div></div>
-      <b class="gbx2">2 : 1</b>
-      <div class="gbf boss"><span class="gbav">${BA(58, down ? 'angry' : 'happy')}</span><div class="gbm"><b>👑 ${B.name}</b><small>${B.ttl} · ${PT} ${STN[stage()]}</small><div class="gbhp b"><i style="width:${bHP}%"></i><span>힘 ${bHP}</span></div></div></div>
-      <div class="gbline">“${line}”</div></div>`); }
-  /* ---------- ③ 결과 ---------- */
-  function result() { const s = document.querySelector('#s2body .ucseal'); if (!s || document.querySelector('#s2body .gbres')) return; const ok = won();
-    s.insertAdjacentHTML('afterend', `<div class="gbres ${ok ? 'ok' : ''}"><span class="gbav">${BA(46, ok ? 'angry' : 'happy')}</span><div><b>👑 ${B.ttl} ${B.name}</b><br>${ok ? `${PT}에 금이 간 채 물러났어요. ${LAST && SEM === 1 ? '2학기에 다시 나타날 거예요!' : LAST ? '학년 최종 결전 승리!' : '다음 단원에서 또 만나요.'}` : '왕중왕전에서 단원 악당과 함께 기다리고 있어요.'}</div></div>`); }
-  function run() { T(chal); T(arena); T(result); }
-  try { new MutationObserver(() => { clearTimeout(run.t); run.t = setTimeout(run, 40); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
-  setTimeout(run, 350);
-})();
-
-</script><!--FLOWU-END-->
 </body>
 </html>
