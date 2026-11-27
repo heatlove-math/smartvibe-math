@@ -9358,7 +9358,8 @@ window.SV_FM = {
 #scratch .sbar{position:sticky;top:0;z-index:2;background:#fffdf4;flex-wrap:wrap}
 #scratch #skcv{height:min(32vh,280px,calc(100dvh - 130px))}
 </style><!--SK-END-->
-<!--SL3-START--><style>/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
+<!--SL3-START--><style>html body .svsl-paged .svsl-pgempty{display:none!important}.svsl-pgd b{white-space:nowrap}
+/* 🎞️ 넘겨 보기 — 원래 수업 화면(내용·기능)은 그대로, 장면 단위로 한 화면씩 보여 주기 */
 #svslTop,#svslTabs,#svslNav,#svslFab{display:none}
 body.svsl-on{overflow:hidden!important;--svT:96px;--svB:64px}
 html:has(body.svsl-on){overflow:hidden}
@@ -10177,14 +10178,14 @@ function fit() { const k = step(); if (B.classList.contains('svsl-s2q')) { const
 /* 점프 문제: 한 화면에 [그림 | 답하기] 두 칸으로 놓고, 남은 높이에 맞춰 줄여요 */
 /* 한 화면에 다 들어가지 않는 카드: 스크롤 대신 쪽(장면)을 나눠 한 쪽씩 보여 줘요. ◀ ▶ 로 넘겨요 */
 const PG = { key: '', i: 0 };
-function pgClear(q) { $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
+function pgClear(q) { $$('.svsl-pgempty', q).forEach(e => e.classList.remove('svsl-pgempty')); $$('.svsl-pgoff', q).forEach(e => e.classList.remove('svsl-pgoff')); $$('[data-pgz]', q).forEach(e => { e.style.zoom = ''; e.removeAttribute('data-pgz'); }); const o = q.querySelector(':scope > .svsl-pager'); if (o) o.remove(); q.classList.remove('svsl-paged'); }
 function pageCard(q, box, deep) { pgClear(q);
   const others = [...box.children].filter(c => c !== q && c.offsetParent !== null).reduce((a, c) => a + c.getBoundingClientRect().height + 10, 0);
   const cs = getComputedStyle(q), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 8;
   let H = box.clientHeight - others - pad - (B.classList.contains("svsl-land") ? 62 : 96); if (H < (B.classList.contains("svsl-land") ? 160 : 110)) return false;
   const part = deep ? q.querySelector(':scope > [id^="part-"]') : null, blocks = [];
   /* 한 쪽보다 큰 덩어리(그림 + 답 칸 등)는 줄이지 않고 안쪽 칸으로 나누어 쪽을 더 만들어요 (휴대폰 세로 화면) */
-  const flat = (c, d) => { if (d < 6 && !(c instanceof SVGElement) && c.getBoundingClientRect().height + 10 > H) { const K = [...c.children].filter(k => k.offsetParent !== null && k.getBoundingClientRect().height > 4); if (K.length >= 2) { K.forEach(k => flat(k, d + 1)); return; } if (K.length === 1) { flat(K[0], d + 1); return; } } blocks.push(c); };
+  const flat = (c, d) => { if (d < 6 && !(c instanceof SVGElement) && ![...c.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && !/^(P|SPAN|B|I|EM|STRONG|LABEL|BUTTON|H[1-6])$/.test(c.tagName) && c.getBoundingClientRect().height + 10 > H) { const K = [...c.children].filter(k => k.offsetParent !== null && k.getBoundingClientRect().height > 4); if (K.length >= 2) { K.forEach(k => flat(k, d + 1)); return; } if (K.length === 1) { flat(K[0], d + 1); return; } } blocks.push(c); };
   [...q.children].forEach(c => { if (c.offsetParent === null) return; if (c === part) [...c.children].forEach(k => { if (k.offsetParent !== null) flat(k, 0); }); else flat(c, 0); });
   if (blocks.length < 2) return false;
   const hh = b => b.getBoundingClientRect().height + 10;
@@ -10199,6 +10200,8 @@ function pageCard(q, box, deep) { pgClear(q);
   const key = SET() + '|' + step() + '|' + (q.id || '') + '|' + ((q.querySelector('.qtext') || q).textContent || '').slice(0, 40);
   if (PG.key !== key) { PG.key = key; PG.i = 0; } PG.i = Math.max(0, Math.min(PG.i, pages.length - 1));
   pages.forEach((P, i) => P.forEach(b => b.classList.toggle('svsl-pgoff', i !== PG.i)));
+  /* 이 쪽에 보일 것이 하나도 없는 틀(빈 테두리 상자)은 함께 숨겨요 */
+  [...q.querySelectorAll('div,section')].reverse().forEach(e => { const K = [...e.children]; if (K.length && !e.closest('.svsl-pager') && K.every(k => k.classList.contains('svsl-pgoff') || k.classList.contains('svsl-pgempty') || /^(STYLE|SCRIPT)$/.test(k.tagName)) && ![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) e.classList.add('svsl-pgempty'); });
   q.classList.add('svsl-paged');
   q.insertAdjacentHTML('beforeend', `<div class="svsl-pager"><button type="button" data-svpg="-1" ${PG.i ? '' : 'disabled'}>◀ 앞 장면</button><span class="svsl-pgd">${pages.map((_, i) => `<i class="${i === PG.i ? 'on' : ''}"></i>`).join('')}<b>${PG.i + 1} / ${pages.length}</b></span><button type="button" data-svpg="1" ${PG.i < pages.length - 1 ? '' : 'disabled'}>다음 장면 ▶</button></div>`);
   return true; }
@@ -10601,7 +10604,8 @@ body.svsl-on #toolBody .svsl-side .cfb .face-e{display:none}
 /* 휴대폰 세로 화면: 조작 활동(개념 탐험·미니게임·보드게임)에서는 가로로 돌려 달라는 안내 — 문제 풀이는 세로 그대로 */
 (function () { if (window.__uniRot) return; window.__uniRot = 1;
   const isPhone = () => Math.min(screen.width, screen.height) < 600 && matchMedia('(pointer:coarse)').matches;
-  const act = () => { const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
+  const isWrap = () => /-U-/.test(decodeURIComponent(location.pathname)) || /-U$/.test(String((window.CONFIG || {}).LESSON_ID || ''));
+  const act = () => { if (isWrap()) return false; const k = document.body.dataset.svst || ''; return k === 'concept' || /^s2-(game|board|arena)/.test(k) || !!document.querySelector('#s2body .gamecard, #s2body .bq-main'); };
   let el = null, dis = {};
   function upd() { const port = innerHeight > innerWidth, on = isPhone() && port && act(); const key = (document.body.dataset.svst || '') + '|' + (document.body.dataset.svset || '');
     if (!el) { el = document.createElement('div'); el.id = 'uniRot'; el.innerHTML = '<div class="uniRotBox"><div class="uniRotPh">📱</div><b>휴대폰을 가로로 돌려 주세요</b><p>직접 끌어 조작하는 활동은 가로 화면에서 그림이 크게 보여요.</p><button type="button">세로로 그냥 할게요</button></div>'; const off = e => { e.preventDefault(); e.stopPropagation(); try { sessionStorage.setItem('uniRotOff', '1'); } catch (x) {} dis.all = 1; el.classList.remove('on'); };
